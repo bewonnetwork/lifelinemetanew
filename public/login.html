@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>LIFELINEMETA – Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+      min-height:100vh;
+      background:linear-gradient(160deg,#dbeafe 0%,#eff6ff 45%,#e0e7ff 100%);
+      font-family:system-ui,sans-serif;
+      display:flex;flex-direction:column;align-items:center;
+    }
+
+    /* ── BLUE PAGE BORDER ── */
+    body::before{
+      content:'';position:fixed;inset:0;
+      border:3px solid rgba(30,58,138,0.18);
+      pointer-events:none;z-index:1000;
+      box-shadow:inset 0 0 40px rgba(30,58,138,0.07);
+    }
+
+    .header{
+      width:100%;max-width:460px;
+      padding:30px 20px 6px;
+      display:flex;flex-direction:column;align-items:center;gap:10px;
+    }
+    .logo{
+      width:72px;height:72px;border-radius:50%;object-fit:cover;
+      border:3px solid #1e3a8a;background:#fff;
+      box-shadow:0 6px 20px -4px rgba(30,58,138,0.4);
+    }
+    .site-title{font-size:24px;font-weight:900;color:#1e3a8a;letter-spacing:.8px;}
+
+    .container{width:100%;max-width:460px;padding:10px 16px 50px;}
+
+    /* ── 3D CARD ── */
+    .card{
+      background:#fff;border-radius:22px;padding:34px 30px;
+      border:2px solid rgba(30,58,138,0.22);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.9) inset,
+        0 6px 0 rgba(30,58,138,0.22),
+        0 12px 0 rgba(30,58,138,0.12),
+        0 18px 0 rgba(30,58,138,0.06),
+        0 28px 60px -10px rgba(30,58,138,0.35),
+        0 10px 20px -6px rgba(30,58,138,0.2);
+    }
+
+    .card-title{
+      text-align:center;font-size:22px;font-weight:900;color:#111827;
+      margin-bottom:4px;
+      display:flex;align-items:center;justify-content:center;gap:8px;
+    }
+    .card-sub{
+      text-align:center;font-size:13px;color:#6b7280;
+      font-weight:600;margin-bottom:24px;
+    }
+
+    /* ── AUTO-FILL BANNER ── */
+    .auto-banner{
+      display:none;
+      background:#eff6ff;border:1.5px solid #93c5fd;
+      border-radius:12px;padding:12px 16px;
+      margin-bottom:20px;
+      align-items:center;gap:10px;
+    }
+    .auto-banner.show{display:flex;}
+    .auto-banner-icon{
+      width:36px;height:36px;background:#1e3a8a;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    }
+    .auto-banner-icon svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;}
+    .auto-banner-text{flex:1;}
+    .auto-banner-label{font-size:11px;color:#6b7280;font-weight:600;display:block;margin-bottom:2px;}
+    .auto-banner-id{font-size:13px;font-weight:900;color:#1e3a8a;word-break:break-all;}
+    .auto-banner-clear{
+      background:none;border:none;cursor:pointer;color:#9ca3af;
+      font-size:18px;padding:0;line-height:1;flex-shrink:0;
+      box-shadow:none;width:auto;margin:0;
+    }
+    .auto-banner-clear:hover{color:#ef4444;background:none;transform:none;box-shadow:none;}
+
+    /* ── TAB ROW ── */
+    .tab-row{
+      display:flex;border:1.5px solid #bfdbfe;
+      border-radius:10px;overflow:hidden;margin-bottom:20px;
+    }
+    .tab-btn{
+      flex:1;padding:10px 6px;font-size:13px;font-weight:700;
+      border:none;cursor:pointer;background:transparent;
+      color:#6b7280;transition:all .15s;
+      display:flex;align-items:center;justify-content:center;gap:5px;
+    }
+    .tab-btn.active{background:#1e3a8a;color:#fff;}
+    .tab-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;}
+
+    /* ── FORM FIELDS ── */
+    .form-group{margin-bottom:16px;position:relative;}
+    label{font-size:13.5px;font-weight:800;color:#111827;margin-bottom:5px;display:block;}
+    input{
+      width:100%;padding:13px 14px 13px 44px;
+      border:1.5px solid #93c5fd;border-radius:10px;
+      font-size:15px;background:#f8faff;
+      font-weight:600;color:#111827;outline:none;
+      transition:border-color .2s,box-shadow .2s;
+    }
+    input:focus{
+      border-color:#1e3a8a;
+      box-shadow:0 0 0 3px rgba(30,58,138,0.14);
+      background:#fff;
+    }
+    input.prefilled{
+      background:#eff6ff;
+      border-color:#93c5fd;
+      color:#1e3a8a;
+      font-weight:800;
+    }
+    input::placeholder{font-weight:500;color:#9ca3af;}
+
+    .f-icon{
+      position:absolute;left:13px;top:38px;
+      width:20px;height:20px;
+      display:flex;align-items:center;justify-content:center;
+      pointer-events:none;
+    }
+    .f-icon svg{width:18px;height:18px;stroke:#1e3a8a;fill:none;stroke-width:2;}
+
+    .eye{
+      position:absolute;right:12px;top:36px;cursor:pointer;
+      width:24px;height:24px;display:flex;align-items:center;justify-content:center;
+    }
+    .eye svg{width:20px;height:20px;stroke:#1e3a8a;fill:none;stroke-width:1.8;}
+
+    /* ── ONLY-PASSWORD NOTE ── */
+    .only-pass-note{
+      display:none;
+      background:#f0fdf4;border:1px solid #86efac;
+      border-radius:8px;padding:8px 12px;
+      font-size:12px;color:#15803d;font-weight:600;
+      margin-bottom:14px;
+      align-items:center;gap:6px;
+    }
+    .only-pass-note.show{display:flex;}
+    .only-pass-note svg{width:14px;height:14px;stroke:#15803d;fill:none;stroke-width:2.5;flex-shrink:0;}
+
+    /* ── SUBMIT BUTTON ── */
+    .submit-btn{
+      width:100%;padding:16px 20px;
+      background:linear-gradient(135deg,#1e3a8a,#2563eb);
+      color:#fff;border:none;border-radius:12px;
+      font-size:16px;font-weight:900;letter-spacing:.4px;
+      margin-top:6px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      box-shadow:0 8px 20px -4px rgba(30,58,138,0.55);
+      transition:.18s;
+    }
+    .submit-btn:hover{
+      background:linear-gradient(135deg,#1d4ed8,#3b82f6);
+      transform:translateY(-2px);
+      box-shadow:0 14px 28px -4px rgba(29,78,216,0.6);
+    }
+    .submit-btn:active{transform:translateY(0);}
+    .submit-btn:disabled{background:#9ca3af;cursor:not-allowed;box-shadow:none;transform:none;}
+    .btn-icon{
+      width:26px;height:26px;background:rgba(255,255,255,.2);
+      border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    }
+    .btn-icon svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.2;}
+
+    /* ── MESSAGE ── */
+    #message{
+      text-align:center;margin:12px 0 4px;font-weight:700;
+      min-height:22px;font-size:13.5px;
+    }
+    .msg-error{color:#dc2626;background:#fef2f2;border:1px solid #fecaca;padding:9px 14px;border-radius:8px;}
+    .msg-info{color:#1e3a8a;background:#eff6ff;border:1px solid #bfdbfe;padding:9px 14px;border-radius:8px;}
+
+    .forgot-row{
+      text-align:right;margin-top:-8px;margin-bottom:14px;
+      font-size:12.5px;
+    }
+    .forgot-row a{color:#1e3a8a;font-weight:700;text-decoration:none;}
+    .forgot-row a:hover{text-decoration:underline;}
+
+    .reg-row{
+      text-align:center;margin-top:18px;
+      font-size:14px;color:#374151;font-weight:600;
+    }
+    .reg-row a{color:#1e3a8a;font-weight:900;text-decoration:none;}
+    .reg-row a:hover{text-decoration:underline;}
+
+    /* ── SUCCESS OVERLAY ── */
+    .success-overlay{
+      position:fixed;inset:0;background:rgba(239,246,255,0.97);
+      display:none;align-items:center;justify-content:center;
+      flex-direction:column;z-index:999;gap:16px;text-align:center;padding:20px;
+    }
+    .success-overlay.show{display:flex;}
+    .success-circle{
+      width:80px;height:80px;border-radius:50%;background:#1e3a8a;
+      display:flex;align-items:center;justify-content:center;
+      animation:popIn .45s cubic-bezier(.34,1.56,.64,1);
+      box-shadow:0 10px 30px -6px rgba(30,58,138,0.45);
+    }
+    .success-circle svg{width:40px;height:40px;stroke:#fff;fill:none;stroke-width:2.2;}
+    @keyframes popIn{0%{transform:scale(0);opacity:0;}100%{transform:scale(1);opacity:1;}}
+    .success-title{font-size:22px;font-weight:900;color:#111827;}
+    .success-sub{font-size:14px;color:#6b7280;font-weight:600;line-height:1.6;}
+    .success-loader{width:28px;height:28px;border:3px solid #dbeafe;border-top-color:#1e3a8a;border-radius:50%;animation:spin .8s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <img src="assets/images/logo.jpeg" alt="LIFELINEMETA" class="logo"
+       onerror="this.onerror=null;this.src='assets/logo/livelinemeta.png';">
+  <div class="site-title">LIFELINEMETA</div>
+</div>
+
+<div class="container">
+  <div class="card">
+
+    <div class="card-title">
+      <svg width="22" height="22" viewBox="0 0 24 24" style="stroke:#1e3a8a;fill:none;stroke-width:2;flex-shrink:0;">
+        <path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+      </svg>
+      SIGN IN
+    </div>
+    <div class="card-sub">Welcome back to LIFELINEMETA</div>
+
+    <!-- AUTO-FILL BANNER — shows when coming from registration -->
+    <div class="auto-banner" id="autoBanner">
+      <div class="auto-banner-icon">
+        <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+      <div class="auto-banner-text">
+        <span class="auto-banner-label">Registration successful! Your ID is pre-filled:</span>
+        <span class="auto-banner-id" id="bannerIdText">—</span>
+      </div>
+      <button class="auto-banner-clear" onclick="clearAutoFill()" title="Clear and login manually">✕</button>
+    </div>
+
+    <!-- ONLY PASSWORD NOTE — shows when ID is pre-filled -->
+    <div class="only-pass-note" id="onlyPassNote">
+      <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+      Your ID is auto-filled — just enter your password to sign in.
+    </div>
+
+    <!-- LOGIN METHOD TABS -->
+    <div class="tab-row" id="tabRow">
+      <button class="tab-btn active" id="tab-uid" onclick="switchTab('uid')">
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3h-8l-2 4h12z"/></svg>
+        Member ID
+      </button>
+      <button class="tab-btn" id="tab-email" onclick="switchTab('email')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        Email
+      </button>
+      <button class="tab-btn" id="tab-mobile" onclick="switchTab('mobile')">
+        <svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg>
+        Mobile
+      </button>
+    </div>
+
+    <!-- MEMBER ID FIELD -->
+    <div class="form-group" id="field-uid">
+      <label>Member ID</label>
+      <span class="f-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3h-8l-2 4h12z"/></svg></span>
+      <input type="text" id="inputUid" placeholder="Enter your Member ID" autocomplete="off">
+    </div>
+
+    <!-- EMAIL FIELD -->
+    <div class="form-group" id="field-email" style="display:none;">
+      <label>Email Address</label>
+      <span class="f-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
+      <input type="email" id="inputEmail" placeholder="Enter your email" autocomplete="off">
+    </div>
+
+    <!-- MOBILE FIELD -->
+    <div class="form-group" id="field-mobile" style="display:none;">
+      <label>Mobile Number</label>
+      <span class="f-icon"><svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg></span>
+      <input type="tel" id="inputMobile" placeholder="Enter your mobile number" autocomplete="off">
+    </div>
+
+    <!-- PASSWORD FIELD -->
+    <div class="form-group">
+      <label>Password</label>
+      <span class="f-icon"><svg viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 1 1 8 0v4"/></svg></span>
+      <input type="password" id="inputPassword" placeholder="Enter your password" autocomplete="current-password">
+      <span class="eye" id="eyeBtn">
+        <svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+      </span>
+    </div>
+
+    <div class="forgot-row"><a href="forgot-password.html">Forgot password?</a></div>
+
+    <button class="submit-btn" id="loginBtn" onclick="doLogin()">
+      <span class="btn-icon">
+        <svg viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
+      </span>
+      SIGN IN
+    </button>
+
+    <div id="message"></div>
+
+    <div class="reg-row">Don't have an account? <a href="register.html">Register Free</a></div>
+
+  </div>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-circle">
+    <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+  </div>
+  <div class="success-title">Login Successful!</div>
+  <div class="success-sub">Welcome back.<br>Redirecting to your dashboard…</div>
+  <div class="success-loader"></div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyA3G2bMOJ_HSDYXJPuM70tVjfbkHlMftr4",
+  authDomain: "livelinemeta.firebaseapp.com",
+  projectId: "livelinemeta",
+  storageBucket: "livelinemeta.appspot.com",
+  messagingSenderId: "206900805598",
+  appId: "1:206900805598:web:10e6b39100af201b4e674f"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+
+/* ══════════════════════════════════════════
+   AUTO-FILL: read uid from URL → Firestore
+══════════════════════════════════════════ */
+let autoEmail = '';
+let autoUid   = '';
+
+window.addEventListener('DOMContentLoaded', async function(){
+
+  // Read uid from URL param only — no localStorage
+  const params = new URLSearchParams(window.location.search);
+  const urlUid = params.get('uid') || '';
+
+  if(urlUid){
+    autoUid = urlUid;
+
+    // Fetch user data from Firestore to show their info
+    try{
+      const snap = await db.collection('users').doc(urlUid).get();
+      if(snap.exists){
+        const data = snap.data();
+        autoEmail = data.email || '';
+
+        // Show banner with username or uid
+        const displayName = data.username || data.fullName || urlUid.substring(0,14).toUpperCase();
+        document.getElementById('bannerIdText').textContent = displayName + '  |  ID: ' + urlUid.substring(0,10).toUpperCase() + '…';
+      } else {
+        document.getElementById('bannerIdText').textContent = urlUid.substring(0,14).toUpperCase() + '…';
+      }
+    } catch(e){
+      document.getElementById('bannerIdText').textContent = urlUid.substring(0,14).toUpperCase() + '…';
+    }
+
+    // Pre-fill Member ID field
+    document.getElementById('inputUid').value = urlUid;
+    document.getElementById('inputUid').classList.add('prefilled');
+
+    // Show banner and note
+    document.getElementById('autoBanner').classList.add('show');
+    document.getElementById('onlyPassNote').classList.add('show');
+
+    // Hide tabs — no need to switch method
+    document.getElementById('tabRow').style.display = 'none';
+    switchTab('uid');
+
+    // Focus password immediately
+    setTimeout(function(){ document.getElementById('inputPassword').focus(); }, 400);
+  }
+});
+
+function clearAutoFill(){
+  autoUid   = '';
+  autoEmail = '';
+
+  document.getElementById('inputUid').value = '';
+  document.getElementById('inputUid').classList.remove('prefilled');
+  document.getElementById('autoBanner').classList.remove('show');
+  document.getElementById('onlyPassNote').classList.remove('show');
+  document.getElementById('tabRow').style.display = 'flex';
+
+  // Remove uid from URL cleanly
+  const url = new URL(window.location.href);
+  url.searchParams.delete('uid');
+  window.history.replaceState({}, '', url);
+}
+
+/* ══════════════════════════════════════
+   TAB SWITCHING
+══════════════════════════════════════ */
+let activeTab = 'uid';
+function switchTab(tab){
+  activeTab = tab;
+  ['uid','email','mobile'].forEach(function(t){
+    document.getElementById('tab-'+t).classList.remove('active');
+    document.getElementById('field-'+t).style.display = 'none';
+  });
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.getElementById('field-'+tab).style.display = 'block';
+}
+
+/* ══════════════════════════════════════
+   PASSWORD SHOW/HIDE
+══════════════════════════════════════ */
+const EYE_OPEN   = '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/>';
+const EYE_CLOSED = '<path d="M2 12s4-7 11-7c2.2 0 4 .6 5.5 1.5M22 12s-1.2 2.1-3.3 3.9M9.9 9.9a3 3 0 0 0 4.2 4.2"/><path d="M3 3l18 18"/>';
+
+document.getElementById('eyeBtn').addEventListener('click', function(){
+  const inp = document.getElementById('inputPassword');
+  const svg = this.querySelector('svg');
+  if(inp.type === 'password'){ inp.type = 'text'; svg.innerHTML = EYE_CLOSED; }
+  else { inp.type = 'password'; svg.innerHTML = EYE_OPEN; }
+});
+
+/* ══════════════════════════════════════
+   MESSAGE HELPER
+══════════════════════════════════════ */
+function setMsg(text, type){
+  const el = document.getElementById('message');
+  el.textContent = text;
+  el.className = '';
+  if(type === 'error') el.classList.add('msg-error');
+  else if(type === 'info') el.classList.add('msg-info');
+}
+
+/* ══════════════════════════════════════
+   LOGIN LOGIC
+══════════════════════════════════════ */
+async function doLogin(){
+  const btn  = document.getElementById('loginBtn');
+  const pass = document.getElementById('inputPassword').value;
+
+  if(!pass){ setMsg('Please enter your password.','error'); return; }
+
+  btn.disabled = true;
+  setMsg('Signing in…', 'info');
+
+  try{
+    let emailToUse = '';
+
+    if(activeTab === 'email'){
+      // Direct email login
+      emailToUse = document.getElementById('inputEmail').value.trim();
+      if(!emailToUse){ setMsg('Please enter your email.','error'); btn.disabled=false; return; }
+
+    } else if(activeTab === 'uid'){
+      // Login by Member ID — look up email in Firestore
+      const uid = document.getElementById('inputUid').value.trim();
+      if(!uid){ setMsg('Please enter your Member ID.','error'); btn.disabled=false; return; }
+
+      // Try direct uid doc first
+      const snap = await db.collection('users').doc(uid).get();
+      if(snap.exists){
+        emailToUse = snap.data().email || '';
+      } else {
+        // Try username field
+        const q = await db.collection('users').where('username','==',uid).limit(1).get();
+        if(!q.empty){ emailToUse = q.docs[0].data().email || ''; }
+      }
+
+      // Also try autoEmail from Firestore fetch done at page load
+      if(!emailToUse && autoEmail){ emailToUse = autoEmail; }
+
+      if(!emailToUse){
+        setMsg('⚠ Member ID not found. Please check and try again.','error');
+        btn.disabled=false; return;
+      }
+
+    } else if(activeTab === 'mobile'){
+      // Login by mobile — look up email in Firestore
+      const mob = document.getElementById('inputMobile').value.trim();
+      if(!mob){ setMsg('Please enter your mobile number.','error'); btn.disabled=false; return; }
+
+      const q = await db.collection('users').where('mobile','==',mob).limit(1).get();
+      if(q.empty){
+        // Try with country code variations
+        const q2 = await db.collection('users')
+          .where('mobile','>=',mob)
+          .where('mobile','<=',mob+'\uf8ff')
+          .limit(1).get();
+        if(q2.empty){
+          setMsg('⚠ Mobile number not found. Please check and try again.','error');
+          btn.disabled=false; return;
+        }
+        emailToUse = q2.docs[0].data().email || '';
+      } else {
+        emailToUse = q.docs[0].data().email || '';
+      }
+    }
+
+    // Firebase sign in with email + password
+    await auth.signInWithEmailAndPassword(emailToUse, pass);
+
+    // Show success and redirect
+    document.getElementById('successOverlay').classList.add('show');
+
+    setTimeout(function(){
+      window.location.href = 'dashboard.html';
+    }, 2000);
+
+  } catch(err){
+    console.error(err);
+    let msg = err.message;
+    if(err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential'){
+      msg = '⚠ Incorrect password. Please try again.';
+    } else if(err.code === 'auth/user-not-found'){
+      msg = '⚠ Account not found. Please register first.';
+    } else if(err.code === 'auth/too-many-requests'){
+      msg = '⚠ Too many attempts. Please try again later.';
+    } else if(err.code === 'auth/invalid-email'){
+      msg = '⚠ Invalid email format.';
+    }
+    setMsg(msg, 'error');
+    btn.disabled = false;
+  }
+}
+
+// Allow pressing Enter to submit
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Enter') doLogin();
+});
+</script>
+</body>
+</html>

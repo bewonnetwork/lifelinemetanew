@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#f1f5f9;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.box{
+background:white;
+padding:30px;
+width:350px;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+h2{
+text-align:center;
+color:#1e40af;
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-bottom:15px;
+border:1px solid #ddd;
+border-radius:8px;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#1e40af;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
+}
+
+button:hover{
+background:#2563eb;
+}
+
+#msg{
+margin-top:15px;
+text-align:center;
+font-weight:bold;
+}
+
+</style>
+</head>
+<body>
+
+<div class="box">
+
+<h2>ADMIN LOGIN</h2>
+
+<input type="email" id="email" placeholder="Admin Email">
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="loginAdmin()">LOGIN</button>
+
+<div id="msg"></div>
+
+</div>
+
+<!-- Firebase -->
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+
+import {
+getAuth,
+signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
+import {
+getFirestore,
+doc,
+getDoc
+} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+/* FIREBASE CONFIG */
+const firebaseConfig = {
+
+  apiKey: "AIzaSyA3G2bMOJ_HSDYXJPuM70tVjfbkHlMftr4",
+  authDomain: "livelinemeta.firebaseapp.com",
+  projectId: "livelinemeta",
+  storageBucket: "livelinemeta.appspot.com",   // ✅ ঠিক করা হলো
+  messagingSenderId: "206900805598",
+  appId: "1:206900805598:web:10e6b39100af201b4e674f"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* ADMIN LOGIN */
+window.loginAdmin = async ()=>{
+
+const email = document.getElementById("email").value.trim();
+const password = document.getElementById("password").value.trim();
+
+const msg = document.getElementById("msg");
+
+msg.style.color="blue";
+msg.innerText="Checking...";
+
+try{
+
+/* NORMAL LOGIN */
+await signInWithEmailAndPassword(auth,email,password);
+
+/* ADMIN CHECK FROM FIRESTORE */
+const adminRef = doc(db,"admins",email);
+
+const adminSnap = await getDoc(adminRef);
+
+if(adminSnap.exists()){
+
+const data = adminSnap.data();
+
+if(data.role === "admin" && data.active === true){
+
+localStorage.setItem("adminLogged","true");
+
+msg.style.color="green";
+msg.innerText="Admin Login Success";
+
+setTimeout(()=>{
+window.location.href="admin.html";
+},1000);
+
+}else{
+
+msg.style.color="red";
+msg.innerText="Admin Disabled";
+
+}
+
+}else{
+
+msg.style.color="red";
+msg.innerText="Not Admin Account";
+
+}
+
+}catch(err){
+
+msg.style.color="red";
+msg.innerText=err.message;
+
+}
+
+}
+
+</script>
+
+</body>
+</html>

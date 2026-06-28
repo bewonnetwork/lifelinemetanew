@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIFELINEMETA – Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+:root{
+  --blue:#1e40af;--blue-light:#dbeafe;--blue-mid:#2563eb;
+  --green:#16a34a;--green-light:#dcfce7;
+  --orange:#ea580c;--orange-light:#fff7ed;
+  --purple:#7c3aed;--purple-light:#ede9fe;
+  --teal:#0f766e;--teal-light:#ccfbf1;
+  --red:#dc2626;--red-light:#fee2e2;
+  --bg:#f1f5f9;--white:#fff;--text:#1e293b;--muted:#64748b;
+  --border:#e5e7eb;--radius:16px;
+}
+body{background:var(--bg);color:var(--text);overflow-x:hidden;}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-thumb{background:var(--blue);border-radius:20px;}
+
+/* ── LAYOUT ── */
+.app{display:flex;min-height:100vh;}
+.sidebar{width:260px;background:var(--white);border-right:1px solid var(--border);
+  position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;
+  display:flex;flex-direction:column;}
+.main{margin-left:260px;flex:1;padding:28px;min-height:100vh;}
+
+/* ── SIDEBAR ── */
+.brand{padding:20px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border);}
+.brand-icon{width:44px;height:44px;background:var(--blue);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;}
+.brand-name{font-size:18px;font-weight:800;color:var(--blue);}
+.brand-tag{font-size:11px;color:var(--muted);}
+.nav{padding:12px 10px;flex:1;}
+.nav-section{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;
+  padding:12px 10px 6px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;
+  border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;color:var(--muted);
+  transition:.2s;margin-bottom:2px;}
+.nav-item:hover{background:var(--blue-light);color:var(--blue);}
+.nav-item.active{background:var(--blue-light);color:var(--blue);font-weight:700;}
+.nav-item .icon{font-size:17px;width:22px;text-align:center;}
+.sidebar-foot{padding:16px;border-top:1px solid var(--border);}
+.user-chip{display:flex;align-items:center;gap:10px;padding:10px 12px;
+  background:var(--bg);border-radius:12px;}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--blue);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;}
+.user-chip-name{font-size:13px;font-weight:600;}
+.user-chip-role{font-size:11px;color:var(--muted);}
+
+/* ── TOPBAR ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:16px;flex-wrap:wrap;}
+.page-title{font-size:26px;font-weight:800;color:var(--text);}
+.page-sub{font-size:14px;color:var(--muted);margin-top:3px;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.notif-btn{width:40px;height:40px;background:var(--white);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);border:1px solid var(--border);position:relative;}
+.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;
+  background:var(--red);border-radius:50%;}
+.rank-badge{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;
+  background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;}
+
+/* ── NOTICE ── */
+.notice{background:var(--orange-light);border:1px solid #fdba74;border-radius:12px;
+  padding:14px 18px;display:flex;align-items:center;gap:10px;
+  font-size:13px;font-weight:600;color:#9a3412;margin-bottom:22px;}
+
+/* ── BALANCE HERO ── */
+.balance-hero{background:linear-gradient(135deg,var(--blue),var(--blue-mid));
+  border-radius:20px;padding:28px;color:#fff;margin-bottom:24px;
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;position:relative;overflow:hidden;}
+.balance-hero::before{content:'';position:absolute;width:200px;height:200px;
+  background:rgba(255,255,255,.08);border-radius:50%;top:-60px;right:-40px;}
+.balance-hero::after{content:'';position:absolute;width:140px;height:140px;
+  background:rgba(255,255,255,.05);border-radius:50%;bottom:-40px;left:40%;}
+.bh-item{position:relative;}
+.bh-label{font-size:12px;opacity:.8;margin-bottom:6px;}
+.bh-value{font-size:28px;font-weight:800;}
+.bh-sub{font-size:12px;color:#bbf7d0;margin-top:4px;}
+.bh-divider{width:1px;background:rgba(255,255,255,.2);}
+
+/* ── STATS GRID ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;}
+.stat{background:var(--white);border-radius:var(--radius);padding:20px;
+  border:1px solid var(--border);transition:.2s;}
+.stat:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.08);}
+.stat-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:20px;margin-bottom:14px;}
+.stat-val{font-size:24px;font-weight:800;color:var(--text);}
+.stat-label{font-size:13px;color:var(--muted);margin-top:4px;}
+.stat-change{font-size:12px;margin-top:6px;font-weight:600;}
+.up{color:var(--green);}
+.down{color:var(--red);}
+
+/* ── SECTION ── */
+.section{display:none;}
+.section.active{display:block;}
+.section-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:16px;}
+
+/* ── CARDS ── */
+.card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);
+  padding:20px;margin-bottom:20px;}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-title{font-size:15px;font-weight:700;color:var(--text);}
+
+/* ── PLAN TABLE ── */
+.plan-table{width:100%;border-collapse:collapse;}
+.plan-table th{background:var(--blue-light);padding:12px 14px;text-align:left;
+  font-size:13px;font-weight:700;color:var(--blue);}
+.plan-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;}
+.plan-table tr:last-child td{border-bottom:none;}
+.plan-table tr:hover td{background:var(--bg);}
+
+/* ── RANK TABLE ── */
+.rank-row{display:flex;align-items:center;justify-content:space-between;
+  padding:12px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.rank-row:last-child{border-bottom:none;}
+.rank-star{font-size:18px;width:36px;text-align:center;}
+.rank-info{flex:1;padding:0 14px;}
+.rank-name{font-weight:700;color:var(--text);}
+.rank-req{font-size:12px;color:var(--muted);margin-top:2px;}
+.rank-reward{font-weight:700;color:var(--blue);}
+.rank-progress{height:5px;background:var(--bg);border-radius:3px;margin-top:6px;overflow:hidden;}
+.rank-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--blue-mid));border-radius:3px;transition:.6s;}
+
+/* ── QUICK ACTIONS ── */
+.actions-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px;}
+.action-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px 16px;text-align:center;cursor:pointer;transition:.25s;}
+.action-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(30,64,175,.12);border-color:var(--blue);}
+.action-card .ac-icon{font-size:36px;display:block;margin-bottom:12px;}
+.action-card h3{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.action-card p{font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto;}
+table.data{width:100%;border-collapse:collapse;font-size:13px;}
+table.data th{background:var(--blue-light);padding:12px 14px;text-align:left;font-weight:700;color:var(--blue);}
+table.data td{padding:12px 14px;border-bottom:1px solid var(--border);}
+table.data tr:hover td{background:var(--bg);}
+table.data tr:last-child td{border-bottom:none;}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge-green{background:var(--green-light);color:var(--green);}
+.badge-orange{background:var(--orange-light);color:var(--orange);}
+.badge-blue{background:var(--blue-light);color:var(--blue);}
+.badge-purple{background:var(--purple-light);color:var(--purple);}
+.badge-red{background:var(--red-light);color:var(--red);}
+
+/* ── TEAM TREE ── */
+.team-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px;}
+.team-stat{background:var(--blue-light);border-radius:12px;padding:16px;}
+.team-stat-val{font-size:22px;font-weight:800;color:var(--blue);}
+.team-stat-label{font-size:12px;color:var(--blue-mid);margin-top:3px;}
+
+/* ── PROGRESS ── */
+.progress-box{margin-bottom:16px;}
+.progress-meta{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;}
+.progress-bar{height:8px;background:var(--bg);border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--blue),var(--blue-mid));transition:.6s;}
+
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+  z-index:9999;justify-content:center;align-items:center;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--white);border-radius:20px;padding:28px;width:440px;max-width:95vw;
+  max-height:90vh;overflow-y:auto;}
+.modal h2{font-size:20px;font-weight:800;color:var(--blue);margin-bottom:20px;}
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;}
+.form-group input,.form-group select,.form-group textarea{
+  width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;
+  font-size:14px;outline:none;transition:.2s;}
+.form-group input:focus,.form-group select:focus{border-color:var(--blue);}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;
+  border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:.2s;}
+.btn-primary{background:var(--blue);color:#fff;}
+.btn-primary:hover{background:var(--blue-mid);}
+.btn-success{background:var(--green);color:#fff;}
+.btn-danger{background:var(--red);color:#fff;}
+.btn-sm{padding:6px 14px;font-size:12px;}
+.btn-full{width:100%;justify-content:center;margin-bottom:8px;}
+
+/* ── ADMIN PANEL ── */
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.admin-control{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
+.admin-control h3{font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px;
+  padding-bottom:10px;border-bottom:1px solid var(--border);}
+.control-row{display:flex;align-items:center;justify-content:space-between;
+  padding:8px 0;border-bottom:1px solid var(--bg);font-size:13px;}
+.control-row:last-child{border-bottom:none;}
+.control-label{color:var(--muted);}
+.control-val{font-weight:700;color:var(--text);}
+.toggle{width:42px;height:24px;background:#ccc;border-radius:12px;cursor:pointer;
+  position:relative;transition:.2s;}
+.toggle.on{background:var(--green);}
+.toggle::after{content:'';position:absolute;width:18px;height:18px;background:#fff;
+  border-radius:50%;top:3px;left:3px;transition:.2s;}
+.toggle.on::after{left:21px;}
+
+/* ── WITHDRAW PLAN ── */
+.withdraw-info{background:var(--blue-light);border-radius:12px;padding:16px;margin-bottom:16px;}
+.withdraw-rule{font-size:13px;color:var(--blue);margin-bottom:6px;font-weight:500;}
+.dist-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
+.dist-item{background:var(--white);border-radius:10px;padding:12px;text-align:center;border:1px solid var(--border);}
+.dist-pct{font-size:20px;font-weight:800;color:var(--blue);}
+.dist-label{font-size:11px;color:var(--muted);margin-top:4px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .sidebar{position:relative;width:100%;height:auto;}
+  .main{margin-left:0;}
+  .app{flex-direction:column;}
+  .balance-hero{grid-template-columns:1fr;}
+  .bh-divider{display:none;}
+  .admin-grid{grid-template-columns:1fr;}
+}
+
+.footer{margin-top:40px;text-align:center;padding:20px;color:var(--muted);font-size:13px;}
+</style>
+</head>
+<body>
+
+<!-- ───────── APP ───────── -->
+<div class="app">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="brand">
+    <div class="brand-icon">🌐</div>
+    <div>
+      <div class="brand-name">LIFELINEMETA</div>
+      <div class="brand-tag">Investment Platform</div>
+    </div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Main Menu</div>
+    <div class="nav-item active" onclick="showSection('dashboard',this)"><span class="icon">🏠</span> Dashboard</div>
+    <div class="nav-item" onclick="showSection('invest',this)"><span class="icon">📈</span> Invest Now</div>
+    <div class="nav-item" onclick="showSection('withdraw',this)"><span class="icon">💸</span> Withdraw</div>
+    <div class="nav-item" onclick="showSection('team',this)"><span class="icon">👥</span> My Team</div>
+    <div class="nav-item" onclick="showSection('referral',this)"><span class="icon">🔗</span> Referral</div>
+    <div class="nav-item" onclick="showSection('history',this)"><span class="icon">📜</span> Transactions</div>
+    <div class="nav-item" onclick="showSection('rank',this)"><span class="icon">🏆</span> Rank & Bonus</div>
+    <div class="nav-item" onclick="showSection('profile',this)"><span class="icon">👤</span> My Profile</div>
+
+    <div class="nav-section">Admin</div>
+    <div class="nav-item" onclick="showSection('admin',this)"><span class="icon">⚙️</span> Admin Panel</div>
+    <div class="nav-item" onclick="showSection('users',this)"><span class="icon">🗂️</span> Manage Users</div>
+    <div class="nav-item" onclick="showSection('notice',this)"><span class="icon">📢</span> Notice Board</div>
+  </nav>
+  <div class="sidebar-foot">
+    <div class="user-chip">
+      <div class="avatar" id="sidebarInitials">RK</div>
+      <div>
+        <div class="user-chip-name" id="sidebarName">Rahim Khan</div>
+        <div class="user-chip-role">Premium Member</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <div class="page-title" id="pageTitle">Dashboard</div>
+      <div class="page-sub" id="pageSub">Welcome back, Rahim Khan 👋</div>
+    </div>
+    <div class="topbar-right">
+      <div class="notif-btn" onclick="showSection('history',document.getElementById('nav-history'))">🔔<div class="notif-dot"></div></div>
+      <div class="rank-badge" id="userRankBadge">⭐ 1 Star</div>
+    </div>
+  </div>
+
+  <!-- NOTICE BAR -->
+  <div class="notice" id="globalNotice">
+    📢 <span id="noticeText">Investment system upgraded. Monthly ROI 12–15% running properly.</span>
+  </div>
+
+  <!-- ═══════════ DASHBOARD SECTION ═══════════ -->
+  <div id="s-dashboard" class="section active">
+    <div class="balance-hero">
+      <div class="bh-item">
+        <div class="bh-label">Total Balance (USD)</div>
+        <div class="bh-value" id="balanceDisplay">$2,845.75</div>
+        <div class="bh-sub">↑ 18.4% growth this month</div>
+      </div>
+      <div class="bh-divider"></div>
+      <div class="bh-item">
+        <div class="bh-label">Available Withdraw</div>
+        <div class="bh-value" id="availableWithdraw">$1,422.87</div>
+        <div class="bh-sub">50% of balance</div>
+      </div>
+      <div class="bh-divider"></div>
+      <div class="bh-item">
+        <div class="bh-label">Capping Limit</div>
+        <div class="bh-value" id="cappingDisplay">$1,000</div>
+        <div class="bh-sub">Max earning cap</div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-icon" style="background:#dbeafe;">💰</div>
+        <div class="stat-val" id="statInvest">$1,850</div>
+        <div class="stat-label">Active Investment</div>
+        <div class="stat-change up">Min $100 per plan</div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon" style="background:#dcfce7;">👥</div>
+        <div class="stat-val" id="statReferrals">15</div>
+        <div class="stat-label">Direct Referrals</div>
+        <div class="stat-change up">+3 this week</div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon" style="background:#ede9fe;">🎁</div>
+        <div class="stat-val" id="statReferIncome">$685</div>
+        <div class="stat-label">Referral Income</div>
+        <div class="stat-change up">$4 per refer</div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon" style="background:#fff7ed;">📈</div>
+        <div class="stat-val" id="statROI">12–15%</div>
+        <div class="stat-label">Monthly ROI</div>
+        <div class="stat-change up">Withdraw 50% only</div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon" style="background:#ccfbf1;">💎</div>
+        <div class="stat-val" id="statCashback">$0</div>
+        <div class="stat-label">Cashback (3%)</div>
+        <div class="stat-change" style="color:var(--muted);">Limit $60</div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon" style="background:#fee2e2;">🤝</div>
+        <div class="stat-val" id="statMatching">$0</div>
+        <div class="stat-label">Matching Income</div>
+        <div class="stat-change" style="color:var(--muted);">5% on team</div>
+      </div>
+    </div>
+
+    <div class="section-title">Quick Actions</div>
+    <div class="actions-grid">
+      <div class="action-card" onclick="showSection('invest',null)">
+        <span class="ac-icon">📈</span><h3>Invest Now</h3><p>Start plans from $100. Capital returns after 6 months.</p>
+      </div>
+      <div class="action-card" onclick="showSection('withdraw',null)">
+        <span class="ac-icon">💸</span><h3>Withdraw</h3><p>Withdraw 50% of your ROI. Processed within 24 hrs.</p>
+      </div>
+      <div class="action-card" onclick="showSection('referral',null)">
+        <span class="ac-icon">🔗</span><h3>Referral</h3><p>Earn $4 per direct refer. Share your unique link now.</p>
+      </div>
+      <div class="action-card" onclick="showSection('team',null)">
+        <span class="ac-icon">🌐</span><h3>My Team</h3><p>Manage your direct and indirect network members.</p>
+      </div>
+      <div class="action-card" onclick="showSection('rank',null)">
+        <span class="ac-icon">🏆</span><h3>Rank & Bonus</h3><p>Track your rank progress and unlock 4% rank bonus.</p>
+      </div>
+      <div class="action-card" onclick="showSection('history',null)">
+        <span class="ac-icon">📜</span><h3>History</h3><p>View all investment, ROI, and withdrawal records.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Recent Transactions</div>
+        <button class="btn btn-primary btn-sm" onclick="showSection('history',null)">View All</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data" id="recentTxTable">
+          <thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody id="recentTxBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ INVEST SECTION ═══════════ -->
+  <div id="s-invest" class="section">
+    <div class="card">
+      <div class="card-head"><div class="card-title">Investment Plans</div></div>
+      <div class="withdraw-info">
+        <div class="withdraw-rule">📌 Minimum Investment: <strong>$100</strong></div>
+        <div class="withdraw-rule">📌 ROI: <strong id="roiDisplay">12–15%</strong> monthly</div>
+        <div class="withdraw-rule">📌 Capital Withdraw: <strong>After 6 months</strong></div>
+        <div class="withdraw-rule">📌 Account Charge: <strong id="acctChargeDisplay">$30</strong> | Reserve Balance: <strong id="reserveDisplay">$5</strong></div>
+      </div>
+      <div class="form-group">
+        <label>Investment Amount (USD)</label>
+        <input type="number" id="investAmount" placeholder="Minimum $100" min="100">
+      </div>
+      <div class="form-group">
+        <label>Select Plan</label>
+        <select id="investPlan">
+          <option value="basic">Basic – 12% monthly ROI</option>
+          <option value="premium">Premium – 15% monthly ROI</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Wallet / Payment Method</label>
+        <input type="text" id="investWallet" placeholder="Enter your wallet address">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="submitInvest()">📈 Submit Investment Request</button>
+    </div>
+  </div>
+
+  <!-- ═══════════ WITHDRAW SECTION ═══════════ -->
+  <div id="s-withdraw" class="section">
+    <div class="card">
+      <div class="card-head"><div class="card-title">Withdraw Funds</div></div>
+      <div class="withdraw-info">
+        <div class="withdraw-rule">📌 You can withdraw <strong>50%</strong> of your earned ROI</div>
+        <div class="withdraw-rule">📌 Remaining 50% is distributed as follows:</div>
+        <div class="dist-grid">
+          <div class="dist-item"><div class="dist-pct" id="dReferal">4%</div><div class="dist-label">Referral</div></div>
+          <div class="dist-item"><div class="dist-pct" id="dCashback">3%</div><div class="dist-label">Cashback</div></div>
+          <div class="dist-item"><div class="dist-pct" id="dMatching">5%</div><div class="dist-label">Matching</div></div>
+          <div class="dist-item"><div class="dist-pct" id="dClub">4%</div><div class="dist-label">Club Bonus</div></div>
+          <div class="dist-item"><div class="dist-pct" id="dRank">4%</div><div class="dist-label">Rank Bonus</div></div>
+          <div class="dist-item"><div class="dist-pct">30%</div><div class="dist-label">Re-invest</div></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Available Balance</label>
+        <input type="text" id="availBalField" readonly>
+      </div>
+      <div class="form-group">
+        <label>Withdraw Amount (Max 50% of balance)</label>
+        <input type="number" id="withdrawAmount" placeholder="Enter amount">
+      </div>
+      <div class="form-group">
+        <label>Wallet Address</label>
+        <input type="text" id="withdrawWallet" placeholder="Your wallet address">
+      </div>
+      <button class="btn btn-success btn-full" onclick="submitWithdraw()">💸 Submit Withdrawal Request</button>
+    </div>
+  </div>
+
+  <!-- ═══════════ TEAM SECTION ═══════════ -->
+  <div id="s-team" class="section">
+    <div class="team-stats">
+      <div class="team-stat"><div class="team-stat-val" id="teamL1">15</div><div class="team-stat-label">Level 1 (Direct)</div></div>
+      <div class="team-stat"><div class="team-stat-val" id="teamL2">48</div><div class="team-stat-label">Level 2</div></div>
+      <div class="team-stat"><div class="team-stat-val" id="teamTotal">243</div><div class="team-stat-label">Total Team</div></div>
+      <div class="team-stat"><div class="team-stat-val" id="teamIncome">$685</div><div class="team-stat-label">Team Income</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Team Members</div></div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Name</th><th>Level</th><th>Joined</th><th>Investment</th><th>Status</th></tr></thead>
+          <tbody id="teamTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ REFERRAL SECTION ═══════════ -->
+  <div id="s-referral" class="section">
+    <div class="card">
+      <div class="card-head"><div class="card-title">Your Referral Link</div></div>
+      <div style="background:var(--blue-light);padding:16px;border-radius:12px;margin-bottom:16px;">
+        <div style="font-size:13px;color:var(--blue);word-break:break-all;font-weight:600;" id="referralLink">
+          https://lifelinemeta.app/register?ref=LM784259
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="copyReferral()">🔗 Copy Referral Link</button>
+    </div>
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-icon" style="background:#dbeafe;">👥</div>
+        <div class="stat-val" id="refCount">15</div>
+        <div class="stat-label">Total Referrals</div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon" style="background:#dcfce7;">💵</div>
+        <div class="stat-val">$4</div>
+        <div class="stat-label">Per Referral Earning</div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon" style="background:#ede9fe;">🎁</div>
+        <div class="stat-val" id="totalRefEarn">$60</div>
+        <div class="stat-label">Total Referral Earned</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">Club Bonus Progress</div></div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:14px;">
+        Club Target: <strong>10 Direct Refers</strong> OR Matching (50 IDs + 5 IDs). Bonus: <strong id="clubBonusDisplay">4%</strong>
+      </div>
+      <div class="progress-box">
+        <div class="progress-meta"><span>Direct Referrals</span><span id="clubProgress">15 / 10 ✅</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="clubFill" style="width:100%"></div></div>
+      </div>
+      <div style="background:var(--green-light);border-radius:10px;padding:12px;text-align:center;font-size:14px;font-weight:700;color:var(--green);">
+        🎉 Club Bonus Unlocked! You earn 4% Club Bonus.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ HISTORY SECTION ═══════════ -->
+  <div id="s-history" class="section">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Transaction History</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-sm" style="background:var(--blue-light);color:var(--blue);" onclick="filterTx('all')">All</button>
+          <button class="btn btn-sm" style="background:var(--green-light);color:var(--green);" onclick="filterTx('Investment')">Investment</button>
+          <button class="btn btn-sm" style="background:var(--purple-light);color:var(--purple);" onclick="filterTx('ROI')">ROI</button>
+          <button class="btn btn-sm" style="background:var(--orange-light);color:var(--orange);" onclick="filterTx('Withdrawal')">Withdrawal</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Note</th><th>Status</th></tr></thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ RANK SECTION ═══════════ -->
+  <div id="s-rank" class="section">
+    <div class="card">
+      <div class="card-head"><div class="card-title">Rank System — 4% Rank Bonus on Matching</div></div>
+      <div id="rankList"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ PROFILE SECTION ═══════════ -->
+  <div id="s-profile" class="section">
+    <div class="card" style="max-width:500px;">
+      <div class="card-head"><div class="card-title">My Profile</div></div>
+      <div class="form-group"><label>Full Name</label><input type="text" id="pName" value="Rahim Khan"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="pEmail" value="rahim@example.com"></div>
+      <div class="form-group"><label>Country</label><input type="text" id="pCountry" value="Bangladesh"></div>
+      <div class="form-group"><label>Wallet Address</label><input type="text" id="pWallet" placeholder="Your wallet"></div>
+      <div class="form-group"><label>New Password</label><input type="password" id="pPass" placeholder="Leave blank to keep current"></div>
+      <button class="btn btn-primary btn-full" onclick="saveProfile()">💾 Save Profile</button>
+    </div>
+  </div>
+
+  <!-- ═══════════ ADMIN PANEL ═══════════ -->
+  <div id="s-admin" class="section">
+    <div style="background:var(--red-light);border:1px solid #fca5a5;border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:13px;font-weight:600;color:var(--red);">
+      🔒 Admin Only — All changes here reflect across the platform instantly.
+    </div>
+    <div class="admin-grid">
+      <!-- Plan Settings -->
+      <div class="admin-control">
+        <h3>⚙️ Plan Settings</h3>
+        <div class="control-row"><span class="control-label">Account Charge</span>
+          <input type="number" id="adAcctCharge" value="30" style="width:80px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;"></div>
+        <div class="control-row"><span class="control-label">Reserve Balance</span>
+          <input type="number" id="adReserve" value="5" style="width:80px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;"></div>
+        <div class="control-row"><span class="control-label">Refer Bonus ($)</span>
+          <input type="number" id="adRefer" value="4" style="width:80px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;"></div>
+        <div class="control-row"><span class="control-label">Cashback %</span>
+          <input type="number" id="adCashback" value="3" style="width:80px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;"></div>
+        <div class="control-row"><span class="control-label">Cashback Limit ($)</span>
+          <input type="number" id="adCashbackLimit" value="60" style="width:80px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;"></div>
+        <div class="control-row"><span class="control-label">Matching %</span>
+          <input type="number" id="adMatching" value="5" style="width:80px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;"></div>
+        <div class="control-row"><span class="control-label">Capping ($)</span>
+          <input type="number" id="adCapping" value="1000" style="width:80px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;"></div>
+        <div class="control-row"><span class="control-label">Club Bonus %</span>
+          <input type="number" id="adClub" value="4" style="width:80px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;"></div>
+        <div class="control-row"><span class="control-label">Club Target (Refers)</span>
+          <input type="number" id="adClubTarget" value="10" style="width:80px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;"></div>
+        <div class="control-row"><span class="control-label">Rank Bonus %</span>
+          <input type="number" id="adRankBonus" value="4" style="width:80px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;"></div>
+        <div class="control-row"><span class="control-label">ROI Min %</span>
+          <input type="number" id="adROIMin" value="12" style="width:80px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;"></div>
+        <div class="control-row"><span class="control-label">ROI Max %</span>
+          <input type="number" id="adROIMax" value="15" style="width:80px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;"></div>
+        <div class="control-row"><span class="control-label">Min Investment ($)</span>
+          <input type="number" id="adMinInvest" value="100" style="width:80px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;"></div>
+        <div style="margin-top:14px;">
+          <button class="btn btn-primary btn-full" onclick="applyAdminSettings()">✅ Apply All Settings</button>
+        </div>
+      </div>
+
+      <!-- System Controls -->
+      <div class="admin-control">
+        <h3>🔧 System Controls</h3>
+        <div class="control-row">
+          <span class="control-label">Investment Open</span>
+          <div class="toggle on" id="togInvest" onclick="toggleSetting(this)"></div>
+        </div>
+        <div class="control-row">
+          <span class="control-label">Withdraw Open</span>
+          <div class="toggle on" id="togWithdraw" onclick="toggleSetting(this)"></div>
+        </div>
+        <div class="control-row">
+          <span class="control-label">Referral Active</span>
+          <div class="toggle on" id="togReferral" onclick="toggleSetting(this)"></div>
+        </div>
+        <div class="control-row">
+          <span class="control-label">Club Bonus Active</span>
+          <div class="toggle on" id="togClub" onclick="toggleSetting(this)"></div>
+        </div>
+        <div class="control-row">
+          <span class="control-label">Rank Bonus Active</span>
+          <div class="toggle on" id="togRank" onclick="toggleSetting(this)"></div>
+        </div>
+        <h3 style="margin-top:16px;">📢 Update Notice</h3>
+        <div class="form-group">
+          <textarea id="adNotice" rows="3" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;font-size:13px;resize:none;">Investment system upgraded. Monthly ROI 12–15% running properly.</textarea>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="updateNotice()">📢 Publish Notice</button>
+
+        <h3 style="margin-top:16px;">💰 Add Reserve Balance</h3>
+        <div class="form-group">
+          <label>User ID</label><input type="text" id="adUserId" placeholder="Enter user ID">
+        </div>
+        <div class="form-group">
+          <label>Amount ($)</label><input type="number" id="adAddBalance" placeholder="Amount to add">
+        </div>
+        <button class="btn btn-success btn-full" onclick="adminAddBalance()">➕ Add Balance to User</button>
+      </div>
+    </div>
+
+    <!-- Pending Withdrawals -->
+    <div class="card" style="margin-top:20px;">
+      <div class="card-head"><div class="card-title">⏳ Pending Withdrawals</div></div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>User</th><th>Amount</th><th>Wallet</th><th>Date</th><th>Action</th></tr></thead>
+          <tbody id="pendingWithdrawBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ MANAGE USERS SECTION ═══════════ -->
+  <div id="s-users" class="section">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">All Users</div>
+        <button class="btn btn-primary btn-sm" onclick="openAddUserModal()">+ Add User</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Investment</th><th>Balance</th><th>Rank</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="usersBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ NOTICE SECTION ═══════════ -->
+  <div id="s-notice" class="section">
+    <div class="card" style="max-width:600px;">
+      <div class="card-head"><div class="card-title">📢 Notice Board</div></div>
+      <div class="form-group">
+        <label>Notice Title</label>
+        <input type="text" id="noticeTitle" placeholder="e.g. System Maintenance">
+      </div>
+      <div class="form-group">
+        <label>Notice Message</label>
+        <textarea id="noticeMsg" rows="4" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;font-size:14px;resize:none;" placeholder="Write your notice here..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select id="noticeType">
+          <option>Info</option>
+          <option>Warning</option>
+          <option>Success</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="publishNotice()">📢 Publish Notice</button>
+    </div>
+    <div class="card" style="margin-top:20px;">
+      <div class="card-title" style="margin-bottom:14px;">Published Notices</div>
+      <div id="noticeList"></div>
+    </div>
+  </div>
+
+  <div class="footer">© 2026 LIFELINEMETA. All Rights Reserved.</div>
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ADD USER MODAL -->
+<div class="modal-bg" id="addUserModal">
+  <div class="modal">
+    <h2>Add New User</h2>
+    <div class="form-group"><label>Full Name</label><input type="text" id="newUserName" placeholder="Name"></div>
+    <div class="form-group"><label>Email</label><input type="email" id="newUserEmail" placeholder="Email"></div>
+    <div class="form-group"><label>Initial Investment ($)</label><input type="number" id="newUserInvest" placeholder="e.g. 100"></div>
+    <div class="form-group"><label>Sponsor ID (Referral)</label><input type="text" id="newUserRef" placeholder="Sponsor ID"></div>
+    <button class="btn btn-success btn-full" onclick="addUser()">✅ Create User</button>
+    <button class="btn btn-danger btn-full" onclick="closeModal('addUserModal')">Close</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" style="display:none;position:fixed;bottom:24px;right:24px;background:var(--blue);color:#fff;
+  padding:14px 22px;border-radius:14px;font-size:14px;font-weight:600;z-index:99999;
+  box-shadow:0 8px 24px rgba(30,64,175,.3);transition:.3s;"></div>
+
+<script>
+/* ─── STATE ─── */
+const state = {
+  balance: 2845.75,
+  invest: 1850,
+  referrals: 15,
+  referIncome: 685,
+  cashback: 0,
+  matching: 0,
+  userName: 'Rahim Khan',
+  rank: 1,
+  settings: {
+    acctCharge: 30, reserve: 5, refer: 4, cashback: 3, cashbackLimit: 60,
+    matching: 5, capping: 1000, club: 4, clubTarget: 10, rank: 4,
+    roiMin: 12, roiMax: 15, minInvest: 100
+  }
+};
+
+const rankDefs = [
+  {star:1, label:'1 Star', matchReq:'50-50 IDs', reward:'$100'},
+  {star:2, label:'2 Star', matchReq:'300-300 IDs', reward:'$300'},
+  {star:3, label:'3 Star', matchReq:'1K-1K IDs', reward:'$1,000'},
+  {star:4, label:'4 Star', matchReq:'3K-3K IDs', reward:'$3,000'},
+  {star:5, label:'5 Star', matchReq:'10K-10K IDs', reward:'$10,000'},
+  {star:6, label:'6 Star', matchReq:'30K-30K IDs', reward:'$30,000'},
+  {star:7, label:'7 Star', matchReq:'1 Lac IDs', reward:'$1,00,000'},
+];
+
+const txData = [
+  {date:'05 Jul 2026', type:'Investment', amount:500, note:'Basic Plan', status:'Completed'},
+  {date:'04 Jul 2026', type:'ROI Bonus', amount:120, note:'Monthly ROI', status:'Completed'},
+  {date:'03 Jul 2026', type:'Withdrawal', amount:-200, note:'Bank Transfer', status:'Pending'},
+  {date:'02 Jul 2026', type:'Referral Bonus', amount:85, note:'Direct Refer', status:'Completed'},
+  {date:'01 Jul 2026', type:'Cashback', amount:30, note:'3% Cashback', status:'Completed'},
+  {date:'30 Jun 2026', type:'Investment', amount:500, note:'Premium Plan', status:'Completed'},
+  {date:'28 Jun 2026', type:'ROI Bonus', amount:90, note:'Monthly ROI', status:'Completed'},
+  {date:'25 Jun 2026', type:'Matching Bonus', amount:55, note:'Team Matching', status:'Completed'},
+];
+
+const teamData = [
+  {name:'Karim Ali', level:'L1', joined:'Jun 2026', invest:'$500', status:'Active'},
+  {name:'Sonia Begum', level:'L1', joined:'Jun 2026', invest:'$200', status:'Active'},
+  {name:'Rajib Hasan', level:'L1', joined:'May 2026', invest:'$300', status:'Active'},
+  {name:'Mim Akter', level:'L2', joined:'May 2026', invest:'$150', status:'Active'},
+  {name:'Nayan Das', level:'L2', joined:'Apr 2026', invest:'$500', status:'Inactive'},
+  {name:'Sumaiya Khan', level:'L1', joined:'Jun 2026', invest:'$100', status:'Active'},
+];
+
+let users = [
+  {id:'LM001', name:'Rahim Khan', email:'rahim@example.com', invest:'$1,850', balance:'$2,845', rank:'1⭐', status:'Active'},
+  {id:'LM002', name:'Karim Ali', email:'karim@example.com', invest:'$500', balance:'$620', rank:'—', status:'Active'},
+  {id:'LM003', name:'Sonia Begum', email:'sonia@example.com', invest:'$200', balance:'$240', rank:'—', status:'Active'},
+];
+
+let notices = [];
+let pendingWithdraws = [
+  {user:'Nayan Das', amount:'$200', wallet:'TRX8x...k2', date:'03 Jul 2026'},
+];
+
+/* ─── SECTION NAV ─── */
+function showSection(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const sec = document.getElementById('s-'+id);
+  if(sec) sec.classList.add('active');
+  if(el) el.classList.add('active');
+
+  const titles = {
+    dashboard:'Dashboard', invest:'Invest Now', withdraw:'Withdraw',
+    team:'My Team', referral:'Referral Program', history:'Transaction History',
+    rank:'Rank & Bonus', profile:'My Profile', admin:'Admin Panel',
+    users:'Manage Users', notice:'Notice Board'
+  };
+  document.getElementById('pageTitle').textContent = titles[id]||id;
+  if(id==='withdraw') document.getElementById('availBalField').value = '$'+( state.balance/2 ).toFixed(2);
+  if(id==='rank') renderRanks();
+  if(id==='history') renderHistory('all');
+  if(id==='team') renderTeam();
+  if(id==='users') renderUsers();
+  if(id==='admin') renderPendingWithdraws();
+}
+
+/* ─── INIT ─── */
+function initDashboard() {
+  renderRecentTx();
+  renderRanks();
+  renderTeam();
+  renderUsers();
+  renderPendingWithdraws();
+  updateDisplays();
+}
+
+function updateDisplays() {
+  document.getElementById('balanceDisplay').textContent = '$'+state.balance.toFixed(2);
+  document.getElementById('availableWithdraw').textContent = '$'+(state.balance/2).toFixed(2);
+  document.getElementById('cappingDisplay').textContent = '$'+state.settings.capping.toLocaleString();
+  document.getElementById('statInvest').textContent = '$'+state.invest.toLocaleString();
+  document.getElementById('statReferrals').textContent = state.referrals;
+  document.getElementById('statReferIncome').textContent = '$'+state.referIncome;
+  document.getElementById('statROI').textContent = state.settings.roiMin+'–'+state.settings.roiMax+'%';
+  document.getElementById('roiDisplay').textContent = state.settings.roiMin+'–'+state.settings.roiMax+'%';
+  document.getElementById('acctChargeDisplay').textContent = '$'+state.settings.acctCharge;
+  document.getElementById('reserveDisplay').textContent = '$'+state.settings.reserve;
+  document.getElementById('clubBonusDisplay').textContent = state.settings.club+'%';
+  document.getElementById('userRankBadge').textContent = '⭐ '+state.rank+' Star';
+  document.getElementById('refCount').textContent = state.referrals;
+  document.getElementById('totalRefEarn').textContent = '$'+(state.referrals * state.settings.refer);
+  document.getElementById('dReferal').textContent = state.settings.refer+'$';
+  document.getElementById('dCashback').textContent = state.settings.cashback+'%';
+  document.getElementById('dMatching').textContent = state.settings.matching+'%';
+  document.getElementById('dClub').textContent = state.settings.club+'%';
+  document.getElementById('dRank').textContent = state.settings.rank+'%';
+}
+
+/* ─── RENDER TX ─── */
+const txColors = {Investment:'badge-blue', 'ROI Bonus':'badge-purple',
+  Withdrawal:'badge-orange', 'Referral Bonus':'badge-green',
+  Cashback:'badge-green', 'Matching Bonus':'badge-purple'};
+
+function renderRecentTx() {
+  const body = document.getElementById('recentTxBody');
+  body.innerHTML = txData.slice(0,5).map(t => `<tr>
+    <td>${t.date}</td>
+    <td><span class="badge ${txColors[t.type]||'badge-blue'}">${t.type}</span></td>
+    <td style="font-weight:700;color:${t.amount<0?'var(--red)':'var(--green)'}">${t.amount<0?'-$'+Math.abs(t.amount):'+$'+t.amount}</td>
+    <td><span class="badge ${t.status==='Completed'?'badge-green':'badge-orange'}">${t.status}</span></td>
+  </tr>`).join('');
+}
+
+function renderHistory(filter) {
+  const body = document.getElementById('historyBody');
+  const filtered = filter==='all' ? txData : txData.filter(t=>t.type.includes(filter));
+  body.innerHTML = filtered.map(t => `<tr>
+    <td>${t.date}</td>
+    <td><span class="badge ${txColors[t.type]||'badge-blue'}">${t.type}</span></td>
+    <td style="font-weight:700;color:${t.amount<0?'var(--red)':'var(--green)'}">${t.amount<0?'-$'+Math.abs(t.amount):'+$'+t.amount}</td>
+    <td style="color:var(--muted)">${t.note}</td>
+    <td><span class="badge ${t.status==='Completed'?'badge-green':'badge-orange'}">${t.status}</span></td>
+  </tr>`).join('');
+}
+
+function filterTx(f) { renderHistory(f); }
+
+/* ─── RENDER RANKS ─── */
+function renderRanks() {
+  const pcts = [100,10,5,2,1,0.5,0];
+  document.getElementById('rankList').innerHTML = rankDefs.map((r,i) => `
+    <div class="rank-row">
+      <div class="rank-star">${'⭐'.repeat(Math.min(r.star,3))}${r.star>3?'<span style="font-size:10px">x'+r.star+'</span>':''}</div>
+      <div class="rank-info">
+        <div class="rank-name">${r.label}</div>
+        <div class="rank-req">Matching: ${r.matchReq} | Bonus: ${state.settings.rank}%</div>
+        <div class="rank-progress"><div class="rank-fill" style="width:${pcts[i]}%"></div></div>
+      </div>
+      <div class="rank-reward">
+        <span class="badge ${state.rank>=r.star?'badge-green':'badge-orange'}">${state.rank>=r.star?'✅ Achieved':r.reward+' reward'}</span>
+      </div>
+    </div>`).join('');
+}
+
+/* ─── TEAM ─── */
+function renderTeam() {
+  document.getElementById('teamTableBody').innerHTML = teamData.map((m,i) => `<tr>
+    <td>${i+1}</td><td>${m.name}</td>
+    <td><span class="badge badge-blue">${m.level}</span></td>
+    <td>${m.joined}</td><td>${m.invest}</td>
+    <td><span class="badge ${m.status==='Active'?'badge-green':'badge-red'}">${m.status}</span></td>
+  </tr>`).join('');
+}
+
+/* ─── USERS ─── */
+function renderUsers() {
+  document.getElementById('usersBody').innerHTML = users.map(u => `<tr>
+    <td style="font-family:monospace;font-size:12px;">${u.id}</td>
+    <td>${u.name}</td><td>${u.email}</td><td>${u.invest}</td>
+    <td>${u.balance}</td><td>${u.rank}</td>
+    <td><span class="badge ${u.status==='Active'?'badge-green':'badge-red'}">${u.status}</span></td>
+    <td><button class="btn btn-sm" style="background:var(--red-light);color:var(--red);" onclick="toggleUser('${u.id}')">Block</button></td>
+  </tr>`).join('');
+}
+
+function toggleUser(id) { toast('User '+id+' status updated.'); }
+
+/* ─── PENDING WITHDRAW ─── */
+function renderPendingWithdraws() {
+  document.getElementById('pendingWithdrawBody').innerHTML = pendingWithdraws.map((p,i) => `<tr>
+    <td>${p.user}</td><td style="font-weight:700;color:var(--orange)">${p.amount}</td>
+    <td style="font-family:monospace;font-size:12px;">${p.wallet}</td><td>${p.date}</td>
+    <td><button class="btn btn-sm btn-success" onclick="approveWithdraw(${i})">✅ Approve</button>
+    <button class="btn btn-sm btn-danger" style="margin-left:4px;" onclick="rejectWithdraw(${i})">❌ Reject</button></td>
+  </tr>`).join('');
+}
+
+function approveWithdraw(i) {
+  toast('Withdrawal approved for '+pendingWithdraws[i].user);
+  pendingWithdraws.splice(i,1);
+  renderPendingWithdraws();
+}
+function rejectWithdraw(i) {
+  toast('Withdrawal rejected for '+pendingWithdraws[i].user);
+  pendingWithdraws.splice(i,1);
+  renderPendingWithdraws();
+}
+
+/* ─── ACTIONS ─── */
+function submitInvest() {
+  const amt = parseFloat(document.getElementById('investAmount').value);
+  if(!amt || amt < state.settings.minInvest) { toast('⚠️ Minimum investment is $'+state.settings.minInvest,'red'); return; }
+  state.invest += amt;
+  txData.unshift({date: new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}),
+    type:'Investment', amount:amt, note:'New Plan', status:'Completed'});
+  updateDisplays(); renderRecentTx();
+  toast('✅ Investment of $'+amt+' submitted!');
+  document.getElementById('investAmount').value='';
+}
+
+function submitWithdraw() {
+  const amt = parseFloat(document.getElementById('withdrawAmount').value);
+  const max = state.balance / 2;
+  if(!amt || amt<=0){ toast('⚠️ Enter a valid amount','red'); return; }
+  if(amt > max){ toast('⚠️ Max withdrawable is $'+max.toFixed(2),'red'); return; }
+  state.balance -= amt;
+  txData.unshift({date: new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}),
+    type:'Withdrawal', amount:-amt, note:'Withdraw Request', status:'Pending'});
+  pendingWithdraws.push({user:state.userName, amount:'$'+amt, wallet:document.getElementById('withdrawWallet').value||'N/A',
+    date: new Date().toLocaleDateString()});
+  updateDisplays(); renderRecentTx();
+  toast('✅ Withdrawal request submitted. Processing within 24 hrs.');
+  document.getElementById('withdrawAmount').value='';
+}
+
+function copyReferral() {
+  const link = document.getElementById('referralLink').textContent.trim();
+  navigator.clipboard.writeText(link).then(()=>toast('🔗 Referral link copied!'));
+}
+
+function saveProfile() {
+  state.userName = document.getElementById('pName').value;
+  document.getElementById('sidebarName').textContent = state.userName;
+  document.getElementById('sidebarInitials').textContent = state.userName.split(' ').map(n=>n[0]).join('').toUpperCase();
+  document.getElementById('pageSub').textContent = 'Welcome back, '+state.userName+' 👋';
+  toast('✅ Profile saved successfully!');
+}
+
+/* ─── ADMIN ─── */
+function applyAdminSettings() {
+  state.settings.acctCharge = +document.getElementById('adAcctCharge').value||30;
+  state.settings.reserve = +document.getElementById('adReserve').value||5;
+  state.settings.refer = +document.getElementById('adRefer').value||4;
+  state.settings.cashback = +document.getElementById('adCashback').value||3;
+  state.settings.cashbackLimit = +document.getElementById('adCashbackLimit').value||60;
+  state.settings.matching = +document.getElementById('adMatching').value||5;
+  state.settings.capping = +document.getElementById('adCapping').value||1000;
+  state.settings.club = +document.getElementById('adClub').value||4;
+  state.settings.clubTarget = +document.getElementById('adClubTarget').value||10;
+  state.settings.rank = +document.getElementById('adRankBonus').value||4;
+  state.settings.roiMin = +document.getElementById('adROIMin').value||12;
+  state.settings.roiMax = +document.getElementById('adROIMax').value||15;
+  state.settings.minInvest = +document.getElementById('adMinInvest').value||100;
+  updateDisplays();
+  toast('✅ Settings applied platform-wide!');
+}
+
+function updateNotice() {
+  const txt = document.getElementById('adNotice').value;
+  document.getElementById('noticeText').textContent = txt;
+  toast('📢 Notice updated!');
+}
+
+function adminAddBalance() {
+  const uid = document.getElementById('adUserId').value;
+  const amt = parseFloat(document.getElementById('adAddBalance').value);
+  if(!uid||!amt){ toast('⚠️ Fill in user ID and amount','red'); return; }
+  if(uid==='LM001'||uid===state.userName){ state.balance += amt; updateDisplays(); }
+  toast('✅ $'+amt+' added to user '+uid);
+  document.getElementById('adUserId').value='';
+  document.getElementById('adAddBalance').value='';
+}
+
+function toggleSetting(el) { el.classList.toggle('on'); }
+
+/* ─── USERS ─── */
+function openAddUserModal() { document.getElementById('addUserModal').classList.add('open'); }
+function addUser() {
+  const name = document.getElementById('newUserName').value;
+  const email = document.getElementById('newUserEmail').value;
+  const invest = document.getElementById('newUserInvest').value;
+  if(!name||!email){ toast('⚠️ Fill in name and email','red'); return; }
+  const id = 'LM'+String(users.length+1).padStart(3,'0');
+  users.push({id, name, email, invest:'$'+(invest||0), balance:'$'+(+invest||0), rank:'—', status:'Active'});
+  state.referrals++;
+  state.referIncome += state.settings.refer;
+  updateDisplays(); renderUsers();
+  closeModal('addUserModal');
+  toast('✅ User '+name+' added! You earned $'+state.settings.refer+' referral bonus.');
+}
+
+/* ─── NOTICE ─── */
+function publishNotice() {
+  const title = document.getElementById('noticeTitle').value;
+  const msg = document.getElementById('noticeMsg').value;
+  const type = document.getElementById('noticeType').value;
+  if(!title||!msg){ toast('⚠️ Fill in title and message','red'); return; }
+  notices.unshift({title, msg, type, date: new Date().toLocaleDateString()});
+  document.getElementById('noticeText').textContent = msg;
+  renderNotices();
+  toast('📢 Notice published!');
+  document.getElementById('noticeTitle').value='';
+  document.getElementById('noticeMsg').value='';
+}
+
+function renderNotices() {
+  const colors = {Info:'badge-blue', Warning:'badge-orange', Success:'badge-green'};
+  document.getElementById('noticeList').innerHTML = notices.length===0
+    ? '<p style="color:var(--muted);font-size:13px;">No notices published yet.</p>'
+    : notices.map(n=>`<div style="padding:14px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span class="badge ${colors[n.type]}">${n.type}</span>
+          <strong style="font-size:14px;">${n.title}</strong>
+          <span style="font-size:12px;color:var(--muted);margin-left:auto;">${n.date}</span>
+        </div>
+        <div style="font-size:13px;color:var(--muted);">${n.msg}</div>
+      </div>`).join('');
+}
+
+/* ─── MODAL ─── */
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+window.onclick = e => { if(e.target.classList.contains('modal-bg')) e.target.classList.remove('open'); };
+
+/* ─── TOAST ─── */
+function toast(msg, type='blue') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = type==='red'?'var(--red)':'var(--blue)';
+  t.style.display='block';
+  setTimeout(()=>t.style.display='none', 3000);
+}
+
+/* ─── BOOT ─── */
+initDashboard();
+</script>
+</body>
+</html>

@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>BEWON Network | Create Wallet</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#020617;
+  --bg2:#0a1628;
+  --card:#0f172a;
+  --card2:#111827;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.12);
+  --text:#e2e8f0;
+  --muted:#64748b;
+  --muted2:#94a3b8;
+  --primary:#38bdf8;
+  --green:#4ade80;
+  --gold:#facc15;
+  --purple:#a855f7;
+  --red:#fb7185;
+  --orange:#fb923c;
+  --cyan:#22d3ee;
+  --glow-blue:rgba(56,189,248,0.15);
+  --glow-purple:rgba(168,85,247,0.15);
+  --glow-green:rgba(74,222,128,0.15);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+.bg-mesh{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+.bg-orb{position:absolute;border-radius:50%;filter:blur(100px);animation:orbFloat 8s ease-in-out infinite;}
+.bg-orb:nth-child(1){width:600px;height:600px;background:rgba(56,189,248,0.06);top:-200px;left:-200px;animation-delay:0s;}
+.bg-orb:nth-child(2){width:500px;height:500px;background:rgba(168,85,247,0.07);bottom:-200px;right:-100px;animation-delay:-3s;}
+.bg-orb:nth-child(3){width:400px;height:400px;background:rgba(74,222,128,0.05);top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:-5s;}
+@keyframes orbFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,-20px)}}
+
+.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(56,189,248,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,0.03) 1px,transparent 1px);background-size:60px 60px;}
+
+.page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:30px 16px 60px;}
+
+.topbar{width:100%;max-width:520px;display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+.logo-link{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.logo-img{width:46px;height:46px;border-radius:50%;border:2px solid var(--gold);background:#000;box-shadow:0 0 14px rgba(255,215,0,0.3),0 0 28px rgba(56,189,248,0.2);display:flex;align-items:center;justify-content:center;font-size:22px;}
+.logo-text h1{font-size:20px;font-weight:800;line-height:1;background:linear-gradient(90deg,#ffd700,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.logo-text p{font-size:9px;letter-spacing:4px;color:var(--gold);margin-top:2px;}
+.back-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:99px;border:1px solid var(--border2);background:rgba(255,255,255,0.04);color:var(--muted2);font-size:12px;font-weight:600;text-decoration:none;cursor:pointer;transition:.2s;}
+.back-btn:hover{border-color:var(--primary);color:var(--primary);}
+
+.box{width:100%;max-width:520px;background:linear-gradient(170deg,#0f172a,#080f1d);border:1px solid rgba(168,85,247,0.2);border-radius:28px;overflow:hidden;box-shadow:0 50px 100px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.03);position:relative;}
+.box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(168,85,247,0.6),rgba(56,189,248,0.6),transparent);}
+
+.step-header{background:rgba(0,0,0,0.3);border-bottom:1px solid var(--border);padding:20px 24px;}
+.step-track{display:flex;align-items:center;gap:0;}
+.step-node{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;cursor:default;}
+.step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid #1e293b;background:#0b1528;color:var(--muted);transition:.4s;position:relative;}
+.step-circle.active{border-color:var(--purple);background:rgba(168,85,247,0.15);color:#d8b4fe;box-shadow:0 0 16px rgba(168,85,247,0.4);}
+.step-circle.done{border-color:var(--green);background:rgba(74,222,128,0.15);color:var(--green);}
+.step-label{font-size:10px;font-weight:600;color:var(--muted);transition:.3s;white-space:nowrap;}
+.step-node.active .step-label{color:#d8b4fe;}
+.step-node.done .step-label{color:var(--green);}
+.step-connector{flex:1;height:2px;background:#1e293b;margin:0 4px;margin-bottom:22px;transition:.4s;position:relative;overflow:hidden;}
+.step-connector.done::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,var(--green),var(--cyan));animation:connFill .4s ease forwards;}
+@keyframes connFill{from{width:0}to{width:100%}}
+
+.panel{display:none;padding:28px 26px;}
+.panel.active{display:block;animation:panelIn .3s ease;}
+@keyframes panelIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+.panel-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:14px;}
+.badge-purple{background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.3);color:#c084fc;}
+.badge-gold{background:rgba(250,204,21,0.1);border:1px solid rgba(250,204,21,0.3);color:var(--gold);}
+.badge-green{background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);color:var(--green);}
+.badge-blue{background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:var(--primary);}
+
+.panel-title{font-size:22px;font-weight:800;margin-bottom:6px;line-height:1.2;}
+.panel-sub{font-size:13px;color:var(--muted2);margin-bottom:22px;line-height:1.7;}
+
+.wallet-info-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.15);margin-bottom:18px;}
+.wallet-info-icon{font-size:20px;flex-shrink:0;}
+.wallet-info-text{font-size:12px;color:#93c5fd;line-height:1.5;}
+.wallet-info-text strong{color:var(--primary);}
+
+.avatar-section{margin-bottom:18px;}
+.avatar-label{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:10px;letter-spacing:.5px;text-transform:uppercase;}
+.avatar-grid{display:flex;flex-wrap:wrap;gap:10px;}
+.avatar-opt{width:52px;height:52px;border-radius:50%;border:2px solid #1e293b;background:#060e1c;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;transition:.25s;}
+.avatar-opt:hover{border-color:rgba(168,85,247,0.5);transform:scale(1.08);}
+.avatar-opt.selected{border-color:var(--purple);box-shadow:0 0 14px rgba(168,85,247,0.5);transform:scale(1.1);}
+
+.field{margin-bottom:14px;}
+.field label{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:7px;letter-spacing:.5px;text-transform:uppercase;}
+.field label .lbl-badge{background:rgba(250,204,21,0.1);border:1px solid rgba(250,204,21,0.2);color:var(--gold);font-size:9px;padding:2px 6px;border-radius:4px;}
+.field .input-wrap{position:relative;}
+.field input,.field select{width:100%;padding:13px 16px;background:#060e1c;border:1px solid #1a2540;border-radius:12px;color:var(--text);font-size:14px;outline:none;transition:.25s;font-family:'Poppins',sans-serif;}
+.field input:focus,.field select:focus{border-color:rgba(168,85,247,0.5);box-shadow:0 0 0 3px rgba(168,85,247,0.08);}
+.field input::placeholder{color:#334155;}
+.field .field-hint{font-size:11px;color:var(--muted);margin-top:5px;}
+.field .pw-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:#ffffff;cursor:pointer;font-size:18px;padding:4px;line-height:1;z-index:5;}
+
+.strength-bar{height:4px;border-radius:99px;background:#1a2540;margin-top:8px;overflow:hidden;}
+.strength-fill{height:100%;border-radius:99px;transition:.4s;width:0;}
+.strength-text{font-size:11px;margin-top:4px;font-weight:600;}
+
+.btn-main{width:100%;padding:15px;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;transition:.3s;position:relative;overflow:hidden;font-family:'Poppins',sans-serif;letter-spacing:.3px;}
+.btn-main:hover{transform:translateY(-2px);}
+.btn-main::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);transition:.5s;}
+.btn-main:hover::after{left:100%;}
+.btn-purple{background:linear-gradient(135deg,#7c3aed,#a855f7,#38bdf8);color:white;box-shadow:0 10px 30px rgba(168,85,247,0.3);}
+.btn-green{background:linear-gradient(135deg,#16a34a,#4ade80,#22d3ee);color:#000;box-shadow:0 10px 30px rgba(74,222,128,0.25);}
+.btn-gold{background:linear-gradient(135deg,#b45309,#facc15,#fde047);color:#000;box-shadow:0 10px 30px rgba(250,204,21,0.25);}
+.btn-sec{width:100%;padding:13px;border:1px solid #1e293b;border-radius:12px;background:transparent;color:var(--muted2);font-size:13px;font-weight:600;cursor:pointer;transition:.2s;margin-top:10px;font-family:'Poppins',sans-serif;}
+.btn-sec:hover{border-color:var(--muted);color:var(--text);}
+
+.seed-box{background:#04080f;border:2px solid rgba(250,204,21,0.25);border-radius:18px;padding:18px;margin:14px 0;position:relative;}
+.seed-box-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.seed-box-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.5px;}
+.copy-seed-btn{display:flex;align-items:center;gap:5px;background:rgba(250,204,21,0.08);border:1px solid rgba(250,204,21,0.25);color:var(--gold);font-size:11px;font-weight:700;padding:5px 12px;border-radius:99px;cursor:pointer;transition:.2s;}
+.copy-seed-btn:hover{background:rgba(250,204,21,0.16);}
+.copy-seed-btn.ok{border-color:var(--green);color:var(--green);background:rgba(74,222,128,0.08);}
+
+.seed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.seed-word-card{background:#080f1c;border:1px solid #1a2540;border-radius:10px;padding:12px 8px;text-align:center;transition:.2s;}
+.seed-word-card:hover{border-color:rgba(250,204,21,0.3);}
+.swc-num{font-size:10px;color:#94a3b8;margin-bottom:5px;font-weight:700;}
+.swc-word{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:#ffffff;letter-spacing:.5px;}
+
+.seed-blur-overlay{position:absolute;inset:0;border-radius:16px;background:rgba(4,8,15,0.92);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:.3s;}
+.seed-blur-overlay.hidden{opacity:0;pointer-events:none;}
+.reveal-btn{display:flex;align-items:center;gap:8px;padding:12px 24px;border-radius:99px;background:linear-gradient(135deg,#7c3aed,#a855f7);border:none;color:white;font-weight:700;font-size:14px;cursor:pointer;transition:.2s;font-family:'Poppins',sans-serif;}
+.reveal-btn:hover{transform:scale(1.04);}
+.reveal-hint{font-size:12px;color:var(--muted);text-align:center;}
+
+.warn-box{background:rgba(251,113,133,0.07);border:1px solid rgba(251,113,133,0.2);border-radius:12px;padding:14px;font-size:13px;color:#fca5a5;line-height:1.8;margin:14px 0;}
+.warn-box .warn-title{font-weight:700;color:var(--red);margin-bottom:6px;font-size:14px;}
+
+.check-row{display:flex;align-items:flex-start;gap:10px;padding:13px 14px;border-radius:10px;border:1px solid #1a2540;background:#060e1c;margin-bottom:12px;cursor:pointer;transition:.2s;}
+.check-row:hover{border-color:rgba(74,222,128,0.3);}
+.check-row.checked{border-color:rgba(74,222,128,0.4);background:rgba(74,222,128,0.04);}
+.check-row input[type=checkbox]{width:18px;height:18px;margin-top:1px;accent-color:var(--green);cursor:pointer;flex-shrink:0;}
+.check-row span{font-size:13px;color:#e2e8f0;line-height:1.6;font-weight:500;}
+
+.verify-info-box{background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.15);border-radius:12px;padding:14px 16px;font-size:13px;color:#7dd3fc;margin-bottom:20px;line-height:1.7;}
+
+.verify-slots{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px;}
+.verify-slot{
+  flex:1;min-width:100px;
+  background:#060e1c;
+  border:2px dashed #1e293b;
+  border-radius:12px;
+  padding:14px 10px;
+  text-align:center;
+  transition:.3s;
+  position:relative;
+  min-height:72px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+}
+.verify-slot.filled{border-style:solid;border-color:rgba(74,222,128,0.5);background:rgba(74,222,128,0.05);}
+.verify-slot.wrong{border-style:solid;border-color:rgba(251,113,133,0.5);background:rgba(251,113,133,0.05);}
+.slot-num{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.5px;}
+.slot-word{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#ffffff;}
+.slot-empty-hint{font-size:11px;color:#334155;}
+.slot-clear{position:absolute;top:5px;right:7px;background:none;border:none;color:var(--red);font-size:12px;cursor:pointer;opacity:0;transition:.2s;}
+.verify-slot.filled:hover .slot-clear{opacity:1;}
+
+.verify-words-pool{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.pool-word{
+  padding:9px 16px;
+  background:#080f1c;
+  border:1px solid #1e293b;
+  border-radius:99px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;font-weight:600;
+  color:#e2e8f0;
+  cursor:pointer;
+  transition:.25s;
+  user-select:none;
+}
+.pool-word:hover{border-color:rgba(168,85,247,0.5);color:#d8b4fe;background:rgba(168,85,247,0.08);}
+.pool-word.used{opacity:.25;pointer-events:none;background:#04060a;color:#334155;}
+.pool-word.correct-animate{border-color:var(--green);color:var(--green);background:rgba(74,222,128,0.1);}
+
+.success-wallet{background:linear-gradient(135deg,#04080f,#080f1c);border:1px solid rgba(74,222,128,0.3);border-radius:20px;padding:22px;margin-bottom:20px;text-align:center;position:relative;overflow:hidden;}
+.success-wallet::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:200px;height:200px;border-radius:50%;background:rgba(74,222,128,0.08);filter:blur(40px);}
+.sw-avatar{font-size:52px;margin-bottom:8px;display:block;}
+.sw-uid{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:4px;text-shadow:0 0 20px rgba(250,204,21,0.4);}
+.sw-name{font-size:14px;color:var(--muted2);}
+
+.info-list{margin-bottom:18px;}
+.info-item{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.info-item:last-child{border-bottom:none;}
+.info-key{color:var(--muted);}
+.info-val{font-weight:600;}
+
+.final-seed{background:#04080f;border:1px solid rgba(250,204,21,0.2);border-radius:14px;padding:14px;margin-bottom:16px;}
+.final-seed-label{font-size:11px;color:var(--muted);margin-bottom:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.final-seed-words{display:flex;flex-wrap:wrap;gap:6px;}
+.fsw{background:#0b1220;border:1px solid #1e293b;border-radius:99px;padding:5px 13px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--green);}
+
+.alert{padding:11px 14px;border-radius:10px;font-size:13px;margin-bottom:12px;line-height:1.6;}
+.alert-err{background:rgba(251,113,133,0.08);border:1px solid rgba(251,113,133,0.25);color:#fca5a5;}
+.alert-info{background:rgba(56,189,248,0.07);border:1px solid rgba(56,189,248,0.2);color:#7dd3fc;}
+.alert-ok{background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.2);color:#86efac;}
+
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.2);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.foot-link{text-align:center;margin-top:14px;font-size:12px;color:var(--muted);}
+.foot-link a{color:var(--primary);text-decoration:none;font-weight:600;}
+.foot-link a:hover{color:var(--gold);}
+
+.network-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:6px;background:rgba(250,204,21,0.08);border:1px solid rgba(250,204,21,0.2);font-size:11px;color:var(--gold);font-weight:600;}
+.network-dot{width:7px;height:7px;border-radius:50%;background:#f59e0b;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-thumb{background:rgba(168,85,247,0.4);border-radius:99px;}
+
+.cursor{animation:blink 1s step-end infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+#importOverlay{position:fixed;inset:0;z-index:100;background:rgba(2,6,23,0.97);display:none;align-items:center;justify-content:center;padding:20px;}
+#importOverlay.show{display:flex;}
+.import-card{width:100%;max-width:500px;background:linear-gradient(170deg,#0f172a,#080f1d);border:1px solid rgba(74,222,128,0.25);border-radius:24px;overflow:hidden;box-shadow:0 50px 100px rgba(0,0,0,0.7);}
+.import-head{background:rgba(0,0,0,0.3);border-bottom:1px solid var(--border);padding:20px 24px;display:flex;align-items:center;gap:12px;}
+.import-body{padding:24px;}
+.import-seed-ta{width:100%;padding:14px;background:#060e1c;border:1px solid #1a2540;border-radius:12px;color:#ffffff;font-family:'JetBrains Mono',monospace;font-size:14px;outline:none;height:120px;resize:none;transition:.25s;line-height:2;}
+.import-seed-ta:focus{border-color:rgba(74,222,128,0.4);}
+.import-seed-ta::placeholder{color:#334155;}
+
+.confetti-piece{position:fixed;top:-10px;width:10px;height:10px;border-radius:2px;animation:confFall linear forwards;pointer-events:none;z-index:999;}
+@keyframes confFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+@media(max-width:480px){
+  .panel{padding:20px 16px;}
+  .seed-grid{grid-template-columns:repeat(2,1fr);}
+  .verify-slots{flex-direction:column;}
+  .verify-slot{min-width:auto;}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-mesh">
+  <div class="bg-orb"></div>
+  <div class="bg-orb"></div>
+  <div class="bg-orb"></div>
+</div>
+<div class="bg-grid"></div>
+
+<div class="page">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <a href="index.html" class="logo-link">
+    <div class="logo-img">🪙</div>
+    <div class="logo-text">
+      <h1>BEWON Network</h1>
+      <p>WEB3 WALLET SYSTEM</p>
+    </div>
+  </a>
+  <a href="index.html" class="back-btn">← Home</a>
+</div>
+
+<!-- MAIN BOX -->
+<div class="box" id="mainBox">
+
+  <!-- STEP HEADER -->
+  <div class="step-header">
+    <div class="step-track">
+      <div class="step-node active" id="sn1">
+        <div class="step-circle active" id="sc1">1</div>
+        <div class="step-label">Profile</div>
+      </div>
+      <div class="step-connector" id="conn1"></div>
+      <div class="step-node" id="sn2">
+        <div class="step-circle" id="sc2">2</div>
+        <div class="step-label">Seed</div>
+      </div>
+      <div class="step-connector" id="conn2"></div>
+      <div class="step-node" id="sn3">
+        <div class="step-circle" id="sc3">3</div>
+        <div class="step-label">Verify</div>
+      </div>
+      <div class="step-connector" id="conn3"></div>
+      <div class="step-node" id="sn4">
+        <div class="step-circle" id="sc4">✓</div>
+        <div class="step-label">Done</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PANEL 1: PROFILE ===== -->
+  <div class="panel active" id="panel1">
+    <div class="panel-badge badge-purple">🔐 BEWON WEB3 WALLET</div>
+    <div class="panel-title">Create Your Wallet Account</div>
+    <div class="panel-sub">Non-custodial Web3 wallet — like MetaMask or Trust Wallet. You own your keys, we own nothing.</div>
+
+    <div class="wallet-info-row">
+      <div class="wallet-info-icon">🔑</div>
+      <div class="wallet-info-text">Your account is secured by a <strong>12-word seed phrase</strong> + your own password. No one else can access your wallet.</div>
+    </div>
+
+    <div id="a1"></div>
+
+    <!-- AVATAR SELECTOR -->
+    <div class="avatar-section">
+      <div class="avatar-label">Choose Your Avatar</div>
+      <div class="avatar-grid" id="avatarGrid">
+        <div class="avatar-opt selected" data-av="🦁" onclick="selectAvatar(this)">🦁</div>
+        <div class="avatar-opt" data-av="🐯" onclick="selectAvatar(this)">🐯</div>
+        <div class="avatar-opt" data-av="🦊" onclick="selectAvatar(this)">🦊</div>
+        <div class="avatar-opt" data-av="🐺" onclick="selectAvatar(this)">🐺</div>
+        <div class="avatar-opt" data-av="🦅" onclick="selectAvatar(this)">🦅</div>
+        <div class="avatar-opt" data-av="🐉" onclick="selectAvatar(this)">🐉</div>
+        <div class="avatar-opt" data-av="🦋" onclick="selectAvatar(this)">🦋</div>
+        <div class="avatar-opt" data-av="🌙" onclick="selectAvatar(this)">🌙</div>
+        <div class="avatar-opt" data-av="⚡" onclick="selectAvatar(this)">⚡</div>
+        <div class="avatar-opt" data-av="💎" onclick="selectAvatar(this)">💎</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Full Name</label>
+      <input type="text" id="fname" placeholder="Your full name">
+    </div>
+    <div class="field">
+      <label>Email Address</label>
+      <input type="email" id="femail" placeholder="your@email.com">
+    </div>
+    <div class="field">
+      <label>Username <span class="lbl-badge">min 3 chars</span></label>
+      <input type="text" id="fusername" placeholder="Choose a unique username">
+      <div class="field-hint">Lowercase letters & numbers only. No spaces.</div>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <div class="input-wrap">
+        <input type="password" id="fpassword" placeholder="Create a strong password" oninput="checkStrength()">
+        <button class="pw-toggle" onclick="togglePw('fpassword',this)" type="button">👁️</button>
+      </div>
+      <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+      <div class="strength-text" id="strengthText" style="color:var(--muted);">Enter a password</div>
+    </div>
+    <div class="field">
+      <label>Confirm Password</label>
+      <div class="input-wrap">
+        <input type="password" id="fpassword2" placeholder="Re-enter your password">
+        <button class="pw-toggle" onclick="togglePw('fpassword2',this)" type="button">👁️</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Phone Number <span class="lbl-badge">optional</span></label>
+      <input type="tel" id="fphone" placeholder="+880 1X XXXX XXXX">
+    </div>
+    <div class="field">
+      <label>Referral Code <span class="lbl-badge">optional</span></label>
+      <input type="text" id="fref" placeholder="Enter referral code if any">
+    </div>
+
+    <div style="margin-bottom:18px;">
+      <div class="network-badge"><div class="network-dot"></div>BSC Network · Non-Custodial</div>
+    </div>
+
+    <button class="btn-main btn-purple" onclick="goStep2()">Generate My 12-Word Seed Phrase →</button>
+    <div class="foot-link" style="margin-top:14px;">Already registered? <a href="login.html">Login to your wallet</a></div>
+    <div class="foot-link" style="margin-top:6px;"><a href="#" onclick="showImport()">🔓 Import Phrase — Recover Old Account</a></div>
+  </div>
+
+  <!-- ===== PANEL 2: SEED PHRASE ===== -->
+  <div class="panel" id="panel2">
+    <div class="panel-badge badge-gold">🗝️ SECRET RECOVERY PHRASE</div>
+    <div class="panel-title">Your 12-Word Seed Phrase</div>
+    <div class="panel-sub">This is your <strong style="color:#e2e8f0;">master wallet key</strong>. Write these 12 words on paper in order. They are the ONLY way to recover your account.</div>
+
+    <div class="seed-box">
+      <div class="seed-box-header">
+        <div class="seed-box-title">🔑 SECRET RECOVERY PHRASE</div>
+        <button class="copy-seed-btn" id="copyBtn" onclick="copySeedPhrase()">📋 Copy</button>
+      </div>
+      <div class="seed-grid" id="seedGrid"></div>
+      <div class="seed-blur-overlay" id="blurOverlay">
+        <button class="reveal-btn" onclick="revealSeed()">👁️ Reveal Seed Phrase</button>
+        <div class="reveal-hint">Tap to show your 12 secret words<br>Make sure no one is watching</div>
+      </div>
+    </div>
+
+    <div class="warn-box">
+      <div class="warn-title">⚠️ Critical Security Warning</div>
+      • <strong>Write these 12 words on paper</strong> — never screenshot or save digitally<br>
+      • <strong>Never share with anyone</strong> — including BEWON support staff<br>
+      • Anyone with these words has <strong>full access</strong> to your account<br>
+      • These words <strong>will NOT be shown again</strong> after this step<br>
+      • Losing these words = losing your account permanently
+    </div>
+
+    <div class="check-row" id="checkRow1" onclick="toggleCheck('chk1','checkRow1')">
+      <input type="checkbox" id="chk1" onclick="event.stopPropagation()">
+      <span>I have written down all 12 words on paper in the correct order</span>
+    </div>
+    <div class="check-row" id="checkRow2" onclick="toggleCheck('chk2','checkRow2')">
+      <input type="checkbox" id="chk2" onclick="event.stopPropagation()">
+      <span>I understand that BEWON cannot recover my account without this seed phrase</span>
+    </div>
+
+    <div id="a2"></div>
+
+    <button class="btn-main btn-gold" id="btn2Continue" onclick="goStep3()">
+      ✅ I've Saved My Phrase — Continue to Verify
+    </button>
+    <button class="btn-sec" onclick="regenSeed()">🔄 Generate New Phrase</button>
+    <button class="btn-sec" onclick="goPanel(1)">← Back</button>
+  </div>
+
+  <!-- ===== PANEL 3: VERIFY ===== -->
+  <div class="panel" id="panel3">
+    <div class="panel-badge badge-blue">🧠 SEED VERIFICATION</div>
+    <div class="panel-title">Confirm Your Seed Phrase</div>
+    <div class="panel-sub">Tap the correct words below to fill in the blank slots. This proves you've saved your seed phrase.</div>
+
+    <div class="verify-info-box" id="vpHint">
+      Fill in the slots for: <span id="vpSpan" style="font-weight:700;color:var(--primary);"></span>
+    </div>
+
+    <div id="a3"></div>
+
+    <!-- BLANK SLOTS -->
+    <div class="verify-slots" id="verifySlots"></div>
+
+    <!-- WORD POOL -->
+    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;margin-bottom:10px;">TAP THE CORRECT WORDS IN ORDER:</div>
+    <div class="verify-words-pool" id="verifyPool"></div>
+
+    <button class="btn-main btn-green" id="btnVerify" onclick="verifyAndCreate()" style="opacity:.4;cursor:not-allowed;" disabled>🚀 Confirm & Create Wallet</button>
+    <button class="btn-sec" onclick="resetVerify()">🔄 Reset</button>
+    <button class="btn-sec" onclick="goPanel(2)">← Back</button>
+  </div>
+
+  <!-- ===== PANEL 4: SUCCESS ===== -->
+  <div class="panel" id="panel4">
+    <div class="success-wallet">
+      <span class="sw-avatar" id="sw-avatar">🦁</span>
+      <div class="sw-uid" id="sw-uid"></div>
+      <div class="sw-name" id="sw-name"></div>
+    </div>
+
+    <div class="panel-badge badge-green" style="margin-bottom:16px;">🎉 WALLET CREATED SUCCESSFULLY</div>
+    <div class="info-list" id="successInfo"></div>
+
+    <div class="final-seed">
+      <div class="final-seed-label">🔑 Your Seed Phrase — Save Now, Won't Show Again</div>
+      <div class="final-seed-words" id="finalSeedWords"></div>
+    </div>
+
+    <button class="copy-seed-btn" style="width:100%;justify-content:center;padding:13px;border-radius:12px;font-size:13px;margin-bottom:14px;" id="finalCopyBtn" onclick="finalCopy()">📋 Copy Seed Phrase</button>
+    <button class="btn-main btn-gold" onclick="autoLogin()">🚀 Enter Dashboard →</button>
+    <button class="btn-sec" onclick="window.location.href='login.html'">Go to Login Page</button>
+    <button class="btn-sec" onclick="window.location.href='index.html'">← Back to Home</button>
+  </div>
+
+</div><!-- /box -->
+
+<div style="margin-top:20px;font-size:11px;color:#1e293b;text-align:center;">
+  © 2026 BEWON Network · Web3 Non-Custodial Wallet System · BSC
+</div>
+</div><!-- /page -->
+
+
+<!-- ===== IMPORT PHRASE OVERLAY ===== -->
+<div id="importOverlay">
+  <div class="import-card">
+    <div class="import-head">
+      <div style="font-size:26px;">🔓</div>
+      <div>
+        <div style="font-weight:800;font-size:17px;background:linear-gradient(90deg,#4ade80,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Import Phrase</div>
+        <div style="font-size:12px;color:var(--muted);">Restore old account with your 12-word seed phrase</div>
+      </div>
+      <button onclick="hideImport()" style="margin-left:auto;background:rgba(255,255,255,0.05);border:1px solid #1e293b;color:var(--muted);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;flex-shrink:0;">✕</button>
+    </div>
+    <div class="import-body">
+      <div id="aImport"></div>
+
+      <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:#86efac;line-height:1.7;">
+        Enter your old 12-word phrase below. Your old account data will be restored and you can set a new password.
+      </div>
+
+      <div class="field">
+        <label>Username (old account)</label>
+        <input type="text" id="impUser" placeholder="Your old username">
+      </div>
+      <div class="field">
+        <label>Your 12-Word Seed Phrase</label>
+        <textarea class="import-seed-ta" id="impSeed" placeholder="Enter all 12 words separated by spaces...&#10;Example: word1 word2 word3 word4 word5 word6&#10;word7 word8 word9 word10 word11 word12"></textarea>
+        <div class="field-hint">Enter all 12 words in correct order, separated by spaces</div>
+      </div>
+      <div class="field">
+        <label>New Password</label>
+        <div class="input-wrap">
+          <input type="password" id="impPassword" placeholder="Set a new password">
+          <button class="pw-toggle" onclick="togglePw('impPassword',this)" type="button">👁️</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Confirm New Password</label>
+        <div class="input-wrap">
+          <input type="password" id="impPassword2" placeholder="Re-enter new password">
+          <button class="pw-toggle" onclick="togglePw('impPassword2',this)" type="button">👁️</button>
+        </div>
+      </div>
+      <button class="btn-main btn-green" onclick="doImport()" style="margin-bottom:10px;">🔓 Verify & Import Wallet</button>
+      <button class="btn-sec" onclick="hideImport()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+/* ================================================================
+   BEWON NETWORK — Full Web3 Wallet Registration System
+   Version 2.1 — All template literal / backtick bugs fixed
+================================================================ */
+
+/* ===== BIP39 WORDLIST (subset, 256 unique words) ===== */
+const BIP39 = [
+  "abandon","ability","able","about","above","absent","absorb","abstract","absurd","abuse",
+  "access","accident","account","accuse","achieve","acid","acoustic","acquire","across","action",
+  "actor","actual","adapt","address","adjust","adult","advance","advice","aerobic","afford",
+  "afraid","again","agent","agree","ahead","aim","airport","aisle","alarm","album",
+  "alert","alien","all","alley","allow","almost","alone","alpha","already","alter",
+  "always","amateur","amazing","among","amount","amused","anchor","anger","angle","animal",
+  "ankle","announce","annual","another","answer","antenna","antique","anxiety","any","apart",
+  "apology","appear","apple","approve","april","arena","argue","arise","army","around",
+  "arrange","arrest","arrow","asset","assist","assume","attend","attract","audit","august",
+  "aunt","author","auto","autumn","average","avocado","avoid","awake","aware","away",
+  "awesome","awful","awkward","balcony","ball","bamboo","banana","banner","barely","barrel",
+  "base","basic","basket","battle","beach","beauty","because","become","beef","before",
+  "begin","behave","behind","believe","below","bench","benefit","best","between","beyond",
+  "bicycle","bird","birth","black","blade","blame","blanket","blast","bleak","bless",
+  "blind","blood","blossom","blouse","blue","blur","blush","board","boat","body",
+  "boil","bomb","bone","bonus","book","boost","border","boring","borrow","bounce",
+  "brain","brave","bread","breeze","brick","bridge","brief","bright","bring","brisk",
+  "broccoli","broken","bronze","broom","brother","brown","brush","bubble","buddy","budget",
+  "bulk","bullet","bundle","bunker","burden","burger","burst","butter","buyer","buzz",
+  "cabbage","cabin","cable","cactus","cage","calm","camera","camp","canal","cancel",
+  "capital","captain","carbon","carpet","carry","cart","case","cash","castle","casual",
+  "catalog","catch","category","cause","caution","cave","ceiling","celery","center","chair",
+  "chaos","chapter","charge","chase","chat","cheap","check","cheese","chef","cherry",
+  "chest","chicken","chief","child","chimney","choice","chunk","circle","city","claim",
+  "clap","clarify","claw","clay","clean","clerk","clever","click","client","cliff",
+  "climb","clinic","clip","clock","clog","close","cloth","cloud","clump","cluster"
+];
+
+/* ===== STATE ===== */
+const STATE = {
+  name:'', email:'', username:'', phone:'', ref:'',
+  password:'', avatar:'🦁',
+  userId:'', mnemonic:[], verifyPos:[], verifySlotAnswers:{},
+  seedRevealed:false
+};
+
+let currentPanel = 1;
+
+/* ===== AVATAR ===== */
+function selectAvatar(el){
+  document.querySelectorAll('.avatar-opt').forEach(a=>a.classList.remove('selected'));
+  el.classList.add('selected');
+  STATE.avatar = el.getAttribute('data-av');
+}
+
+/* ===== PASSWORD TOGGLE ===== */
+function togglePw(id, btn){
+  const inp = document.getElementById(id);
+  if(inp.type === 'password'){
+    inp.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    inp.type = 'password';
+    btn.textContent = '👁️';
+  }
+}
+
+/* ===== PASSWORD STRENGTH ===== */
+function checkStrength(){
+  const pw = document.getElementById('fpassword').value;
+  const fill = document.getElementById('strengthFill');
+  const txt = document.getElementById('strengthText');
+  let score = 0;
+  if(pw.length >= 6) score++;
+  if(pw.length >= 10) score++;
+  if(/[A-Z]/.test(pw)) score++;
+  if(/[0-9]/.test(pw)) score++;
+  if(/[^A-Za-z0-9]/.test(pw)) score++;
+  const levels = [
+    {pct:0,color:'',label:'Enter a password',tcolor:'var(--muted)'},
+    {pct:20,color:'#fb7185',label:'Very Weak',tcolor:'#fb7185'},
+    {pct:40,color:'#fb923c',label:'Weak',tcolor:'#fb923c'},
+    {pct:60,color:'#facc15',label:'Fair',tcolor:'#facc15'},
+    {pct:80,color:'#4ade80',label:'Strong',tcolor:'#4ade80'},
+    {pct:100,color:'#22d3ee',label:'Very Strong 💪',tcolor:'#22d3ee'}
+  ];
+  const lv = levels[score] || levels[0];
+  fill.style.width = lv.pct+'%';
+  fill.style.background = lv.color;
+  txt.textContent = lv.label;
+  txt.style.color = lv.tcolor;
+}
+
+/* ===== UID GENERATION ===== */
+function genUID(username){
+  const prefix = 'BWN';
+  const user = (username||'').toUpperCase().slice(0,3)||'USR';
+  const rand = Math.floor(10000000 + Math.random()*89999999);
+  return `${prefix}${user}${rand}`;
+}
+
+/* ===== SEED GENERATION ===== */
+function generateSeed(){
+  const words = [];
+  const buf = new Uint32Array(12);
+  crypto.getRandomValues(buf);
+  buf.forEach(v => words.push(BIP39[v % BIP39.length]));
+  return words;
+}
+
+/* ===== STEP MANAGEMENT ===== */
+function setActiveStep(n){
+  for(let i=1;i<=4;i++){
+    const sc = document.getElementById('sc'+i);
+    const sn = document.getElementById('sn'+i);
+    sc.className = 'step-circle';
+    sn.className = 'step-node';
+    if(i < n){ sc.className += ' done'; sn.className += ' done'; sc.textContent = '✓'; }
+    else if(i === n){ sc.className += ' active'; sn.className += ' active'; if(i<4) sc.textContent = i; }
+    else { sc.textContent = i<4 ? i : '✓'; }
+  }
+  for(let i=1;i<=3;i++){
+    const c = document.getElementById('conn'+i);
+    if(i < n) c.classList.add('done');
+    else c.classList.remove('done');
+  }
+}
+
+function goPanel(n){
+  document.getElementById('panel'+currentPanel).classList.remove('active');
+  document.getElementById('panel'+n).classList.add('active');
+  currentPanel = n;
+  setActiveStep(n);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ===== ALERT ===== */
+function alert_(id,type,msg){
+  document.getElementById(id).innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+}
+function clearAlert(id){ document.getElementById(id).innerHTML=''; }
+
+/* ===== STEP 1 → 2 ===== */
+function goStep2(){
+  clearAlert('a1');
+  const name = document.getElementById('fname').value.trim();
+  const email = document.getElementById('femail').value.trim();
+  const username = document.getElementById('fusername').value.trim().toLowerCase().replace(/[^a-z0-9]/g,'');
+  const pw = document.getElementById('fpassword').value;
+  const pw2 = document.getElementById('fpassword2').value;
+
+  if(!name){ alert_('a1','err','⚠️ Full name is required'); return; }
+  if(!email || !email.includes('@') || !email.includes('.')){ alert_('a1','err','⚠️ Valid email address required'); return; }
+  if(!username || username.length < 3){ alert_('a1','err','⚠️ Username must be at least 3 characters'); return; }
+  if(!pw || pw.length < 6){ alert_('a1','err','⚠️ Password must be at least 6 characters'); return; }
+  if(pw !== pw2){ alert_('a1','err','❌ Passwords do not match'); return; }
+  if(localStorage.getItem('bwn_account_'+username)){
+    alert_('a1','err','❌ Username already taken. Please choose a different username.');
+    return;
+  }
+
+  STATE.name = name;
+  STATE.email = email;
+  STATE.username = username;
+  STATE.password = pw;
+  STATE.phone = document.getElementById('fphone').value.trim();
+  STATE.ref = document.getElementById('fref').value.trim();
+
+  STATE.mnemonic = generateSeed();
+  STATE.seedRevealed = false;
+  renderSeedGrid();
+  resetChecks();
+  clearAlert('a2');
+  goPanel(2);
+}
+
+/* ===== RENDER SEED GRID ===== */
+function renderSeedGrid(){
+  const g = document.getElementById('seedGrid');
+  g.innerHTML = '';
+  STATE.mnemonic.forEach((w,i)=>{
+    g.innerHTML += `
+      <div class="seed-word-card">
+        <div class="swc-num">${i+1}</div>
+        <div class="swc-word">${w}</div>
+      </div>`;
+  });
+  document.getElementById('blurOverlay').classList.remove('hidden');
+  STATE.seedRevealed = false;
+}
+
+function revealSeed(){
+  document.getElementById('blurOverlay').classList.add('hidden');
+  STATE.seedRevealed = true;
+}
+
+function copySeedPhrase(){
+  if(!STATE.seedRevealed){ revealSeed(); return; }
+  const text = STATE.mnemonic.join(' ');
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✅ Copied!';
+    btn.classList.add('ok');
+    setTimeout(()=>{ btn.textContent='📋 Copy'; btn.classList.remove('ok'); }, 2500);
+  }).catch(()=>{ prompt('Copy your seed phrase:', text); });
+}
+
+function regenSeed(){
+  if(!confirm('⚠️ Generate a new seed phrase? Your current phrase will be replaced.')) return;
+  STATE.mnemonic = generateSeed();
+  STATE.seedRevealed = false;
+  renderSeedGrid();
+  resetChecks();
+}
+
+/* ===== CHECKBOXES ===== */
+function resetChecks(){
+  document.getElementById('chk1').checked = false;
+  document.getElementById('chk2').checked = false;
+  document.getElementById('checkRow1').classList.remove('checked');
+  document.getElementById('checkRow2').classList.remove('checked');
+}
+
+function toggleCheck(id, rowId){
+  const cb = document.getElementById(id);
+  cb.checked = !cb.checked;
+  document.getElementById(rowId).classList.toggle('checked', cb.checked);
+}
+
+/* ===== STEP 2 → 3 ===== */
+function goStep3(){
+  clearAlert('a2');
+  if(!document.getElementById('chk1').checked){
+    alert_('a2','err','⚠️ Please confirm you have written down your seed phrase');
+    return;
+  }
+  if(!document.getElementById('chk2').checked){
+    alert_('a2','err','⚠️ Please confirm you understand the responsibility');
+    return;
+  }
+  buildVerifyPanel();
+  goPanel(3);
+}
+
+/* ===== BUILD VERIFY PANEL ===== */
+function buildVerifyPanel(){
+  clearAlert('a3');
+  STATE.verifySlotAnswers = {};
+
+  // Pick 3 or 4 random unique positions
+  const count = Math.random() < 0.5 ? 3 : 4;
+  const pos = new Set();
+  while(pos.size < count) pos.add(Math.floor(Math.random()*12));
+  STATE.verifyPos = [...pos].sort((a,b)=>a-b);
+
+  document.getElementById('vpSpan').textContent = STATE.verifyPos.map(p=>`#${p+1}`).join(', ');
+
+  // Build slots
+  const slotsDiv = document.getElementById('verifySlots');
+  slotsDiv.innerHTML = '';
+  STATE.verifyPos.forEach(pos=>{
+    slotsDiv.innerHTML += `
+      <div class="verify-slot" id="slot_${pos}" onclick="handleSlotClick(${pos})">
+        <div class="slot-num">WORD #${pos+1}</div>
+        <div class="slot-empty-hint">tap a word</div>
+        <button class="slot-clear" onclick="clearSlot(event,${pos})">✕</button>
+      </div>`;
+  });
+
+  // Build word pool: correct words + decoys
+  const allPool = [...STATE.verifyPos.map(p=>STATE.mnemonic[p])];
+  const used = new Set(allPool);
+  let tries = 0;
+  while(allPool.length < 12 && tries < 500){
+    tries++;
+    const rnd = BIP39[Math.floor(Math.random()*BIP39.length)];
+    if(!used.has(rnd)){ used.add(rnd); allPool.push(rnd); }
+  }
+  // Shuffle
+  for(let i=allPool.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [allPool[i],allPool[j]]=[allPool[j],allPool[i]];
+  }
+
+  const poolDiv = document.getElementById('verifyPool');
+  poolDiv.innerHTML = '';
+  allPool.forEach((w,idx)=>{
+    poolDiv.innerHTML += `<div class="pool-word" id="pw_${idx}" data-word="${w}" onclick="tapPoolWord(this)">${w}</div>`;
+  });
+
+  updateVerifyBtn();
+}
+
+let activeSlotPos = null;
+
+function handleSlotClick(pos){
+  if(STATE.verifySlotAnswers[pos]) return;
+  activeSlotPos = pos;
+  document.querySelectorAll('.verify-slot').forEach(s=>{ s.style.borderColor=''; s.style.boxShadow=''; });
+  const slot = document.getElementById('slot_'+pos);
+  slot.style.borderColor = 'rgba(168,85,247,0.6)';
+  slot.style.boxShadow = '0 0 12px rgba(168,85,247,0.2)';
+}
+
+function tapPoolWord(el){
+  const word = el.getAttribute('data-word');
+  let targetPos = activeSlotPos;
+  if(targetPos === null || STATE.verifySlotAnswers[targetPos]){
+    targetPos = null;
+    for(let p of STATE.verifyPos){
+      if(!STATE.verifySlotAnswers[p]){ targetPos = p; break; }
+    }
+  }
+  if(targetPos === null) return;
+
+  STATE.verifySlotAnswers[targetPos] = word;
+  el.classList.add('used');
+
+  const slot = document.getElementById('slot_'+targetPos);
+  slot.classList.add('filled');
+  slot.style.borderColor = '';
+  slot.style.boxShadow = '';
+  slot.innerHTML = `
+    <div class="slot-num">WORD #${targetPos+1}</div>
+    <div class="slot-word">${word}</div>
+    <button class="slot-clear" onclick="clearSlot(event,${targetPos})">✕</button>`;
+
+  activeSlotPos = null;
+  for(let p of STATE.verifyPos){
+    if(!STATE.verifySlotAnswers[p]){ activeSlotPos = p; break; }
+  }
+  if(activeSlotPos !== null){
+    const ns = document.getElementById('slot_'+activeSlotPos);
+    ns.style.borderColor = 'rgba(168,85,247,0.6)';
+    ns.style.boxShadow = '0 0 12px rgba(168,85,247,0.2)';
+  }
+
+  updateVerifyBtn();
+}
+
+function clearSlot(event, pos){
+  event.stopPropagation();
+  const word = STATE.verifySlotAnswers[pos];
+  if(!word) return;
+  delete STATE.verifySlotAnswers[pos];
+
+  document.querySelectorAll('.pool-word').forEach(pw=>{
+    if(pw.getAttribute('data-word') === word && pw.classList.contains('used')){
+      pw.classList.remove('used');
+      pw.classList.remove('correct-animate');
+    }
+  });
+
+  const slot = document.getElementById('slot_'+pos);
+  slot.classList.remove('filled','wrong');
+  slot.style.borderColor = '';
+  slot.style.boxShadow = '';
+  slot.innerHTML = `
+    <div class="slot-num">WORD #${pos+1}</div>
+    <div class="slot-empty-hint">tap a word</div>
+    <button class="slot-clear" onclick="clearSlot(event,${pos})">✕</button>`;
+
+  activeSlotPos = pos;
+  slot.style.borderColor = 'rgba(168,85,247,0.6)';
+  updateVerifyBtn();
+}
+
+function resetVerify(){
+  buildVerifyPanel();
+}
+
+function updateVerifyBtn(){
+  const allFilled = STATE.verifyPos.every(p => STATE.verifySlotAnswers[p]);
+  const btn = document.getElementById('btnVerify');
+  btn.disabled = !allFilled;
+  btn.style.opacity = allFilled ? '1' : '.4';
+  btn.style.cursor = allFilled ? 'pointer' : 'not-allowed';
+}
+
+/* ===== VERIFY & CREATE ===== */
+function verifyAndCreate(){
+  clearAlert('a3');
+  let allCorrect = true;
+
+  STATE.verifyPos.forEach(pos=>{
+    const slot = document.getElementById('slot_'+pos);
+    const given = STATE.verifySlotAnswers[pos];
+    const correct = STATE.mnemonic[pos];
+    if(given === correct){
+      slot.classList.add('filled');
+      slot.classList.remove('wrong');
+    } else {
+      slot.classList.add('wrong');
+      slot.classList.remove('filled');
+      allCorrect = false;
+    }
+  });
+
+  if(!allCorrect){
+    alert_('a3','err','❌ Some words are wrong. Check your written seed phrase and try again.');
+    return;
+  }
+
+  STATE.userId = genUID(STATE.username);
+
+  const account = {
+    userId: STATE.userId,
+    name: STATE.name,
+    email: STATE.email,
+    username: STATE.username,
+    phone: STATE.phone,
+    ref: STATE.ref,
+    avatar: STATE.avatar,
+    password: STATE.password,
+    mnemonic: STATE.mnemonic.join(' '),
+    createdAt: new Date().toISOString(),
+    balance: '0.00',
+    network: 'BSC',
+    type: 'web3_wallet'
+  };
+
+  try{
+    localStorage.setItem('bwn_account_'+STATE.username, JSON.stringify(account));
+    localStorage.setItem('bwn_session', JSON.stringify({
+      userId: account.userId,
+      username: account.username,
+      name: account.name,
+      email: account.email,
+      avatar: account.avatar,
+      loggedIn: true,
+      loginTime: new Date().toISOString()
+    }));
+  } catch(e){ console.warn('Storage error', e); }
+
+  renderSuccess(account);
+  goPanel(4);
+  launchConfetti();
+}
+
+/* ===== SUCCESS ===== */
+function renderSuccess(acc){
+  document.getElementById('sw-avatar').textContent = acc.avatar || '🦁';
+  document.getElementById('sw-uid').textContent = acc.userId;
+  document.getElementById('sw-name').textContent = '@' + acc.username + ' · ' + acc.name;
+
+  document.getElementById('successInfo').innerHTML = `
+    <div class="info-item"><span class="info-key">Wallet ID</span><span class="info-val" style="color:var(--gold);font-family:'JetBrains Mono',monospace;">${acc.userId}</span></div>
+    <div class="info-item"><span class="info-key">Username</span><span class="info-val">@${acc.username}</span></div>
+    <div class="info-item"><span class="info-key">Email</span><span class="info-val">${acc.email}</span></div>
+    <div class="info-item"><span class="info-key">Network</span><span class="info-val" style="color:var(--gold);">BSC (Binance Smart Chain)</span></div>
+    <div class="info-item"><span class="info-key">Account Type</span><span class="info-val" style="color:var(--green);">✅ Web3 Non-Custodial</span></div>
+    <div class="info-item"><span class="info-key">Created</span><span class="info-val">${new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</span></div>`;
+
+  const sw = document.getElementById('finalSeedWords');
+  sw.innerHTML = '';
+  acc.mnemonic.split(' ').forEach((w,i)=>{
+    sw.innerHTML += `<div class="fsw">${i+1}. ${w}</div>`;
+  });
+}
+
+function finalCopy(){
+  navigator.clipboard.writeText(STATE.mnemonic.join(' ')).then(()=>{
+    const btn = document.getElementById('finalCopyBtn');
+    btn.textContent = '✅ Copied!';
+    btn.classList.add('ok');
+    setTimeout(()=>{ btn.textContent='📋 Copy Seed Phrase'; btn.classList.remove('ok'); }, 2500);
+  }).catch(()=>prompt('Copy seed phrase:', STATE.mnemonic.join(' ')));
+}
+
+function autoLogin(){
+  window.location.href = 'login.html?user='+encodeURIComponent(STATE.username);
+}
+
+/* ===== CONFETTI ===== */
+function launchConfetti(){
+  const colors=['#facc15','#a855f7','#38bdf8','#4ade80','#fb7185','#fb923c'];
+  for(let i=0;i<60;i++){
+    setTimeout(()=>{
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left = Math.random()*100+'vw';
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      el.style.width = (8+Math.random()*8)+'px';
+      el.style.height = (8+Math.random()*8)+'px';
+      el.style.borderRadius = Math.random()<0.5?'50%':'2px';
+      el.style.animationDuration = (2+Math.random()*2)+'s';
+      el.style.animationDelay = Math.random()*0.5+'s';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(), 4000);
+    }, i*30);
+  }
+}
+
+/* ===== IMPORT PHRASE ===== */
+function showImport(){
+  document.getElementById('importOverlay').classList.add('show');
+  clearAlert('aImport');
+}
+function hideImport(){
+  document.getElementById('importOverlay').classList.remove('show');
+}
+
+function doImport(){
+  clearAlert('aImport');
+  const username = (document.getElementById('impUser').value||'').trim().toLowerCase();
+  const seedRaw = (document.getElementById('impSeed').value||'').trim().toLowerCase();
+  const words = seedRaw.split(/\s+/).filter(Boolean);
+  const pw = document.getElementById('impPassword').value;
+  const pw2 = document.getElementById('impPassword2').value;
+
+  if(!username){ alert_('aImport','err','⚠️ Enter your old username'); return; }
+  if(words.length !== 12){
+    alert_('aImport','err',`❌ You entered ${words.length} words. Exactly 12 words required.`);
+    return;
+  }
+  if(!pw || pw.length < 6){ alert_('aImport','err','⚠️ New password must be at least 6 characters'); return; }
+  if(pw !== pw2){ alert_('aImport','err','❌ Passwords do not match'); return; }
+
+  const saved = localStorage.getItem('bwn_account_'+username);
+  if(!saved){
+    alert_('aImport','err','❌ Account not found. Check your username or register a new account.');
+    return;
+  }
+
+  const acc = JSON.parse(saved);
+  if(acc.mnemonic !== words.join(' ')){
+    alert_('aImport','err','❌ Seed phrase does not match. Check your written words and try again.');
+    return;
+  }
+
+  acc.password = pw;
+  acc.lastRecovered = new Date().toISOString();
+  localStorage.setItem('bwn_account_'+username, JSON.stringify(acc));
+
+  localStorage.setItem('bwn_session', JSON.stringify({
+    userId: acc.userId,
+    username: acc.username,
+    name: acc.name,
+    email: acc.email,
+    avatar: acc.avatar || '🦁',
+    loggedIn: true,
+    loginTime: new Date().toISOString()
+  }));
+
+  alert_('aImport','ok',`✅ Wallet imported! Welcome back, @${acc.username}.<br>Redirecting to login...`);
+  setTimeout(()=>{
+    window.location.href = 'login.html?user='+encodeURIComponent(username);
+  }, 2000);
+}
+
+/* ===== INIT ===== */
+document.addEventListener('DOMContentLoaded',()=>{
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get('ref');
+  if(ref) document.getElementById('fref').value = ref;
+  const u = params.get('user');
+  if(u) document.getElementById('fusername').value = u;
+
+  document.addEventListener('keydown', e=>{
+    if(e.key === 'Escape') hideImport();
+  });
+});
+</script>
+</body>
+</html>

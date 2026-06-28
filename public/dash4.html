@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LIFELINEMETA - Professional User Dashboard</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,sans-serif;
+}
+
+body{
+background:#f1f5f9;
+color:#1e293b;
+overflow-x:hidden;
+}
+
+/* ================= SCROLLBAR ================= */
+
+::-webkit-scrollbar{
+width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+background:#1e40af;
+border-radius:20px;
+}
+
+/* ================= LAYOUT ================= */
+
+.container{
+display:flex;
+min-height:100vh;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+width:290px;
+background:white;
+border-right:1px solid #e5e7eb;
+box-shadow:0 0 30px rgba(0,0,0,0.08);
+padding-bottom:30px;
+position:fixed;
+top:0;
+left:0;
+bottom:0;
+overflow-y:auto;
+z-index:999;
+}
+
+.logo-area{
+padding:25px;
+display:flex;
+align-items:center;
+gap:14px;
+border-bottom:1px solid #eee;
+}
+
+.logo{
+width:60px;
+height:60px;
+border-radius:50%;
+object-fit:cover;
+border:4px solid #1e40af;
+}
+
+.brand-name{
+font-size:24px;
+font-weight:800;
+color:#1e40af;
+letter-spacing:1px;
+}
+
+.menu{
+padding-top:15px;
+}
+
+.menu-item{
+padding:17px 25px;
+display:flex;
+align-items:center;
+gap:14px;
+cursor:pointer;
+font-weight:600;
+transition:0.3s;
+color:#374151;
+font-size:15px;
+}
+
+.menu-item:hover{
+background:#eff6ff;
+color:#1e40af;
+padding-left:30px;
+}
+
+.menu-item.active{
+background:#dbeafe;
+border-left:5px solid #1e40af;
+color:#1e40af;
+}
+
+/* ================= MAIN ================= */
+
+.main{
+margin-left:290px;
+flex:1;
+padding:30px;
+}
+
+/* ================= TOPBAR ================= */
+
+.top-bar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+flex-wrap:wrap;
+gap:20px;
+}
+
+.welcome{
+font-size:32px;
+font-weight:800;
+color:#1e40af;
+}
+
+.top-right{
+display:flex;
+align-items:center;
+gap:20px;
+}
+
+.profile-box{
+display:flex;
+align-items:center;
+gap:10px;
+background:white;
+padding:10px 16px;
+border-radius:14px;
+box-shadow:0 5px 20px rgba(0,0,0,0.06);
+}
+
+.profile-box img{
+width:45px;
+height:45px;
+border-radius:50%;
+object-fit:cover;
+}
+
+/* ================= NOTICE ================= */
+
+.notice-board{
+background:#fff7ed;
+border:1px solid #fdba74;
+padding:18px 20px;
+border-radius:16px;
+margin-bottom:25px;
+display:flex;
+align-items:center;
+gap:10px;
+font-weight:600;
+color:#9a3412;
+}
+
+/* ================= BALANCE ================= */
+
+.balance-card{
+background:linear-gradient(135deg,#1e40af,#2563eb);
+padding:35px;
+border-radius:25px;
+color:white;
+margin-bottom:30px;
+box-shadow:0 20px 40px rgba(30,64,175,0.25);
+position:relative;
+overflow:hidden;
+}
+
+.balance-card::before{
+content:'';
+position:absolute;
+width:250px;
+height:250px;
+background:rgba(255,255,255,0.1);
+border-radius:50%;
+top:-100px;
+right:-50px;
+}
+
+.balance-title{
+font-size:18px;
+opacity:0.9;
+margin-bottom:10px;
+}
+
+.balance-amount{
+font-size:52px;
+font-weight:800;
+margin-bottom:10px;
+}
+
+.balance-growth{
+font-size:17px;
+color:#bbf7d0;
+}
+
+/* ================= STATS ================= */
+
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:22px;
+margin-bottom:35px;
+}
+
+.stat-card{
+background:white;
+padding:25px;
+border-radius:18px;
+box-shadow:0 8px 25px rgba(0,0,0,0.06);
+transition:0.3s;
+}
+
+.stat-card:hover{
+transform:translateY(-5px);
+}
+
+.stat-icon{
+font-size:40px;
+margin-bottom:15px;
+}
+
+.stat-card h2{
+font-size:30px;
+margin-bottom:8px;
+color:#1e40af;
+}
+
+.stat-card p{
+color:#64748b;
+font-weight:500;
+}
+
+/* ================= QUICK ACTION ================= */
+
+.section-title{
+font-size:24px;
+font-weight:800;
+margin-bottom:20px;
+color:#1e40af;
+}
+
+.menu-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:22px;
+}
+
+.menu-card{
+background:white;
+padding:30px 20px;
+border-radius:20px;
+text-align:center;
+cursor:pointer;
+transition:0.4s;
+box-shadow:0 8px 25px rgba(0,0,0,0.06);
+}
+
+.menu-card:hover{
+transform:translateY(-10px);
+box-shadow:0 20px 40px rgba(30,64,175,0.15);
+}
+
+.menu-card span{
+font-size:50px;
+display:block;
+margin-bottom:14px;
+}
+
+.menu-card h3{
+font-size:20px;
+margin-bottom:10px;
+color:#1e293b;
+}
+
+.menu-card p{
+font-size:14px;
+color:#64748b;
+line-height:1.5;
+}
+
+/* ================= TABLE ================= */
+
+.table-wrapper{
+margin-top:40px;
+background:white;
+border-radius:20px;
+overflow:hidden;
+box-shadow:0 8px 25px rgba(0,0,0,0.06);
+}
+
+.table-header{
+padding:20px;
+font-size:22px;
+font-weight:800;
+color:#1e40af;
+border-bottom:1px solid #eee;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+table th{
+background:#eff6ff;
+padding:16px;
+text-align:left;
+font-size:15px;
+}
+
+table td{
+padding:16px;
+border-bottom:1px solid #eee;
+font-size:14px;
+}
+
+.status-success{
+color:#16a34a;
+font-weight:700;
+}
+
+.status-pending{
+color:#ea580c;
+font-weight:700;
+}
+
+/* ================= FOOTER ================= */
+
+.footer{
+margin-top:40px;
+text-align:center;
+padding:20px;
+color:#64748b;
+font-size:14px;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:900px){
+
+.sidebar{
+position:relative;
+width:100%;
+height:auto;
+}
+
+.main{
+margin-left:0;
+}
+
+.container{
+flex-direction:column;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- ================= SIDEBAR ================= -->
+
+<div class="sidebar">
+
+<div class="logo-area">
+
+<img src="assets/logo/livelinemeta.png" class="logo">
+
+<div class="brand-name">
+LIFELINEMETA
+</div>
+
+</div>
+
+<div class="menu">
+
+<div class="menu-item active">
+🏠 Dashboard
+</div>
+
+<div class="menu-item" onclick="investNow()">
+📈 Invest Now
+</div>
+
+<div class="menu-item" onclick="withdrawNow()">
+💸 Withdraw
+</div>
+
+<div class="menu-item" onclick="showTeam()">
+👥 My Team
+</div>
+
+<div class="menu-item" onclick="copyReferral()">
+🔗 Referral Link
+</div>
+
+<div class="menu-item" onclick="showHistory()">
+📜 Transaction History
+</div>
+
+<div class="menu-item" onclick="showProfile()">
+👤 My Profile
+</div>
+
+<div class="menu-item" onclick="showSupport()">
+🛟 Support
+</div>
+
+<div class="menu-item" onclick="logout()">
+🚪 Logout
+</div>
+
+</div>
+
+</div>
+
+<!-- ================= MAIN ================= -->
+
+<div class="main">
+
+<!-- TOP BAR -->
+
+<div class="top-bar">
+
+<div>
+
+<h1 class="welcome">
+Welcome Back,
+<span id="userName">Rahim Khan</span> 👋
+</h1>
+
+<p style="margin-top:8px;color:#64748b;">
+Your investment dashboard overview
+</p>
+
+</div>
+
+<div class="top-right">
+
+<div class="profile-box">
+
+<img src="https://i.pravatar.cc/150?img=12">
+
+<div>
+
+<h4 id="profileUserName">
+Rahim Khan
+</h4>
+
+<p style="font-size:13px;color:#64748b;">
+Premium Member
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- NOTICE -->
+
+<div class="notice-board">
+
+📢 Admin Notice:
+<span id="noticeText">
+Investment system upgraded successfully. Monthly ROI running properly.
+</span>
+
+</div>
+
+<!-- BALANCE -->
+
+<div class="balance-card">
+
+<div class="balance-title">
+Total Balance (USD)
+</div>
+
+<div class="balance-amount" id="balance">
+$2,845.75
+</div>
+
+<div class="balance-growth">
+↑ 18.4% Growth This Month
+</div>
+
+</div>
+
+<!-- STATS -->
+
+<div class="stats">
+
+<div class="stat-card">
+
+<div class="stat-icon">
+💰
+</div>
+
+<h2>
+$1,850
+</h2>
+
+<p>
+Active Investment
+</p>
+
+</div>
+
+<div class="stat-card">
+
+<div class="stat-icon">
+👥
+</div>
+
+<h2>
+15
+</h2>
+
+<p>
+Direct Referrals
+</p>
+
+</div>
+
+<div class="stat-card">
+
+<div class="stat-icon">
+🎁
+</div>
+
+<h2>
+$685
+</h2>
+
+<p>
+Referral Income
+</p>
+
+</div>
+
+<div class="stat-card">
+
+<div class="stat-icon">
+📈
+</div>
+
+<h2>
+15-20%
+</h2>
+
+<p>
+Monthly ROI
+</p>
+
+</div>
+
+</div>
+
+<!-- QUICK ACTIONS -->
+
+<div class="section-title">
+Quick Actions
+</div>
+
+<div class="menu-grid">
+
+<div class="menu-card" onclick="investNow()">
+
+<span>
+📈
+</span>
+
+<h3>
+Invest Now
+</h3>
+
+<p>
+Start new investment plans and grow your earnings.
+</p>
+
+</div>
+
+<div class="menu-card" onclick="withdrawNow()">
+
+<span>
+💸
+</span>
+
+<h3>
+Withdraw
+</h3>
+
+<p>
+Withdraw your available balance securely anytime.
+</p>
+
+</div>
+
+<div class="menu-card" onclick="copyReferral()">
+
+<span>
+🔗
+</span>
+
+<h3>
+Referral Program
+</h3>
+
+<p>
+Share your referral link and earn 10% bonus income.
+</p>
+
+</div>
+
+<div class="menu-card" onclick="showTeam()">
+
+<span>
+🌐
+</span>
+
+<h3>
+My Team
+</h3>
+
+<p>
+Manage your direct and indirect referral network.
+</p>
+
+</div>
+
+<div class="menu-card" onclick="showHistory()">
+
+<span>
+📜
+</span>
+
+<h3>
+History
+</h3>
+
+<p>
+Check all investment and withdrawal transaction records.
+</p>
+
+</div>
+
+<div class="menu-card" onclick="showProfile()">
+
+<span>
+👤
+</span>
+
+<h3>
+Profile
+</h3>
+
+<p>
+View your account details and membership information.
+</p>
+
+</div>
+
+</div>
+
+<!-- TRANSACTION TABLE -->
+
+<div class="table-wrapper">
+
+<div class="table-header">
+Recent Transactions
+</div>
+
+<table>
+
+<thead>
+
+<tr>
+<th>Date</th>
+<th>Type</th>
+<th>Amount</th>
+<th>Status</th>
+</tr>
+
+</thead>
+  <!-- PROFILE EDIT BUTTON -->
+<div style="margin-top:30px;">
+  <button onclick="openProfileModal()" style="
+    padding:12px 18px;
+    background:#1e40af;
+    color:white;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:700;">
+    ⚙️ Edit Profile
+  </button>
+</div>
+
+<!-- PROFILE MODAL -->
+<div id="profileModal" style="
+  display:none;
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.6);
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+">
+
+<div style="
+  background:white;
+  width:400px;
+  padding:25px;
+  border-radius:15px;
+">
+
+<h2 style="margin-bottom:15px;color:#1e40af;">Edit Profile</h2>
+
+<!-- PROFILE PIC -->
+<label>Profile Picture</label>
+<input type="file" id="profilePic" style="margin-bottom:10px;">
+
+<!-- WALLET -->
+<label>Wallet Address</label>
+<input type="text" id="walletInput" placeholder="Enter Wallet Address">
+
+<!-- PASSWORD -->
+<label>New Password</label>
+<input type="password" id="passwordInput" placeholder="New Password">
+
+<button onclick="saveProfile()" style="
+  width:100%;
+  margin-top:10px;
+  padding:12px;
+  background:#10b981;
+  color:white;
+  border:none;
+  border-radius:10px;
+  font-weight:700;">
+  Save Changes
+</button>
+
+<button onclick="closeProfileModal()" style="
+  width:100%;
+  margin-top:8px;
+  padding:12px;
+  background:#ef4444;
+  color:white;
+  border:none;
+  border-radius:10px;
+  font-weight:700;">
+  Close
+</button>
+
+</div>
+
+</div>
+<tbody>
+
+<tr>
+<td>05 July 2026</td>
+<td>Investment</td>
+<td>$500</td>
+<td class="status-success">
+Completed
+</td>
+</tr>
+
+<tr>
+<td>04 July 2026</td>
+<td>ROI Bonus</td>
+<td>$120</td>
+<td class="status-success">
+Completed
+</td>
+</tr>
+
+<tr>
+<td>03 July 2026</td>
+<td>Withdrawal</td>
+<td>$200</td>
+<td class="status-pending">
+Pending
+</td>
+</tr>
+
+<tr>
+<td>02 July 2026</td>
+<td>Referral Bonus</td>
+<td>$85</td>
+<td class="status-success">
+Completed
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<!-- FOOTER -->
+
+<div class="footer">
+
+© 2026 LIFELINEMETA. All Rights Reserved.
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+/* ================= INVEST ================= */
+
+function investNow(){
+
+let amount = prompt("Enter Investment Amount (USD):","100");
+
+if(amount && !isNaN(amount) && parseFloat(amount) > 0){
+
+alert(
+"✅ Investment Request Submitted Successfully!\n\n" +
+"Amount: $" + amount +
+"\n\nAdmin will review your request shortly."
+);
+
+}else{
+
+alert("⚠️ Please enter a valid amount.");
+
+}
+
+}
+
+/* ================= WITHDRAW ================= */
+
+function withdrawNow(){
+
+let amount = prompt("Enter Withdrawal Amount (USD):","50");
+
+if(amount && !isNaN(amount) && parseFloat(amount) > 0){
+
+alert(
+"✅ Withdrawal Request Submitted!\n\n" +
+"Amount: $" + amount +
+"\n\nProcessing Time: 24 Hours"
+);
+
+}else{
+
+alert("⚠️ Invalid amount entered.");
+
+}
+
+}
+
+/* ================= REFERRAL ================= */
+
+function copyReferral(){
+
+const referralLink =
+"https://livelinemeta.web.app/register?ref=LM784259";
+
+navigator.clipboard.writeText(referralLink);
+
+alert(
+"🔗 Referral Link Copied Successfully!\n\n" +
+referralLink
+);
+
+}
+
+/* ================= TEAM ================= */
+
+function showTeam(){
+
+alert(
+"👥 TEAM DETAILS\n\n" +
+"Level 1 Members: 8\n" +
+"Level 2 Members: 15\n" +
+"Total Team Income: $685\n\n" +
+"Referral Commission: 10%"
+);
+
+}
+
+/* ================= HISTORY ================= */
+
+function showHistory(){
+
+alert(
+"📜 RECENT HISTORY\n\n" +
+"• +$500 Investment\n" +
+"• +$120 ROI Bonus\n" +
+"• +$85 Referral Income\n" +
+"• -$200 Withdrawal Pending"
+);
+
+}
+
+/* ================= PROFILE ================= */
+
+function showProfile(){
+
+alert(
+"👤 PROFILE DETAILS\n\n" +
+"Name: Rahim Khan\n" +
+"Email: rahim@example.com\n" +
+"Country: Bangladesh\n" +
+"Membership: Premium\n" +
+"Monthly ROI: 15-20%"
+);
+
+}
+
+/* ================= SUPPORT ================= */
+
+function showSupport(){
+
+alert(
+"🛟 SUPPORT CENTER\n\n" +
+"Email: support@livelinemeta.com\n" +
+"Telegram: @livelinemeta\n" +
+"Support Time: 24/7"
+);
+
+}
+
+/* ================= LOGOUT ================= */
+
+function logout(){
+
+if(confirm("Are you sure you want to logout?")){
+
+window.location.href = "login.html";
+
+}
+
+}
+
+/* ================= LOAD DATA ================= */
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+document.getElementById("userName").innerText =
+"Rahim Khan";
+
+document.getElementById("profileUserName").innerText =
+"Rahim Khan";
+
+document.getElementById("balance").innerText =
+"$2,845.75";
+
+});
+
+</script>
+
+</body>
+</html>

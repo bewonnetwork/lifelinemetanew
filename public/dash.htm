@@ -1,0 +1,729 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+  .shell { display: flex; height: 100vh; min-height: 600px; background: var(--color-background-tertiary); overflow: hidden; }
+  .sidebar { width: 200px; min-width: 200px; background: var(--color-background-primary); border-right: 0.5px solid var(--color-border-tertiary); display: flex; flex-direction: column; padding: 12px 0; }
+  .logo { display: flex; align-items: center; gap: 8px; padding: 4px 16px 16px; border-bottom: 0.5px solid var(--color-border-tertiary); margin-bottom: 8px; }
+  .logo-icon { width: 30px; height: 30px; background: #534AB7; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .logo-text { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+  .logo-text span { color: #7F77DD; }
+  .nav-group { padding: 0 8px; margin-bottom: 4px; }
+  .nav-label { font-size: 10px; color: var(--color-text-tertiary); padding: 8px 8px 4px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: var(--border-radius-md); cursor: pointer; font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1px; transition: background 0.15s; }
+  .nav-item:hover { background: var(--color-background-secondary); color: var(--color-text-primary); }
+  .nav-item.active { background: #EEEDFE; color: #534AB7; font-weight: 500; }
+  .nav-item i { font-size: 15px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background: var(--color-background-primary); border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .topbar-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); }
+  .topbar-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 1px; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .badge-rank { font-size: 11px; padding: 3px 10px; border-radius: 20px; background: #EAF3DE; color: #3B6D11; font-weight: 500; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #CECBF6; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: #534AB7; }
+  .notif { position: relative; cursor: pointer; }
+  .notif i { font-size: 18px; color: var(--color-text-secondary); }
+  .notif-dot { position: absolute; top: -2px; right: -2px; width: 14px; height: 14px; background: #E24B4A; border-radius: 50%; font-size: 9px; color: white; display: flex; align-items: center; justify-content: center; }
+  .content { flex: 1; overflow-y: auto; }
+  .section { display: none; padding: 20px; }
+  .section.active { display: block; }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .stat-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 14px; }
+  .stat-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .stat-value { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+  .stat-change { font-size: 11px; margin-top: 6px; }
+  .stat-change.up { color: #3B6D11; }
+  .stat-change.down { color: #A32D2D; }
+  .charts-row { display: grid; grid-template-columns: 1.6fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 16px; }
+  .card-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 12px; }
+  .card-sub { font-size: 11px; color: var(--color-text-secondary); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; padding: 8px 10px; color: var(--color-text-secondary); font-weight: 500; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  td { padding: 9px 10px; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--color-background-secondary); }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+  .pill-green { background: #EAF3DE; color: #3B6D11; }
+  .pill-amber { background: #FAEEDA; color: #854F0B; }
+  .pill-blue { background: #E6F1FB; color: #185FA5; }
+  .pill-purple { background: #EEEDFE; color: #534AB7; }
+  .pill-red { background: #FCEBEB; color: #A32D2D; }
+  .tree-wrap { overflow-x: auto; padding-bottom: 8px; }
+  .tree-node { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .tree-box { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 8px 12px; text-align: center; min-width: 90px; cursor: pointer; transition: border-color 0.15s; }
+  .tree-box:hover { border-color: #7F77DD; }
+  .tree-box .name { font-size: 12px; font-weight: 500; color: var(--color-text-primary); }
+  .tree-box .rank { font-size: 10px; color: var(--color-text-secondary); }
+  .tree-box .earn { font-size: 11px; color: #3B6D11; margin-top: 2px; }
+  .tree-connector { width: 1px; height: 20px; background: var(--color-border-tertiary); }
+  .tree-children { display: flex; gap: 12px; position: relative; }
+  .tree-children::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: calc(100% - 90px); height: 1px; background: var(--color-border-tertiary); }
+  .tree-child { display: flex; flex-direction: column; align-items: center; }
+  .tree-child-line { width: 1px; height: 20px; background: var(--color-border-tertiary); }
+  .income-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .income-row:last-child { border-bottom: none; }
+  .income-icon { width: 32px; height: 32px; border-radius: var(--border-radius-md); display: flex; align-items: center; justify-content: center; font-size: 15px; margin-right: 10px; }
+  .income-left { display: flex; align-items: center; }
+  .income-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .income-desc { font-size: 11px; color: var(--color-text-secondary); }
+  .income-amount { font-size: 14px; font-weight: 500; color: #3B6D11; }
+  .ref-box { background: #EEEDFE; border-radius: var(--border-radius-lg); padding: 16px; margin-bottom: 12px; }
+  .ref-url { font-family: var(--font-mono); font-size: 12px; color: #534AB7; background: var(--color-background-primary); border: 0.5px solid #AFA9EC; border-radius: var(--border-radius-md); padding: 8px 12px; margin: 8px 0; word-break: break-all; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--border-radius-md); font-size: 12px; font-weight: 500; cursor: pointer; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-primary); transition: background 0.15s; }
+  .btn:hover { background: var(--color-background-tertiary); }
+  .btn-primary { background: #534AB7; color: white; border-color: #534AB7; }
+  .btn-primary:hover { background: #3C3489; }
+  .filter-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .filter-btn { padding: 5px 12px; border-radius: 20px; font-size: 12px; border: 0.5px solid var(--color-border-tertiary); cursor: pointer; background: var(--color-background-primary); color: var(--color-text-secondary); }
+  .filter-btn.active { background: #EEEDFE; color: #534AB7; border-color: #AFA9EC; font-weight: 500; }
+  .progress-bar { height: 6px; border-radius: 3px; background: var(--color-background-secondary); overflow: hidden; margin-top: 4px; }
+  .progress-fill { height: 100%; border-radius: 3px; background: #7F77DD; }
+</style>
+
+<h2 class="sr-only">Elite MLM dashboard with overview, genealogy tree, network, finance, transactions, income, referral, and reports sections.</h2>
+
+<div class="shell">
+  <div class="sidebar">
+    <div class="logo">
+      <div class="logo-icon"><i class="ti ti-network" style="color:white;font-size:15px" aria-hidden="true"></i></div>
+      <div class="logo-text">Elite<span>MLM</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Main</div>
+      <div class="nav-item active" onclick="nav('overview',this)" id="n-overview"><i class="ti ti-chart-line" aria-hidden="true"></i> Overview</div>
+      <div class="nav-item" onclick="nav('genealogy',this)" id="n-genealogy"><i class="ti ti-sitemap" aria-hidden="true"></i> Genealogy</div>
+      <div class="nav-item" onclick="nav('network',this)" id="n-network"><i class="ti ti-users" aria-hidden="true"></i> Network</div>
+      <div class="nav-item" onclick="nav('finance',this)" id="n-finance"><i class="ti ti-wallet" aria-hidden="true"></i> Finance</div>
+      <div class="nav-item" onclick="nav('transactions',this)" id="n-transactions"><i class="ti ti-arrows-exchange" aria-hidden="true"></i> Transactions</div>
+      <div class="nav-item" onclick="nav('income',this)" id="n-income"><i class="ti ti-coin" aria-hidden="true"></i> Income</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Tools</div>
+      <div class="nav-item" onclick="nav('referral',this)" id="n-referral"><i class="ti ti-link" aria-hidden="true"></i> Referral</div>
+      <div class="nav-item" onclick="nav('reports',this)" id="n-reports"><i class="ti ti-chart-bar" aria-hidden="true"></i> Reports</div>
+    </div>
+  </div>
+
+  <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="section-title">Overview</div>
+        <div class="topbar-sub" id="section-sub">Performance summary · June 2026</div>
+      </div>
+      <div class="topbar-right">
+        <div class="badge-rank"><i class="ti ti-diamond" aria-hidden="true"></i> Diamond</div>
+        <div class="notif"><i class="ti ti-bell" aria-hidden="true"></i><div class="notif-dot">12</div></div>
+        <div class="avatar">AR</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- OVERVIEW -->
+      <div id="s-overview" class="section active">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Earnings</div>
+            <div class="stat-value">$142,890</div>
+            <div class="stat-change up"><i class="ti ti-trending-up" aria-hidden="true"></i> +18.2% this month</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Network Size</div>
+            <div class="stat-value">2,847</div>
+            <div class="stat-change up"><i class="ti ti-trending-up" aria-hidden="true"></i> +143 this month</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Active Members</div>
+            <div class="stat-value">1,921</div>
+            <div class="stat-change up"><i class="ti ti-trending-up" aria-hidden="true"></i> 67.5% active rate</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Monthly Volume</div>
+            <div class="stat-value">$389K</div>
+            <div class="stat-change up"><i class="ti ti-trending-up" aria-hidden="true"></i> +22.4%</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Direct Referrals</div>
+            <div class="stat-value">48</div>
+            <div class="stat-change up"><i class="ti ti-trending-up" aria-hidden="true"></i> 6 this week</div>
+          </div>
+        </div>
+
+        <div class="charts-row">
+          <div class="card">
+            <div class="card-title">Earnings overview</div>
+            <div style="display:flex;gap:16px;margin-bottom:12px;">
+              <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary);"><span style="width:10px;height:10px;border-radius:2px;background:#7F77DD;display:inline-block;"></span>Commissions</span>
+              <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary);"><span style="width:10px;height:10px;border-radius:2px;background:#1D9E75;display:inline-block;"></span>Bonuses</span>
+            </div>
+            <div style="position:relative;width:100%;height:220px;">
+              <canvas id="earningsChart" role="img" aria-label="Monthly earnings chart showing commissions and bonuses from January to June 2026">Monthly earnings Jan–Jun 2026.</canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Income sources</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+              <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary);"><span style="width:10px;height:10px;border-radius:2px;background:#7F77DD;display:inline-block;"></span>Direct 38%</span>
+              <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary);"><span style="width:10px;height:10px;border-radius:2px;background:#1D9E75;display:inline-block;"></span>Level 2 29%</span>
+              <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary);"><span style="width:10px;height:10px;border-radius:2px;background:#EF9F27;display:inline-block;"></span>Level 3+ 21%</span>
+              <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary);"><span style="width:10px;height:10px;border-radius:2px;background:#D4537E;display:inline-block;"></span>Bonus 12%</span>
+            </div>
+            <div style="position:relative;width:100%;height:200px;">
+              <canvas id="pieChart" role="img" aria-label="Pie chart of income sources: direct 38%, level 2 29%, level 3+ 21%, bonus 12%">Income: direct 38%, level 2 29%, level 3+ 21%, bonus 12%.</canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Recent activity</div>
+          <table>
+            <thead><tr><th>Member</th><th>Action</th><th>Level</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>Sarah Chen</td><td>New signup</td><td>L1</td><td>$250</td><td>Jun 22</td><td><span class="pill pill-green">Active</span></td></tr>
+              <tr><td>James Okafor</td><td>Purchase</td><td>L2</td><td>$1,200</td><td>Jun 21</td><td><span class="pill pill-green">Paid</span></td></tr>
+              <tr><td>Maria López</td><td>Rank up</td><td>L1</td><td>—</td><td>Jun 21</td><td><span class="pill pill-purple">Gold</span></td></tr>
+              <tr><td>Tom Nguyen</td><td>Commission</td><td>L3</td><td>$340</td><td>Jun 20</td><td><span class="pill pill-green">Paid</span></td></tr>
+              <tr><td>Aisha Patel</td><td>New signup</td><td>L1</td><td>$250</td><td>Jun 20</td><td><span class="pill pill-amber">Pending</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- GENEALOGY -->
+      <div id="s-genealogy" class="section">
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-title">Your downline tree</div>
+          <div class="tree-wrap">
+            <div class="tree-node" style="align-items:center;">
+              <div class="tree-box" style="background:#EEEDFE;border-color:#AFA9EC;">
+                <div class="name" style="color:#534AB7;">Alex Rivera</div>
+                <div class="rank" style="color:#7F77DD;">Diamond</div>
+                <div class="earn">$142,890</div>
+              </div>
+              <div class="tree-connector"></div>
+              <div class="tree-children">
+                <div class="tree-child">
+                  <div class="tree-child-line"></div>
+                  <div class="tree-box">
+                    <div class="name">Sarah Chen</div><div class="rank">Gold</div><div class="earn">$28,400</div>
+                  </div>
+                  <div class="tree-connector"></div>
+                  <div class="tree-children">
+                    <div class="tree-child"><div class="tree-child-line"></div><div class="tree-box"><div class="name">Leo Park</div><div class="rank">Silver</div><div class="earn">$8,200</div></div></div>
+                    <div class="tree-child"><div class="tree-child-line"></div><div class="tree-box"><div class="name">Nina Russo</div><div class="rank">Bronze</div><div class="earn">$3,400</div></div></div>
+                  </div>
+                </div>
+                <div class="tree-child">
+                  <div class="tree-child-line"></div>
+                  <div class="tree-box">
+                    <div class="name">James Okafor</div><div class="rank">Platinum</div><div class="earn">$51,200</div>
+                  </div>
+                  <div class="tree-connector"></div>
+                  <div class="tree-children">
+                    <div class="tree-child"><div class="tree-child-line"></div><div class="tree-box"><div class="name">Mei Zhang</div><div class="rank">Gold</div><div class="earn">$19,100</div></div></div>
+                    <div class="tree-child"><div class="tree-child-line"></div><div class="tree-box"><div class="name">Carlos Vega</div><div class="rank">Silver</div><div class="earn">$7,800</div></div></div>
+                    <div class="tree-child"><div class="tree-child-line"></div><div class="tree-box"><div class="name">Dana Kim</div><div class="rank">Bronze</div><div class="earn">$2,900</div></div></div>
+                  </div>
+                </div>
+                <div class="tree-child">
+                  <div class="tree-child-line"></div>
+                  <div class="tree-box">
+                    <div class="name">Maria López</div><div class="rank">Gold</div><div class="earn">$22,700</div>
+                  </div>
+                  <div class="tree-connector"></div>
+                  <div class="tree-children">
+                    <div class="tree-child"><div class="tree-child-line"></div><div class="tree-box"><div class="name">Aisha Patel</div><div class="rank">Bronze</div><div class="earn">$1,200</div></div></div>
+                    <div class="tree-child"><div class="tree-child-line"></div><div class="tree-box"><div class="name">Tom Nguyen</div><div class="rank">Silver</div><div class="earn">$5,600</div></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+          <div class="stat-card"><div class="stat-label">Level 1</div><div class="stat-value">48</div><div class="stat-change up">Direct referrals</div></div>
+          <div class="stat-card"><div class="stat-label">Level 2</div><div class="stat-value">312</div><div class="stat-change up">+41 this month</div></div>
+          <div class="stat-card"><div class="stat-label">Level 3</div><div class="stat-value">891</div><div class="stat-change up">+78 this month</div></div>
+          <div class="stat-card"><div class="stat-label">Level 4+</div><div class="stat-value">1,596</div><div class="stat-change up">+24 this month</div></div>
+        </div>
+      </div>
+
+      <!-- NETWORK -->
+      <div id="s-network" class="section">
+        <div class="filter-row">
+          <div class="filter-btn active" onclick="filterNet('all',this)">All members</div>
+          <div class="filter-btn" onclick="filterNet('active',this)">Active</div>
+          <div class="filter-btn" onclick="filterNet('inactive',this)">Inactive</div>
+          <div class="filter-btn" onclick="filterNet('new',this)">New this month</div>
+        </div>
+        <div class="card">
+          <table id="networkTable">
+            <thead><tr><th>Name</th><th>Rank</th><th>Level</th><th>Volume</th><th>Earnings</th><th>Status</th><th>Joined</th></tr></thead>
+            <tbody id="networkBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- FINANCE -->
+      <div id="s-finance" class="section">
+        <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px;">
+          <div class="stat-card"><div class="stat-label">Available balance</div><div class="stat-value">$18,240</div><div class="stat-change up">Ready to withdraw</div></div>
+          <div class="stat-card"><div class="stat-label">Pending payout</div><div class="stat-value">$4,890</div><div class="stat-change" style="color:var(--color-text-secondary);">Processing</div></div>
+          <div class="stat-card"><div class="stat-label">Total withdrawn</div><div class="stat-value">$119,760</div><div class="stat-change up">All time</div></div>
+        </div>
+        <div class="charts-row">
+          <div class="card">
+            <div class="card-title">Monthly payout history</div>
+            <div style="display:flex;gap:16px;margin-bottom:12px;">
+              <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary);"><span style="width:10px;height:10px;border-radius:2px;background:#7F77DD;display:inline-block;"></span>Earnings</span>
+              <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary);"><span style="width:10px;height:10px;border-radius:2px;background:#1D9E75;display:inline-block;"></span>Withdrawn</span>
+            </div>
+            <div style="position:relative;width:100%;height:200px;">
+              <canvas id="financeChart" role="img" aria-label="Monthly earnings vs withdrawals bar chart">Monthly earnings vs withdrawals.</canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Rank progress</div>
+            <div style="margin-bottom:10px;font-size:12px;color:var(--color-text-secondary);">Diamond → Ambassador</div>
+            <div style="margin-bottom:16px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>Personal volume</span><span style="font-weight:500;">$24,800 / $30,000</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width:82.6%"></div></div>
+            </div>
+            <div style="margin-bottom:16px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>Group volume</span><span style="font-weight:500;">$389K / $500K</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width:77.8%"></div></div>
+            </div>
+            <div style="margin-bottom:16px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>Active legs</span><span style="font-weight:500;">3 / 5</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
+            </div>
+            <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="sendPrompt('How do I qualify for Ambassador rank faster?') ">How to qualify faster ↗</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRANSACTIONS -->
+      <div id="s-transactions" class="section">
+        <div class="filter-row">
+          <div class="filter-btn active" onclick="filterTx('all',this)">All</div>
+          <div class="filter-btn" onclick="filterTx('commission',this)">Commissions</div>
+          <div class="filter-btn" onclick="filterTx('bonus',this)">Bonuses</div>
+          <div class="filter-btn" onclick="filterTx('withdrawal',this)">Withdrawals</div>
+        </div>
+        <div class="card">
+          <table id="txTable">
+            <thead><tr><th>ID</th><th>Type</th><th>From / Note</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+            <tbody id="txBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- INCOME -->
+      <div id="s-income" class="section">
+        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px;">
+          <div class="stat-card"><div class="stat-label">This month</div><div class="stat-value">$21,480</div><div class="stat-change up">+18.2%</div></div>
+          <div class="stat-card"><div class="stat-label">This quarter</div><div class="stat-value">$58,920</div><div class="stat-change up">+24.7%</div></div>
+          <div class="stat-card"><div class="stat-label">This year</div><div class="stat-value">$142,890</div><div class="stat-change up">+31.2%</div></div>
+          <div class="stat-card"><div class="stat-label">All time</div><div class="stat-value">$384,200</div><div class="stat-change up">Since 2021</div></div>
+        </div>
+        <div class="charts-row">
+          <div class="card">
+            <div class="card-title">Income breakdown — June 2026</div>
+            <div class="income-row">
+              <div class="income-left"><div class="income-icon" style="background:#EEEDFE;"><i class="ti ti-users" style="color:#534AB7;font-size:15px" aria-hidden="true"></i></div><div><div class="income-name">Direct commissions</div><div class="income-desc">48 active referrals</div></div></div>
+              <div class="income-amount">$8,160</div>
+            </div>
+            <div class="income-row">
+              <div class="income-left"><div class="income-icon" style="background:#E1F5EE;"><i class="ti ti-network" style="color:#0F6E56;font-size:15px" aria-hidden="true"></i></div><div><div class="income-name">Level 2 override</div><div class="income-desc">312 members</div></div></div>
+              <div class="income-amount">$6,240</div>
+            </div>
+            <div class="income-row">
+              <div class="income-left"><div class="income-icon" style="background:#FAEEDA;"><i class="ti ti-award" style="color:#854F0B;font-size:15px" aria-hidden="true"></i></div><div><div class="income-name">Leadership bonus</div><div class="income-desc">Diamond rank</div></div></div>
+              <div class="income-amount">$4,200</div>
+            </div>
+            <div class="income-row">
+              <div class="income-left"><div class="income-icon" style="background:#FAECE7;"><i class="ti ti-star" style="color:#993C1D;font-size:15px" aria-hidden="true"></i></div><div><div class="income-name">Pool bonus</div><div class="income-desc">Monthly pool</div></div></div>
+              <div class="income-amount">$1,880</div>
+            </div>
+            <div class="income-row">
+              <div class="income-left"><div class="income-icon" style="background:#E6F1FB;"><i class="ti ti-receipt" style="color:#185FA5;font-size:15px" aria-hidden="true"></i></div><div><div class="income-name">Residual income</div><div class="income-desc">Deep levels 3–7</div></div></div>
+              <div class="income-amount">$1,000</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">6-month trend</div>
+            <div style="position:relative;width:100%;height:240px;">
+              <canvas id="incomeChart" role="img" aria-label="Line chart showing income trend over 6 months">Income trend Jan–Jun 2026.</canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REFERRAL -->
+      <div id="s-referral" class="section">
+        <div class="ref-box">
+          <div style="font-size:13px;font-weight:500;color:#534AB7;margin-bottom:4px;">Your referral link</div>
+          <div class="ref-url">https://elitemlm.com/join?ref=ALEX-RIVERA-DIA-7841</div>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button class="btn" onclick="copyRef()"><i class="ti ti-copy" aria-hidden="true"></i> Copy link</button>
+            <button class="btn"><i class="ti ti-share" aria-hidden="true"></i> Share</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+          <div class="stat-card"><div class="stat-label">Total clicks</div><div class="stat-value">4,821</div><div class="stat-change up">+340 this week</div></div>
+          <div class="stat-card"><div class="stat-label">Conversions</div><div class="stat-value">48</div><div class="stat-change up">0.99% conv. rate</div></div>
+          <div class="stat-card"><div class="stat-label">Earned from referrals</div><div class="stat-value">$8,160</div><div class="stat-change up">This month</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Referral performance — last 30 days</div>
+          <div style="position:relative;width:100%;height:200px;">
+            <canvas id="refChart" role="img" aria-label="Line chart of daily referral clicks over 30 days">Daily referral clicks last 30 days.</canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORTS -->
+      <div id="s-reports" class="section">
+        <div class="charts-row" style="margin-bottom:14px;">
+          <div class="card">
+            <div class="card-title">Rank distribution</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+              <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary);"><span style="width:10px;height:10px;border-radius:2px;background:#7F77DD;display:inline-block;"></span>Diamond 1</span>
+              <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary);"><span style="width:10px;height:10px;border-radius:2px;background:#EF9F27;display:inline-block;"></span>Platinum 4</span>
+              <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary);"><span style="width:10px;height:10px;border-radius:2px;background:#1D9E75;display:inline-block;"></span>Gold 18</span>
+              <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary);"><span style="width:10px;height:10px;border-radius:2px;background:#378ADD;display:inline-block;"></span>Silver 91</span>
+              <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary);"><span style="width:10px;height:10px;border-radius:2px;background:#888780;display:inline-block;"></span>Bronze 733</span>
+            </div>
+            <div style="position:relative;width:100%;height:200px;">
+              <canvas id="rankChart" role="img" aria-label="Horizontal bar chart of rank distribution across network">Rank distribution: Diamond 1, Platinum 4, Gold 18, Silver 91, Bronze 733.</canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Growth rate</div>
+            <div style="position:relative;width:100%;height:200px;">
+              <canvas id="growthChart" role="img" aria-label="Line chart showing network growth rate month over month">Network growth rate month over month.</canvas>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div class="card-title" style="margin-bottom:0;">Top performers</div>
+            <button class="btn" onclick="sendPrompt('Export top performer report as CSV') ">Export ↗</button>
+          </div>
+          <table>
+            <thead><tr><th>#</th><th>Name</th><th>Rank</th><th>Monthly vol.</th><th>Team size</th><th>Trend</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>James Okafor</td><td><span class="pill pill-purple">Platinum</span></td><td>$91,200</td><td>428</td><td style="color:#3B6D11;">↑ 24%</td></tr>
+              <tr><td>2</td><td>Sarah Chen</td><td><span class="pill pill-amber">Gold</span></td><td>$48,400</td><td>219</td><td style="color:#3B6D11;">↑ 18%</td></tr>
+              <tr><td>3</td><td>Mei Zhang</td><td><span class="pill pill-amber">Gold</span></td><td>$37,100</td><td>183</td><td style="color:#3B6D11;">↑ 31%</td></tr>
+              <tr><td>4</td><td>Maria López</td><td><span class="pill pill-amber">Gold</span></td><td>$29,700</td><td>147</td><td style="color:#3B6D11;">↑ 9%</td></tr>
+              <tr><td>5</td><td>Carlos Vega</td><td><span class="pill pill-blue">Silver</span></td><td>$18,900</td><td>94</td><td style="color:#A32D2D;">↓ 3%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const sections = ['overview','genealogy','network','finance','transactions','income','referral','reports'];
+const titles = {overview:'Overview',genealogy:'Genealogy Tree',network:'Network',finance:'Finance',transactions:'Transactions',income:'Income',referral:'Referral',reports:'Reports'};
+const subs = {overview:'Performance summary · June 2026',genealogy:'Your downline structure',network:'All network members',finance:'Balance & payouts',transactions:'Transaction history',income:'Earnings breakdown',referral:'Your referral link & stats',reports:'Analytics & top performers'};
+
+function nav(id, el) {
+  sections.forEach(s => {
+    document.getElementById('s-'+s).classList.remove('active');
+    document.getElementById('n-'+s).classList.remove('active');
+  });
+  document.getElementById('s-'+id).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('section-title').textContent = titles[id];
+  document.getElementById('section-sub').textContent = subs[id];
+}
+
+const netData = [
+  {name:'Sarah Chen',rank:'Gold',level:'L1',vol:'$48,400',earn:'$28,400',status:'active',joined:'Jan 2024'},
+  {name:'James Okafor',rank:'Platinum',level:'L1',vol:'$91,200',earn:'$51,200',status:'active',joined:'Mar 2023'},
+  {name:'Maria López',rank:'Gold',level:'L1',vol:'$29,700',earn:'$22,700',status:'active',joined:'Feb 2024'},
+  {name:'Mei Zhang',rank:'Gold',level:'L2',vol:'$37,100',earn:'$19,100',status:'active',joined:'May 2024'},
+  {name:'Leo Park',rank:'Silver',level:'L2',vol:'$14,800',earn:'$8,200',status:'active',joined:'Jun 2024'},
+  {name:'Carlos Vega',rank:'Silver',level:'L2',vol:'$12,400',earn:'$7,800',status:'inactive',joined:'Apr 2024'},
+  {name:'Tom Nguyen',rank:'Silver',level:'L2',vol:'$9,200',earn:'$5,600',status:'active',joined:'Jul 2024'},
+  {name:'Nina Russo',rank:'Bronze',level:'L2',vol:'$5,100',earn:'$3,400',status:'inactive',joined:'Sep 2024'},
+  {name:'Dana Kim',rank:'Bronze',level:'L3',vol:'$4,600',earn:'$2,900',status:'active',joined:'Oct 2024'},
+  {name:'Aisha Patel',rank:'Bronze',level:'L1',vol:'$1,800',earn:'$1,200',status:'new',joined:'Jun 2026'},
+];
+const rankClass = {Gold:'pill-amber',Platinum:'pill-purple',Silver:'pill-blue',Bronze:'pill-green'};
+const statusClass = {active:'pill-green',inactive:'pill-red',new:'pill-blue'};
+
+function renderNet(data) {
+  document.getElementById('networkBody').innerHTML = data.map(m=>`<tr><td>${m.name}</td><td><span class="pill ${rankClass[m.rank]}">${m.rank}</span></td><td>${m.level}</td><td>${m.vol}</td><td>${m.earn}</td><td><span class="pill ${statusClass[m.status]}">${m.status}</span></td><td>${m.joined}</td></tr>`).join('');
+}
+renderNet(netData);
+
+let activeNetFilter = 'all';
+function filterNet(f, el) {
+  document.querySelectorAll('#s-network .filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const filtered = f==='all'?netData:netData.filter(m=>m.status===f);
+  renderNet(filtered);
+}
+
+const txData = [
+  {id:'TX-9841',type:'commission',note:'Sarah Chen L1',amount:'+$680',date:'Jun 22',status:'paid'},
+  {id:'TX-9840',type:'bonus',note:'Leadership bonus',amount:'+$1,400',date:'Jun 21',status:'paid'},
+  {id:'TX-9839',type:'commission',note:'James Okafor L1',amount:'+$2,100',date:'Jun 21',status:'paid'},
+  {id:'TX-9838',type:'withdrawal',note:'Bank transfer',amount:'-$5,000',date:'Jun 20',status:'processed'},
+  {id:'TX-9837',type:'commission',note:'Mei Zhang L2',amount:'+$480',date:'Jun 20',status:'paid'},
+  {id:'TX-9836',type:'commission',note:'Pool bonus payout',amount:'+$940',date:'Jun 19',status:'paid'},
+  {id:'TX-9835',type:'bonus',note:'Rank bonus',amount:'+$500',date:'Jun 18',status:'paid'},
+  {id:'TX-9834',type:'withdrawal',note:'Bank transfer',amount:'-$3,500',date:'Jun 15',status:'processed'},
+  {id:'TX-9833',type:'commission',note:'Tom Nguyen L2',amount:'+$220',date:'Jun 14',status:'pending'},
+  {id:'TX-9832',type:'commission',note:'Leo Park L2',amount:'+$310',date:'Jun 13',status:'paid'},
+];
+const txTypeClass = {commission:'pill-purple',bonus:'pill-amber',withdrawal:'pill-blue'};
+const txStatusClass = {paid:'pill-green',processed:'pill-blue',pending:'pill-amber'};
+
+function renderTx(data) {
+  document.getElementById('txBody').innerHTML = data.map(t=>`<tr><td style="font-family:var(--font-mono);font-size:11px;">${t.id}</td><td><span class="pill ${txTypeClass[t.type]}">${t.type}</span></td><td>${t.note}</td><td style="font-weight:500;color:${t.amount.startsWith('+')? '#3B6D11':'#A32D2D'}">${t.amount}</td><td>${t.date}</td><td><span class="pill ${txStatusClass[t.status]}">${t.status}</span></td></tr>`).join('');
+}
+renderTx(txData);
+
+function filterTx(f, el) {
+  document.querySelectorAll('#s-transactions .filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const filtered = f==='all'?txData:txData.filter(t=>t.type===f);
+  renderTx(filtered);
+}
+
+function copyRef() {
+  const txt = 'https://elitemlm.com/join?ref=ALEX-RIVERA-DIA-7841';
+  navigator.clipboard.writeText(txt).then(()=>{ const b=event.target.closest('button'); b.textContent='Copied!'; setTimeout(()=>{b.innerHTML='<i class="ti ti-copy" aria-hidden="true"></i> Copy link';},2000); });
+}
+
+const months = ['Jan','Feb','Mar','Apr','May','Jun'];
+
+new Chart(document.getElementById('earningsChart'), {
+  type: 'bar',
+  data: {
+    labels: months,
+    datasets: [
+      {label:'Commissions', data:[14200,16800,15400,18100,19800,21480], backgroundColor:'#7F77DD', borderRadius:4},
+      {label:'Bonuses', data:[3200,4100,3800,4900,5200,6800], backgroundColor:'#1D9E75', borderRadius:4}
+    ]
+  },
+  options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#888',font:{size:11}}},y:{grid:{color:'rgba(128,128,128,0.1)'},ticks:{color:'#888',font:{size:11},callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}}
+});
+
+new Chart(document.getElementById('pieChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Direct','Level 2','Level 3+','Bonus'],
+    datasets: [{data:[38,29,21,12], backgroundColor:['#7F77DD','#1D9E75','#EF9F27','#D4537E'], borderWidth:0}]
+  },
+  options: {responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false}}}
+});
+
+new Chart(document.getElementById('financeChart'), {
+  type: 'bar',
+  data: {
+    labels: months,
+    datasets: [
+      {label:'Earnings', data:[17400,20900,19200,23000,25000,28280], backgroundColor:'#7F77DD', borderRadius:4},
+      {label:'Withdrawn', data:[12000,15000,14000,18000,20000,24000], backgroundColor:'#1D9E75', borderRadius:4}
+    ]
+  },
+  options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#888',font:{size:11}}},y:{grid:{color:'rgba(128,128,128,0.1)'},ticks:{color:'#888',font:{size:11},callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}}
+});
+
+new Chart(document.getElementById('incomeChart'), {
+  type: 'line',
+  data: {
+    labels: months,
+    datasets: [{label:'Income', data:[17400,20900,19200,23000,25000,28280], borderColor:'#7F77DD', backgroundColor:'rgba(127,119,221,0.1)', fill:true, tension:0.4, borderWidth:2, pointRadius:3, pointBackgroundColor:'#7F77DD'}]
+  },
+  options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#888',font:{size:11}}},y:{grid:{color:'rgba(128,128,128,0.1)'},ticks:{color:'#888',font:{size:11},callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}}
+});
+
+const refDays = Array.from({length:30},(_,i)=>Math.floor(90+Math.random()*180));
+new Chart(document.getElementById('refChart'), {
+  type: 'line',
+  data: {
+    labels: Array.from({length:30},(_,i)=>`Jun ${i+1}`),
+    datasets: [{label:'Clicks', data:refDays, borderColor:'#7F77DD', backgroundColor:'rgba(127,119,221,0.1)', fill:true, tension:0.4, borderWidth:2, pointRadius:0}]
+  },
+  options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#888',font:{size:11},maxTicksLimit:6}},y:{grid:{color:'rgba(128,128,128,0.1)'},ticks:{color:'#888',font:{size:11}}}}}
+});
+
+new Chart(document.getElementById('rankChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Diamond','Platinum','Gold','Silver','Bronze'],
+    datasets: [{label:'Members', data:[1,4,18,91,733], backgroundColor:['#7F77DD','#EF9F27','#1D9E75','#378ADD','#888780'], borderRadius:4}]
+  },
+  options: {responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(128,128,128,0.1)'},ticks:{color:'#888',font:{size:11}}},y:{grid:{display:false},ticks:{color:'#888',font:{size:11}}}}}
+});
+
+new Chart(document.getElementById('growthChart'), {
+  type: 'line',
+  data: {
+    labels: months,
+    datasets: [{label:'Growth %', data:[8.2,11.4,9.1,14.6,16.2,18.2], borderColor:'#1D9E75', backgroundColor:'rgba(29,158,117,0.1)', fill:true, tension:0.4, borderWidth:2, pointRadius:3, pointBackgroundColor:'#1D9E75'}]
+  },
+  options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#888',font:{size:11}}},y:{grid:{color:'rgba(128,128,128,0.1)'},ticks:{color:'#888',font:{size:11},callback:v=>v+'%'}}}}
+});
+</script>
+<script>
+
+/* ================= INVEST ================= */
+
+function investNow(){
+
+let amount = prompt("Enter Investment Amount (USD):","100");
+
+if(amount && !isNaN(amount) && parseFloat(amount) > 0){
+
+alert(
+"✅ Investment Request Submitted Successfully!\n\n" +
+"Amount: $" + amount +
+"\n\nAdmin will review your request shortly."
+);
+
+}else{
+
+alert("⚠️ Please enter a valid amount.");
+
+}
+
+}
+
+/* ================= WITHDRAW ================= */
+
+function withdrawNow(){
+
+let amount = prompt("Enter Withdrawal Amount (USD):","50");
+
+if(amount && !isNaN(amount) && parseFloat(amount) > 0){
+
+alert(
+"✅ Withdrawal Request Submitted!\n\n" +
+"Amount: $" + amount +
+"\n\nProcessing Time: 24 Hours"
+);
+
+}else{
+
+alert("⚠️ Invalid amount entered.");
+
+}
+
+}
+
+/* ================= REFERRAL ================= */
+
+function copyReferral(){
+
+const referralLink =
+"https://livelinemeta.web.app/register?ref=LM784259";
+
+navigator.clipboard.writeText(referralLink);
+
+alert(
+"🔗 Referral Link Copied Successfully!\n\n" +
+referralLink
+);
+
+}
+
+/* ================= TEAM ================= */
+
+function showTeam(){
+
+alert(
+"👥 TEAM DETAILS\n\n" +
+"Level 1 Members: 8\n" +
+"Level 2 Members: 15\n" +
+"Total Team Income: $685\n\n" +
+"Referral Commission: 10%"
+);
+
+}
+
+/* ================= HISTORY ================= */
+
+function showHistory(){
+
+alert(
+"📜 RECENT HISTORY\n\n" +
+"• +$500 Investment\n" +
+"• +$120 ROI Bonus\n" +
+"• +$85 Referral Income\n" +
+"• -$200 Withdrawal Pending"
+);
+
+}
+
+/* ================= PROFILE ================= */
+
+function showProfile(){
+
+alert(
+"👤 PROFILE DETAILS\n\n" +
+"Name: Rahim Khan\n" +
+"Email: rahim@example.com\n" +
+"Country: Bangladesh\n" +
+"Membership: Premium\n" +
+"Monthly ROI: 15-20%"
+);
+
+}
+
+/* ================= SUPPORT ================= */
+
+function showSupport(){
+
+alert(
+"🛟 SUPPORT CENTER\n\n" +
+"Email: support@livelinemeta.com\n" +
+"Telegram: @livelinemeta\n" +
+"Support Time: 24/7"
+);
+
+}
+
+/* ================= LOGOUT ================= */
+
+function logout(){
+
+if(confirm("Are you sure you want to logout?")){
+
+window.location.href = "login.html";
+
+}
+
+}
+
+/* ================= LOAD DATA ================= */
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+document.getElementById("userName").innerText =
+"Rahim Khan";
+
+document.getElementById("profileUserName").innerText =
+"Rahim Khan";
+
+document.getElementById("balance").innerText =
+"$2,845.75";
+
+});
+
+</script>
+
+
+</body>
+</html>

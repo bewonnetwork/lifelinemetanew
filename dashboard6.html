@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NexaVault — Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+  /* ── TOKENS ── */
+  :root {
+    --bg:        #0a0d14;
+    --surface:   #111520;
+    --surface2:  #181d2e;
+    --border:    #1f2740;
+    --accent:    #6c63ff;
+    --accent2:   #00e5c4;
+    --warn:      #f5a623;
+    --danger:    #ff4d6d;
+    --text:      #e8eaf0;
+    --muted:     #6b7399;
+    --font:      'Space Grotesk', sans-serif;
+    --mono:      'Space Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 14px;
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 220px;
+    min-width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 0;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    padding: 0 20px 28px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .logo span {
+    font-family: var(--mono);
+    font-size: 17px;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+  }
+  .logo sub { font-size: 9px; color: var(--muted); display: block; font-family: var(--font); -webkit-text-fill-color: var(--muted); margin-top: 2px; letter-spacing: 2px; text-transform: uppercase; }
+
+  .nav-section { margin-bottom: 8px; }
+  .nav-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); padding: 8px 20px 4px; }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 20px;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 13.5px;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+    transition: all .18s;
+    user-select: none;
+  }
+  .nav-item:hover { color: var(--text); background: var(--surface2); }
+  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(108,99,255,.08); }
+  .nav-item .icon { font-size: 15px; width: 18px; text-align: center; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .user-chip {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; color: #fff; flex-shrink: 0;
+  }
+  .user-meta .name { font-weight: 600; font-size: 13px; }
+  .user-meta .id   { font-size: 10px; color: var(--muted); font-family: var(--mono); }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: 220px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky; top: 0; z-index: 90;
+  }
+  .topbar-title { font-size: 15px; font-weight: 600; }
+  .topbar-right { display: flex; gap: 10px; align-items: center; }
+
+  .badge {
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+  .badge.warn { background: var(--warn); }
+  .badge.success { background: #22c55e; }
+
+  .btn {
+    padding: 7px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 600;
+    transition: opacity .15s, transform .1s;
+  }
+  .btn:hover { opacity: .88; }
+  .btn:active { transform: scale(.97); }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  .btn-success { background: var(--accent2); color: #0a0d14; }
+  .btn-sm { padding: 5px 12px; font-size: 12px; }
+
+  /* ── CONTENT ── */
+  .content {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* ── STAT CARDS ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .stat-card:hover { border-color: var(--accent); }
+  .stat-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .stat-card:hover::before { opacity: 1; }
+
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 8px; }
+  .stat-value { font-family: var(--mono); font-size: 22px; font-weight: 700; line-height: 1; }
+  .stat-value.green { color: var(--accent2); }
+  .stat-value.purple { color: var(--accent); }
+  .stat-value.warn { color: var(--warn); }
+  .stat-sub { font-size: 11px; color: var(--muted); margin-top: 6px; }
+  .stat-icon { position: absolute; right: 16px; top: 16px; font-size: 20px; opacity: .18; }
+
+  /* ── PANELS ── */
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .panel-head {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 13px; font-weight: 600;
+  }
+  .panel-body { padding: 18px 20px; }
+
+  /* ── WALLET ── */
+  .wallet-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .wallet-row:last-child { border-bottom: none; }
+  .w-label { color: var(--muted); font-size: 12.5px; }
+  .w-val { font-family: var(--mono); font-weight: 700; font-size: 14px; }
+
+  /* ── BINARY TREE ── */
+  .tree-wrap { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .tree-row { display: flex; align-items: flex-start; justify-content: center; gap: 0; position: relative; }
+
+  .tree-node {
+    display: flex; flex-direction: column; align-items: center;
+    position: relative;
+  }
+  .node-box {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 11px;
+    text-align: center;
+    min-width: 80px;
+    position: relative;
+    z-index: 2;
+    transition: border-color .2s;
+  }
+  .node-box.root { border-color: var(--accent); background: rgba(108,99,255,.1); }
+  .node-box.active-node { border-color: var(--accent2); }
+  .node-box .nid { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+  .node-box .nname { font-weight: 600; font-size: 12px; }
+  .node-box .nlevel { font-size: 9px; color: var(--accent2); margin-top: 2px; }
+
+  .tree-connector { display: flex; justify-content: center; }
+  .v-line { width: 2px; height: 22px; background: var(--border); }
+  .h-wrap { display: flex; align-items: flex-start; }
+  .h-line { height: 2px; width: 60px; background: var(--border); margin-top: 22px; }
+  .children-row { display: flex; gap: 20px; }
+
+  .leg-stats {
+    display: flex; gap: 20px; margin-top: 14px;
+  }
+  .leg-box {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .leg-box .leg-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .leg-box .leg-count { font-family: var(--mono); font-size: 20px; font-weight: 700; margin: 4px 0; }
+  .leg-box .leg-count.left { color: var(--accent); }
+  .leg-box .leg-count.right { color: var(--accent2); }
+  .leg-box .leg-sub { font-size: 10px; color: var(--muted); }
+
+  /* ── RANK ── */
+  .rank-progress { padding: 4px 0; }
+  .rank-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .rank-name { font-weight: 700; font-size: 13px; }
+  .rank-reward { font-family: var(--mono); font-size: 13px; color: var(--warn); }
+  .progress-track {
+    height: 8px; background: var(--surface2); border-radius: 20px; overflow: hidden; margin-bottom: 10px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 20px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width .6s ease;
+  }
+  .rank-desc { font-size: 11px; color: var(--muted); }
+
+  .rank-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .rank-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .rank-badge.achieved { border-color: var(--accent2); color: var(--accent2); background: rgba(0,229,196,.07); }
+  .rank-badge.current { border-color: var(--warn); color: var(--warn); background: rgba(245,166,35,.07); }
+
+  /* ── TRANSACTIONS ── */
+  .tx-table { width: 100%; border-collapse: collapse; }
+  .tx-table th { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+  .tx-table td { padding: 10px 10px; font-size: 12.5px; border-bottom: 1px solid var(--border); }
+  .tx-table tr:last-child td { border-bottom: none; }
+  .tx-table tr:hover td { background: var(--surface2); }
+  .tx-type { display: inline-flex; align-items: center; gap: 5px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot.green { background: var(--accent2); }
+  .dot.purple { background: var(--accent); }
+  .dot.warn { background: var(--warn); }
+  .dot.red { background: var(--danger); }
+  .tx-amount { font-family: var(--mono); font-weight: 700; }
+  .tx-amount.credit { color: var(--accent2); }
+  .tx-amount.debit { color: var(--danger); }
+
+  /* ── REFERRAL ── */
+  .ref-link-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .ref-link {
+    flex: 1;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ref-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .ref-stat {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .ref-stat .rv { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--accent); }
+  .ref-stat .rl { font-size: 10px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ── ROI PLAN ── */
+  .roi-card {
+    background: linear-gradient(135deg, rgba(108,99,255,.12), rgba(0,229,196,.06));
+    border: 1px solid rgba(108,99,255,.3);
+    border-radius: 14px;
+    padding: 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .roi-left .roi-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; }
+  .roi-left .roi-amount { font-family: var(--mono); font-size: 28px; font-weight: 700; color: var(--accent2); }
+  .roi-left .roi-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .roi-right { text-align: right; }
+  .roi-right .roi-pct { font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--accent); }
+  .roi-right .roi-duration { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .countdown-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .countdown-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 16px;
+    text-align: center; min-width: 70px;
+  }
+  .countdown-box .cv { font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--text); }
+  .countdown-box .cl { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+  /* ── WITHDRAWAL ── */
+  .withdraw-info { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; }
+  .w-info-box {
+    flex: 1;
+    min-width: 120px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .w-info-box .wv { font-family: var(--mono); font-size: 17px; font-weight: 700; }
+  .w-info-box .wl { font-size: 10px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+
+  .pie-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed; bottom: 28px; right: 28px;
+    background: var(--surface2);
+    border: 1px solid var(--accent2);
+    color: var(--accent2);
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all .3s;
+    z-index: 999;
+    pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.6);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    width: 360px;
+    max-width: 95vw;
+  }
+  .modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+  .input-group { margin-bottom: 14px; }
+  .input-group label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+  .input-group input, .input-group select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 13px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .input-group input:focus, .input-group select:focus { border-color: var(--accent); }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .modal-actions .btn { flex: 1; }
+
+  /* ── CANVAS PIE ── */
+  .pie-wrap { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  canvas#pie { flex-shrink: 0; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ── PAGES ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .sidebar { width: 60px; min-width: 60px; }
+    .logo sub, .nav-label, .nav-item span, .user-meta { display: none; }
+    .nav-item { justify-content: center; padding: 12px; border-left: none; border-bottom: 3px solid transparent; }
+    .nav-item.active { border-bottom-color: var(--accent); border-left: none; }
+    .logo { padding: 0 10px 16px; text-align: center; }
+    .main { margin-left: 60px; }
+    .panels { grid-template-columns: 1fr; }
+    .sidebar-footer { padding: 10px; }
+    .user-chip { justify-content: center; }
+  }
+  @media (max-width: 600px) {
+    .content { padding: 14px; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .topbar { padding: 12px 14px; }
+    .roi-card { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <span>NexaVault</span>
+    <sub>MEMBER PORTAL</sub>
+  </div>
+
+  <nav>
+    <div class="nav-section">
+      <div class="nav-label">Main</div>
+      <div class="nav-item active" onclick="navigate('dashboard', this)">
+        <span class="icon">⬡</span><span>Dashboard</span>
+      </div>
+      <div class="nav-item" onclick="navigate('network', this)">
+        <span class="icon">⬡</span><span>My Network</span>
+      </div>
+      <div class="nav-item" onclick="navigate('earnings', this)">
+        <span class="icon">⬡</span><span>Earnings</span>
+      </div>
+      <div class="nav-item" onclick="navigate('investment', this)">
+        <span class="icon">⬡</span><span>Investment</span>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Finance</div>
+      <div class="nav-item" onclick="navigate('withdraw', this)">
+        <span class="icon">⬡</span><span>Withdraw</span>
+      </div>
+      <div class="nav-item" onclick="navigate('history', this)">
+        <span class="icon">⬡</span><span>History</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="avatar">AK</div>
+      <div class="user-meta">
+        <div class="name">Alex Kumar</div>
+        <div class="id">#NV-00482</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="page-title">Dashboard</div>
+    <div class="topbar-right">
+      <span class="badge warn">★ 2 Star</span>
+      <button class="btn btn-primary btn-sm" onclick="openModal('depositModal')">+ Deposit</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ DASHBOARD PAGE ══ -->
+    <div class="page active" id="page-dashboard">
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Balance</div>
+          <div class="stat-value green">$1,482.50</div>
+          <div class="stat-sub">Reserve: $5.00</div>
+          <div class="stat-icon">💰</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Withdrawable</div>
+          <div class="stat-value purple">$741.25</div>
+          <div class="stat-sub">50% of earnings</div>
+          <div class="stat-icon">💸</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Direct Referrals</div>
+          <div class="stat-value warn">18</div>
+          <div class="stat-sub">$72 earned</div>
+          <div class="stat-icon">👥</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Matching Bonus</div>
+          <div class="stat-value green">$320.00</div>
+          <div class="stat-sub">5% on pairs</div>
+          <div class="stat-icon">⚡</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Cashback</div>
+          <div class="stat-value purple">$9.00</div>
+          <div class="stat-sub">3% on charge</div>
+          <div class="stat-icon">🔁</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">ROI Earned</div>
+          <div class="stat-value green">$156.00</div>
+          <div class="stat-sub">12-15% p.a.</div>
+          <div class="stat-icon">📈</div>
+        </div>
+      </div>
+
+      <!-- Panels Row 1 -->
+      <div class="panels">
+        <!-- Wallet Breakdown -->
+        <div class="panel">
+          <div class="panel-head">
+            Wallet Breakdown
+            <button class="btn btn-outline btn-sm" onclick="openModal('withdrawModal')">Withdraw</button>
+          </div>
+          <div class="panel-body">
+            <div class="wallet-row">
+              <span class="w-label">Main Wallet</span>
+              <span class="w-val" style="color:var(--accent2)">$741.25</span>
+            </div>
+            <div class="wallet-row">
+              <span class="w-label">Reinvestment Wallet (20%)</span>
+              <span class="w-val">$296.50</span>
+            </div>
+            <div class="wallet-row">
+              <span class="w-label">Reserve Fund (10%)</span>
+              <span class="w-val">$148.25</span>
+            </div>
+            <div class="wallet-row">
+              <span class="w-label">Club Bonus Pool (10%)</span>
+              <span class="w-val">$148.25</span>
+            </div>
+            <div class="wallet-row">
+              <span class="w-label">Maintenance Fund (5%)</span>
+              <span class="w-val">$74.12</span>
+            </div>
+            <div class="wallet-row">
+              <span class="w-label">Rank & Leadership (5%)</span>
+              <span class="w-val">$74.13</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Referral -->
+        <div class="panel">
+          <div class="panel-head">Referral Link</div>
+          <div class="panel-body">
+            <div class="ref-link-box">
+              <span class="ref-link" id="refLink">https://nexavault.io/ref/NV-00482</span>
+              <button class="btn btn-outline btn-sm" onclick="copyRef()">Copy</button>
+            </div>
+            <div class="ref-stats">
+              <div class="ref-stat">
+                <div class="rv">18</div>
+                <div class="rl">Direct</div>
+              </div>
+              <div class="ref-stat">
+                <div class="rv" style="color:var(--accent2)">$72</div>
+                <div class="rl">Earned</div>
+              </div>
+              <div class="ref-stat">
+                <div class="rv" style="color:var(--warn)">347</div>
+                <div class="rl">Team Size</div>
+              </div>
+              <div class="ref-stat">
+                <div class="rv" style="color:var(--accent)">$4</div>
+                <div class="rl">Per Referral</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Transactions -->
+      <div class="panel">
+        <div class="panel-head">Recent Transactions <span class="badge">Live</span></div>
+        <div class="panel-body" style="padding:0">
+          <table class="tx-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="txBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ NETWORK PAGE ══ -->
+    <div class="page" id="page-network">
+      <div class="panels">
+        <!-- Binary Tree -->
+        <div class="panel">
+          <div class="panel-head">Binary Tree (Live)</div>
+          <div class="panel-body">
+            <div class="tree-wrap">
+              <!-- Root -->
+              <div class="tree-node">
+                <div class="node-box root">
+                  <div class="nname">Alex K.</div>
+                  <div class="nid">#NV-00482</div>
+                  <div class="nlevel">YOU</div>
+                </div>
+              </div>
+              <div class="tree-connector"><div class="v-line"></div></div>
+              <!-- L2 -->
+              <div class="h-wrap">
+                <div class="tree-node">
+                  <div class="h-line"></div>
+                  <div class="tree-node">
+                    <div class="node-box active-node">
+                      <div class="nname">Priya M.</div>
+                      <div class="nid">#NV-00491</div>
+                      <div class="nlevel">LEFT • L1</div>
+                    </div>
+                  </div>
+                </div>
+                <div style="width:2px;height:22px;background:var(--border);margin-top:0"></div>
+                <div class="tree-node">
+                  <div class="h-line" style="transform:scaleX(-1)"></div>
+                  <div class="node-box active-node">
+                    <div class="nname">Sam T.</div>
+                    <div class="nid">#NV-00499</div>
+                    <div class="nlevel">RIGHT • L1</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="leg-stats">
+              <div class="leg-box">
+                <div class="leg-label">Left Leg</div>
+                <div class="leg-count left">187</div>
+                <div class="leg-sub">total IDs</div>
+              </div>
+              <div class="leg-box">
+                <div class="leg-label">Right Leg</div>
+                <div class="leg-count right">160</div>
+                <div class="leg-sub">total IDs</div>
+              </div>
+              <div class="leg-box">
+                <div class="leg-label">Pairs Made</div>
+                <div class="leg-count" style="color:var(--warn)">160</div>
+                <div class="leg-sub">matched</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rank Progress -->
+        <div class="panel">
+          <div class="panel-head">Rank Progress</div>
+          <div class="panel-body">
+            <div class="rank-progress">
+              <div class="rank-row">
+                <span class="rank-name">★★★ 3 Star (Next Target)</span>
+                <span class="rank-reward">$1,000</span>
+              </div>
+              <div class="rank-desc" style="margin-bottom:10px">Need 1000L / 1000R — Currently 187L / 160R</div>
+              <div class="progress-track">
+                <div class="progress-fill" style="width:16%"></div>
+              </div>
+              <div class="rank-desc">16% complete (160 pairs / 1000 needed)</div>
+            </div>
+
+            <div class="rank-badges">
+              <div class="rank-badge achieved">★ 1 Star ✓</div>
+              <div class="rank-badge current">★★ 2 Star ✓</div>
+              <div class="rank-badge">★★★ 3 Star</div>
+              <div class="rank-badge">★★★★ 4 Star</div>
+              <div class="rank-badge">★★★★★ 5 Star</div>
+              <div class="rank-badge">6 Star</div>
+              <div class="rank-badge">7 Star</div>
+            </div>
+
+            <div style="margin-top:20px">
+              <div class="panel-head" style="padding:0;border:none;margin-bottom:10px;font-size:12px">All Ranks</div>
+              <table class="tx-table">
+                <thead><tr><th>Rank</th><th>Required</th><th>Bonus</th></tr></thead>
+                <tbody>
+                  <tr><td>★ 1 Star</td><td>50L / 50R</td><td style="color:var(--warn);font-family:var(--mono)">$100</td></tr>
+                  <tr><td>★★ 2 Star</td><td>300L / 300R</td><td style="color:var(--warn);font-family:var(--mono)">$300</td></tr>
+                  <tr><td>★★★ 3 Star</td><td>1000L / 1000R</td><td style="color:var(--warn);font-family:var(--mono)">$1,000</td></tr>
+                  <tr><td>★★★★ 4 Star</td><td>3000L / 3000R</td><td style="color:var(--warn);font-family:var(--mono)">$3,000</td></tr>
+                  <tr><td>★★★★★ 5 Star</td><td>10000L / 10000R</td><td style="color:var(--warn);font-family:var(--mono)">$10,000</td></tr>
+                  <tr><td>6 Star</td><td>30000L / 30000R</td><td style="color:var(--warn);font-family:var(--mono)">$30,000</td></tr>
+                  <tr><td>7 Star</td><td>100000L / 100000R</td><td style="color:var(--warn);font-family:var(--mono)">$100,000</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ EARNINGS PAGE ══ -->
+    <div class="page" id="page-earnings">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Direct Referral</div>
+          <div class="stat-value purple">$72.00</div>
+          <div class="stat-sub">18 × $4</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Matching Bonus</div>
+          <div class="stat-value green">$320.00</div>
+          <div class="stat-sub">5% (capped $1000)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Cashback</div>
+          <div class="stat-value purple">$9.00</div>
+          <div class="stat-sub">3% of $300 charged</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Club Bonus</div>
+          <div class="stat-value warn">$0.00</div>
+          <div class="stat-sub">Not qualified yet</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Rank Bonus</div>
+          <div class="stat-value warn">$400.00</div>
+          <div class="stat-sub">1★ $100 + 2★ $300</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">ROI</div>
+          <div class="stat-value green">$156.00</div>
+          <div class="stat-sub">On $1,200 invested</div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:0">
+        <div class="panel-head">Club Bonus Qualification</div>
+        <div class="panel-body">
+          <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:14px">
+            <div style="flex:1;min-width:200px">
+              <div class="stat-label" style="margin-bottom:8px">Option A: 10 Direct Referrals</div>
+              <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+              <div class="rank-desc" style="margin-top:4px;color:var(--accent2)">✓ Complete (18/10)</div>
+            </div>
+            <div style="flex:1;min-width:200px">
+              <div class="stat-label" style="margin-bottom:8px">Option B: Matching from 50 IDs</div>
+              <div class="progress-track"><div class="progress-fill" style="width:69%"></div></div>
+              <div class="rank-desc" style="margin-top:4px">347 / 50 IDs — need 5 active each side</div>
+            </div>
+          </div>
+          <div class="badge success" style="font-size:12px;padding:6px 14px">✓ Club Bonus Active — Earning 4% Pool</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ INVESTMENT PAGE ══ -->
+    <div class="page" id="page-investment">
+      <div class="roi-card">
+        <div class="roi-left">
+          <div class="roi-label">Active Investment</div>
+          <div class="roi-amount">$1,200.00</div>
+          <div class="roi-sub">Capital locked until Dec 14, 2025</div>
+        </div>
+        <div class="roi-right">
+          <div class="roi-pct">12–15%</div>
+          <div class="roi-duration">Annual ROI</div>
+        </div>
+      </div>
+      <div style="margin-top:14px">
+        <div class="stat-label" style="margin-bottom:8px">Time Until Capital Unlock</div>
+        <div class="countdown-row" id="countdown">
+          <div class="countdown-box"><div class="cv" id="cd-d">--</div><div class="cl">Days</div></div>
+          <div class="countdown-box"><div class="cv" id="cd-h">--</div><div class="cl">Hrs</div></div>
+          <div class="countdown-box"><div class="cv" id="cd-m">--</div><div class="cl">Min</div></div>
+          <div class="countdown-box"><div class="cv" id="cd-s">--</div><div class="cl">Sec</div></div>
+        </div>
+      </div>
+
+      <div class="panels" style="margin-top:0">
+        <div class="panel">
+          <div class="panel-head">ROI Projections</div>
+          <div class="panel-body">
+            <table class="tx-table">
+              <thead><tr><th>Period</th><th>12% ROI</th><th>15% ROI</th></tr></thead>
+              <tbody>
+                <tr><td>1 Month</td><td style="font-family:var(--mono)">$12.00</td><td style="font-family:var(--mono);color:var(--accent2)">$15.00</td></tr>
+                <tr><td>3 Months</td><td style="font-family:var(--mono)">$36.00</td><td style="font-family:var(--mono);color:var(--accent2)">$45.00</td></tr>
+                <tr><td>6 Months</td><td style="font-family:var(--mono)">$72.00</td><td style="font-family:var(--mono);color:var(--accent2)">$90.00</td></tr>
+                <tr><td>12 Months</td><td style="font-family:var(--mono)">$144.00</td><td style="font-family:var(--mono);color:var(--accent2)">$180.00</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">Add New Investment</div>
+          <div class="panel-body">
+            <div class="input-group">
+              <label>Amount (Min. $100 USDT)</label>
+              <input type="number" placeholder="100" min="100" id="investAmount"/>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:14px">Capital withdrawable after 6 months. ROI paid monthly.</div>
+            <button class="btn btn-success" style="width:100%" onclick="invest()">Confirm Investment</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ WITHDRAW PAGE ══ -->
+    <div class="page" id="page-withdraw">
+      <div class="withdraw-info">
+        <div class="w-info-box">
+          <div class="wv" style="color:var(--accent2)">$741.25</div>
+          <div class="wl">Available</div>
+        </div>
+        <div class="w-info-box">
+          <div class="wv" style="color:var(--muted)">50%</div>
+          <div class="wl">Withdrawable</div>
+        </div>
+        <div class="w-info-box">
+          <div class="wv" style="color:var(--warn)">USDT</div>
+          <div class="wl">Currency</div>
+        </div>
+      </div>
+
+      <div class="panels">
+        <div class="panel">
+          <div class="panel-head">Withdrawal Distribution</div>
+          <div class="panel-body">
+            <div class="pie-wrap">
+              <canvas id="pie" width="130" height="130"></canvas>
+              <div>
+                <div class="pie-legend">
+                  <div class="legend-item"><div class="legend-dot" style="background:#6c63ff"></div>50% Withdrawable</div>
+                  <div class="legend-item"><div class="legend-dot" style="background:#00e5c4"></div>20% Reinvestment</div>
+                  <div class="legend-item"><div class="legend-dot" style="background:#f5a623"></div>10% Reserve</div>
+                  <div class="legend-item"><div class="legend-dot" style="background:#ff4d6d"></div>10% Club Pool</div>
+                  <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>5% Maintenance</div>
+                  <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div>5% Rank Pool</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">Request Withdrawal</div>
+          <div class="panel-body">
+            <div class="input-group">
+              <label>USDT Wallet Address</label>
+              <input type="text" placeholder="TRX... or 0x..." id="walletAddr"/>
+            </div>
+            <div class="input-group">
+              <label>Amount</label>
+              <input type="number" placeholder="Max: $741.25" max="741.25" id="withdrawAmt"/>
+            </div>
+            <div class="input-group">
+              <label>Network</label>
+              <select>
+                <option>TRC-20 (TRON)</option>
+                <option>ERC-20 (Ethereum)</option>
+                <option>BEP-20 (BSC)</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="requestWithdraw()">Request Withdrawal</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ HISTORY PAGE ══ -->
+    <div class="page" id="page-history">
+      <div class="panel">
+        <div class="panel-head">Full Transaction History</div>
+        <div class="panel-body" style="padding:0">
+          <table class="tx-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="histBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- MODALS -->
+<div class="modal-overlay" id="depositModal">
+  <div class="modal">
+    <h3>Deposit USDT</h3>
+    <div class="input-group">
+      <label>Amount (USDT)</label>
+      <input type="number" placeholder="Min. $30" id="depAmount"/>
+    </div>
+    <div class="input-group">
+      <label>Network</label>
+      <select>
+        <option>TRC-20 (TRON)</option>
+        <option>ERC-20 (Ethereum)</option>
+        <option>BEP-20 (BSC)</option>
+      </select>
+    </div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;color:var(--muted);margin-top:4px">
+      Send USDT to:<br>
+      <span style="font-family:var(--mono);color:var(--accent2);font-size:11px">TXnv8mJ...kQ92x</span>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('depositModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('depositModal');toast('Deposit submitted!')">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="withdrawModal">
+  <div class="modal">
+    <h3>Quick Withdraw</h3>
+    <div class="input-group">
+      <label>Amount</label>
+      <input type="number" placeholder="Max $741.25"/>
+    </div>
+    <div class="input-group">
+      <label>USDT Address</label>
+      <input type="text" placeholder="Your wallet address"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('withdrawModal')">Cancel</button>
+      <button class="btn btn-success" onclick="closeModal('withdrawModal');toast('Withdrawal requested!')">Withdraw</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast">✓ Copied!</div>
+
+<script>
+/* ── DATA ── */
+const txData = [
+  { type:'referral',  dot:'purple', desc:'Direct referral — #NV-00521',      date:'Jun 27, 2026', amt:'+$4.00',   credit:true,  status:'completed' },
+  { type:'matching',  dot:'green',  desc:'Matching bonus — 5 pairs',          date:'Jun 26, 2026', amt:'+$32.00',  credit:true,  status:'completed' },
+  { type:'roi',       dot:'green',  desc:'Monthly ROI distribution',          date:'Jun 20, 2026', amt:'+$13.00',  credit:true,  status:'completed' },
+  { type:'rank',      dot:'warn',   desc:'2 Star rank bonus',                 date:'Jun 15, 2026', amt:'+$300.00', credit:true,  status:'completed' },
+  { type:'withdraw',  dot:'red',    desc:'USDT withdrawal — TRC20',           date:'Jun 12, 2026', amt:'-$200.00', credit:false, status:'processed' },
+  { type:'referral',  dot:'purple', desc:'Direct referral — #NV-00508',      date:'Jun 10, 2026', amt:'+$4.00',   credit:true,  status:'completed' },
+  { type:'cashback',  dot:'purple', desc:'3% cashback on join fee',           date:'Jun 08, 2026', amt:'+$0.90',   credit:true,  status:'completed' },
+  { type:'deposit',   dot:'green',  desc:'USDT deposit — TRC20',             date:'Jun 01, 2026', amt:'+$500.00', credit:true,  status:'completed' },
+  { type:'matching',  dot:'green',  desc:'Matching bonus — 8 pairs',          date:'May 28, 2026', amt:'+$48.00',  credit:true,  status:'completed' },
+  { type:'withdraw',  dot:'red',    desc:'USDT withdrawal — TRC20',           date:'May 20, 2026', amt:'-$150.00', credit:false, status:'processed' },
+];
+
+function buildRow(tx) {
+  return `<tr>
+    <td><span class="tx-type"><span class="dot ${tx.dot}"></span>${tx.type}</span></td>
+    <td style="color:var(--muted)">${tx.desc}</td>
+    <td style="color:var(--muted)">${tx.date}</td>
+    <td class="tx-amount ${tx.credit?'credit':'debit'}">${tx.amt}</td>
+    <td><span class="badge ${tx.status==='completed'?'success':'warn'}" style="font-size:9px">${tx.status}</span></td>
+  </tr>`;
+}
+
+document.getElementById('txBody').innerHTML = txData.slice(0,5).map(buildRow).join('');
+document.getElementById('histBody').innerHTML = txData.map(buildRow).join('');
+
+/* ── NAVIGATION ── */
+const titles = { dashboard:'Dashboard', network:'My Network', earnings:'Earnings', investment:'Investment', withdraw:'Withdraw', history:'History' };
+
+function navigate(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('page-title').textContent = titles[page];
+  if (page === 'withdraw') drawPie();
+}
+
+/* ── PIE CHART ── */
+function drawPie() {
+  const canvas = document.getElementById('pie');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const data = [50, 20, 10, 10, 5, 5];
+  const colors = ['#6c63ff','#00e5c4','#f5a623','#ff4d6d','#a78bfa','#34d399'];
+  const total = data.reduce((a,b) => a+b, 0);
+  let start = -Math.PI / 2;
+  const cx = 65, cy = 65, r = 55;
+  ctx.clearRect(0, 0, 130, 130);
+  data.forEach((val, i) => {
+    const slice = (val / total) * 2 * Math.PI;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, start + slice);
+    ctx.closePath();
+    ctx.fillStyle = colors[i];
+    ctx.fill();
+    start += slice;
+  });
+  // donut hole
+  ctx.beginPath();
+  ctx.arc(cx, cy, 30, 0, 2 * Math.PI);
+  ctx.fillStyle = '#111520';
+  ctx.fill();
+}
+
+/* ── COUNTDOWN ── */
+const unlockDate = new Date('2025-12-14T00:00:00');
+function updateCountdown() {
+  const now = new Date();
+  const diff = unlockDate - now;
+  if (diff <= 0) {
+    ['cd-d','cd-h','cd-m','cd-s'].forEach(id => document.getElementById(id).textContent = '00');
+    return;
+  }
+  document.getElementById('cd-d').textContent = String(Math.floor(diff/86400000)).padStart(2,'0');
+  document.getElementById('cd-h').textContent = String(Math.floor((diff%86400000)/3600000)).padStart(2,'0');
+  document.getElementById('cd-m').textContent = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+  document.getElementById('cd-s').textContent = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+}
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+/* ── HELPERS ── */
+function toast(msg = '✓ Copied!') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function copyRef() {
+  navigator.clipboard.writeText(document.getElementById('refLink').textContent).catch(()=>{});
+  toast('✓ Referral link copied!');
+}
+
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function requestWithdraw() {
+  const addr = document.getElementById('walletAddr').value;
+  const amt  = document.getElementById('withdrawAmt').value;
+  if (!addr || !amt) { toast('⚠️ Fill in all fields'); return; }
+  toast('✓ Withdrawal request submitted!');
+}
+
+function invest() {
+  const amt = parseFloat(document.getElementById('investAmount').value);
+  if (!amt || amt < 100) { toast('⚠️ Minimum investment is $100'); return; }
+  toast(✓ Investment of $${amt} confirmed!);
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+});
+</script>
+</body>
+</html>

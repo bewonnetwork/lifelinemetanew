@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NexaVault</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg:       #ffffff;
+  --bg2:      #f4f6fa;
+  --bg3:      #ebeef5;
+  --border:   #dde2ed;
+  --blue:     #1a56ff;
+  --blue-d:   #1240d6;
+  --blue-l:   #e8eeff;
+  --blue-m:   #c0ccff;
+  --black:    #0a0c12;
+  --dark:     #1c1f2e;
+  --text:     #0a0c12;
+  --sub:      #6b7394;
+  --white:    #ffffff;
+  --success:  #0a84ff;
+  --danger:   #1a56ff;
+  --nav-h:    58px;
+  --sidebar-w:240px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+
+html, body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg2);
+  color: var(--text);
+  font-size: 14px;
+  height: 100%;
+}
+
+/* ── LAYOUT ── */
+.app { display:flex; min-height:100vh; }
+
+/* ── SIDEBAR (desktop) ── */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--black);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top:0; left:0; bottom:0;
+  z-index: 200;
+  transition: transform .25s;
+}
+
+.logo-wrap {
+  padding: 22px 20px 18px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.logo-wrap .brand {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.4px;
+}
+.logo-wrap .brand span { color: var(--blue); }
+.logo-wrap .uid {
+  font-size: 10px;
+  color: rgba(255,255,255,.35);
+  margin-top: 3px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.nav-group { padding: 10px 0; }
+.nav-section-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.25);
+  padding: 8px 20px 4px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 11px 20px;
+  color: rgba(255,255,255,.45);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all .15s;
+  user-select: none;
+}
+.nav-item svg { flex-shrink:0; opacity:.5; transition: opacity .15s; }
+.nav-item:hover { color: #fff; background: rgba(255,255,255,.05); }
+.nav-item:hover svg { opacity:.8; }
+.nav-item.active {
+  color: #fff;
+  border-left-color: var(--blue);
+  background: rgba(26,86,255,.15);
+}
+.nav-item.active svg { opacity:1; }
+
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+.user-row { display:flex; align-items:center; gap:10px; }
+.av {
+  width:36px; height:36px; border-radius:10px;
+  background: var(--blue);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:13px; color:#fff; flex-shrink:0;
+}
+.u-name { font-size:13px; font-weight:600; color:#fff; }
+.u-id   { font-size:10px; color: rgba(255,255,255,.35); margin-top:1px; }
+
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top:0; z-index:100;
+}
+.topbar-left { display:flex; align-items:center; gap:12px; }
+.menu-btn {
+  display:none;
+  background:none; border:none; cursor:pointer; padding:4px;
+  color: var(--text);
+}
+.page-title { font-size:15px; font-weight:700; color:var(--black); }
+.topbar-right { display:flex; align-items:center; gap:8px; }
+
+.chip {
+  display:inline-flex; align-items:center; gap:5px;
+  background: var(--blue-l);
+  color: var(--blue);
+  font-size:11px; font-weight:700;
+  padding:4px 10px; border-radius:20px;
+}
+.btn {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:8px 16px; border-radius:10px; border:none;
+  cursor:pointer; font-family:'Inter',sans-serif;
+  font-size:13px; font-weight:600; transition: all .15s;
+}
+.btn:active { transform:scale(.97); }
+.btn-blue { background:var(--blue); color:#fff; }
+.btn-blue:hover { background:var(--blue-d); }
+.btn-outline { background:transparent; border:1.5px solid var(--border); color:var(--text); }
+.btn-outline:hover { border-color:var(--blue); color:var(--blue); }
+.btn-sm { padding:6px 12px; font-size:12px; }
+.btn-full { width:100%; justify-content:center; }
+
+/* ── CONTENT ── */
+.content { padding:20px 24px; display:flex; flex-direction:column; gap:20px; }
+
+/* ── PAGE VISIBILITY ── */
+.page { display:none; }
+.page.active { display:contents; }
+
+/* ── SECTION HEADER ── */
+.sec-head {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:12px;
+}
+.sec-title { font-size:13px; font-weight:700; color:var(--black); }
+
+/* ── BALANCE HERO ── */
+.balance-hero {
+  background: var(--black);
+  border-radius:16px;
+  padding:22px 22px 20px;
+  position:relative; overflow:hidden;
+}
+.balance-hero::before {
+  content:'';
+  position:absolute; top:-40px; right:-40px;
+  width:160px; height:160px; border-radius:50%;
+  background: rgba(26,86,255,.18);
+  pointer-events:none;
+}
+.balance-hero::after {
+  content:'';
+  position:absolute; bottom:-50px; right:60px;
+  width:100px; height:100px; border-radius:50%;
+  background: rgba(26,86,255,.1);
+  pointer-events:none;
+}
+.bal-label { font-size:11px; color:rgba(255,255,255,.45); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+.bal-amount { font-size:34px; font-weight:800; color:#fff; letter-spacing:-1px; line-height:1; }
+.bal-sub { font-size:12px; color:rgba(255,255,255,.4); margin-top:6px; }
+.bal-actions { display:flex; gap:10px; margin-top:18px; }
+.bal-btn {
+  flex:1; padding:10px; border-radius:10px; border:none;
+  cursor:pointer; font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+  transition:all .15s;
+}
+.bal-btn-primary { background:var(--blue); color:#fff; }
+.bal-btn-primary:hover { background:var(--blue-d); }
+.bal-btn-ghost { background:rgba(255,255,255,.1); color:#fff; }
+.bal-btn-ghost:hover { background:rgba(255,255,255,.16); }
+
+/* ── STAT ROW ── */
+.stat-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.stat-card {
+  background:var(--white);
+  border:1.5px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+}
+.stat-card .sc-label { font-size:10px; color:var(--sub); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+.stat-card .sc-val { font-size:18px; font-weight:800; color:var(--black); letter-spacing:-.5px; }
+.stat-card .sc-val.blue { color:var(--blue); }
+.stat-card .sc-sub { font-size:10px; color:var(--sub); margin-top:4px; }
+
+/* ── CARD ── */
+.card {
+  background:var(--white);
+  border:1.5px solid var(--border);
+  border-radius:16px;
+  overflow:hidden;
+}
+.card-head {
+  padding:14px 16px;
+  border-bottom:1.5px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.card-head-title { font-size:13px; font-weight:700; }
+.card-body { padding:16px; }
+
+/* ── WALLET ROWS ── */
+.w-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:11px 0; border-bottom:1px solid var(--border);
+}
+.w-row:last-child { border-bottom:none; }
+.w-row-left { display:flex; align-items:center; gap:10px; }
+.w-dot { width:8px; height:8px; border-radius:50%; background:var(--blue); flex-shrink:0; }
+.w-dot.grey { background:var(--bg3); }
+.w-label { font-size:12.5px; color:var(--sub); }
+.w-val { font-size:13px; font-weight:700; color:var(--black); }
+.w-val.blue { color:var(--blue); }
+
+/* ── REF LINK ── */
+.ref-box {
+  display:flex; align-items:center; gap:10px;
+  background:var(--bg2);
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  padding:10px 12px;
+  margin-bottom:14px;
+}
+.ref-url { flex:1; font-size:11px; color:var(--blue); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* ── REF STATS ── */
+.ref-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.ref-stat {
+  background:var(--bg2); border:1.5px solid var(--border);
+  border-radius:12px; padding:12px; text-align:center;
+}
+.ref-stat .rv { font-size:20px; font-weight:800; color:var(--black); }
+.ref-stat .rv.blue { color:var(--blue); }
+.ref-stat .rl { font-size:10px; color:var(--sub); margin-top:3px; text-transform:uppercase; letter-spacing:1px; }
+
+/* ── TX TABLE ── */
+.tx-list { display:flex; flex-direction:column; }
+.tx-item {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 0; border-bottom:1px solid var(--border);
+}
+.tx-item:last-child { border-bottom:none; }
+.tx-icon {
+  width:38px; height:38px; border-radius:12px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px;
+}
+.tx-icon.blue { background:var(--blue-l); }
+.tx-icon.dark { background:var(--bg3); }
+.tx-info { flex:1; min-width:0; }
+.tx-desc { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tx-date { font-size:11px; color:var(--sub); margin-top:2px; }
+.tx-right { text-align:right; flex-shrink:0; }
+.tx-amt { font-size:13px; font-weight:700; }
+.tx-amt.pos { color:var(--blue); }
+.tx-amt.neg { color:var(--sub); }
+.tx-status { font-size:10px; color:var(--sub); margin-top:2px; }
+
+/* ── NETWORK ── */
+.tree-box {
+  background:var(--bg2); border:1.5px solid var(--border);
+  border-radius:12px; padding:20px; text-align:center; margin-bottom:16px;
+}
+.tree-root { display:flex; flex-direction:column; align-items:center; }
+.t-node {
+  background:var(--black); color:#fff;
+  border-radius:12px; padding:10px 18px; font-size:12px; font-weight:700;
+  display:inline-block; margin-bottom:0;
+}
+.t-node.blue-node { background:var(--blue); }
+.t-node.outline-node { background:var(--white); color:var(--black); border:1.5px solid var(--border); }
+.t-line { width:2px; height:20px; background:var(--border); margin:0 auto; }
+.t-h-wrap { display:flex; align-items:flex-start; justify-content:center; gap:0; margin-top:0; }
+.t-h-line { height:2px; width:50px; background:var(--border); margin-top:22px; }
+.t-col { display:flex; flex-direction:column; align-items:center; }
+.t-v { width:2px; height:20px; background:var(--border); }
+
+.leg-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+.leg-card {
+  background:var(--bg2); border:1.5px solid var(--border);
+  border-radius:12px; padding:12px; text-align:center;
+}
+.leg-card .lv { font-size:20px; font-weight:800; color:var(--black); }
+.leg-card .lv.blue { color:var(--blue); }
+.leg-card .ll { font-size:10px; color:var(--sub); margin-top:3px; text-transform:uppercase; letter-spacing:1px; }
+
+/* ── RANK TABLE ── */
+.rank-table { width:100%; border-collapse:collapse; }
+.rank-table th {
+  font-size:10px; color:var(--sub); text-transform:uppercase; letter-spacing:1px;
+  padding:8px 10px; text-align:left; border-bottom:1.5px solid var(--border);
+  background:var(--bg2);
+}
+.rank-table td { padding:10px 10px; font-size:12.5px; border-bottom:1px solid var(--border); }
+.rank-table tr:last-child td { border-bottom:none; }
+.rank-table tr.current-rank td { background:var(--blue-l); }
+.rank-mono { font-weight:700; font-size:13px; }
+
+/* ── PROGRESS ── */
+.progress-wrap { margin-bottom:16px; }
+.prog-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.prog-label { font-size:12px; font-weight:600; }
+.prog-val { font-size:12px; color:var(--sub); }
+.progress-track { height:8px; background:var(--bg3); border-radius:20px; overflow:hidden; }
+.progress-fill { height:100%; border-radius:20px; background:var(--blue); transition:width .6s ease; }
+.prog-sub { font-size:11px; color:var(--sub); margin-top:5px; }
+
+/* ── ROI HERO ── */
+.roi-hero {
+  background:var(--black); border-radius:16px; padding:20px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+}
+.roi-hero-l .rhl { font-size:10px; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:5px; }
+.roi-hero-l .rha { font-size:28px; font-weight:800; color:#fff; letter-spacing:-1px; }
+.roi-hero-l .rhs { font-size:11px; color:rgba(255,255,255,.35); margin-top:4px; }
+.roi-hero-r { text-align:right; }
+.roi-hero-r .rhp { font-size:26px; font-weight:800; color:var(--blue); letter-spacing:-1px; }
+.roi-hero-r .rhd { font-size:11px; color:rgba(255,255,255,.35); margin-top:2px; }
+
+/* ── COUNTDOWN ── */
+.cd-row { display:flex; gap:10px; }
+.cd-box {
+  flex:1; background:var(--white); border:1.5px solid var(--border);
+  border-radius:12px; padding:12px 6px; text-align:center;
+}
+.cd-box .cv { font-size:24px; font-weight:800; color:var(--black); line-height:1; }
+.cd-box .cl { font-size:9px; color:var(--sub); text-transform:uppercase; letter-spacing:1px; margin-top:4px; }
+
+/* ── INVEST TABLE ── */
+.proj-table { width:100%; border-collapse:collapse; }
+.proj-table th { font-size:10px; color:var(--sub); text-transform:uppercase; letter-spacing:1px; padding:8px 10px; text-align:left; border-bottom:1.5px solid var(--border); background:var(--bg2); }
+.proj-table td { padding:10px 10px; font-size:12.5px; border-bottom:1px solid var(--border); }
+.proj-table tr:last-child td { border-bottom:none; }
+.proj-table .blue { color:var(--blue); font-weight:700; }
+
+/* ── FORM ── */
+.form-group { margin-bottom:14px; }
+.form-group label { display:block; font-size:11px; font-weight:600; color:var(--sub); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+.form-group input,
+.form-group select {
+  width:100%; background:var(--bg2); border:1.5px solid var(--border);
+  border-radius:10px; padding:11px 12px;
+  color:var(--text); font-family:'Inter',sans-serif; font-size:13px;
+  outline:none; transition:border-color .2s; -webkit-appearance:none;
+}
+.form-group input:focus,
+.form-group select:focus { border-color:var(--blue); }
+
+/* ── WITHDRAWAL SPLIT ── */
+.split-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+.split-item {
+  background:var(--bg2); border:1.5px solid var(--border);
+  border-radius:12px; padding:12px; display:flex; align-items:center; gap:10px;
+}
+.split-bar { width:4px; border-radius:4px; align-self:stretch; background:var(--blue); flex-shrink:0; }
+.split-bar.grey { background:var(--border); }
+.split-pct { font-size:16px; font-weight:800; color:var(--black); }
+.split-label { font-size:10px; color:var(--sub); margin-top:2px; }
+.avail-box {
+  background:var(--blue); border-radius:12px; padding:14px 16px;
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;
+}
+.avail-box .al { font-size:11px; color:rgba(255,255,255,.7); }
+.avail-box .av-val { font-size:20px; font-weight:800; color:#fff; }
+
+/* ── EARNINGS PAGE ── */
+.earn-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.earn-card {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:14px; padding:14px;
+}
+.earn-card .ec-label { font-size:10px; color:var(--sub); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+.earn-card .ec-val { font-size:20px; font-weight:800; color:var(--black); }
+.earn-card .ec-val.blue { color:var(--blue); }
+.earn-card .ec-sub { font-size:10px; color:var(--sub); margin-top:4px; }
+
+.club-bar {
+  background:var(--blue-l); border:1.5px solid var(--blue-m);
+  border-radius:10px; padding:12px 14px;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  margin-top:14px;
+}
+.club-bar .cb-text { font-size:12px; font-weight:600; color:var(--blue); }
+.club-bar .cb-badge {
+  background:var(--blue); color:#fff; font-size:10px; font-weight:700;
+  padding:3px 10px; border-radius:20px; white-space:nowrap;
+}
+
+/* ── TOAST ── */
+#toast {
+  position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--black); color:#fff;
+  padding:10px 20px; border-radius:30px;
+  font-size:13px; font-weight:600;
+  opacity:0; transition:all .3s; z-index:9999; white-space:nowrap;
+  pointer-events:none;
+}
+#toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.4); z-index:500;
+  align-items:flex-end; justify-content:center;
+}
+.modal-overlay.open { display:flex; }
+.modal {
+  background:var(--white);
+  border-radius:20px 20px 0 0;
+  padding:24px 20px 32px;
+  width:100%; max-width:480px;
+  animation: slideUp .25s ease;
+}
+@keyframes slideUp { from { transform:translateY(60px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+.modal-handle { width:40px; height:4px; background:var(--border); border-radius:4px; margin:0 auto 20px; }
+.modal h3 { font-size:16px; font-weight:800; margin-bottom:18px; }
+.modal-actions { display:flex; gap:10px; margin-top:18px; }
+.modal-actions .btn { flex:1; justify-content:center; }
+
+/* ── BOTTOM NAV (mobile) ── */
+.bottom-nav {
+  display:none;
+  position:fixed; bottom:0; left:0; right:0;
+  background:var(--white);
+  border-top:1.5px solid var(--border);
+  height:var(--nav-h);
+  z-index:300;
+  justify-content:space-around; align-items:center;
+}
+.bn-item {
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:6px 10px; cursor:pointer; flex:1;
+  color:var(--sub); font-size:10px; font-weight:500;
+  transition:color .15s; user-select:none;
+}
+.bn-item svg { transition:all .15s; }
+.bn-item.active { color:var(--blue); }
+.bn-item.active svg path, .bn-item.active svg rect, .bn-item.active svg circle { stroke:var(--blue); }
+
+/* ── MOBILE OVERLAY ── */
+.sidebar-overlay {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:199;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .sidebar { transform:translateX(-100%); }
+  .sidebar.open { transform:translateX(0); }
+  .sidebar-overlay.open { display:block; }
+  .main { margin-left:0; }
+  .topbar { padding:0 14px; }
+  .menu-btn { display:flex; }
+  .content { padding:14px 14px 76px; }
+  .bottom-nav { display:flex; }
+  .bal-amount { font-size:28px; }
+  .stat-row { grid-template-columns:1fr 1fr; }
+  .stat-row .stat-card:last-child { grid-column:span 2; }
+  .split-grid { grid-template-columns:1fr; }
+  .earn-grid { grid-template-columns:1fr 1fr; }
+  .leg-grid { grid-template-columns:1fr 1fr 1fr; }
+}
+
+@media (max-width: 400px) {
+  .stat-row { grid-template-columns:1fr 1fr; }
+  .earn-grid { grid-template-columns:1fr 1fr; }
+  .cd-box .cv { font-size:20px; }
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<div class="app">
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar" id="sidebar">
+  <div class="logo-wrap">
+    <div class="brand">Nexa<span>Vault</span></div>
+    <div class="uid">Member Portal</div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-section-label">Main</div>
+    <div class="nav-item active" onclick="navigate('dashboard',this)">
+      <svg width="16" height="16" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      <span>Dashboard</span>
+    </div>
+    <div class="nav-item" onclick="navigate('network',this)">
+      <svg width="16" height="16" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v4M12 11l-5 6M12 11l5 6"/></svg>
+      <span>My Network</span>
+    </div>
+    <div class="nav-item" onclick="navigate('earnings',this)">
+      <svg width="16" height="16" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <span>Earnings</span>
+    </div>
+    <div class="nav-item" onclick="navigate('investment',this)">
+      <svg width="16" height="16" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      <span>Investment</span>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-section-label">Finance</div>
+    <div class="nav-item" onclick="navigate('withdraw',this)">
+      <svg width="16" height="16" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12H19M12 5l7 7-7 7"/></svg>
+      <span>Withdraw</span>
+    </div>
+    <div class="nav-item" onclick="navigate('history',this)">
+      <svg width="16" height="16" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+      <span>History</span>
+    </div>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="user-row">
+      <div class="av">AK</div>
+      <div>
+        <div class="u-name">Alex Kumar</div>
+        <div class="u-id">#NV-00482</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-btn" onclick="openSidebar()" aria-label="Menu">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+      <div class="page-title" id="pageTitle">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <span class="chip">★★ 2 Star</span>
+      <button class="btn btn-blue btn-sm" onclick="openModal('depositModal')">+ Deposit</button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div class="page active" id="page-dashboard">
+
+      <!-- Balance Hero -->
+      <div class="balance-hero">
+        <div class="bal-label">Total Balance</div>
+        <div class="bal-amount">$1,482.50</div>
+        <div class="bal-sub">Withdrawable: $741.25 · Reserve: $5.00</div>
+        <div class="bal-actions">
+          <button class="bal-btn bal-btn-primary" onclick="navigate('withdraw', document.querySelector('[data-page=withdraw]'))">Withdraw</button>
+          <button class="bal-btn bal-btn-ghost" onclick="openModal('depositModal')">Deposit</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="sc-label">Referrals</div>
+          <div class="sc-val blue">18</div>
+          <div class="sc-sub">$72 earned</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-label">Matching</div>
+          <div class="sc-val blue">$320</div>
+          <div class="sc-sub">5% on pairs</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-label">ROI Earned</div>
+          <div class="sc-val blue">$156</div>
+          <div class="sc-sub">12–15% p.a.</div>
+        </div>
+      </div>
+
+      <!-- Wallet Breakdown -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">Wallet Breakdown</div>
+          <button class="btn btn-outline btn-sm" onclick="openModal('withdrawModal')">Withdraw</button>
+        </div>
+        <div class="card-body" style="padding-top:4px;padding-bottom:4px">
+          <div class="w-row">
+            <div class="w-row-left"><div class="w-dot"></div><span class="w-label">Main Wallet (50%)</span></div>
+            <span class="w-val blue">$741.25</span>
+          </div>
+          <div class="w-row">
+            <div class="w-row-left"><div class="w-dot grey"></div><span class="w-label">Reinvestment (20%)</span></div>
+            <span class="w-val">$296.50</span>
+          </div>
+          <div class="w-row">
+            <div class="w-row-left"><div class="w-dot grey"></div><span class="w-label">Reserve Fund (10%)</span></div>
+            <span class="w-val">$148.25</span>
+          </div>
+          <div class="w-row">
+            <div class="w-row-left"><div class="w-dot grey"></div><span class="w-label">Club Bonus Pool (10%)</span></div>
+            <span class="w-val">$148.25</span>
+          </div>
+          <div class="w-row">
+            <div class="w-row-left"><div class="w-dot grey"></div><span class="w-label">Maintenance (5%)</span></div>
+            <span class="w-val">$74.12</span>
+          </div>
+          <div class="w-row">
+            <div class="w-row-left"><div class="w-dot grey"></div><span class="w-label">Rank Pool (5%)</span></div>
+            <span class="w-val">$74.13</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Referral -->
+      <div class="card">
+        <div class="card-head"><div class="card-head-title">Referral Link</div></div>
+        <div class="card-body">
+          <div class="ref-box">
+            <span class="ref-url" id="refLink">https://nexavault.io/ref/NV-00482</span>
+            <button class="btn btn-blue btn-sm" onclick="copyRef()">Copy</button>
+          </div>
+          <div class="ref-grid">
+            <div class="ref-stat"><div class="rv blue">18</div><div class="rl">Direct</div></div>
+            <div class="ref-stat"><div class="rv blue">$72</div><div class="rl">Earned</div></div>
+            <div class="ref-stat"><div class="rv">347</div><div class="rl">Team</div></div>
+            <div class="ref-stat"><div class="rv blue">$4</div><div class="rl">Per Ref</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Transactions -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">Recent Activity</div>
+          <button class="btn btn-outline btn-sm" onclick="navigate('history', document.querySelector('[data-page=history]'))">View All</button>
+        </div>
+        <div class="card-body" style="padding-top:4px;padding-bottom:4px">
+          <div class="tx-list" id="txList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ NETWORK ══ -->
+    <div class="page" id="page-network">
+      <!-- Binary Tree -->
+      <div class="card">
+        <div class="card-head"><div class="card-head-title">Binary Tree</div></div>
+        <div class="card-body">
+          <div class="tree-box">
+            <div class="tree-root">
+              <div class="t-node blue-node">Alex K. · YOU</div>
+              <div class="t-line"></div>
+              <div class="t-h-wrap">
+                <div class="t-col">
+                  <div class="t-h-line"></div>
+                  <div class="t-v"></div>
+                  <div class="t-node outline-node" style="font-size:11px">Priya M.<br><span style="color:var(--blue);font-size:10px">LEFT · L1</span></div>
+                </div>
+                <div style="width:2px;height:20px;background:var(--border);margin-top:0;align-self:flex-start;margin-top:20px"></div>
+                <div class="t-col">
+                  <div class="t-h-line" style="transform:scaleX(-1)"></div>
+                  <div class="t-v"></div>
+                  <div class="t-node outline-node" style="font-size:11px">Sam T.<br><span style="color:var(--blue);font-size:10px">RIGHT · L1</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="leg-grid">
+            <div class="leg-card"><div class="lv blue">187</div><div class="ll">Left IDs</div></div>
+            <div class="leg-card"><div class="lv blue">160</div><div class="ll">Right IDs</div></div>
+            <div class="leg-card"><div class="lv">160</div><div class="ll">Pairs</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rank Progress -->
+      <div class="card">
+        <div class="card-head"><div class="card-head-title">Rank Progress</div><span class="chip">★★ 2 Star</span></div>
+        <div class="card-body">
+          <div class="progress-wrap">
+            <div class="prog-header">
+              <span class="prog-label">★★★ 3 Star (Next)</span>
+              <span class="prog-val" style="color:var(--blue);font-weight:700">$1,000 bonus</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width:16%"></div></div>
+            <div class="prog-sub">187L / 160R of 1000 each needed · 16% complete</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- All Ranks -->
+      <div class="card">
+        <div class="card-head"><div class="card-head-title">All Ranks</div></div>
+        <div style="overflow-x:auto">
+          <table class="rank-table">
+            <thead><tr><th>Rank</th><th>Left IDs</th><th>Right IDs</th><th>Bonus</th></tr></thead>
+            <tbody>
+              <tr><td>★ 1 Star ✓</td><td>50</td><td>50</td><td class="rank-mono" style="color:var(--sub)">$100</td></tr>
+              <tr class="current-rank"><td><strong>★★ 2 Star ✓</strong></td><td>300</td><td>300</td><td class="rank-mono" style="color:var(--blue)">$300</td></tr>
+              <tr><td>★★★ 3 Star</td><td>1,000</td><td>1,000</td><td class="rank-mono">$1,000</td></tr>
+              <tr><td>★★★★ 4 Star</td><td>3,000</td><td>3,000</td><td class="rank-mono">$3,000</td></tr>
+              <tr><td>★★★★★ 5 Star</td><td>10,000</td><td>10,000</td><td class="rank-mono">$10,000</td></tr>
+              <tr><td>6 Star</td><td>30,000</td><td>30,000</td><td class="rank-mono">$30,000</td></tr>
+              <tr><td>7 Star</td><td>100,000</td><td>100,000</td><td class="rank-mono">$100,000</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ EARNINGS ══ -->
+    <div class="page" id="page-earnings">
+      <div class="earn-grid">
+        <div class="earn-card"><div class="ec-label">Direct Referral</div><div class="ec-val blue">$72.00</div><div class="ec-sub">18 × $4</div></div>
+        <div class="earn-card"><div class="ec-label">Matching Bonus</div><div class="ec-val blue">$320.00</div><div class="ec-sub">5% on pairs</div></div>
+        <div class="earn-card"><div class="ec-label">Cashback</div><div class="ec-val blue">$9.00</div><div class="ec-sub">3% of charge</div></div>
+        <div class="earn-card"><div class="ec-label">Club Bonus</div><div class="ec-val">$0.00</div><div class="ec-sub">4% pool</div></div>
+        <div class="earn-card"><div class="ec-label">Rank Bonus</div><div class="ec-val blue">$400.00</div><div class="ec-sub">1★+2★ earned</div></div>
+        <div class="earn-card"><div class="ec-label">ROI</div><div class="ec-val blue">$156.00</div><div class="ec-sub">On $1,200</div></div>
+      </div>
+
+      <!-- Club Bonus -->
+      <div class="card">
+        <div class="card-head"><div class="card-head-title">Club Bonus Qualification</div></div>
+        <div class="card-body">
+          <div class="progress-wrap" style="margin-bottom:12px">
+            <div class="prog-header"><span class="prog-label">Option A — 10 Direct Referrals</span><span class="prog-val" style="color:var(--blue);font-weight:700">✓ Done</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+            <div class="prog-sub">18 / 10 — complete</div>
+          </div>
+          <div class="progress-wrap" style="margin-bottom:0">
+            <div class="prog-header"><span class="prog-label">Option B — Match 50 IDs (5 active/side)</span><span class="prog-val">Active</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+            <div class="prog-sub">347 team IDs — qualified</div>
+          </div>
+          <div class="club-bar">
+            <span class="cb-text">✓ Club Bonus active — earning 4% pool</span>
+            <span class="cb-badge">ACTIVE</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ INVESTMENT ══ -->
+    <div class="page" id="page-investment">
+      <div class="roi-hero">
+        <div class="roi-hero-l">
+          <div class="rhl">Active Investment</div>
+          <div class="rha">$1,200.00</div>
+          <div class="rhs">Locked until Dec 14, 2025</div>
+        </div>
+        <div class="roi-hero-r">
+          <div class="rhp">12–15%</div>
+          <div class="rhd">Annual ROI</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-head-title">Capital Unlock Countdown</div></div>
+        <div class="card-body">
+          <div class="cd-row">
+            <div class="cd-box"><div class="cv" id="cd-d">--</div><div class="cl">Days</div></div>
+            <div class="cd-box"><div class="cv" id="cd-h">--</div><div class="cl">Hrs</div></div>
+            <div class="cd-box"><div class="cv" id="cd-m">--</div><div class="cl">Min</div></div>
+            <div class="cd-box"><div class="cv" id="cd-s">--</div><div class="cl">Sec</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-head-title">ROI Projections — $1,200</div></div>
+        <div style="overflow-x:auto">
+          <table class="proj-table">
+            <thead><tr><th>Period</th><th>At 12%</th><th>At 15%</th></tr></thead>
+            <tbody>
+              <tr><td>1 Month</td><td>$12.00</td><td class="blue">$15.00</td></tr>
+              <tr><td>3 Months</td><td>$36.00</td><td class="blue">$45.00</td></tr>
+              <tr><td>6 Months</td><td>$72.00</td><td class="blue">$90.00</td></tr>
+              <tr><td>12 Months</td><td>$144.00</td><td class="blue">$180.00</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-head-title">New Investment</div></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label>Amount (Min. $100 USDT)</label>
+            <input type="number" placeholder="100" min="100" id="investAmt"/>
+          </div>
+          <div style="font-size:11px;color:var(--sub);margin-bottom:14px">Capital is locked for 6 months. ROI distributed monthly.</div>
+          <button class="btn btn-blue btn-full" onclick="invest()">Confirm Investment</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ WITHDRAW ══ -->
+    <div class="page" id="page-withdraw">
+      <div class="avail-box">
+        <div><div class="al">Available to Withdraw</div><div class="av-val">$741.25 USDT</div></div>
+        <svg width="24" height="24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12H19M12 5l7 7-7 7"/></svg>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-head-title">Earnings Split</div></div>
+        <div class="card-body">
+          <div class="split-grid">
+            <div class="split-item"><div class="split-bar"></div><div><div class="split-pct">50%</div><div class="split-label">You receive</div></div></div>
+            <div class="split-item"><div class="split-bar"></div><div><div class="split-pct">20%</div><div class="split-label">Reinvestment</div></div></div>
+            <div class="split-item"><div class="split-bar grey"></div><div><div class="split-pct">10%</div><div class="split-label">Reserve Fund</div></div></div>
+            <div class="split-item"><div class="split-bar grey"></div><div><div class="split-pct">10%</div><div class="split-label">Club Pool</div></div></div>
+            <div class="split-item"><div class="split-bar grey"></div><div><div class="split-pct">5%</div><div class="split-label">Maintenance</div></div></div>
+            <div class="split-item"><div class="split-bar grey"></div><div><div class="split-pct">5%</div><div class="split-label">Rank Pool</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-head-title">Request Withdrawal</div></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label>USDT Wallet Address</label>
+            <input type="text" placeholder="TRX... or 0x..." id="walletAddr"/>
+          </div>
+          <div class="form-group">
+            <label>Amount (Max $741.25)</label>
+            <input type="number" placeholder="0.00" max="741.25" id="withdrawAmt"/>
+          </div>
+          <div class="form-group">
+            <label>Network</label>
+            <select>
+              <option>TRC-20 (TRON)</option>
+              <option>ERC-20 (Ethereum)</option>
+              <option>BEP-20 (BSC)</option>
+            </select>
+          </div>
+          <button class="btn btn-blue btn-full" onclick="requestWithdraw()">Submit Withdrawal</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ HISTORY ══ -->
+    <div class="page" id="page-history">
+      <div class="card">
+        <div class="card-head"><div class="card-head-title">All Transactions</div></div>
+        <div class="card-body" style="padding-top:4px;padding-bottom:4px">
+          <div class="tx-list" id="histList"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ══ BOTTOM NAV (mobile) ══ -->
+<nav class="bottom-nav">
+  <div class="bn-item active" data-page="dashboard" onclick="navigate('dashboard',this)">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Home
+  </div>
+  <div class="bn-item" data-page="network" onclick="navigate('network',this)">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v4M12 11l-5 6M12 11l5 6"/></svg>
+    Network
+  </div>
+  <div class="bn-item" data-page="earnings" onclick="navigate('earnings',this)">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    Earnings
+  </div>
+  <div class="bn-item" data-page="withdraw" onclick="navigate('withdraw',this)">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12H19M12 5l7 7-7 7"/></svg>
+    Withdraw
+  </div>
+  <div class="bn-item" data-page="history" onclick="navigate('history',this)">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+    History
+  </div>
+</nav>
+
+<!-- ══ MODALS ══ -->
+<div class="modal-overlay" id="depositModal" onclick="handleOverlayClick(event,'depositModal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>Deposit USDT</h3>
+    <div class="form-group">
+      <label>Amount (Min. $30)</label>
+      <input type="number" placeholder="30" id="depAmt"/>
+    </div>
+    <div class="form-group">
+      <label>Network</label>
+      <select><option>TRC-20 (TRON)</option><option>ERC-20 (Ethereum)</option><option>BEP-20 (BSC)</option></select>
+    </div>
+    <div style="background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:12px;font-size:11px;color:var(--sub);">
+      Send USDT to:<br>
+      <span style="font-family:monospace;color:var(--blue);font-size:12px;word-break:break-all">TXnv8mJkR3pQ7dY9mN4wLcB6fKsEzA2xQ</span>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('depositModal')">Cancel</button>
+      <button class="btn btn-blue" onclick="closeModal('depositModal');toast('Deposit submitted!')">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="withdrawModal" onclick="handleOverlayClick(event,'withdrawModal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>Quick Withdraw</h3>
+    <div class="form-group">
+      <label>Amount (Max $741.25)</label>
+      <input type="number" placeholder="0.00"/>
+    </div>
+    <div class="form-group">
+      <label>USDT Address</label>
+      <input type="text" placeholder="Your wallet address"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('withdrawModal')">Cancel</button>
+      <button class="btn btn-blue" onclick="closeModal('withdrawModal');toast('Withdrawal requested!')">Withdraw</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast">✓ Done</div>
+
+<script>
+/* ── TX DATA ── */
+const txData = [
+  { icon:'💸', label:'Direct Referral', desc:'#NV-00521 joined', date:'Jun 27, 2026', amt:'+$4.00', pos:true },
+  { icon:'⚡', label:'Matching Bonus',  desc:'5 pairs matched',  date:'Jun 26, 2026', amt:'+$32.00', pos:true },
+  { icon:'📈', label:'ROI Distribution', desc:'Monthly ROI',     date:'Jun 20, 2026', amt:'+$13.00', pos:true },
+  { icon:'🏆', label:'Rank Bonus',      desc:'2 Star achieved',  date:'Jun 15, 2026', amt:'+$300.00', pos:true },
+  { icon:'↗️', label:'Withdrawal',       desc:'TRC-20 · Processed', date:'Jun 12, 2026', amt:'-$200.00', pos:false },
+  { icon:'💸', label:'Direct Referral', desc:'#NV-00508 joined', date:'Jun 10, 2026', amt:'+$4.00', pos:true },
+  { icon:'🔁', label:'Cashback',        desc:'3% on join fee',   date:'Jun 08, 2026', amt:'+$0.90', pos:true },
+  { icon:'💰', label:'Deposit',         desc:'TRC-20 · Confirmed', date:'Jun 01, 2026', amt:'+$500.00', pos:true },
+  { icon:'⚡', label:'Matching Bonus',  desc:'8 pairs matched',  date:'May 28, 2026', amt:'+$48.00', pos:true },
+  { icon:'↗️', label:'Withdrawal',       desc:'TRC-20 · Processed', date:'May 20, 2026', amt:'-$150.00', pos:false },
+];
+
+function txItem(tx) {
+  return `<div class="tx-item">
+    <div class="tx-icon ${tx.pos?'blue':'dark'}">${tx.icon}</div>
+    <div class="tx-info">
+      <div class="tx-desc">${tx.label}</div>
+      <div class="tx-date">${tx.desc} · ${tx.date}</div>
+    </div>
+    <div class="tx-right">
+      <div class="tx-amt ${tx.pos?'pos':'neg'}">${tx.amt}</div>
+      <div class="tx-status">Completed</div>
+    </div>
+  </div>`;
+}
+
+document.getElementById('txList').innerHTML = txData.slice(0,5).map(txItem).join('');
+document.getElementById('histList').innerHTML = txData.map(txItem).join('');
+
+/* ── NAVIGATION ── */
+const pageTitles = {
+  dashboard:'Dashboard', network:'My Network', earnings:'Earnings',
+  investment:'Investment', withdraw:'Withdraw', history:'History'
+};
+
+function navigate(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('pageTitle').textContent = pageTitles[page];
+
+  // Sidebar nav
+  document.querySelectorAll('.sidebar .nav-item').forEach(n => n.classList.remove('active'));
+  const sideItem = [...document.querySelectorAll('.sidebar .nav-item')].find(n =>
+    n.getAttribute('onclick') && n.getAttribute('onclick').includes("'"+page+"'")
+  );
+  if (sideItem) sideItem.classList.add('active');
+
+  // Bottom nav
+  document.querySelectorAll('.bn-item').forEach(n => n.classList.remove('active'));
+  const bnItem = document.querySelector(.bn-item[data-page="${page}"]);
+  if (bnItem) bnItem.classList.add('active');
+
+  closeSidebar();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ── SIDEBAR MOBILE ── */
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+}
+
+/* ── MODALS ── */
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function handleOverlayClick(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
+
+/* ── COUNTDOWN ── */
+const unlock = new Date('2025-12-14T00:00:00');
+function tick() {
+  const diff = unlock - new Date();
+  const s = Math.max(0, Math.floor(diff/1000));
+  document.getElementById('cd-d').textContent = String(Math.floor(s/86400)).padStart(2,'0');
+  document.getElementById('cd-h').textContent = String(Math.floor(s%86400/3600)).padStart(2,'0');
+  document.getElementById('cd-m').textContent = String(Math.floor(s%3600/60)).padStart(2,'0');
+  document.getElementById('cd-s').textContent = String(s%60).padStart(2,'0');
+}
+setInterval(tick, 1000); tick();
+
+/* ── TOAST ── */
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+/* ── ACTIONS ── */
+function copyRef() {
+  navigator.clipboard.writeText(document.getElementById('refLink').textContent).catch(()=>{});
+  toast('✓ Link copied!');
+}
+function invest() {
+  const v = parseFloat(document.getElementById('investAmt').value);
+  if (!v || v < 100) { toast('⚠️ Minimum is $100'); return; }
+  toast(✓ $${v} investment confirmed);
+}
+function requestWithdraw() {
+  const addr = document.getElementById('walletAddr').value;
+  const amt  = document.getElementById('withdrawAmt').value;
+  if (!addr || !amt) { toast('⚠️ Fill in all fields'); return; }
+  toast('✓ Withdrawal submitted');
+}
+</script>
+</body>
+</html>

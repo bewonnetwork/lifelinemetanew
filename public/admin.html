@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LifelineMeta — Super Admin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,sans-serif}
+:root{--blue:#1e40af;--green:#10b981;--red:#ef4444;--orange:#f59e0b;--purple:#7c3aed;--bg:#f1f5f9;--white:#fff;--border:#e5e7eb;--text:#1f2937;--muted:#6b7280}
+body{background:var(--bg);color:var(--text)}
+
+/* SIDEBAR */
+.sidebar{width:250px;background:var(--blue);color:#fff;position:fixed;top:0;left:0;bottom:0;padding:20px 15px;overflow-y:auto;z-index:100}
+.sidebar-logo{font-size:1.1rem;font-weight:800;text-align:center;padding-bottom:15px;border-bottom:1px solid rgba(255,255,255,.2);margin-bottom:15px}
+.menu-item{padding:12px 15px;border-radius:8px;cursor:pointer;margin-bottom:6px;font-weight:600;font-size:.875rem;transition:.2s;display:flex;align-items:center;gap:8px}
+.menu-item:hover{background:rgba(255,255,255,.15)}
+.menu-item.active{background:rgba(255,255,255,.2)}
+
+/* MAIN */
+.main{margin-left:250px;padding:20px;min-height:100vh}
+.topbar{background:var(--white);padding:15px 20px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.topbar h2{font-size:1.1rem;color:var(--blue)}
+
+/* PAGE */
+.page{display:none}.page.active{display:block}
+
+/* CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:15px;margin-bottom:20px}
+.stat-card{background:var(--white);padding:18px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.06);border-left:4px solid var(--blue)}
+.stat-card h3{font-size:.8rem;color:var(--muted);margin-bottom:8px;text-transform:uppercase}
+.stat-card .val{font-size:1.8rem;font-weight:800;color:var(--blue)}
+
+/* TABLE CARD */
+.card{background:var(--white);border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.06);overflow:hidden;margin-bottom:20px}
+.card-header{padding:15px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.card-header h3{font-size:1rem;font-weight:700}
+.card-body{padding:15px 20px}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+thead th{background:#eff6ff;color:var(--blue);padding:10px 12px;text-align:left;font-weight:600;white-space:nowrap}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:hover{background:#f9fafb}
+tbody tr:last-child td{border-bottom:none}
+
+/* BADGE */
+.badge{padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700}
+.badge-green{background:#dcfce7;color:#166534}
+.badge-red{background:#fee2e2;color:#991b1b}
+.badge-blue{background:#dbeafe;color:#1e40af}
+.badge-orange{background:#fef3c7;color:#92400e}
+
+/* BUTTONS */
+.btn{padding:7px 13px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:.8rem;transition:.2s}
+.btn:hover{opacity:.85}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-green{background:var(--green);color:#fff}
+.btn-red{background:var(--red);color:#fff}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-purple{background:var(--purple);color:#fff}
+.btn-ghost{background:var(--bg);color:var(--text);border:1px solid var(--border)}
+
+/* SEARCH */
+.search-input{padding:9px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:.875rem;outline:none;min-width:250px;transition:border-color .2s}
+.search-input:focus{border-color:var(--blue)}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;gap:6px;margin-top:15px;justify-content:center;flex-wrap:wrap}
+.pg-btn{padding:6px 12px;border:1.5px solid var(--border);border-radius:6px;background:var(--white);cursor:pointer;font-size:.8rem;font-weight:600;transition:.2s}
+.pg-btn:hover,.pg-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.pg-info{color:var(--muted);font-size:.8rem}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;align-items:center;justify-content:center;padding:20px}
+.modal-bg.open{display:flex}
+.modal{background:var(--white);border-radius:16px;padding:25px;width:100%;max-width:520px;max-height:85vh;overflow-y:auto}
+.modal h3{font-size:1.1rem;font-weight:700;margin-bottom:15px;color:var(--blue)}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+/* FORM */
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:5px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.875rem;outline:none;transition:border-color .2s;background:var(--white);color:var(--text)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--blue)}
+.form-group textarea{resize:vertical;min-height:80px}
+
+/* USER INFO GRID */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}
+.info-item{background:var(--bg);border-radius:8px;padding:10px}
+.info-item .lbl{font-size:.72rem;color:var(--muted);margin-bottom:3px}
+.info-item .val{font-size:.9rem;font-weight:600;word-break:break-all}
+
+/* TOAST */
+#toast{position:fixed;bottom:20px;right:20px;padding:12px 20px;border-radius:10px;font-size:.875rem;font-weight:600;z-index:9999;opacity:0;transform:translateY(20px);transition:.3s;pointer-events:none}
+#toast.show{opacity:1;transform:translateY(0)}
+#toast.success{background:#dcfce7;color:#166534;border:1px solid #86efac}
+#toast.error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+
+/* ACTION BTNS */
+.action-group{display:flex;gap:5px;flex-wrap:wrap}
+
+/* LOADING SCREEN */
+#initLoading{position:fixed;inset:0;background:#f1f5f9;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:99999}
+#initLoading.hide{display:none}
+.spin{width:42px;height:42px;border:4px solid #dbeafe;border-top-color:#1e40af;border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* CONNECTION ERROR BANNER */
+#connError{display:none;background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;padding:12px 20px;border-radius:10px;margin-bottom:15px;font-size:.85rem;font-weight:600}
+#connError.show{display:block}
+
+@media(max-width:700px){
+  .sidebar{width:100%;position:relative;height:auto}
+  .main{margin-left:0}
+  .info-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="initLoading">
+  <div class="spin"></div>
+  <div style="color:#1e40af;font-weight:700;font-size:.9rem">Loading Admin Panel…</div>
+</div>
+
+<script>
+if(localStorage.getItem('adminLogged') !== 'true'){
+  window.location.href = 'admin-login.html';
+}
+</script>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">⚙️ LIFELINEMETA<br/><small style="font-weight:400;opacity:.7;font-size:.7rem">Super Admin Panel</small></div>
+  <div class="menu-item active" data-page="dashboard">📊 Dashboard</div>
+  <div class="menu-item" data-page="users">👥 Users</div>
+  <div class="menu-item" data-page="investments">📈 Investments</div>
+  <div class="menu-item" data-page="withdraw">💸 Withdrawals</div>
+  <div class="menu-item" data-page="transactions">🔁 Transactions</div>
+  <div class="menu-item" data-page="notice">📢 Notice Board</div>
+  <div class="menu-item" data-page="voucher">🎁 Voucher</div>
+  <div class="menu-item" data-page="settings">⚙️ MLM Settings</div>
+  <div class="menu-item" data-page="menucontrol">🧩 Menu Control</div>
+  <div class="menu-item" data-page="addbalance">💰 Add Balance</div>
+  <div class="menu-item" data-page="createuser">➕ Create User</div>
+  <div class="menu-item" data-page="backup">💾 Backup</div>
+  <div class="menu-item" id="logoutBtn" style="margin-top:20px;background:rgba(239,68,68,.2)">🚪 Logout</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <h2 id="pageTitle">📊 Dashboard</h2>
+    <div style="color:var(--muted);font-size:.85rem">👑 Welcome, Admin</div>
+  </div>
+
+  <div id="connError"></div>
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="stats-grid">
+      <div class="stat-card"><h3>Total Users</h3><div class="val" id="st-users">—</div></div>
+      <div class="stat-card" style="border-color:#10b981"><h3>Active Users</h3><div class="val" style="color:#10b981" id="st-active">—</div></div>
+      <div class="stat-card" style="border-color:#ef4444"><h3>Blocked Users</h3><div class="val" style="color:#ef4444" id="st-blocked">—</div></div>
+      <div class="stat-card" style="border-color:#f59e0b"><h3>Total Balance</h3><div class="val" style="color:#f59e0b" id="st-balance">—</div></div>
+      <div class="stat-card" style="border-color:#7c3aed"><h3>Pending Withdraw</h3><div class="val" style="color:#7c3aed" id="st-withdraw">—</div></div>
+      <div class="stat-card" style="border-color:#10b981"><h3>Total Investment</h3><div class="val" style="color:#10b981" id="st-invest">—</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>📢 Live Notice</h3></div>
+      <div class="card-body"><div id="liveNotice" style="background:#eff6ff;padding:15px;border-radius:8px;color:var(--blue)">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- USERS -->
+  <div class="page" id="page-users">
+    <div class="card">
+      <div class="card-header">
+        <h3>👥 All Users</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <input class="search-input" id="userSearch" placeholder="🔍 Search name, email, username..."/>
+          <button class="btn btn-blue" id="refreshUsersBtn">🔄 Refresh</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Name</th><th>Username</th><th>Email</th>
+              <th>Mobile</th><th>Balance</th><th>Country</th>
+              <th>Status</th><th>Income</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userTable"><tr><td colspan="10" style="text-align:center;padding:30px;color:var(--muted)">Loading...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="userPagination"></div>
+    </div>
+  </div>
+
+  <!-- INVESTMENTS -->
+  <div class="page" id="page-investments">
+    <div class="card">
+      <div class="card-header"><h3>📈 All Investments</h3><button class="btn btn-blue" id="refreshInvestBtn">🔄 Refresh</button></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>User</th><th>Amount</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="investTable"><tr><td colspan="5" style="text-align:center;padding:30px;color:var(--muted)">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- WITHDRAW -->
+  <div class="page" id="page-withdraw">
+    <div class="card">
+      <div class="card-header"><h3>💸 Withdraw Requests</h3><button class="btn btn-blue" id="refreshWithdrawBtn">🔄 Refresh</button></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>User</th><th>Amount</th><th>Method</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="withdrawTable"><tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted)">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSACTIONS -->
+  <div class="page" id="page-transactions">
+    <div class="card">
+      <div class="card-header">
+        <h3>🔁 Transaction History</h3>
+        <div style="display:flex;gap:8px">
+          <input class="search-input" id="txSearch" placeholder="🔍 Search..."/>
+          <button class="btn btn-blue" id="refreshTxBtn">🔄 Refresh</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>User</th><th>Type</th><th>Amount</th><th>Note</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="txTable"><tr><td colspan="7" style="text-align:center;padding:30px;color:var(--muted)">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTICE -->
+  <div class="page" id="page-notice">
+    <div class="card" style="max-width:600px">
+      <div class="card-header"><h3>📢 Notice Board</h3></div>
+      <div class="card-body">
+        <div class="form-group"><label>Notice Title</label><input id="noticeTitle" placeholder="Enter title..."/></div>
+        <div class="form-group"><label>Notice Message</label><textarea id="noticeText" placeholder="Write notice here..."></textarea></div>
+        <button class="btn btn-blue" id="saveNoticeBtn">💾 Save Notice</button>
+      </div>
+    </div>
+    <div class="card" style="max-width:600px">
+      <div class="card-header"><h3>All Notices</h3></div>
+      <div class="card-body" id="noticeList">Loading...</div>
+    </div>
+  </div>
+
+  <!-- VOUCHER -->
+  <div class="page" id="page-voucher">
+    <div class="card" style="max-width:600px">
+      <div class="card-header"><h3>🎁 Send Voucher / Gift</h3></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label>Send To</label>
+          <select id="voucherTarget">
+            <option value="all">All Users</option>
+            <option value="single">Single User</option>
+          </select>
+        </div>
+        <div class="form-group" id="voucherUserGroup" style="display:none">
+          <label>User Email or ID</label>
+          <input id="voucherUserId" placeholder="Enter user email or document ID..."/>
+        </div>
+        <div class="form-group"><label>Amount ($)</label><input type="number" id="voucherAmount" placeholder="e.g. 10"/></div>
+        <div class="form-group"><label>Note</label><input id="voucherNote" placeholder="Gift reason (optional)"/></div>
+        <button class="btn btn-green" id="sendVoucherBtn">🎁 Send Voucher</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="page" id="page-settings">
+    <div class="card" style="max-width:600px">
+      <div class="card-header"><h3>⚙️ MLM Global Settings</h3></div>
+      <div class="card-body">
+        <div class="form-group"><label>ROI per Day (%)</label><input id="roi" placeholder="e.g. 1"/></div>
+        <div class="form-group"><label>Monthly ROI (%)</label><input id="monthlyROI" placeholder="e.g. 10"/></div>
+        <div class="form-group"><label>Referral Bonus (%)</label><input id="ref" placeholder="e.g. 5"/></div>
+        <div class="form-group"><label>Generation Income (%)</label><input id="genIncome" placeholder="e.g. 3"/></div>
+        <div class="form-group"><label>Matching Income (%)</label><input id="matchIncome" placeholder="e.g. 2"/></div>
+        <div class="form-group"><label>Registration Fee ($)</label><input id="fee" placeholder="e.g. 20"/></div>
+        <div class="form-group"><label>Minimum Withdraw ($)</label><input id="minWithdraw" placeholder="e.g. 10"/></div>
+        <div class="form-group"><label>Maximum Withdraw ($)</label><input id="maxWithdraw" placeholder="e.g. 500"/></div>
+        <div class="form-group"><label>Tree Cut (Level)</label><input id="treeCut" placeholder="e.g. 13"/></div>
+        <button class="btn btn-blue" id="saveSettingsBtn">💾 Save Settings</button>
+        <button class="btn btn-green" style="margin-left:10px" id="distributeROIBtn">💰 Distribute Monthly ROI</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENU CONTROL -->
+  <div class="page" id="page-menucontrol">
+    <div class="card" style="max-width:500px">
+      <div class="card-header"><h3>🧩 User Dashboard Menu Control</h3></div>
+      <div class="card-body">
+        <div class="form-group"><label>Deposit Button</label><select id="depositBtn"><option value="true">ON ✅</option><option value="false">OFF ❌</option></select></div>
+        <div class="form-group"><label>Withdraw Button</label><select id="withdrawBtn"><option value="true">ON ✅</option><option value="false">OFF ❌</option></select></div>
+        <div class="form-group"><label>Team Button</label><select id="teamBtn"><option value="true">ON ✅</option><option value="false">OFF ❌</option></select></div>
+        <div class="form-group"><label>Salary Button</label><select id="salaryBtn"><option value="true">ON ✅</option><option value="false">OFF ❌</option></select></div>
+        <div class="form-group"><label>Investment Button</label><select id="investBtn"><option value="true">ON ✅</option><option value="false">OFF ❌</option></select></div>
+        <div class="form-group"><label>ROI Button</label><select id="roiBtn"><option value="true">ON ✅</option><option value="false">OFF ❌</option></select></div>
+        <button class="btn btn-blue" id="saveMenuControlBtn">💾 Save Menu Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD BALANCE -->
+  <div class="page" id="page-addbalance">
+    <div class="card" style="max-width:500px">
+      <div class="card-header"><h3>💰 Add / Deduct Balance</h3></div>
+      <div class="card-body">
+        <div class="form-group"><label>User Document ID</label><input id="balanceUserId" placeholder="Paste user document ID..."/></div>
+        <div class="form-group"><label>Amount ($)</label><input type="number" id="balanceAmount" placeholder="e.g. 100"/></div>
+        <div class="form-group">
+          <label>Action</label>
+          <select id="balanceAction">
+            <option value="add">Add Balance ➕</option>
+            <option value="deduct">Deduct Balance ➖</option>
+            <option value="set">Set Exact Balance</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Note</label><input id="balanceNote" placeholder="Reason (optional)"/></div>
+        <button class="btn btn-green" id="modifyBalanceBtn">✅ Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE USER -->
+  <div class="page" id="page-createuser">
+    <div class="card" style="max-width:500px">
+      <div class="card-header"><h3>➕ Create New User</h3></div>
+      <div class="card-body">
+        <div class="form-group"><label>Full Name</label><input id="newName" placeholder="Full name..."/></div>
+        <div class="form-group"><label>Email</label><input id="newEmail" placeholder="Email address..."/></div>
+        <div class="form-group"><label>Username</label><input id="newUsername" placeholder="Username..."/></div>
+        <div class="form-group"><label>Mobile</label><input id="newMobile" placeholder="Mobile number..."/></div>
+        <div class="form-group"><label>Country</label><input id="newCountry" placeholder="Country..."/></div>
+        <div class="form-group"><label>Initial Balance ($)</label><input type="number" id="newBalance" placeholder="0"/></div>
+        <div class="form-group"><label>Ref Code</label><input id="newRef" placeholder="Referral code (optional)..."/></div>
+        <button class="btn btn-blue" id="createUserBtn">➕ Create User</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BACKUP -->
+  <div class="page" id="page-backup">
+    <div class="card" style="max-width:500px">
+      <div class="card-header"><h3>💾 Backup & Restore</h3></div>
+      <div class="card-body">
+        <p style="color:var(--muted);margin-bottom:15px;font-size:.875rem">Download all users data as JSON. Restore করতে চাইলে JSON file upload করো।</p>
+        <button class="btn btn-blue" id="downloadBackupBtn">⬇️ Download Backup (JSON)</button>
+        <div style="margin-top:20px">
+          <div class="form-group"><label>Restore from JSON file</label><input type="file" id="restoreFile" accept=".json"/></div>
+          <button class="btn btn-orange" id="restoreBackupBtn">⬆️ Restore Backup</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- USER DETAIL MODAL -->
+<div class="modal-bg" id="userModal">
+  <div class="modal">
+    <h3>👤 User Details</h3>
+    <div class="info-grid" id="userInfoGrid"></div>
+    <hr style="margin:15px 0;border-color:var(--border)"/>
+    <div style="margin-bottom:15px">
+      <div style="font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase">Quick Actions</div>
+      <div class="action-group" id="userModalActions"></div>
+    </div>
+    <hr style="margin:15px 0;border-color:var(--border)"/>
+    <div style="font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase">Update Wallet</div>
+    <div style="display:flex;gap:8px">
+      <input type="number" id="walletAmount" placeholder="New balance..." class="search-input" style="flex:1"/>
+      <button class="btn btn-orange" id="updateWalletBtn">Update</button>
+    </div>
+    <hr style="margin:15px 0;border-color:var(--border)"/>
+    <div style="font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase">Change Sponsor</div>
+    <div style="display:flex;gap:8px">
+      <input type="text" id="newSponsor" placeholder="New sponsor ref code..." class="search-input" style="flex:1"/>
+      <button class="btn btn-purple" id="changeSponsorBtn">Change</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="closeUserModalBtn">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, setDoc, getDoc, deleteDoc, addDoc, writeBatch } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA3G2bMOJ_HSDYXJPuM70tVjfbkHlMftr4",
+  authDomain: "livelinemeta.firebaseapp.com",
+  projectId: "livelinemeta",
+  storageBucket: "livelinemeta.appspot.com",
+  messagingSenderId: "206900805598",
+  appId: "1:206900805598:web:10e6b39100af201b4e674f"
+};
+
+let app, db, FIREBASE_OK = true;
+try {
+  app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+} catch (e) {
+  FIREBASE_OK = false;
+  console.error('Firebase init failed:', e);
+}
+
+// ── STATE ──
+let allUsers = [];
+let filteredUsers = [];
+let allTx = [];
+let currentPage = 1;
+const PER_PAGE = 20;
+let selectedUserId = null;
+
+// ── TOAST ──
+function toast(msg, type){
+  type = type || 'success';
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + type;
+  setTimeout(function(){ t.className = ''; }, 3000);
+}
+
+function showConnError(msg){
+  const el = document.getElementById('connError');
+  el.textContent = '⚠️ ' + msg;
+  el.classList.add('show');
+}
+
+// ── PAGE NAV ──
+const PAGE_TITLES = {
+  dashboard:'📊 Dashboard', users:'👥 Users', investments:'📈 Investments',
+  withdraw:'💸 Withdrawals', transactions:'🔁 Transactions', notice:'📢 Notice Board',
+  voucher:'🎁 Voucher', settings:'⚙️ MLM Settings', menucontrol:'🧩 Menu Control',
+  addbalance:'💰 Add Balance', createuser:'➕ Create User', backup:'💾 Backup'
+};
+
+function showPage(id, el){
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.menu-item').forEach(function(m){ m.classList.remove('active'); });
+  const target = document.getElementById('page-' + id);
+  if (target) target.classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('pageTitle').textContent = PAGE_TITLES[id] || id;
+
+  if (id === 'notice') loadNotices();
+  if (id === 'transactions') loadTransactions();
+  if (id === 'settings') loadSettings();
+  if (id === 'menucontrol') loadMenuControl();
+  if (id === 'users' && allUsers.length === 0) loadUsers();
+  if (id === 'investments') loadInvestments();
+  if (id === 'withdraw') loadWithdraw();
+}
+
+// Wire up sidebar menu clicks
+document.querySelectorAll('.menu-item[data-page]').forEach(function(item){
+  item.addEventListener('click', function(){
+    showPage(item.getAttribute('data-page'), item);
+  });
+});
+
+// ── MODAL ──
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-bg').forEach(function(m){
+  m.addEventListener('click', function(e){ if (e.target === m) m.classList.remove('open'); });
+});
+document.getElementById('closeUserModalBtn').addEventListener('click', function(){ closeModal('userModal'); });
+
+// ── LOGOUT ──
+document.getElementById('logoutBtn').addEventListener('click', function(){
+  if(!confirm('Logout from admin panel?')) return;
+  localStorage.removeItem('adminLogged');
+  window.location.href = 'admin-login.html';
+});
+
+// ── DASHBOARD ──
+async function loadDashboard(){
+  if (!FIREBASE_OK) { showConnError('Firebase failed to initialize.'); return; }
+  try {
+    const snap = await getDocs(collection(db,'users'));
+    let total=0, active=0, blocked=0, balance=0;
+    snap.forEach(function(d){
+      total++;
+      const data = d.data();
+      if (data.blocked) blocked++; else active++;
+      balance += parseFloat(data.balance || 0);
+    });
+    document.getElementById('st-users').textContent = total;
+    document.getElementById('st-active').textContent = active;
+    document.getElementById('st-blocked').textContent = blocked;
+    document.getElementById('st-balance').textContent = '$' + balance.toFixed(2);
+  } catch(e) {
+    console.error('Dashboard load error:', e);
+    showConnError('Could not load dashboard stats: ' + e.message);
+  }
+
+  try {
+    const wSnap = await getDocs(collection(db,'withdrawals'));
+    let pw = 0;
+    wSnap.forEach(function(d){ if (d.data().status !== 'approved') pw++; });
+    document.getElementById('st-withdraw').textContent = pw;
+  } catch(e) { document.getElementById('st-withdraw').textContent = '0'; }
+
+  try {
+    const iSnap = await getDocs(collection(db,'investments'));
+    let ti = 0;
+    iSnap.forEach(function(d){ ti += parseFloat(d.data().amount || 0); });
+    document.getElementById('st-invest').textContent = '$' + ti.toFixed(2);
+  } catch(e) { document.getElementById('st-invest').textContent = '$0.00'; }
+}
+
+async function loadDashboardNotice(){
+  try {
+    const snap = await getDoc(doc(db,'notice','latest'));
+    if (snap.exists()) {
+      document.getElementById('liveNotice').textContent = snap.data().text || 'No notice.';
+    } else {
+      document.getElementById('liveNotice').textContent = 'No notice posted yet.';
+    }
+  } catch(e) {
+    document.getElementById('liveNotice').textContent = 'No notice posted yet.';
+  }
+}
+
+// ── LOAD USERS ──
+async function loadUsers(){
+  document.getElementById('userTable').innerHTML = '<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--muted)">Loading...</td></tr>';
+  try {
+    const snap = await getDocs(collection(db,'users'));
+    allUsers = [];
+    snap.forEach(function(d){ allUsers.push(Object.assign({ id: d.id }, d.data())); });
+    filteredUsers = allUsers.slice();
+    currentPage = 1;
+    renderUsers();
+  } catch(e) {
+    console.error('loadUsers error:', e);
+    document.getElementById('userTable').innerHTML = '<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--red)">Failed to load: ' + e.message + '</td></tr>';
+    showConnError('Failed to load users: ' + e.message);
+  }
+}
+
+document.getElementById('userSearch').addEventListener('input', function(){
+  const q = this.value.toLowerCase();
+  filteredUsers = allUsers.filter(function(u){
+    return (u['full neme'] || u.fullName || u.name || '').toLowerCase().includes(q) ||
+      (u.email || '').toLowerCase().includes(q) ||
+      (u.username || '').toLowerCase().includes(q) ||
+      (u.mobile || '').includes(q);
+  });
+  currentPage = 1;
+  renderUsers();
+});
+document.getElementById('refreshUsersBtn').addEventListener('click', loadUsers);
+
+function renderUsers(){
+  const total = Math.ceil(filteredUsers.length / PER_PAGE) || 1;
+  const start = (currentPage - 1) * PER_PAGE;
+  const slice = filteredUsers.slice(start, start + PER_PAGE);
+  const tbody = document.getElementById('userTable');
+
+  if (!slice.length) {
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--muted)">No users found</td></tr>';
+    renderPagination(total);
+    return;
+  }
+
+  tbody.innerHTML = slice.map(function(u, i){
+    const name = u['full neme'] || u.fullName || u.name || '—';
+    const username = u.username || '—';
+    const email = u.email || '—';
+    const mobile = u.mobile || '—';
+    const balance = parseFloat(u.balance || 0).toFixed(2);
+    const country = u.country || '—';
+    const blocked = !!u.blocked;
+    const incomeOff = u.incomeEnabled === false;
+    return '<tr>' +
+      '<td style="color:var(--muted)">' + (start + i + 1) + '</td>' +
+      '<td><strong>' + name + '</strong></td>' +
+      '<td style="color:var(--blue)">@' + username + '</td>' +
+      '<td style="color:var(--muted);font-size:.78rem">' + email + '</td>' +
+      '<td>' + mobile + '</td>' +
+      '<td><strong style="color:#f59e0b">$' + balance + '</strong></td>' +
+      '<td>' + country + '</td>' +
+      '<td><span class="badge ' + (blocked ? 'badge-red' : 'badge-green') + '">' + (blocked ? 'Blocked' : 'Active') + '</span></td>' +
+      '<td><span class="badge ' + (incomeOff ? 'badge-red' : 'badge-green') + '">' + (incomeOff ? 'OFF' : 'ON') + '</span></td>' +
+      '<td><div class="action-group">' +
+        '<button class="btn btn-blue act-view" data-id="' + u.id + '" style="padding:5px 9px;font-size:.75rem">👁️ View</button>' +
+        '<button class="btn ' + (blocked ? 'btn-green' : 'btn-orange') + ' act-block" data-id="' + u.id + '" data-blocked="' + blocked + '" style="padding:5px 9px;font-size:.75rem">' + (blocked ? 'Unblock' : 'Block') + '</button>' +
+        '<button class="btn ' + (incomeOff ? 'btn-green' : 'btn-orange') + ' act-income" data-id="' + u.id + '" data-incomeoff="' + incomeOff + '" style="padding:5px 9px;font-size:.75rem">' + (incomeOff ? 'Income ON' : 'Income OFF') + '</button>' +
+        '<button class="btn btn-red act-delete" data-id="' + u.id + '" style="padding:5px 9px;font-size:.75rem">🗑️</button>' +
+      '</div></td>' +
+    '</tr>';
+  }).join('');
+
+  renderPagination(total);
+  attachUserRowEvents();
+}
+
+function attachUserRowEvents(){
+  document.querySelectorAll('.act-view').forEach(function(btn){
+    btn.addEventListener('click', function(){ viewUser(btn.getAttribute('data-id')); });
+  });
+  document.querySelectorAll('.act-block').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      const blocked = btn.getAttribute('data-blocked') === 'true';
+      blockUser(btn.getAttribute('data-id'), blocked);
+    });
+  });
+  document.querySelectorAll('.act-income').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      const incomeOff = btn.getAttribute('data-incomeoff') === 'true';
+      toggleIncome(btn.getAttribute('data-id'), incomeOff);
+    });
+  });
+  document.querySelectorAll('.act-delete').forEach(function(btn){
+    btn.addEventListener('click', function(){ deleteUser(btn.getAttribute('data-id')); });
+  });
+}
+
+function renderPagination(total){
+  const pg = document.getElementById('userPagination');
+  if (total <= 1) { pg.innerHTML = ''; return; }
+  let html = '<span class="pg-info">' + filteredUsers.length + ' users</span>';
+  for (let i = 1; i <= total; i++) {
+    html += '<button class="pg-btn ' + (i === currentPage ? 'active' : '') + '" data-page-num="' + i + '">' + i + '</button>';
+  }
+  pg.innerHTML = html;
+  pg.querySelectorAll('.pg-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      currentPage = parseInt(btn.getAttribute('data-page-num'), 10);
+      renderUsers();
+    });
+  });
+}
+
+// ── VIEW USER ──
+function viewUser(id){
+  const u = allUsers.find(function(x){ return x.id === id; });
+  if (!u) return;
+  selectedUserId = id;
+  document.getElementById('userInfoGrid').innerHTML =
+    '<div class="info-item"><div class="lbl">Full Name</div><div class="val">' + (u['full neme'] || u.fullName || u.name || '—') + '</div></div>' +
+    '<div class="info-item"><div class="lbl">Username</div><div class="val">@' + (u.username || '—') + '</div></div>' +
+    '<div class="info-item"><div class="lbl">Email</div><div class="val">' + (u.email || '—') + '</div></div>' +
+    '<div class="info-item"><div class="lbl">Mobile</div><div class="val">' + (u.mobile || '—') + '</div></div>' +
+    '<div class="info-item"><div class="lbl">Balance</div><div class="val" style="color:#f59e0b">$' + parseFloat(u.balance || 0).toFixed(2) + '</div></div>' +
+    '<div class="info-item"><div class="lbl">Country</div><div class="val">' + (u.country || '—') + '</div></div>' +
+    '<div class="info-item"><div class="lbl">Ref Code</div><div class="val">' + (u['ref code'] || u.refCode || '—') + '</div></div>' +
+    '<div class="info-item"><div class="lbl">Joined</div><div class="val">' + (u.createAt ? new Date(u.createAt).toLocaleDateString() : '—') + '</div></div>' +
+    '<div class="info-item"><div class="lbl">Status</div><div class="val"><span class="badge ' + (u.blocked ? 'badge-red' : 'badge-green') + '">' + (u.blocked ? 'Blocked' : 'Active') + '</span></div></div>' +
+    '<div class="info-item"><div class="lbl">Income</div><div class="val"><span class="badge ' + (u.incomeEnabled === false ? 'badge-red' : 'badge-green') + '">' + (u.incomeEnabled === false ? 'OFF' : 'ON') + '</span></div></div>';
+  document.getElementById('walletAmount').value = u.balance || 0;
+  document.getElementById('newSponsor').value = '';
+  document.getElementById('userModal').classList.add('open');
+}
+
+// ── BLOCK ──
+async function blockUser(id, status){
+  if (!confirm(status ? 'Unblock this user?' : 'Block this user?')) return;
+  try {
+    await updateDoc(doc(db,'users',id), { blocked: !status });
+    toast(status ? '✅ User unblocked' : '🚫 User blocked');
+    loadUsers(); loadDashboard();
+  } catch(e) { toast('Failed: ' + e.message, 'error'); }
+}
+
+// ── INCOME ──
+async function toggleIncome(id, incomeOff){
+  try {
+    await updateDoc(doc(db,'users',id), { incomeEnabled: incomeOff ? true : false });
+    toast('Income updated');
+    loadUsers();
+  } catch(e) { toast('Failed: ' + e.message, 'error'); }
+}
+
+// ── DELETE ──
+async function deleteUser(id){
+  if (!confirm('⚠️ Permanently delete this user?')) return;
+  try {
+    await deleteDoc(doc(db,'users',id));
+    toast('🗑️ User deleted');
+    loadUsers(); loadDashboard();
+  } catch(e) { toast('Failed: ' + e.message, 'error'); }
+}
+
+// ── WALLET UPDATE ──
+document.getElementById('updateWalletBtn').addEventListener('click', async function(){
+  const amount = parseFloat(document.getElementById('walletAmount').value);
+  if (isNaN(amount)) return toast('Enter valid amount', 'error');
+  try {
+    await updateDoc(doc(db,'users',selectedUserId), { balance: amount });
+    toast('💰 Wallet updated!');
+    closeModal('userModal');
+    loadUsers(); loadDashboard();
+  } catch(e) { toast('Failed: ' + e.message, 'error'); }
+});
+
+// ── CHANGE SPONSOR ──
+document.getElementById('changeSponsorBtn').addEventListener('click', async function(){
+  const sponsor = document.getElementById('newSponsor').value.trim();
+  if (!sponsor) return toast('Enter sponsor ref code', 'error');
+  try {
+    await updateDoc(doc(db,'users',selectedUserId), { sponsor: sponsor, refCode: sponsor });
+    toast('✅ Sponsor changed!');
+    closeModal('userModal');
+    loadUsers();
+  } catch(e) { toast('Failed: ' + e.message, 'error'); }
+});
+
+// ── INVESTMENTS ──
+async function loadInvestments(){
+  document.getElementById('investTable').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:var(--muted)">Loading...</td></tr>';
+  try {
+    const snap = await getDocs(collection(db,'investments'));
+    let html = '', total = 0;
+    snap.forEach(function(d){
+      const data = d.data();
+      total += parseFloat(data.amount || 0);
+      html += '<tr><td>' + (data.user || data.userId || '—') + '</td><td><strong>$' + (data.amount || 0) + '</strong></td><td>' + (data.date || data.createdAt || '—') + '</td><td><span class="badge badge-green">' + (data.status || 'active') + '</span></td><td><button class="btn btn-red act-del-invest" data-id="' + d.id + '" style="padding:5px 9px;font-size:.75rem">🗑️</button></td></tr>';
+    });
+    document.getElementById('investTable').innerHTML = html || '<tr><td colspan="5" style="text-align:center;padding:30px;color:var(--muted)">No data</td></tr>';
+    document.getElementById('st-invest').textContent = '$' + total.toFixed(2);
+    document.querySelectorAll('.act-del-invest').forEach(function(btn){
+      btn.addEventListener('click', function(){ deleteInvest(btn.getAttribute('data-id')); });
+    });
+  } catch(e) {
+    document.getElementById('investTable').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--red);padding:20px">No investments collection found yet</td></tr>';
+  }
+}
+async function deleteInvest(id){
+  if (!confirm('Delete?')) return;
+  await deleteDoc(doc(db,'investments',id));
+  toast('Deleted'); loadInvestments();
+}
+document.getElementById('refreshInvestBtn').addEventListener('click', loadInvestments);
+
+// ── WITHDRAW ──
+async function loadWithdraw(){
+  document.getElementById('withdrawTable').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted)">Loading...</td></tr>';
+  try {
+    const snap = await getDocs(collection(db,'withdrawals'));
+    let html = '', pending = 0;
+    snap.forEach(function(d){
+      const data = d.data();
+      if (data.status !== 'approved') pending++;
+      const statusClass = data.status === 'approved' ? 'badge-green' : data.status === 'rejected' ? 'badge-red' : 'badge-orange';
+      html += '<tr><td>' + (data.user || data.userId || '—') + '</td><td><strong>$' + (data.amount || 0) + '</strong></td><td>' + (data.method || '—') + '</td><td>' + (data.date || data.createdAt || '—') + '</td><td><span class="badge ' + statusClass + '">' + (data.status || 'pending') + '</span></td>' +
+        '<td><div class="action-group">' +
+          '<button class="btn btn-green act-approve-w" data-id="' + d.id + '" style="padding:5px 9px;font-size:.75rem">✅ Approve</button>' +
+          '<button class="btn btn-red act-reject-w" data-id="' + d.id + '" style="padding:5px 9px;font-size:.75rem">❌ Reject</button>' +
+          '<button class="btn btn-ghost act-return-w" data-id="' + d.id + '" data-userid="' + (data.userId || '') + '" data-amount="' + (data.amount || 0) + '" style="padding:5px 9px;font-size:.75rem">↩️ Return</button>' +
+        '</div></td></tr>';
+    });
+    document.getElementById('withdrawTable').innerHTML = html || '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted)">No data</td></tr>';
+    document.getElementById('st-withdraw').textContent = pending;
+
+    document.querySelectorAll('.act-approve-w').forEach(function(btn){
+      btn.addEventListener('click', function(){ approveWithdraw(btn.getAttribute('data-id')); });
+    });
+    document.querySelectorAll('.act-reject-w').forEach(function(btn){
+      btn.addEventListener('click', function(){ rejectWithdraw(btn.getAttribute('data-id')); });
+    });
+    document.querySelectorAll('.act-return-w').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        returnTransfer(btn.getAttribute('data-id'), btn.getAttribute('data-userid'), parseFloat(btn.getAttribute('data-amount')));
+      });
+    });
+  } catch(e) {
+    document.getElementById('withdrawTable').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--red);padding:20px">No withdrawals collection found yet</td></tr>';
+  }
+}
+async function approveWithdraw(id){ await updateDoc(doc(db,'withdrawals',id), { status: 'approved' }); toast('✅ Approved'); loadWithdraw(); }
+async function rejectWithdraw(id){ await updateDoc(doc(db,'withdrawals',id), { status: 'rejected' }); toast('❌ Rejected'); loadWithdraw(); }
+async function returnTransfer(id, userId, amount){
+  if (!confirm('Return $' + amount + ' to user?')) return;
+  if (userId) {
+    const uRef = doc(db,'users',userId);
+    const uSnap = await getDoc(uRef);
+    if (uSnap.exists()) {
+      const cur = parseFloat(uSnap.data().balance || 0);
+      await updateDoc(uRef, { balance: cur + amount });
+    }
+  }
+  await updateDoc(doc(db,'withdrawals',id), { status: 'returned' });
+  toast('↩️ Amount returned to user');
+  loadWithdraw();
+}
+document.getElementById('refreshWithdrawBtn').addEventListener('click', loadWithdraw);
+
+// ── TRANSACTIONS ──
+async function loadTransactions(){
+  document.getElementById('txTable').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--muted)">Loading...</td></tr>';
+  try {
+    const snap = await getDocs(collection(db,'transactions'));
+    allTx = [];
+    snap.forEach(function(d){ allTx.push(Object.assign({ id: d.id }, d.data())); });
+    renderTx(allTx);
+  } catch(e) {
+    document.getElementById('txTable').innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--red);padding:20px">No transactions collection yet</td></tr>';
+  }
+}
+document.getElementById('txSearch').addEventListener('input', function(){
+  const q = this.value.toLowerCase();
+  const filtered = allTx.filter(function(t){
+    return (t.userId || '').toLowerCase().includes(q) || (t.type || '').toLowerCase().includes(q) || (t.note || '').toLowerCase().includes(q);
+  });
+  renderTx(filtered);
+});
+function renderTx(list){
+  document.getElementById('txTable').innerHTML = list.length ? list.map(function(t){
+    return '<tr>' +
+      '<td style="font-size:.75rem;color:var(--muted)">' + (t.createdAt ? new Date(t.createdAt).toLocaleString() : '—') + '</td>' +
+      '<td>' + (t.userId || '—') + '</td>' +
+      '<td><span class="badge badge-blue">' + (t.type || '—') + '</span></td>' +
+      '<td><strong style="color:#f59e0b">$' + parseFloat(t.amount || 0).toFixed(2) + '</strong></td>' +
+      '<td style="color:var(--muted);font-size:.78rem">' + (t.note || '—') + '</td>' +
+      '<td><span class="badge ' + (t.status === 'completed' ? 'badge-green' : 'badge-orange') + '">' + (t.status || 'pending') + '</span></td>' +
+      '<td><button class="btn btn-red act-del-tx" data-id="' + t.id + '" style="padding:5px 9px;font-size:.75rem">🗑️</button></td>' +
+    '</tr>';
+  }).join('') : '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--muted)">No transactions</td></tr>';
+
+  document.querySelectorAll('.act-del-tx').forEach(function(btn){
+    btn.addEventListener('click', function(){ deleteTx(btn.getAttribute('data-id')); });
+  });
+}
+async function deleteTx(id){
+  if (!confirm('Delete transaction?')) return;
+  await deleteDoc(doc(db,'transactions',id));
+  toast('Deleted'); loadTransactions();
+}
+document.getElementById('refreshTxBtn').addEventListener('click', loadTransactions);
+
+// ── NOTICES ──
+async function loadNotices(){
+  try {
+    const snap = await getDocs(collection(db,'notices'));
+    const list = [];
+    snap.forEach(function(d){ list.push(Object.assign({ id: d.id }, d.data())); });
+    document.getElementById('noticeList').innerHTML = list.length ? list.map(function(n){
+      return '<div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px">' +
+        '<div><div style="font-weight:600;margin-bottom:4px">' + (n.title || 'Notice') + '</div><div style="color:var(--muted);font-size:.85rem">' + (n.text || n.message || '') + '</div><div style="color:var(--muted);font-size:.72rem;margin-top:4px">' + (n.createdAt ? new Date(n.createdAt).toLocaleString() : '') + '</div></div>' +
+        '<button class="btn btn-red act-del-notice" data-id="' + n.id + '" style="padding:5px 9px;font-size:.75rem">🗑️</button>' +
+      '</div>';
+    }).join('') : '<div style="color:var(--muted)">No notices yet.</div>';
+
+    document.querySelectorAll('.act-del-notice').forEach(function(btn){
+      btn.addEventListener('click', function(){ deleteNotice(btn.getAttribute('data-id')); });
+    });
+  } catch(e) {
+    document.getElementById('noticeList').innerHTML = '<div style="color:var(--red)">Failed to load notices.</div>';
+  }
+}
+document.getElementById('saveNoticeBtn').addEventListener('click', async function(){
+  const title = document.getElementById('noticeTitle').value.trim();
+  const text = document.getElementById('noticeText').value.trim();
+  if (!title || !text) return toast('Fill all fields', 'error');
+  try {
+    await addDoc(collection(db,'notices'), { title: title, text: text, createdAt: new Date().toISOString() });
+    await setDoc(doc(db,'notice','latest'), { text: title + ': ' + text });
+    toast('📢 Notice sent!');
+    document.getElementById('noticeTitle').value = '';
+    document.getElementById('noticeText').value = '';
+    loadNotices();
+  } catch(e) { toast('Failed: ' + e.message, 'error'); }
+});
+async function deleteNotice(id){
+  if (!confirm('Delete notice?')) return;
+  await deleteDoc(doc(db,'notices',id));
+  toast('Deleted'); loadNotices();
+}
+
+// ── VOUCHER ──
+document.getElementById('voucherTarget').addEventListener('change', function(){
+  document.getElementById('voucherUserGroup').style.display = this.value === 'single' ? 'block' : 'none';
+});
+document.getElementById('sendVoucherBtn').addEventListener('click', async function(){
+  const target = document.getElementById('voucherTarget').value;
+  const amount = parseFloat(document.getElementById('voucherAmount').value);
+  if (isNaN(amount) || amount <= 0) return toast('Enter valid amount', 'error');
+
+  try {
+    if (target === 'all') {
+      if (!confirm('Send $' + amount + ' voucher to ALL users?')) return;
+      const snap = await getDocs(collection(db,'users'));
+      const batch = writeBatch(db);
+      snap.forEach(function(d){
+        const cur = parseFloat(d.data().balance || 0);
+        batch.update(doc(db,'users',d.id), { balance: cur + amount });
+      });
+      await batch.commit();
+      toast('🎁 Voucher sent to all users!');
+    } else {
+      const userId = document.getElementById('voucherUserId').value.trim();
+      if (!userId) return toast('Enter user ID or email', 'error');
+      const uSnap = await getDoc(doc(db,'users',userId));
+      if (!uSnap.exists()) return toast('User not found', 'error');
+      const cur = parseFloat(uSnap.data().balance || 0);
+      await updateDoc(doc(db,'users',userId), { balance: cur + amount });
+      toast('🎁 Voucher sent!');
+    }
+    document.getElementById('voucherAmount').value = '';
+  } catch(e) { toast('Failed: ' + e.message, 'error'); }
+});
+
+// ── SETTINGS ──
+async function loadSettings(){
+  try {
+    const snap = await getDoc(doc(db,'settings','global'));
+    if (snap.exists()) {
+      const d = snap.data();
+      document.getElementById('roi').value = d.roi || '';
+      document.getElementById('monthlyROI').value = d.monthlyROI || '';
+      document.getElementById('ref').value = d.referralBonus || '';
+      document.getElementById('genIncome').value = d.generationIncome || '';
+      document.getElementById('matchIncome').value = d.matchingIncome || '';
+      document.getElementById('fee').value = d.registrationFee || '';
+      document.getElementById('minWithdraw').value = d.minWithdraw || '';
+      document.getElementById('maxWithdraw').value = d.maxWithdraw || '';
+      document.getElementById('treeCut').value = d.treeCut || '';
+    }
+  } catch(e) { console.error(e); }
+}
+document.getElementById('saveSettingsBtn').addEventListener('click', async function(){
+  try {
+    await setDoc(doc(db,'settings','global'), {
+      roi: document.getElementById('roi').value,
+      monthlyROI: document.getElementById('monthlyROI').value,
+      referralBonus: document.getElementById('ref').value,
+      generationIncome: document.getElementById('genIncome').value,
+      matchingIncome: document.getElementById('matchIncome').value,
+      registrationFee: document.getElementById('fee').value,
+      minWithdraw: document.getElementById('minWithdraw').value,
+      maxWithdraw: document.getElementById('maxWithdraw').value,
+      treeCut: document.getElementById('treeCut').value
+    }, { merge: true });
+    toast('⚙️ Settings saved!');
+  } catch(e) { toast('Failed: ' + e.message, 'error'); }
+});
+
+// ── ROI DISTRIBUTE ──
+document.getElementById('distributeROIBtn').addEventListener('click', async function(){
+  try {
+    const settSnap = await getDoc(doc(db,'settings','global'));
+    const roi = parseFloat(settSnap.exists() ? (settSnap.data().monthlyROI || 10) : 10);
+    if (!confirm('Distribute ' + roi + '% Monthly ROI to ALL active users?')) return;
+    const snap = await getDocs(collection(db,'users'));
+    const batch = writeBatch(db);
+    snap.forEach(function(d){
+      const data = d.data();
+      if (!data.blocked && data.incomeEnabled !== false) {
+        const cur = parseFloat(data.balance || 0);
+        const roiAmt = (cur * roi) / 100;
+        batch.update(doc(db,'users',d.id), { balance: cur + roiAmt });
+      }
+    });
+    await batch.commit();
+    toast('💰 ROI distributed!');
+  } catch(e) { toast('Failed: ' + e.message, 'error'); }
+});
+
+// ── MENU CONTROL ──
+async function loadMenuControl(){
+  try {
+    const snap = await getDoc(doc(db,'menuControl','main'));
+    if (snap.exists()) {
+      const d = snap.data();
+      document.getElementById('depositBtn').value = String(d.deposit !== false);
+      document.getElementById('withdrawBtn').value = String(d.withdraw !== false);
+      document.getElementById('teamBtn').value = String(d.team !== false);
+      document.getElementById('salaryBtn').value = String(d.salary !== false);
+      document.getElementById('investBtn').value = String(d.invest !== false);
+      document.getElementById('roiBtn').value = String(d.roi !== false);
+    }
+  } catch(e) { console.error(e); }
+}
+document.getElementById('saveMenuControlBtn').addEventListener('click', async function(){
+  try {
+    await setDoc(doc(db,'menuControl','main'), {
+      deposit: document.getElementById('depositBtn').value === 'true',
+      withdraw: document.getElementById('withdrawBtn').value === 'true',
+      team: document.getElementById('teamBtn').value === 'true',
+      salary: document.getElementById('salaryBtn').value === 'true',
+      invest: document.getElementById('investBtn').value === 'true',
+      roi: document.getElementById('roiBtn').value === 'true'
+    });
+    toast('🧩 Menu control saved!');
+  } catch(e) { toast('Failed: ' + e.message, 'error'); }
+});
+
+// ── MODIFY BALANCE ──
+document.getElementById('modifyBalanceBtn').addEventListener('click', async function(){
+  const userId = document.getElementById('balanceUserId').value.trim();
+  const amount = parseFloat(document.getElementById('balanceAmount').value);
+  const action = document.getElementById('balanceAction').value;
+  const note = document.getElementById('balanceNote').value || 'Admin adjustment';
+  if (!userId || isNaN(amount)) return toast('Fill all fields', 'error');
+
+  try {
+    const uRef = doc(db,'users',userId);
+    const uSnap = await getDoc(uRef);
+    if (!uSnap.exists()) return toast('User not found', 'error');
+    const cur = parseFloat(uSnap.data().balance || 0);
+    let newBal = action === 'add' ? cur + amount : action === 'deduct' ? cur - amount : amount;
+    if (newBal < 0) return toast('Balance cannot be negative', 'error');
+    await updateDoc(uRef, { balance: newBal });
+    await addDoc(collection(db,'transactions'), { userId: userId, amount: amount, type: 'admin_' + action, note: note, status: 'completed', createdAt: new Date().toISOString() });
+    toast('✅ Balance updated! New: $' + newBal.toFixed(2));
+    document.getElementById('balanceUserId').value = '';
+    document.getElementById('balanceAmount').value = '';
+  } catch(e) { toast('Failed: ' + e.message, 'error'); }
+});
+
+// ── CREATE USER ──
+document.getElementById('createUserBtn').addEventListener('click', async function(){
+  const name = document.getElementById('newName').value.trim();
+  const email = document.getElementById('newEmail').value.trim();
+  if (!name || !email) return toast('Name and email required', 'error');
+
+  try {
+    await addDoc(collection(db,'users'), {
+      'full neme': name, email: email,
+      username: document.getElementById('newUsername').value,
+      mobile: document.getElementById('newMobile').value,
+      country: document.getElementById('newCountry').value,
+      balance: parseFloat(document.getElementById('newBalance').value || 0),
+      'ref code': document.getElementById('newRef').value,
+      blocked: false, incomeEnabled: true,
+      createAt: new Date().toISOString()
+    });
+    toast('✅ User created!');
+    ['newName','newEmail','newUsername','newMobile','newCountry','newBalance','newRef'].forEach(function(id){
+      document.getElementById(id).value = '';
+    });
+    loadUsers();
+  } catch(e) { toast('Failed: ' + e.message, 'error'); }
+});
+
+// ── BACKUP ──
+document.getElementById('downloadBackupBtn').addEventListener('click', async function(){
+  try {
+    const snap = await getDocs(collection(db,'users'));
+    const data = [];
+    snap.forEach(function(d){ data.push(Object.assign({ id: d.id }, d.data())); });
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'lifelinemeta_backup_' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('⬇️ Backup downloaded!');
+  } catch(e) { toast('Failed: ' + e.message, 'error'); }
+});
+document.getElementById('restoreBackupBtn').addEventListener('click', async function(){
+  const file = document.getElementById('restoreFile').files[0];
+  if (!file) return toast('Select a JSON file', 'error');
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if (!confirm('Restore ' + data.length + ' users? Existing data will be overwritten.')) return;
+    const batch = writeBatch(db);
+    data.forEach(function(u){
+      const id = u.id;
+      const rest = Object.assign({}, u);
+      delete rest.id;
+      batch.set(doc(db,'users',id), rest);
+    });
+    await batch.commit();
+    toast('✅ Backup restored!');
+    loadUsers();
+  } catch(e) { toast('Failed: ' + e.message, 'error'); }
+});
+
+// ── INIT ──
+(async function init(){
+  await loadDashboard();
+  await loadDashboardNotice();
+  await loadUsers();
+  document.getElementById('initLoading').classList.add('hide');
+})();
+</script>
+</body>
+</html>
