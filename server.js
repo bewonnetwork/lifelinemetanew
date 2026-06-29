@@ -5,7 +5,19 @@ const path = require('path');
 require('dotenv').config();
 
 // Firebase Admin Init
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+// Firebase Admin Init
+// ================= Firebase Admin =================
+
+let serviceAccount;
+
+if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+  // Render
+  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+} else {
+  // Local VS Code
+  serviceAccount = require("./serviceAccountKey.json");
+}
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
