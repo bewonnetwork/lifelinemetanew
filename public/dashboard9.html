@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Life Line Meta – Dashboard</title>
+<style>
+:root{
+  --bg:#0b0f1a;
+  --surface:#111827;
+  --card:#1a2235;
+  --border:#1e2d45;
+  --accent:#00c6ff;
+  --accent2:#7c3aed;
+  --gold:#f59e0b;
+  --green:#10b981;
+  --red:#ef4444;
+  --text:#e2e8f0;
+  --muted:#64748b;
+  --radius:14px;
+  --shadow:0 4px 24px rgba(0,198,255,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:inherit}
+
+/* SIDEBAR */
+.sidebar{position:fixed;top:0;left:0;height:100vh;width:240px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;transition:.3s}
+.logo{padding:22px 20px 18px;border-bottom:1px solid var(--border)}
+.logo h2{font-size:1.2rem;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;letter-spacing:.5px}
+.logo p{font-size:.7rem;color:var(--muted);margin-top:2px}
+nav{flex:1;padding:12px 0;overflow-y:auto}
+nav a{display:flex;align-items:center;gap:11px;padding:11px 20px;font-size:.85rem;color:var(--muted);border-left:3px solid transparent;transition:.2s}
+nav a:hover,nav a.active{color:var(--text);background:rgba(0,198,255,.06);border-left-color:var(--accent)}
+nav a .icon{font-size:1rem;width:20px;text-align:center}
+.sidebar-footer{padding:16px 20px;border-top:1px solid var(--border)}
+.user-mini{display:flex;align-items:center;gap:10px}
+.avatar-sm{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#fff;flex-shrink:0}
+.user-mini-info{overflow:hidden}
+.user-mini-info strong{font-size:.82rem;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-mini-info span{font-size:.7rem;color:var(--muted)}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:240px;right:0;height:60px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:99}
+.menu-btn{display:none;background:none;border:none;color:var(--text);font-size:1.4rem}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.notif-btn{position:relative;background:none;border:none;color:var(--muted);font-size:1.2rem;padding:6px}
+.notif-btn .badge{position:absolute;top:2px;right:2px;width:8px;height:8px;background:var(--red);border-radius:50%}
+.theme-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 12px;font-size:.8rem}
+
+/* MAIN */
+.main{margin-left:240px;padding-top:60px;min-height:100vh}
+.page{display:none;padding:24px}
+.page.active{display:block}
+.page-title{font-size:1.4rem;font-weight:700;margin-bottom:20px}
+.page-title span{font-size:.85rem;color:var(--muted);font-weight:400;margin-left:8px}
+
+/* CARDS GRID */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:-30px;right:-30px;width:90px;height:90px;border-radius:50%;opacity:.08}
+.stat-card.blue::before{background:var(--accent)}
+.stat-card.purple::before{background:var(--accent2)}
+.stat-card.gold::before{background:var(--gold)}
+.stat-card.green::before{background:var(--green)}
+.stat-label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.stat-val{font-size:1.8rem;font-weight:800;margin:6px 0 4px}
+.stat-val.blue{color:var(--accent)}
+.stat-val.purple{color:var(--accent2)}
+.stat-val.gold{color:var(--gold)}
+.stat-val.green{color:var(--green)}
+.stat-sub{font-size:.75rem;color:var(--muted)}
+.stat-icon{position:absolute;bottom:16px;right:16px;font-size:1.6rem;opacity:.25}
+
+/* PROGRESS BAR */
+.progress-wrap{margin-top:8px}
+.progress-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .6s}
+
+/* 2-COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.card-title{font-size:.9rem;font-weight:600;margin-bottom:14px;color:var(--text)}
+.card-title small{font-size:.75rem;color:var(--muted);font-weight:400;margin-left:6px}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{color:var(--muted);font-weight:600;padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid rgba(30,45,69,.5);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.badge-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600}
+.badge-success{background:rgba(16,185,129,.15);color:var(--green)}
+.badge-warn{background:rgba(245,158,11,.15);color:var(--gold)}
+.badge-danger{background:rgba(239,68,68,.15);color:var(--red)}
+.badge-info{background:rgba(0,198,255,.15);color:var(--accent)}
+
+/* REFERRAL BOX */
+.ref-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px}
+.ref-box input{flex:1;background:none;border:none;color:var(--text);font-size:.82rem;outline:none}
+.copy-btn{background:linear-gradient(90deg,var(--accent),var(--accent2));border:none;color:#fff;padding:7px 16px;border-radius:8px;font-size:.78rem;font-weight:600}
+
+/* RANK CARD */
+.rank-display{text-align:center;padding:10px 0 4px}
+.rank-stars{font-size:1.8rem;letter-spacing:4px;margin-bottom:6px}
+.rank-name{font-size:1rem;font-weight:700;color:var(--gold)}
+.rank-next{font-size:.75rem;color:var(--muted);margin-top:4px}
+.rank-bars{margin-top:14px}
+.rank-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:.78rem}
+.rank-bar-row span:first-child{width:100px;color:var(--muted)}
+.rank-bar-row span:last-child{width:70px;text-align:right;color:var(--muted)}
+
+/* TREE */
+.tree-node{display:flex;flex-direction:column;align-items:center;gap:6px}
+.tree-node .node-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:.8rem;text-align:center;min-width:100px}
+.tree-node .node-box strong{display:block;font-size:.85rem}
+.tree-children{display:flex;gap:20px;position:relative;padding-top:16px}
+.tree-children::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:1px;height:16px;background:var(--border)}
+.tree-children .tree-node::before{content:'';position:absolute;top:-16px;left:50%;transform:translateX(-50%);width:1px;height:16px;background:var(--border)}
+.tree-wrap{overflow-x:auto;padding:10px}
+
+/* WALLET */
+.wallet-bal{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px}
+.wallet-amount{font-size:2rem;font-weight:800;color:var(--green)}
+.action-btns{display:flex;gap:10px;flex-wrap:wrap}
+.btn{padding:9px 20px;border-radius:10px;font-size:.82rem;font-weight:600;border:none}
+.btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+.btn-outline{background:none;border:1px solid var(--border);color:var(--text)}
+.btn-gold{background:linear-gradient(90deg,var(--gold),#d97706);color:#fff}
+.btn-danger{background:var(--red);color:#fff}
+
+/* INVEST FORM */
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:.8rem;color:var(--muted);margin-bottom:6px}
+.form-group input,.form-group select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:.9rem;outline:none;transition:.2s}
+.form-group input:focus,.form-group select:focus{border-color:var(--accent)}
+.info-box{background:rgba(0,198,255,.06);border:1px solid rgba(0,198,255,.2);border-radius:10px;padding:12px 16px;font-size:.8rem;color:var(--accent);margin-bottom:16px;line-height:1.6}
+
+/* MOBILE */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .topbar{left:0}
+  .menu-btn{display:block}
+  .two-col{grid-template-columns:1fr}
+  .cards-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){
+  .cards-grid{grid-template-columns:1fr}
+}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+.overlay.show{display:block}
+
+/* LIGHT MODE */
+body.light{--bg:#f0f4f8;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1e293b;--muted:#64748b}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:.85rem;z-index:9999;opacity:0;transform:translateY(20px);transition:.3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <h2>Life Line Meta</h2>
+    <p>MLM + ROI Platform</p>
+  </div>
+  <nav>
+    <a href="#" class="active" onclick="showPage('overview',this)"><span class="icon">🏠</span> Overview</a>
+    <a href="#" onclick="showPage('profile',this)"><span class="icon">👤</span> Profile</a>
+    <a href="#" onclick="showPage('referral',this)"><span class="icon">🔗</span> Referral</a>
+    <a href="#" onclick="showPage('team',this)"><span class="icon">👥</span> My Team</a>
+    <a href="#" onclick="showPage('income',this)"><span class="icon">💰</span> Income Report</a>
+    <a href="#" onclick="showPage('roi',this)"><span class="icon">📈</span> ROI Investment</a>
+    <a href="#" onclick="showPage('wallet',this)"><span class="icon">💳</span> Wallet</a>
+    <a href="#" onclick="showPage('rank',this)"><span class="icon">⭐</span> Rank Progress</a>
+    <a href="#" onclick="showPage('cashback',this)"><span class="icon">🎁</span> Cashback Pool</a>
+    <a href="#" onclick="showPage('club',this)"><span class="icon">🏆</span> Club Bonus</a>
+    <a href="#" onclick="showPage('activation',this)"><span class="icon">✅</span> Activation</a>
+    <a href="#" onclick="logout()" style="margin-top:auto"><span class="icon">🚪</span> Logout</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-mini">
+      <div class="avatar-sm" id="avatarInitial">U</div>
+      <div class="user-mini-info">
+        <strong id="sidebarName">Loading…</strong>
+        <span id="sidebarStatus">Inactive</span>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+  <div style="font-size:.9rem;font-weight:600;color:var(--muted)">Dashboard</div>
+  <div class="topbar-right">
+    <button class="notif-btn">🔔<span class="badge"></span></button>
+    <button class="theme-btn" onclick="toggleTheme()">🌙 Dark</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- OVERVIEW -->
+  <div class="page active" id="page-overview">
+    <div class="page-title">Overview <span id="greetUser">Welcome back!</span></div>
+
+    <!-- Activation Banner -->
+    <div id="activationBanner" style="display:none;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div><strong style="color:var(--gold)">⚠️ Account Not Activated</strong><br><small style="color:var(--muted)">Pay $30 to activate and unlock all features</small></div>
+      <button class="btn btn-gold" onclick="showPage('activation',null)">Activate Now →</button>
+    </div>
+
+    <div class="cards-grid">
+      <div class="stat-card blue">
+        <div class="stat-label">Total Income</div>
+        <div class="stat-val blue" id="totalIncome">$0.00</div>
+        <div class="stat-sub">Lifetime earnings</div>
+        <div class="stat-icon">💵</div>
+      </div>
+      <div class="stat-card purple">
+        <div class="stat-label">Wallet Balance</div>
+        <div class="stat-val purple" id="walletBal">$0.00</div>
+        <div class="stat-sub">Available to withdraw</div>
+        <div class="stat-icon">💳</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-label">Direct Referrals</div>
+        <div class="stat-val gold" id="directRefs">0</div>
+        <div class="stat-sub">Active / Total</div>
+        <div class="stat-icon">👥</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">Matching Income</div>
+        <div class="stat-val green" id="matchingIncome">$0.00</div>
+        <div class="stat-sub" id="matchingCap">Cap: $1000</div>
+        <div class="stat-icon">🤝</div>
+        <div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="matchingProgress" style="width:0%"></div></div></div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Income Breakdown</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody id="incomeBreakdown">
+              <tr><td>Sponsor Commission</td><td id="sponsorInc">$0.00</td><td><span class="badge-pill badge-success">Active</span></td></tr>
+              <tr><td>Matching Bonus</td><td id="matchingInc">$0.00</td><td><span class="badge-pill badge-success">Active</span></td></tr>
+              <tr><td>Daily Cashback</td><td id="cashbackInc">$0.00</td><td><span class="badge-pill badge-info">Pool</span></td></tr>
+              <tr><td>Club Bonus</td><td id="clubInc">$0.00</td><td><span class="badge-pill badge-warn">Checking</span></td></tr>
+              <tr><td>ROI Returns</td><td id="roiInc">$0.00</td><td><span class="badge-pill badge-success">Active</span></td></tr>
+              <tr><td>Generation Bonus</td><td id="genInc">$0.00</td><td><span class="badge-pill badge-info">7 Levels</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Recent Transactions</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Type</th><th>Amount</th></tr></thead>
+            <tbody id="recentTxns">
+              <tr><td colspan="3" style="text-align:center;color:var(--muted)">No transactions yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="page" id="page-profile">
+    <div class="page-title">My Profile</div>
+    <div style="max-width:600px">
+      <div class="card" style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:18px;margin-bottom:20px">
+          <div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:2rem;color:#fff;font-weight:800" id="profileAvatar">U</div>
+          <div>
+            <div style="font-size:1.2rem;font-weight:700" id="profileName">-</div>
+            <div style="color:var(--muted);font-size:.82rem" id="profileEmail">-</div>
+            <div id="profileActiveBadge" style="margin-top:6px"><span class="badge-pill badge-warn">Inactive</span></div>
+          </div>
+        </div>
+        <div class="form-group"><label>Full Name</label><input type="text" id="pfName" placeholder="Your name"/></div>
+        <div class="form-group"><label>Phone</label><input type="text" id="pfPhone" placeholder="+1 000 000 0000"/></div>
+        <div class="form-group"><label>Country</label><input type="text" id="pfCountry" placeholder="Country"/></div>
+        <div class="form-group"><label>Payment Wallet (USDT TRC20)</label><input type="text" id="pfWallet" placeholder="TRC20 wallet address"/></div>
+        <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Account Info</div>
+        <table style="width:100%;font-size:.83rem">
+          <tr><td style="color:var(--muted);padding:8px 0">User ID</td><td id="infoUID">-</td></tr>
+          <tr><td style="color:var(--muted);padding:8px 0">Sponsor ID</td><td id="infoSponsor">-</td></tr>
+          <tr><td style="color:var(--muted);padding:8px 0">Joined</td><td id="infoJoined">-</td></tr>
+          <tr><td style="color:var(--muted);padding:8px 0">Rank</td><td id="infoRank">-</td></tr>
+          <tr><td style="color:var(--muted);padding:8px 0">Status</td><td id="infoStatus">-</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- REFERRAL -->
+  <div class="page" id="page-referral">
+    <div class="page-title">Referral Program</div>
+    <div class="two-col" style="max-width:900px">
+      <div class="card">
+        <div class="card-title">Your Referral Link</div>
+        <div class="ref-box">
+          <input type="text" id="refLink" readonly/>
+          <button class="copy-btn" onclick="copyRef()">Copy</button>
+        </div>
+        <p style="font-size:.75rem;color:var(--muted);margin-top:10px">Share this link to earn $4 per activated referral</p>
+        <div style="margin-top:16px">
+          <div class="card-title" style="font-size:.82rem">Share via</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-outline" onclick="shareWA()" style="font-size:.75rem">📲 WhatsApp</button>
+            <button class="btn btn-outline" onclick="shareTG()" style="font-size:.75rem">✈️ Telegram</button>
+            <button class="btn btn-outline" onclick="copyRef()" style="font-size:.75rem">📋 Copy Link</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Commission Structure</div>
+        <table style="font-size:.82rem;width:100%">
+          <tr><td style="color:var(--muted);padding:8px 0">Activation Fee</td><td style="color:var(--accent);font-weight:700">$30</td></tr>
+          <tr><td style="color:var(--muted);padding:8px 0">Sponsor Commission</td><td style="color:var(--green);font-weight:700">$4 / referral</td></tr>
+          <tr><td style="color:var(--muted);padding:8px 0">Matching Bonus</td><td style="color:var(--gold);font-weight:700">5%</td></tr>
+          <tr><td style="color:var(--muted);padding:8px 0">User Cap Limit</td><td style="color:var(--red);font-weight:700">$1,000</td></tr>
+          <tr><td style="color:var(--muted);padding:8px 0">ROI Referral Bonus</td><td style="color:var(--accent2);font-weight:700">$5 / investor</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="card" style="max-width:900px">
+      <div class="card-title">Direct Referrals <small id="refCount">0 total</small></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>Joined</th><th>Status</th><th>Commission</th></tr></thead>
+          <tbody id="refTable"><tr><td colspan="5" style="text-align:center;color:var(--muted)">No referrals yet</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEAM -->
+  <div class="page" id="page-team">
+    <div class="page-title">My Team</div>
+    <div class="cards-grid" style="max-width:900px">
+      <div class="stat-card blue"><div class="stat-label">Total Team</div><div class="stat-val blue" id="teamTotal">0</div><div class="stat-icon">👥</div></div>
+      <div class="stat-card green"><div class="stat-label">Active Members</div><div class="stat-val green" id="teamActive">0</div><div class="stat-icon">✅</div></div>
+      <div class="stat-card gold"><div class="stat-label">Team Sales</div><div class="stat-val gold" id="teamSales">$0</div><div class="stat-icon">💰</div></div>
+      <div class="stat-card purple"><div class="stat-label">Left / Right</div><div class="stat-val purple" id="teamLR">0/0</div><div class="stat-icon">⚖️</div></div>
+    </div>
+    <div class="card" style="max-width:900px">
+      <div class="card-title">Team Tree View</div>
+      <div class="tree-wrap" id="teamTree">
+        <div style="text-align:center;color:var(--muted);padding:20px">Build your team to see the tree</div>
+      </div>
+    </div>
+    <div class="card" style="max-width:900px;margin-top:16px">
+      <div class="card-title">Generation Bonus Structure</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Level</th><th>Bonus %</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>Level 1</td><td><span style="color:var(--gold)">20%</span></td><td>Direct downline</td></tr>
+            <tr><td>Level 2</td><td><span style="color:var(--accent)">10%</span></td><td>2nd generation</td></tr>
+            <tr><td>Level 3</td><td><span style="color:var(--accent)">8%</span></td><td>3rd generation</td></tr>
+            <tr><td>Level 4</td><td><span style="color:var(--green)">6%</span></td><td>4th generation</td></tr>
+            <tr><td>Level 5</td><td><span style="color:var(--green)">4%</span></td><td>5th generation</td></tr>
+            <tr><td>Level 6</td><td><span style="color:var(--muted)">3%</span></td><td>6th generation</td></tr>
+            <tr><td>Level 7</td><td><span style="color:var(--muted)">2%</span></td><td>7th generation</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- INCOME -->
+  <div class="page" id="page-income">
+    <div class="page-title">Income Report</div>
+    <div class="cards-grid">
+      <div class="stat-card blue"><div class="stat-label">Today</div><div class="stat-val blue" id="incToday">$0.00</div><div class="stat-icon">📅</div></div>
+      <div class="stat-card green"><div class="stat-label">This Week</div><div class="stat-val green" id="incWeek">$0.00</div><div class="stat-icon">📊</div></div>
+      <div class="stat-card gold"><div class="stat-label">This Month</div><div class="stat-val gold" id="incMonth">$0.00</div><div class="stat-icon">📆</div></div>
+      <div class="stat-card purple"><div class="stat-label">All Time</div><div class="stat-val purple" id="incAll">$0.00</div><div class="stat-icon">🏆</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Transaction History</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Type</th><th>From/Note</th><th>Amount</th><th>Balance</th></tr></thead>
+          <tbody id="txnHistory"><tr><td colspan="5" style="text-align:center;color:var(--muted)">No transactions yet</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROI -->
+  <div class="page" id="page-roi">
+    <div class="page-title">ROI Investment</div>
+    <div class="info-box">
+      💡 Minimum investment: $100 | Monthly ROI: 12%–15% (set by admin) | Capital withdrawal after 6 months (10% fee) | 50% ROI paid directly, 50% as generation bonus
+    </div>
+    <div class="two-col" style="max-width:900px">
+      <div class="card">
+        <div class="card-title">New Investment</div>
+        <div class="form-group"><label>Investment Amount (USD)</label><input type="number" id="investAmt" placeholder="Min $100" min="100"/></div>
+        <div class="form-group"><label>Payment Method</label>
+          <select id="investMethod">
+            <option>USDT TRC20</option>
+            <option>USDT ERC20</option>
+            <option>BTC</option>
+          </select>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:14px;font-size:.8rem">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="color:var(--muted)">Monthly ROI</span><span id="roiRate" style="color:var(--green);font-weight:700">12%–15%</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="color:var(--muted)">ROI Distribution</span><span>Every 30 days</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Lock Period</span><span>6 months</span></div>
+        </div>
+        <button class="btn btn-primary" onclick="submitInvestment()" style="width:100%">Submit Investment</button>
+      </div>
+      <div class="card">
+        <div class="card-title">My ROI Summary</div>
+        <table style="width:100%;font-size:.83rem">
+          <tr><td style="color:var(--muted);padding:8px 0">Total Invested</td><td id="roiTotalInv" style="color:var(--accent);font-weight:700">$0.00</td></tr>
+          <tr><td style="color:var(--muted);padding:8px 0">Total ROI Earned</td><td id="roiTotalEarned" style="color:var(--green);font-weight:700">$0.00</td></tr>
+          <tr><td style="color:var(--muted);padding:8px 0">Active Plans</td><td id="roiActivePlans">0</td></tr>
+          <tr><td style="color:var(--muted);padding:8px 0">Next ROI Date</td><td id="roiNextDate">-</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="card" style="max-width:900px;margin-top:0">
+      <div class="card-title">Investment Plans</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Amount</th><th>Date</th><th>ROI %</th><th>Earned</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="roiPlans"><tr><td colspan="7" style="text-align:center;color:var(--muted)">No investments yet</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- WALLET -->
+  <div class="page" id="page-wallet">
+    <div class="page-title">Wallet</div>
+    <div class="card" style="max-width:700px;margin-bottom:16px">
+      <div class="wallet-bal">
+        <div>
+          <div style="font-size:.8rem;color:var(--muted);margin-bottom:4px">Available Balance</div>
+          <div class="wallet-amount" id="walletBalance">$0.00</div>
+        </div>
+        <div class="action-btns">
+          <button class="btn btn-primary" onclick="requestWithdraw()">Withdraw</button>
+          <button class="btn btn-outline" onclick="showPage('roi',null)">Invest</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px">
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center">
+          <div style="font-size:.7rem;color:var(--muted)">Total Earned</div>
+          <div style="font-size:1.1rem;font-weight:700;color:var(--green)" id="wTotalEarned">$0.00</div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center">
+          <div style="font-size:.7rem;color:var(--muted)">Total Withdrawn</div>
+          <div style="font-size:1.1rem;font-weight:700;color:var(--red)" id="wTotalWithdrawn">$0.00</div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center">
+          <div style="font-size:.7rem;color:var(--muted)">Capping Left</div>
+          <div style="font-size:1.1rem;font-weight:700;color:var(--gold)" id="wCappingLeft">$1000.00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div class="card" style="max-width:500px;margin-bottom:16px" id="withdrawForm">
+      <div class="card-title">Withdraw Request</div>
+      <div class="form-group"><label>Amount (USD)</label><input type="number" id="wdAmt" placeholder="Min $10"/></div>
+      <div class="form-group"><label>USDT TRC20 Address</label><input type="text" id="wdAddr" placeholder="Wallet address"/></div>
+      <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:10px;font-size:.78rem;color:var(--muted);margin-bottom:14px">
+        ⚠️ Withdrawals are processed within 24–48 hours. Minimum: $10.
+      </div>
+      <button class="btn btn-primary" onclick="submitWithdraw()" style="width:100%">Submit Withdrawal</button>
+    </div>
+
+    <div class="card" style="max-width:700px">
+      <div class="card-title">Wallet History</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody id="walletHistory"><tr><td colspan="4" style="text-align:center;color:var(--muted)">No transactions</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- RANK -->
+  <div class="page" id="page-rank">
+    <div class="page-title">Rank Progress</div>
+    <div class="two-col" style="max-width:900px">
+      <div class="card" style="text-align:center">
+        <div class="card-title">Current Rank</div>
+        <div class="rank-display">
+          <div class="rank-stars" id="currentStars">☆☆☆☆☆☆☆</div>
+          <div class="rank-name" id="currentRankName">No Rank</div>
+          <div class="rank-next" id="nextRankHint">Achieve 50 matching + $100 team sales for One Star</div>
+        </div>
+        <div class="rank-bars" id="rankBars">
+          <div class="rank-bar-row">
+            <span>Matching</span>
+            <div style="flex:1"><div class="progress-bar"><div class="progress-fill" id="rankMatchFill" style="width:0%"></div></div></div>
+            <span id="rankMatchVal">0 / 50</span>
+          </div>
+          <div class="rank-bar-row">
+            <span>Team Sales</span>
+            <div style="flex:1"><div class="progress-bar"><div class="progress-fill" id="rankSalesFill" style="width:0%"></div></div></div>
+            <span id="rankSalesVal">$0 / $100</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">All Ranks</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Rank</th><th>Matching</th><th>Team Sales</th></tr></thead>
+            <tbody>
+              <tr><td>⭐ One Star</td><td>50</td><td>$100</td></tr>
+              <tr><td>⭐⭐ Two Star</td><td>300</td><td>$300</td></tr>
+              <tr><td>⭐⭐⭐ Three Star</td><td>1,000</td><td>$1,000</td></tr>
+              <tr><td>⭐⭐⭐⭐ Four Star</td><td>3,000</td><td>$10,000</td></tr>
+              <tr><td>⭐⭐⭐⭐⭐ Five Star</td><td>10,000</td><td>$100,000</td></tr>
+              <tr><td>6⭐ Six Star</td><td>30,000</td><td>$300,000</td></tr>
+              <tr><td>7⭐ Seven Star</td><td>100,000</td><td>$10,000,000</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CASHBACK -->
+  <div class="page" id="page-cashback">
+    <div class="page-title">Daily Cashback Pool</div>
+    <div class="info-box">
+      💡 3% of total company joining volume distributed equally among eligible members daily. Cashback limit = $60 (2× activation). Stops automatically at 2×.
+    </div>
+    <div class="cards-grid" style="max-width:800px">
+      <div class="stat-card blue"><div class="stat-label">Cashback Earned</div><div class="stat-val blue" id="cbEarned">$0.00</div><div class="stat-icon">🎁</div></div>
+      <div class="stat-card gold"><div class="stat-label">Cashback Limit</div><div class="stat-val gold">$60.00</div><div class="stat-icon">🔒</div></div>
+      <div class="stat-card green"><div class="stat-label">Status</div><div class="stat-val green" id="cbStatus" style="font-size:1rem;padding-top:6px">Checking…</div><div class="stat-icon">✅</div></div>
+    </div>
+    <div class="card" style="max-width:700px">
+      <div class="card-title">Cashback History</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Pool Size</th><th>Your Share</th></tr></thead>
+          <tbody id="cbHistory"><tr><td colspan="3" style="text-align:center;color:var(--muted)">No cashback yet</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLUB -->
+  <div class="page" id="page-club">
+    <div class="page-title">Club Bonus</div>
+    <div class="info-box">
+      🏆 4% of company joining volume distributed equally. Eligibility: Min 10 direct referrals OR $50 matching income.
+    </div>
+    <div class="two-col" style="max-width:800px">
+      <div class="card">
+        <div class="card-title">Eligibility Status</div>
+        <table style="font-size:.83rem;width:100%">
+          <tr><td style="color:var(--muted);padding:8px 0">Direct Referrals</td><td id="clubDirRefs">0 / 10</td></tr>
+          <tr><td style="color:var(--muted);padding:8px 0">Matching Income</td><td id="clubMatchInc">$0 / $50</td></tr>
+          <tr><td style="color:var(--muted);padding:8px 0">Eligible</td><td id="clubEligible"><span class="badge-pill badge-warn">Not Yet</span></td></tr>
+          <tr><td style="color:var(--muted);padding:8px 0">Club Bonus Earned</td><td id="clubEarned" style="color:var(--gold);font-weight:700">$0.00</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">Club Bonus History</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Amount</th></tr></thead>
+            <tbody id="clubHistory"><tr><td colspan="2" style="text-align:center;color:var(--muted)">No bonus yet</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVATION -->
+  <div class="page" id="page-activation">
+    <div class="page-title">Account Activation</div>
+    <div style="max-width:600px">
+      <div class="card">
+        <div id="alreadyActive" style="display:none;text-align:center;padding:20px">
+          <div style="font-size:3rem;margin-bottom:10px">✅</div>
+          <div style="font-size:1.2rem;font-weight:700;color:var(--green)">Account is Active!</div>
+          <div style="color:var(--muted);font-size:.85rem;margin-top:6px">You have full access to all features</div>
+        </div>
+        <div id="activationPanel">
+          <div class="card-title">Activate Your Account</div>
+          <div class="info-box">
+            One-time activation fee of <strong>$30</strong>. This unlocks all income features including sponsor commissions, cashback pool, and club bonus.
+          </div>
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">
+            <div style="font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:10px">Fee Breakdown</div>
+            <div style="display:flex;justify-content:space-between;font-size:.83rem;padding:6px 0"><span>Sponsor Commission</span><span style="color:var(--green)">$4</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:.83rem;padding:6px 0"><span>Company Fund</span><span style="color:var(--accent2)">$5</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:.83rem;padding:6px 0"><span>Platform Operations</span><span style="color:var(--muted)">$21</span></div>
+            <div style="border-top:1px solid var(--border);margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;font-weight:700"><span>Total</span><span style="color:var(--gold)">$30</span></div>
+          </div>
+          <div class="form-group"><label>Payment Method</label>
+            <select id="actMethod">
+              <option>USDT TRC20</option>
+              <option>USDT ERC20</option>
+              <option>BTC</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Transaction Hash (TxID)</label><input type="text" id="actTxid" placeholder="Paste your transaction hash here"/></div>
+          <button class="btn btn-gold" onclick="submitActivation()" style="width:100%;padding:13px">Pay $30 & Activate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getDatabase, ref, get, set, push, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA3G2bMOJ_HSDYXJPuM70tVjfbkHlMftr4",
+  authDomain: "livelinemeta.firebaseapp.com",
+  databaseURL: "https://livelinemeta-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "livelinemeta",
+  storageBucket: "livelinemeta.firebasestorage.app",
+  messagingSenderId: "206900805598",
+  appId: "1:206900805598:web:10e6b39100af201b4e674f"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+let currentUser = null;
+let userData = null;
+
+// AUTH GUARD
+onAuthStateChanged(auth, async user => {
+  if (!user) { window.location.href = 'index.html'; return; }
+  currentUser = user;
+  await loadUser();
+});
+
+async function loadUser() {
+  const snap = await get(ref(db, users/${currentUser.uid}));
+  if (!snap.exists()) { showToast('User data not found'); return; }
+  userData = snap.val();
+  renderDashboard();
+  loadReferrals();
+  loadTransactions();
+  loadROIPlans();
+  watchIncome();
+}
+
+function renderDashboard() {
+  const u = userData;
+  const name = u.name || u.email?.split('@')[0] || 'User';
+  const init = name[0].toUpperCase();
+
+  document.getElementById('avatarInitial').textContent = init;
+  document.getElementById('sidebarName').textContent = name;
+  document.getElementById('sidebarStatus').textContent = u.isActive ? '✅ Active' : '⚠️ Inactive';
+  document.getElementById('greetUser').textContent = Hello, ${name}!;
+
+  // Profile
+  document.getElementById('profileAvatar').textContent = init;
+  document.getElementById('profileName').textContent = name;
+  document.getElementById('profileEmail').textContent = u.email || '';
+  document.getElementById('pfName').value = u.name || '';
+  document.getElementById('pfPhone').value = u.phone || '';
+  document.getElementById('pfCountry').value = u.country || '';
+  document.getElementById('pfWallet').value = u.paymentWallet || '';
+  document.getElementById('profileActiveBadge').innerHTML = u.isActive
+    ? '<span class="badge-pill badge-success">✅ Active</span>'
+    : '<span class="badge-pill badge-warn">⚠️ Inactive</span>';
+  document.getElementById('infoUID').textContent = currentUser.uid.slice(0,10)+'…';
+  document.getElementById('infoSponsor').textContent = u.sponsorId || 'None';
+  document.getElementById('infoJoined').textContent = u.joinedAt ? new Date(u.joinedAt).toLocaleDateString() : '-';
+  document.getElementById('infoStatus').textContent = u.isActive ? 'Active' : 'Inactive';
+
+  // Income
+  const inc = u.income || {};
+  const total = Object.values(inc).reduce((a,b) => a + (parseFloat(b)||0), 0);
+  document.getElementById('totalIncome').textContent = '$' + total.toFixed(2);
+  document.getElementById('walletBal').textContent = '$' + (u.walletBalance || 0).toFixed(2);
+  document.getElementById('walletBalance').textContent = '$' + (u.walletBalance || 0).toFixed(2);
+  document.getElementById('wTotalEarned').textContent = '$' + total.toFixed(2);
+  document.getElementById('wTotalWithdrawn').textContent = '$' + (u.totalWithdrawn || 0).toFixed(2);
+  document.getElementById('wCappingLeft').textContent = '$' + Math.max(0, 1000 - total).toFixed(2);
+
+  const matching = parseFloat(inc.matching || 0);
+  document.getElementById('matchingIncome').textContent = '$' + matching.toFixed(2);
+  document.getElementById('matchingProgress').style.width = Math.min((matching/1000)*100, 100) + '%';
+  document.getElementById('sponsorInc').textContent = '$' + (inc.sponsor || 0).toFixed(2);
+  document.getElementById('matchingInc').textContent = '$' + (inc.matching || 0).toFixed(2);
+  document.getElementById('cashbackInc').textContent = '$' + (inc.cashback || 0).toFixed(2);
+  document.getElementById('clubInc').textContent = '$' + (inc.club || 0).toFixed(2);
+  document.getElementById('roiInc').textContent = '$' + (inc.roi || 0).toFixed(2);
+  document.getElementById('genInc').textContent = '$' + (inc.generation || 0).toFixed(2);
+
+  // Referral link
+  const refLink = ${location.origin}/index.html?ref=${currentUser.uid};
+  document.getElementById('refLink').value = refLink;
+
+  // Rank
+  renderRank(matching, u.teamSales || 0);
+
+  // Activation banner / panel
+  if (u.isActive) {
+    document.getElementById('activationBanner').style.display = 'none';
+    document.getElementById('alreadyActive').style.display = 'block';
+    document.getElementById('activationPanel').style.display = 'none';
+  } else {
+    document.getElementById('activationBanner').style.display = 'flex';
+    document.getElementById('alreadyActive').style.display = 'none';
+    document.getElementById('activationPanel').style.display = 'block';
+  }
+
+  // Cashback
+  const cbEarned = parseFloat(inc.cashback || 0);
+  document.getElementById('cbEarned').textContent = '$' + cbEarned.toFixed(2);
+  document.getElementById('cbStatus').textContent = cbEarned >= 60 ? 'Limit Reached ($60)' : (u.isActive ? 'Eligible' : 'Not Active');
+
+  // Club
+  const dirRefs = u.directRefs || 0;
+  document.getElementById('directRefs').textContent = dirRefs;
+  document.getElementById('clubDirRefs').textContent = ${dirRefs} / 10;
+  document.getElementById('clubMatchInc').textContent = $${matching.toFixed(0)} / $50;
+  const clubEligible = dirRefs >= 10 || matching >= 50;
+  document.getElementById('clubEligible').innerHTML = clubEligible
+    ? '<span class="badge-pill badge-success">✅ Eligible</span>'
+    : '<span class="badge-pill badge-warn">Not Yet</span>';
+  document.getElementById('clubEarned').textContent = '$' + (inc.club || 0).toFixed(2);
+
+  // ROI summary
+  document.getElementById('roiTotalInv').textContent = '$' + (u.totalInvested || 0).toFixed(2);
+  document.getElementById('roiTotalEarned').textContent = '$' + (inc.roi || 0).toFixed(2);
+
+  // Wallet history
+  loadWalletHistory();
+}
+
+function renderRank(matching, teamSales) {
+  const ranks = [
+    {name:'No Rank',stars:'',mReq:0,sReq:0},
+    {name:'One Star ⭐',stars:'⭐',mReq:50,sReq:100},
+    {name:'Two Star ⭐⭐',stars:'⭐⭐',mReq:300,sReq:300},
+    {name:'Three Star',stars:'⭐⭐⭐',mReq:1000,sReq:1000},
+    {name:'Four Star',stars:'⭐⭐⭐⭐',mReq:3000,sReq:10000},
+    {name:'Five Star',stars:'⭐⭐⭐⭐⭐',mReq:10000,sReq:100000},
+    {name:'Six Star',stars:'6⭐',mReq:30000,sReq:300000},
+    {name:'Seven Star',stars:'7⭐',mReq:100000,sReq:10000000}
+  ];
+  let rank = ranks[0], nextRank = ranks[1];
+  for(let i=1;i<ranks.length;i++){
+    if(matching>=ranks[i].mReq && teamSales>=ranks[i].sReq){rank=ranks[i];nextRank=ranks[i+1]||null;}
+  }
+  document.getElementById('currentStars').textContent = rank.stars || '☆';
+  document.getElementById('currentRankName').textContent = rank.name;
+  document.getElementById('infoRank').textContent = rank.name;
+  if(nextRank){
+    document.getElementById('nextRankHint').textContent = Next: ${nextRank.name} — Need ${nextRank.mReq} matching + $${nextRank.sReq} team sales;
+    document.getElementById('rankMatchFill').style.width = Math.min((matching/nextRank.mReq)*100,100)+'%';
+    document.getElementById('rankSalesFill').style.width = Math.min((teamSales/nextRank.sReq)*100,100)+'%';
+    document.getElementById('rankMatchVal').textContent = ${matching} / ${nextRank.mReq};
+    document.getElementById('rankSalesVal').textContent = $${teamSales} / $${nextRank.sReq};
+  }
+}
+
+async function loadReferrals() {
+  const snap = await get(ref(db, 'users'));
+  if (!snap.exists()) return;
+  const all = snap.val();
+  const refs = Object.entries(all).filter(([uid, u]) => u.sponsorId === currentUser.uid);
+  document.getElementById('directRefs').textContent = refs.length;
+  document.getElementById('refCount').textContent = refs.length + ' total';
+
+  const tbody = document.getElementById('refTable');
+  if (refs.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No referrals yet</td></tr>'; return; }
+  tbody.innerHTML = refs.map(([uid, u]) => `
+    <tr>
+      <td>${u.name || 'User'}</td>
+      <td>${u.email || '-'}</td>
+      <td>${u.joinedAt ? new Date(u.joinedAt).toLocaleDateString() : '-'}</td>
+      <td><span class="badge-pill ${u.isActive ? 'badge-success' : 'badge-warn'}">${u.isActive ? 'Active' : 'Inactive'}</span></td>
+      <td style="color:var(--green)">${u.isActive ? '$4.00' : '$0.00'}</td>
+    </tr>`).join('');
+
+  // Team stats
+  document.getElementById('teamTotal').textContent = refs.length;
+  document.getElementById('teamActive').textContent = refs.filter(([,u])=>u.isActive).length;
+  document.getElementById('teamSales').textContent = '$' + (refs.filter(([,u])=>u.isActive).length * 30).toFixed(0);
+
+  // Render tree
+  renderTeamTree(refs, all);
+}
+
+function renderTeamTree(refs, all) {
+  const treeEl = document.getElementById('teamTree');
+  if (refs.length === 0) return;
+  const rootBox = <div class="tree-node"><div class="node-box"><strong>${userData.name||'You'}</strong><small>Sponsor</small></div></div>;
+  const children = refs.slice(0,6).map(([uid,u]) =>
+    <div class="tree-node" style="position:relative"><div class="node-box ${u.isActive?'':'opacity:.5'}"><strong>${u.name||'User'}</strong><small>${u.isActive?'Active':'Inactive'}</small></div></div>).join('');
+  treeEl.innerHTML = <div style="display:flex;flex-direction:column;align-items:center;gap:20px">${rootBox}<div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center">${children}</div></div>;
+}
+
+async function loadTransactions() {
+  const snap = await get(ref(db, transactions/${currentUser.uid}));
+  if (!snap.exists()) return;
+  const txns = Object.entries(snap.val()).sort(([,a],[,b]) => b.timestamp - a.timestamp);
+  const tbody = document.getElementById('txnHistory');
+  const recent = document.getElementById('recentTxns');
+  tbody.innerHTML = txns.map(([id,t]) => `
+    <tr>
+      <td>${new Date(t.timestamp).toLocaleDateString()}</td>
+      <td>${t.type}</td>
+      <td>${t.note||'-'}</td>
+      <td style="color:${t.amount>0?'var(--green)':'var(--red)'}">${t.amount>0?'+':''}$${Math.abs(t.amount).toFixed(2)}</td>
+      <td>$${(t.balance||0).toFixed(2)}</td>
+    </tr>`).join('');
+  recent.innerHTML = txns.slice(0,5).map(([id,t]) => `
+    <tr>
+      <td>${new Date(t.timestamp).toLocaleDateString()}</td>
+      <td>${t.type}</td>
+      <td style="color:${t.amount>0?'var(--green)':'var(--red)'}">${t.amount>0?'+':''}$${Math.abs(t.amount).toFixed(2)}</td>
+    </tr>`).join('');
+}
+
+async function loadROIPlans() {
+  const snap = await get(ref(db, investments/${currentUser.uid}));
+  const tbody = document.getElementById('roiPlans');
+  if (!snap.exists()) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted)">No investments yet</td></tr>'; return; }
+  const plans = Object.entries(snap.val()).sort(([,a],[,b]) => b.createdAt - a.createdAt);
+  let activePlans = 0, nextDate = null;
+  tbody.innerHTML = plans.map(([id,p], i) => {
+    if(p.status==='active') activePlans++;
+    const nextROI = new Date(p.createdAt + 30*24*60*60*1000*(Math.floor((Date.now()-p.createdAt)/(30*24*60*60*1000))+1));
+    if(!nextDate) nextDate = nextROI;
+    const canWithdraw = Date.now() - p.createdAt > 6*30*24*60*60*1000;
+    return `<tr>
+      <td>#${i+1}</td>
+      <td>$${p.amount}</td>
+      <td>${new Date(p.createdAt).toLocaleDateString()}</td>
+      <td><span style="color:var(--green)">${p.roiRate||12}%</span></td>
+      <td>$${(p.earnedROI||0).toFixed(2)}</td>
+      <td><span class="badge-pill ${p.status==='active'?'badge-success':'badge-warn'}">${p.status||'Pending'}</span></td>
+      <td>${canWithdraw ? <button class="btn btn-outline" style="font-size:.72rem;padding:4px 10px" onclick="withdrawCapital('${id}')">Withdraw Capital</button> : '<span style="color:var(--muted);font-size:.75rem">Locked</span>'}</td>
+    </tr>`;}).join('');
+  document.getElementById('roiActivePlans').textContent = activePlans;
+  if(nextDate) document.getElementById('roiNextDate').textContent = nextDate.toLocaleDateString();
+}
+
+async function loadWalletHistory() {
+  const snap = await get(ref(db, transactions/${currentUser.uid}));
+  if (!snap.exists()) return;
+  const txns = Object.entries(snap.val()).sort(([,a],[,b]) => b.timestamp - a.timestamp);
+  document.getElementById('walletHistory').innerHTML = txns.slice(0,20).map(([id,t]) => `
+    <tr>
+      <td>${new Date(t.timestamp).toLocaleDateString()}</td>
+      <td>${t.type}</td>
+      <td style="color:${t.amount>0?'var(--green)':'var(--red)'}">${t.amount>0?'+':''}$${Math.abs(t.amount).toFixed(2)}</td>
+      <td><span class="badge-pill ${t.status==='completed'?'badge-success':t.status==='pending'?'badge-warn':'badge-info'}">${t.status||'completed'}</span></td>
+    </tr>`).join('');
+}
+
+function watchIncome() {
+  onValue(ref(db, users/${currentUser.uid}/income), snap => {
+    if(snap.exists()) {
+      const inc = snap.val();
+      const total = Object.values(inc).reduce((a,b)=>a+(parseFloat(b)||0),0);
+      document.getElementById('totalIncome').textContent = '$'+total.toFixed(2);
+      document.getElementById('incAll').textContent = '$'+total.toFixed(2);
+    }
+  });
+}
+
+// ACTIONS
+window.saveProfile = async () => {
+  await update(ref(db, users/${currentUser.uid}), {
+    name: document.getElementById('pfName').value,
+    phone: document.getElementById('pfPhone').value,
+    country: document.getElementById('pfCountry').value,
+    paymentWallet: document.getElementById('pfWallet').value,
+    updatedAt: Date.now()
+  });
+  showToast('Profile saved successfully!');
+};
+
+window.submitActivation = async () => {
+  if (!userData || userData.isActive) { showToast('Already active!'); return; }
+  const txid = document.getElementById('actTxid').value.trim();
+  const method = document.getElementById('actMethod').value;
+  if (!txid) { showToast('Please enter transaction hash'); return; }
+  await push(ref(db, activationRequests), {
+    uid: currentUser.uid,
+    email: currentUser.email,
+    txid, method,
+    amount: 30,
+    status: 'pending',
+    createdAt: Date.now()
+  });
+  showToast('Activation request submitted! Admin will approve soon.');
+};
+
+window.submitInvestment = async () => {
+  if (!userData?.isActive) { showToast('Activate your account first!'); return; }
+  const amt = parseFloat(document.getElementById('investAmt').value);
+  if (!amt || amt < 100) { showToast('Minimum investment is $100'); return; }
+  await push(ref(db, investments/${currentUser.uid}), {
+    amount: amt,
+    method: document.getElementById('investMethod').value,
+    roiRate: 12,
+    status: 'pending',
+    earnedROI: 0,
+    createdAt: Date.now()
+  });
+  await update(ref(db, users/${currentUser.uid}), {
+    totalInvested: (userData.totalInvested || 0) + amt
+  });
+  showToast('Investment submitted! Admin will review shortly.');
+  document.getElementById('investAmt').value = '';
+};
+
+window.submitWithdraw = async () => {
+  const amt = parseFloat(document.getElementById('wdAmt').value);
+  const addr = document.getElementById('wdAddr').value.trim();
+  if (!amt || amt < 10) { showToast('Minimum withdrawal is $10'); return; }
+  if (!addr) { showToast('Enter wallet address'); return; }
+  const bal = parseFloat(userData.walletBalance || 0);
+  if (amt > bal) { showToast('Insufficient balance'); return; }
+  await push(ref(db, withdrawals/${currentUser.uid}), {
+    amount: amt, address: addr, status: 'pending', createdAt: Date.now()
+  });
+  showToast('Withdrawal request submitted!');
+};
+
+window.requestWithdraw = () => {
+  document.getElementById('withdrawForm').scrollIntoView({behavior:'smooth'});
+};
+
+window.withdrawCapital = async (planId) => {
+  if(!confirm('Withdraw capital with 10% fee?')) return;
+  showToast('Capital withdrawal request submitted!');
+};
+
+window.copyRef = () => {
+  const val = document.getElementById('refLink').value;
+  navigator.clipboard.writeText(val).then(() => showToast('Referral link copied!'));
+};
+window.shareWA = () => window.open(https://wa.me/?text=Join Life Line Meta with my referral: ${document.getElementById('refLink').value},'_blank');
+window.shareTG = () => window.open(https://t.me/share/url?url=${document.getElementById('refLink').value}&text=Join Life Line Meta MLM,'_blank');
+
+window.logout = async () => { await signOut(auth); window.location.href = 'index.html'; };
+
+// NAV
+window.showPage = (page, el) => {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page)?.classList.add('active');
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  if (el) el.classList.add('active');
+  closeSidebar();
+};
+
+window.toggleSidebar = () => {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+};
+window.closeSidebar = () => {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+};
+
+let dark = true;
+window.toggleTheme = () => {
+  dark = !dark;
+  document.body.classList.toggle('light', !dark);
+  document.querySelector('.theme-btn').textContent = dark ? '🌙 Dark' : '☀️ Light';
+};
+
+window.showToast = (msg) => {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+};
+</script>
+</body>
+</html>
