@@ -27,7 +27,8 @@ nav a.active{color:var(--text);background:rgba(0,198,255,.07);border-left-color:
 nav a .ic{width:17px;text-align:center;font-size:.9rem}
 .sb-footer{padding:13px 18px;border-top:1px solid var(--border)}
 .user-mini{display:flex;align-items:center;gap:9px}
-.av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.82rem;color:#fff;flex-shrink:0}
+.av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.82rem;color:#fff;flex-shrink:0;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover}
 .um-info strong{font-size:.79rem;display:block;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .um-info span{font-size:.66rem;color:var(--muted)}
 
@@ -52,23 +53,40 @@ nav a .ic{width:17px;text-align:center;font-size:.9rem}
 .banner{border-radius:12px;padding:13px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
 .banner-warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25)}
 
-/* CARDS */
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:13px;margin-bottom:18px}
-.sc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative;overflow:hidden}
-.sc::before{content:'';position:absolute;top:-20px;right:-20px;width:75px;height:75px;border-radius:50%;opacity:.07}
+/* NOTICE BOARD (scrollable) */
+.notice-card{background:linear-gradient(145deg,var(--card),var(--surface));border:1px solid var(--border);border-radius:var(--radius);padding:0;margin-bottom:16px;overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.notice-head{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);background:rgba(0,198,255,.06)}
+.notice-head strong{font-size:.8rem}
+.notice-scroll{max-height:120px;overflow-y:auto;padding:4px 0}
+.notice-item{display:flex;gap:10px;padding:9px 14px;border-bottom:1px dashed rgba(30,45,69,.5);font-size:.78rem;line-height:1.5}
+.notice-item:last-child{border-bottom:none}
+.notice-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:5px;box-shadow:0 0 6px var(--gold)}
+.notice-date{color:var(--muted);font-size:.66rem;white-space:nowrap}
+.notice-scroll::-webkit-scrollbar{width:6px}
+.notice-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+/* CARDS - 3D ATTRACTIVE STYLE */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:13px;margin-bottom:18px;perspective:900px}
+.sc{background:linear-gradient(160deg,var(--card) 0%,var(--surface) 100%);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative;overflow:hidden;
+    box-shadow:0 10px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.04);
+    transition:transform .25s ease,box-shadow .25s ease;transform-style:preserve-3d}
+.sc:hover{transform:translateY(-6px) rotateX(4deg) scale(1.02);box-shadow:0 20px 36px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08)}
+.sc::before{content:'';position:absolute;top:-20px;right:-20px;width:75px;height:75px;border-radius:50%;opacity:.1;filter:blur(2px)}
 .sc.cb::before{background:var(--accent)}.sc.cp::before{background:var(--accent2)}.sc.cg::before{background:var(--gold)}.sc.cgr::before{background:var(--green)}
 .sc-lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
-.sc-val{font-size:1.6rem;font-weight:800;margin-bottom:2px}
+.sc-val{font-size:1.6rem;font-weight:800;margin-bottom:2px;text-shadow:0 2px 8px rgba(0,0,0,.4)}
 .cb .sc-val{color:var(--accent)}.cp .sc-val{color:var(--accent2)}.cg .sc-val{color:var(--gold)}.cgr .sc-val{color:var(--green)}
 .sc-sub{font-size:.7rem;color:var(--muted)}
-.sc-ic{position:absolute;bottom:12px;right:12px;font-size:1.4rem;opacity:.2}
+.sc-ic{position:absolute;bottom:12px;right:12px;font-size:1.4rem;opacity:.25;filter:drop-shadow(0 4px 4px rgba(0,0,0,.4))}
 
 /* PROGRESS */
-.prog{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:7px}
-.prog-f{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .5s}
+.prog{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:7px;box-shadow:inset 0 1px 3px rgba(0,0,0,.4)}
+.prog-f{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width .5s;box-shadow:0 0 8px rgba(0,198,255,.5)}
 
-/* CARD */
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+/* CARD - 3D */
+.card{background:linear-gradient(160deg,var(--card) 0%,var(--surface) 100%);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;
+      box-shadow:0 8px 20px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.03);transition:box-shadow .25s ease,transform .25s ease}
+.card:hover{box-shadow:0 14px 28px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.05)}
 .card-title{font-size:.87rem;font-weight:700;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
 .card-title small{font-size:.7rem;color:var(--muted);font-weight:400}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:14px}
@@ -90,13 +108,13 @@ tr:last-child td{border-bottom:none}
 .fg{margin-bottom:13px}
 .fg label{display:block;font-size:.73rem;color:var(--muted);margin-bottom:4px;font-weight:600}
 .fg input,.fg select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:9px 12px;color:var(--text);font-size:.85rem;outline:none;transition:.2s}
-.fg input:focus,.fg select:focus{border-color:var(--accent)}
+.fg input:focus,.fg select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,198,255,.12)}
 
 /* BUTTONS */
 .btn{padding:8px 16px;border-radius:9px;font-size:.79rem;font-weight:700;border:none;cursor:pointer;transition:.15s}
-.btn:hover{opacity:.85}
-.btn-p{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
-.btn-g{background:linear-gradient(90deg,var(--gold),#d97706);color:#000}
+.btn:hover{opacity:.85;transform:translateY(-1px)}
+.btn-p{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 12px rgba(0,198,255,.25)}
+.btn-g{background:linear-gradient(90deg,var(--gold),#d97706);color:#000;box-shadow:0 4px 12px rgba(245,158,11,.25)}
 .btn-gr{background:var(--green);color:#fff}
 .btn-o{background:none;border:1px solid var(--border);color:var(--text)}
 .btn-r{background:var(--red);color:#fff}
@@ -109,34 +127,58 @@ tr:last-child td{border-bottom:none}
 /* INFO BOX */
 .info-box{background:rgba(0,198,255,.05);border:1px solid rgba(0,198,255,.15);border-radius:9px;padding:11px 14px;font-size:.77rem;color:var(--accent);margin-bottom:13px;line-height:1.7}
 
-/* BINARY TREE */
-.tree-container{overflow-x:auto;padding:10px 0;min-height:200px}
+/* BINARY TREE - 3D STYLE */
+.tree-container{overflow-x:auto;padding:30px 10px;min-height:240px;perspective:1100px}
+.tree-3d-wrap{transform-style:preserve-3d;transform:rotateX(8deg);transition:transform .3s}
+.tree-container:hover .tree-3d-wrap{transform:rotateX(3deg)}
 .tree-node{display:flex;flex-direction:column;align-items:center;position:relative}
-.tree-box{background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:8px 12px;text-align:center;min-width:90px;font-size:.73rem;cursor:default;transition:.2s;position:relative}
-.tree-box:hover{border-color:var(--accent);background:rgba(0,198,255,.05)}
-.tree-box.active-node{border-color:var(--green)}
-.tree-box.you-node{border-color:var(--accent);background:rgba(0,198,255,.08)}
-.tree-box.empty-node{border-style:dashed;border-color:var(--muted);opacity:.4}
-.tree-name{font-weight:700;font-size:.75rem;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tree-status{font-size:.62rem;margin-top:1px}
+.tree-box{background:linear-gradient(160deg,var(--card),var(--bg));border:2px solid var(--border);border-radius:12px;padding:10px 14px;text-align:center;min-width:96px;font-size:.73rem;cursor:default;
+  transition:transform .2s,box-shadow .2s;position:relative;
+  box-shadow:0 8px 0 -2px rgba(0,0,0,.35),0 14px 18px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.06);
+  transform-style:preserve-3d}
+.tree-box:hover{transform:translateY(-5px) scale(1.05);border-color:var(--accent)}
+.tree-box.active-node{border-color:var(--green);box-shadow:0 8px 0 -2px rgba(16,185,129,.3),0 14px 22px rgba(16,185,129,.25),inset 0 1px 0 rgba(255,255,255,.08)}
+.tree-box.you-node{border-color:var(--accent);background:linear-gradient(160deg,rgba(0,198,255,.18),var(--bg));box-shadow:0 8px 0 -2px rgba(0,198,255,.35),0 16px 26px rgba(0,198,255,.3)}
+.tree-box.empty-node{border-style:dashed;border-color:var(--muted);opacity:.45;box-shadow:none}
+.tree-name{font-weight:700;font-size:.75rem;max-width:84px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tree-status{font-size:.62rem;margin-top:2px}
 .tree-children{display:flex;gap:30px;margin-top:0;position:relative;padding-top:20px}
-.tree-connector{position:absolute;top:0;left:50%;width:1px;height:20px;background:var(--border);transform:translateX(-50%)}
-.tree-h-line{position:absolute;top:0;height:1px;background:var(--border)}
 
-/* RANK */
-.rank-stars{font-size:1.5rem;letter-spacing:3px;margin:6px 0 3px}
-.rank-name-d{font-size:.93rem;font-weight:800;color:var(--gold)}
+/* RANK - 3D BADGE STYLE */
+.rank-badge-wrap{display:flex;flex-direction:column;align-items:center;perspective:700px}
+.rank-badge-3d{width:108px;height:108px;border-radius:50%;position:relative;margin:8px auto 10px;
+  background:radial-gradient(circle at 35% 30%,#ffe9a8,var(--gold) 55%,#92600a 100%);
+  box-shadow:0 10px 0 -2px rgba(0,0,0,.4),0 16px 26px rgba(245,158,11,.35),inset 0 3px 6px rgba(255,255,255,.5),inset 0 -6px 10px rgba(0,0,0,.35);
+  display:flex;align-items:center;justify-content:center;font-size:1.9rem;
+  transform:rotateX(8deg);transition:transform .3s}
+.rank-badge-3d:hover{transform:rotateX(0deg) scale(1.06)}
+.rank-badge-3d.norank{background:radial-gradient(circle at 35% 30%,#3a4256,var(--muted) 55%,#1c2433 100%);box-shadow:0 10px 0 -2px rgba(0,0,0,.4),0 16px 24px rgba(0,0,0,.3),inset 0 3px 6px rgba(255,255,255,.12),inset 0 -6px 10px rgba(0,0,0,.4)}
+.rank-tiers{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+.rank-tier{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:800;color:#fff;
+  background:linear-gradient(160deg,#283449,#161e2c);border:1px solid var(--border);
+  box-shadow:0 4px 0 -1px rgba(0,0,0,.4),0 6px 10px rgba(0,0,0,.35);position:relative}
+.rank-tier.unlocked{background:radial-gradient(circle at 35% 30%,#ffe9a8,var(--gold) 55%,#92600a 100%);color:#3a2700;
+  box-shadow:0 4px 0 -1px rgba(0,0,0,.4),0 8px 14px rgba(245,158,11,.4),inset 0 2px 3px rgba(255,255,255,.6)}
+.rank-tier.current{outline:2px solid var(--accent);transform:scale(1.18)}
+.rank-name-d{font-size:1rem;font-weight:800;color:var(--gold);text-shadow:0 2px 6px rgba(245,158,11,.3)}
 .rank-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:.74rem}
 .rank-bar-row .rl{width:85px;color:var(--muted)}
 .rank-bar-row .rv{width:85px;text-align:right;color:var(--muted);font-size:.7rem}
 
 /* WALLET */
-.wal-bal{font-size:2rem;font-weight:800;color:var(--green)}
+.wal-bal{font-size:2rem;font-weight:800;color:var(--green);text-shadow:0 2px 10px rgba(16,185,129,.3)}
+
+/* PROFILE PICTURE / SIGNATURE */
+.pic-upload-wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pic-preview{width:74px;height:74px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);background:var(--bg);box-shadow:0 6px 16px rgba(0,0,0,.4)}
+.sig-preview{width:160px;height:64px;object-fit:contain;border:1px dashed var(--border);border-radius:9px;background:#fff}
+.file-btn{display:inline-block;padding:7px 13px;border-radius:9px;border:1px solid var(--border);background:var(--bg);font-size:.74rem;color:var(--text);cursor:pointer}
+.file-btn input{display:none}
 
 /* OVERLAY & TOAST */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
 .overlay.show{display:block}
-.toast{position:fixed;bottom:20px;right:20px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:.81rem;z-index:9999;opacity:0;transform:translateY(14px);transition:.3s;pointer-events:none;max-width:270px}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:.81rem;z-index:9999;opacity:0;transform:translateY(14px);transition:.3s;pointer-events:none;max-width:270px;box-shadow:0 10px 24px rgba(0,0,0,.4)}
 .toast.show{opacity:1;transform:translateY(0)}
 
 /* SEARCH BOX */
@@ -179,6 +221,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     <a onclick="showPage('tree',this)"><span class="ic">🌳</span> Binary Tree</a>
     <a onclick="showPage('team',this)"><span class="ic">👥</span> My Team</a>
     <a onclick="showPage('income',this)"><span class="ic">💰</span> Income Report</a>
+    <a onclick="showPage('deposit',this)"><span class="ic">💵</span> Deposit</a>
     <a onclick="showPage('roi',this)"><span class="ic">📈</span> ROI Investment</a>
     <a onclick="showPage('wallet',this)"><span class="ic">💳</span> Wallet</a>
     <a onclick="showPage('rank',this)"><span class="ic">⭐</span> Rank Progress</a>
@@ -217,10 +260,18 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 <div class="page active" id="page-overview">
   <div class="pg-title">Overview <span id="greetMsg"></span></div>
 
+  <!-- NOTICE BOARD -->
+  <div class="notice-card">
+    <div class="notice-head"><span>📢</span><strong>Announcements</strong></div>
+    <div class="notice-scroll" id="noticeScroll">
+      <div class="notice-item"><span class="notice-dot"></span><div>Loading notices…</div></div>
+    </div>
+  </div>
+
   <div id="actBanner" class="banner banner-warn" style="display:none">
     <div>
       <strong style="color:var(--gold)">⚠️ Account Not Activated</strong><br>
-      <small style="color:var(--muted)">Pay $30 to unlock all income features</small>
+      <small style="color:var(--muted)">Pay <span id="actBannerFee">$30</span> to unlock all income features</small>
     </div>
     <button class="btn btn-g btn-sm" onclick="showPage('activation',null)">Activate Now →</button>
   </div>
@@ -247,7 +298,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     <div class="sc cgr">
       <div class="sc-lbl">Matching Income</div>
       <div class="sc-val" id="ovMatch">$0.00</div>
-      <div class="sc-sub">Cap: $1,000</div>
+      <div class="sc-sub">Cap: <span id="ovMatchCapLbl">$1,000</span></div>
       <div class="sc-ic">🤝</div>
       <div class="prog"><div class="prog-f" id="ovMatchP" style="width:0%"></div></div>
     </div>
@@ -289,23 +340,50 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
   <div class="pg-title">My Profile</div>
   <div style="max-width:540px">
     <div class="card">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-        <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.7rem;color:#fff;font-weight:800;flex-shrink:0" id="pfAv">U</div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap">
+        <div style="position:relative">
+          <div class="av" id="pfAvWrap" style="width:60px;height:60px;font-size:1.7rem"><span id="pfAv">U</span></div>
+        </div>
         <div>
           <div style="font-size:1.05rem;font-weight:800" id="pfNameD">—</div>
           <div style="color:var(--muted);font-size:.78rem" id="pfEmailD">—</div>
           <div id="pfBadge" style="margin-top:5px"></div>
         </div>
       </div>
+
+      <!-- Profile Picture upload -->
+      <div class="fg">
+        <label>Profile Picture</label>
+        <div class="pic-upload-wrap">
+          <img id="picPreview" class="pic-preview" src="" style="display:none">
+          <div class="av" id="picPreviewInit" style="width:74px;height:74px;font-size:1.6rem">U</div>
+          <label class="file-btn">📷 Choose Photo<input type="file" id="picFile" accept="image/*" onchange="previewFile('picFile','picPreview','picPreviewInit')"></label>
+          <button class="btn btn-p btn-sm" onclick="saveProfilePic()">Save Photo</button>
+        </div>
+        <div style="font-size:.66rem;color:var(--muted);margin-top:5px">JPG/PNG, recommended under 300KB</div>
+      </div>
+
+      <!-- Signature upload -->
+      <div class="fg">
+        <label>Signature</label>
+        <div class="pic-upload-wrap">
+          <img id="sigPreview" class="sig-preview" src="" style="display:none">
+          <div id="sigPreviewEmpty" style="width:160px;height:64px;border:1px dashed var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.68rem">No signature</div>
+          <label class="file-btn">✍️ Choose Signature<input type="file" id="sigFile" accept="image/*" onchange="previewFile('sigFile','sigPreview','sigPreviewEmpty')"></label>
+          <button class="btn btn-p btn-sm" onclick="saveSignature()">Save Signature</button>
+        </div>
+      </div>
+
       <div class="fg"><label>Full Name</label><input type="text" id="pfName" placeholder="Full name"/></div>
       <div class="fg"><label>Username</label><input type="text" id="pfUsername" readonly style="opacity:.6"/></div>
+      <div class="fg"><label>Email</label><input type="text" id="pfEmail" readonly style="opacity:.6"/></div>
       <div class="fg"><label>Phone</label><input type="text" id="pfPhone" placeholder="+880 …"/></div>
       <div class="fg"><label>Country</label><input type="text" id="pfCountry" placeholder="Country" readonly style="opacity:.6"/></div>
       <div class="fg"><label>USDT TRC20 Wallet</label><input type="text" id="pfWallet" placeholder="T… wallet address"/></div>
       <button class="btn btn-p" onclick="saveProfile()">💾 Save Profile</button>
     </div>
 
-    <!-- Change Password (new active function) -->
+    <!-- Change Password -->
     <div class="card">
       <div class="card-title">🔒 Change Password</div>
       <div class="fg"><label>Current Password</label><input type="password" id="cpCurrent" placeholder="Current password"/></div>
@@ -319,8 +397,9 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
       <table style="width:100%;font-size:.8rem">
         <tr><td style="color:var(--muted);padding:6px 0;width:120px">Member ID</td><td id="infoUID" style="font-family:monospace;font-size:.72rem;word-break:break-all">—</td></tr>
         <tr><td style="color:var(--muted);padding:6px 0">Username</td><td id="infoUsername">—</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Email</td><td id="infoEmail">—</td></tr>
         <tr><td style="color:var(--muted);padding:6px 0">Sponsor</td><td id="infoSponsor">—</td></tr>
-        <tr><td style="color:var(--muted);padding:6px 0">Joined</td><td id="infoJoined">—</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Joining Date</td><td id="infoJoined">—</td></tr>
         <tr><td style="color:var(--muted);padding:6px 0">Rank</td><td id="infoRank">No Rank</td></tr>
         <tr><td style="color:var(--muted);padding:6px 0">Status</td><td id="infoStatus">—</td></tr>
         <tr><td style="color:var(--muted);padding:6px 0">Signup Method</td><td id="infoMethod">—</td></tr>
@@ -339,7 +418,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
         <input type="text" id="refLinkInput" readonly/>
         <button class="btn btn-p btn-sm" onclick="copyRef()">Copy</button>
       </div>
-      <div style="font-size:.7rem;color:var(--muted);margin-top:7px">Earn <strong style="color:var(--green)">$4</strong> for every activated referral</div>
+      <div style="font-size:.7rem;color:var(--muted);margin-top:7px">Earn <strong style="color:var(--green)" id="refBonusLbl">$4</strong> for every activated referral</div>
       <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">
         <button class="btn btn-o btn-sm" onclick="shareWA()">📲 WhatsApp</button>
         <button class="btn btn-o btn-sm" onclick="shareTG()">✈️ Telegram</button>
@@ -349,11 +428,11 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     <div class="card">
       <div class="card-title">Commission Structure</div>
       <table style="font-size:.79rem;width:100%">
-        <tr><td style="color:var(--muted);padding:6px 0">Activation Fee</td><td style="color:var(--accent);font-weight:700">$30</td></tr>
-        <tr><td style="color:var(--muted);padding:6px 0">Sponsor Commission</td><td style="color:var(--green);font-weight:700">$4 / referral</td></tr>
-        <tr><td style="color:var(--muted);padding:6px 0">Matching Bonus</td><td style="color:var(--gold);font-weight:700">5%</td></tr>
-        <tr><td style="color:var(--muted);padding:6px 0">Capping Limit</td><td style="color:var(--red);font-weight:700">$1,000</td></tr>
-        <tr><td style="color:var(--muted);padding:6px 0">ROI Referral Bonus</td><td style="color:var(--accent2);font-weight:700">$5 / investor</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Activation Fee</td><td style="color:var(--accent);font-weight:700" id="setActivationFee">$30</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Sponsor Commission</td><td style="color:var(--green);font-weight:700" id="setSponsorComm">$4 / referral</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Matching Bonus</td><td style="color:var(--gold);font-weight:700" id="setMatchPercent">5%</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Capping Limit</td><td style="color:var(--red);font-weight:700" id="setCapLimit">$1,000</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">ROI Referral Bonus</td><td style="color:var(--accent2);font-weight:700" id="setRoiRefBonus">$5 / investor</td></tr>
       </table>
     </div>
   </div>
@@ -373,7 +452,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
   </div>
 </div>
 
-<!-- ===== BINARY TREE ===== -->
+<!-- ===== BINARY TREE (3D) ===== -->
 <div class="page" id="page-tree">
   <div class="pg-title">Binary Tree</div>
   <div class="info-box">🌳 Binary placement tree — Left and Right legs. Green border = active member. Dashed = empty slot.</div>
@@ -383,7 +462,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     <div class="sc cg"><div class="sc-lbl">Weaker Leg</div><div class="sc-val" id="treeWeakerLeg">—</div><div class="sc-sub">For matching</div></div>
   </div>
   <div class="card">
-    <div class="card-title">Tree View <small>3 levels shown</small></div>
+    <div class="card-title">Tree View <small>3 levels • 3D view</small></div>
     <div class="tree-container" id="treeContainer">
       <div style="text-align:center;color:var(--muted);padding:30px">Loading tree…</div>
     </div>
@@ -416,14 +495,14 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     <div class="tw">
       <table>
         <thead><tr><th>Level</th><th>Bonus %</th><th>On ROI Pool</th></tr></thead>
-        <tbody>
-          <tr><td>Level 1</td><td style="color:var(--gold);font-weight:700">20%</td><td>Direct downline ROI</td></tr>
-          <tr><td>Level 2</td><td style="color:var(--accent)">10%</td><td>2nd generation</td></tr>
-          <tr><td>Level 3</td><td style="color:var(--accent)">8%</td><td>3rd generation</td></tr>
-          <tr><td>Level 4</td><td style="color:var(--green)">6%</td><td>4th generation</td></tr>
-          <tr><td>Level 5</td><td style="color:var(--green)">4%</td><td>5th generation</td></tr>
-          <tr><td>Level 6</td><td style="color:var(--muted)">3%</td><td>6th generation</td></tr>
-          <tr><td>Level 7</td><td style="color:var(--muted)">2%</td><td>7th generation</td></tr>
+        <tbody id="genLevelsTb">
+          <tr><td>Level 1</td><td style="color:var(--gold);font-weight:700" id="genLvl1">20%</td><td>Direct downline ROI</td></tr>
+          <tr><td>Level 2</td><td style="color:var(--accent)" id="genLvl2">10%</td><td>2nd generation</td></tr>
+          <tr><td>Level 3</td><td style="color:var(--accent)" id="genLvl3">8%</td><td>3rd generation</td></tr>
+          <tr><td>Level 4</td><td style="color:var(--green)" id="genLvl4">6%</td><td>4th generation</td></tr>
+          <tr><td>Level 5</td><td style="color:var(--green)" id="genLvl5">4%</td><td>5th generation</td></tr>
+          <tr><td>Level 6</td><td style="color:var(--muted)" id="genLvl6">3%</td><td>6th generation</td></tr>
+          <tr><td>Level 7</td><td style="color:var(--muted)" id="genLvl7">2%</td><td>7th generation</td></tr>
         </tbody>
       </table>
     </div>
@@ -440,7 +519,6 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     <div class="sc cp"><div class="sc-lbl">Withdrawn</div><div class="sc-val" id="incWd">$0.00</div><div class="sc-ic">💸</div></div>
   </div>
 
-  <!-- Income by type -->
   <div class="two-col">
     <div class="card">
       <div class="card-title">Income by Type</div>
@@ -479,10 +557,47 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
   </div>
 </div>
 
+<!-- ===== DEPOSIT (NEW) ===== -->
+<div class="page" id="page-deposit">
+  <div class="pg-title">Deposit Request</div>
+  <div class="info-box">💵 Submit your deposit details below. Once you pay, an admin will verify your transaction and approve it — your wallet balance updates automatically after approval.</div>
+  <div class="two-col" style="max-width:840px">
+    <div class="card">
+      <div class="card-title">New Deposit</div>
+      <div class="fg"><label>Amount (USD)</label><input type="number" id="depAmt" placeholder="Min " min="1"/></div>
+      <div class="fg"><label>Payment Method</label>
+        <select id="depMethod">
+          <option>USDT TRC20</option><option>USDT ERC20</option><option>BTC</option>
+        </select>
+      </div>
+      <div class="fg"><label>Transaction Hash (TxID)</label><input type="text" id="depTxid" placeholder="Paste your TxID"/></div>
+      <button class="btn btn-p" onclick="submitDeposit()" style="width:100%">Submit Deposit Request →</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Deposit Summary</div>
+      <table style="width:100%;font-size:.8rem">
+        <tr><td style="color:var(--muted);padding:6px 0">Total Deposited (Approved)</td><td style="color:var(--green);font-weight:700" id="depApprovedTotal">$0.00</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Pending Requests</td><td style="color:var(--gold);font-weight:700" id="depPendingCount">0</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="card" style="max-width:840px">
+    <div class="card-title">My Deposit Requests</div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>#</th><th>Amount</th><th>Method</th><th>TxID</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody id="depTb">
+          <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:18px">No deposit requests yet</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <!-- ===== ROI ===== -->
 <div class="page" id="page-roi">
   <div class="pg-title">ROI Investment</div>
-  <div class="info-box">💡 Min $100 | Monthly ROI: <strong>12%–15%</strong> (admin-set) | Paid every 30 days | 50% direct + 50% generation bonus (7 levels) | Capital withdrawal after 6 months with 10% fee</div>
+  <div class="info-box" id="roiInfoBox">💡 Min $100 | Monthly ROI: <strong>12%–15%</strong> (admin-set) | Paid every 30 days | 50% direct + 50% generation bonus (7 levels) | Capital withdrawal after 6 months with 10% fee</div>
   <div class="two-col" style="max-width:840px">
     <div class="card">
       <div class="card-title">New Investment</div>
@@ -495,9 +610,9 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
       <div class="fg"><label>Transaction Hash (TxID)</label><input type="text" id="invTxid" placeholder="Paste your TxID"/></div>
       <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:11px;margin-bottom:11px;font-size:.77rem">
         <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Monthly ROI</span><span style="color:var(--green);font-weight:700" id="roiRateD">12%</span></div>
-        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Payout Cycle</span><span>Every 30 days</span></div>
-        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Lock Period</span><span>6 months</span></div>
-        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Withdrawal Fee</span><span style="color:var(--red)">10%</span></div>
+        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Payout Cycle</span><span id="setPayoutCycle">Every 30 days</span></div>
+        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Lock Period</span><span id="setLockPeriod">6 months</span></div>
+        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Withdrawal Fee</span><span style="color:var(--red)" id="setWdFee">10%</span></div>
       </div>
       <button class="btn btn-p" onclick="submitInvestment()" style="width:100%">Submit Investment →</button>
     </div>
@@ -535,6 +650,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-p btn-sm" onclick="showWdForm()">Withdraw</button>
+        <button class="btn btn-o btn-sm" onclick="showPage('deposit',null)">Deposit</button>
         <button class="btn btn-o btn-sm" onclick="showPage('roi',null)">Invest</button>
       </div>
     </div>
@@ -557,7 +673,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     <div class="card-title">Withdrawal Request</div>
     <div class="fg"><label>Amount (USD)</label><input type="number" id="wdAmt" placeholder="Min $10"/></div>
     <div class="fg"><label>USDT TRC20 Address</label><input type="text" id="wdAddr" placeholder="Your TRC20 wallet address"/></div>
-    <div style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);border-radius:9px;padding:9px;font-size:.74rem;color:var(--muted);margin-bottom:11px">⚠️ Processed 24–48 hrs. Min $10.</div>
+    <div style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);border-radius:9px;padding:9px;font-size:.74rem;color:var(--muted);margin-bottom:11px">⚠️ Processed 24–48 hrs. Min <span id="setMinWd">$10</span>.</div>
     <div style="display:flex;gap:8px">
       <button class="btn btn-p" onclick="submitWithdraw()" style="flex:1">Submit</button>
       <button class="btn btn-o" onclick="hideWdForm()">Cancel</button>
@@ -576,24 +692,29 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
   </div>
 </div>
 
-<!-- ===== RANK ===== -->
+<!-- ===== RANK (3D BADGES) ===== -->
 <div class="page" id="page-rank">
   <div class="pg-title">Rank Progress</div>
   <div class="two-col" style="max-width:840px">
     <div class="card" style="text-align:center">
       <div class="card-title" style="justify-content:center">Current Rank</div>
-      <div class="rank-stars" id="rankStarsD">☆</div>
-      <div class="rank-name-d" id="rankNameD">No Rank</div>
-      <div style="font-size:.71rem;color:var(--muted);margin:5px 0 14px" id="rankNextHint"></div>
-      <div class="rank-bar-row">
-        <span class="rl">Matching</span>
-        <div style="flex:1"><div class="prog"><div class="prog-f" id="rankMatchF" style="width:0%"></div></div></div>
-        <span class="rv" id="rankMatchV">0/50</span>
+      <div class="rank-badge-wrap">
+        <div class="rank-badge-3d norank" id="rankBadge3d">☆</div>
+        <div class="rank-name-d" id="rankNameD">No Rank</div>
       </div>
-      <div class="rank-bar-row">
-        <span class="rl">Team Sales</span>
-        <div style="flex:1"><div class="prog"><div class="prog-f" id="rankSalesF" style="width:0%"></div></div></div>
-        <span class="rv" id="rankSalesV">$0/$100</span>
+      <div style="font-size:.71rem;color:var(--muted);margin:5px 0 14px" id="rankNextHint"></div>
+      <div class="rank-tiers" id="rankTiersRow"></div>
+      <div style="margin-top:16px">
+        <div class="rank-bar-row">
+          <span class="rl">Matching</span>
+          <div style="flex:1"><div class="prog"><div class="prog-f" id="rankMatchF" style="width:0%"></div></div></div>
+          <span class="rv" id="rankMatchV">0/50</span>
+        </div>
+        <div class="rank-bar-row">
+          <span class="rl">Team Sales</span>
+          <div style="flex:1"><div class="prog"><div class="prog-f" id="rankSalesF" style="width:0%"></div></div></div>
+          <span class="rv" id="rankSalesV">$0/$100</span>
+        </div>
       </div>
     </div>
     <div class="card">
@@ -601,7 +722,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
       <div class="tw">
         <table>
           <thead><tr><th>Rank</th><th>Matching</th><th>Sales</th></tr></thead>
-          <tbody>
+          <tbody id="ranksAllTb">
             <tr><td>⭐ One Star</td><td>50</td><td>$100</td></tr>
             <tr><td>⭐⭐ Two Star</td><td>300</td><td>$300</td></tr>
             <tr><td>⭐⭐⭐ Three Star</td><td>1,000</td><td>$1K</td></tr>
@@ -619,10 +740,10 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 <!-- ===== CASHBACK ===== -->
 <div class="page" id="page-cashback">
   <div class="pg-title">Daily Cashback Pool</div>
-  <div class="info-box">💡 3% of total company joining volume distributed equally. Max: <strong>$60</strong> (2× of $30). Stops at 2×.</div>
+  <div class="info-box" id="cashbackInfoBox">💡 3% of total company joining volume distributed equally. Max: <strong>$60</strong> (2× of $30). Stops at 2×.</div>
   <div class="cards-grid" style="max-width:640px">
     <div class="sc cb"><div class="sc-lbl">Cashback Earned</div><div class="sc-val" id="cbEarned">$0.00</div><div class="sc-ic">🎁</div></div>
-    <div class="sc cg"><div class="sc-lbl">Limit</div><div class="sc-val">$60.00</div><div class="sc-ic">🔒</div></div>
+    <div class="sc cg"><div class="sc-lbl">Limit</div><div class="sc-val" id="cbLimitD">$60.00</div><div class="sc-ic">🔒</div></div>
     <div class="sc cgr">
       <div class="sc-lbl">Status</div>
       <div id="cbStatus" style="margin-top:8px;font-size:.83rem;font-weight:700">Checking…</div>
@@ -634,7 +755,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 <!-- ===== CLUB ===== -->
 <div class="page" id="page-club">
   <div class="pg-title">Club Bonus</div>
-  <div class="info-box">🏆 4% of company joining volume distributed equally. Eligibility: min <strong>10 direct referrals</strong> OR <strong>$50 matching income</strong>.</div>
+  <div class="info-box" id="clubInfoBox">🏆 4% of company joining volume distributed equally. Eligibility: min <strong>10 direct referrals</strong> OR <strong>$50 matching income</strong>.</div>
   <div class="two-col" style="max-width:700px">
     <div class="card">
       <div class="card-title">Your Eligibility</div>
@@ -647,7 +768,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     </div>
     <div class="card">
       <div class="card-title">About Club Bonus</div>
-      <div style="font-size:.78rem;color:var(--muted);line-height:1.75">4% of total company joining volume shared equally among all eligible members monthly.<br><br>Qualify with: <strong style="color:var(--green)">10 direct referrals</strong> or <strong style="color:var(--green)">$50 matching income</strong>.</div>
+      <div style="font-size:.78rem;color:var(--muted);line-height:1.75" id="clubAboutText">4% of total company joining volume shared equally among all eligible members monthly.<br><br>Qualify with: <strong style="color:var(--green)">10 direct referrals</strong> or <strong style="color:var(--green)">$50 matching income</strong>.</div>
     </div>
   </div>
 </div>
@@ -663,19 +784,19 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     </div>
     <div class="card" id="actFormCard">
       <div class="card-title">Activate Account</div>
-      <div class="info-box">One-time fee of <strong>$30</strong> unlocks all income features.</div>
+      <div class="info-box">One-time fee of <strong id="actFeeLbl">$30</strong> unlocks all income features.</div>
       <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:13px;margin-bottom:13px">
         <div style="font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:7px;text-transform:uppercase">Fee Breakdown</div>
-        <div style="display:flex;justify-content:space-between;font-size:.78rem;padding:4px 0"><span>Sponsor Commission</span><span style="color:var(--green);font-weight:700">$4</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:.78rem;padding:4px 0"><span>Company Fund</span><span style="color:var(--accent2);font-weight:700">$5</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:.78rem;padding:4px 0"><span>Platform Operations</span><span style="color:var(--muted)">$21</span></div>
-        <div style="border-top:1px solid var(--border);margin-top:7px;padding-top:7px;display:flex;justify-content:space-between;font-weight:800"><span>Total</span><span style="color:var(--gold)">$30</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:.78rem;padding:4px 0"><span>Sponsor Commission</span><span style="color:var(--green);font-weight:700" id="actBreakSponsor">$4</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:.78rem;padding:4px 0"><span>Company Fund</span><span style="color:var(--accent2);font-weight:700" id="actBreakCompany">$5</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:.78rem;padding:4px 0"><span>Platform Operations</span><span style="color:var(--muted)" id="actBreakOps">$21</span></div>
+        <div style="border-top:1px solid var(--border);margin-top:7px;padding-top:7px;display:flex;justify-content:space-between;font-weight:800"><span>Total</span><span style="color:var(--gold)" id="actBreakTotal">$30</span></div>
       </div>
       <div class="fg"><label>Payment Method</label>
         <select id="actMethod"><option>USDT TRC20</option><option>USDT ERC20</option><option>BTC</option></select>
       </div>
       <div class="fg"><label>Transaction Hash (TxID)</label><input type="text" id="actTxid" placeholder="Paste your TxID here"/></div>
-      <button class="btn btn-g" onclick="submitActivation()" style="width:100%;padding:12px;font-size:.88rem">⚡ Pay $30 & Activate Account</button>
+      <button class="btn btn-g" onclick="submitActivation()" style="width:100%;padding:12px;font-size:.88rem">⚡ Pay <span id="actBtnFee">$30</span> & Activate Account</button>
     </div>
   </div>
 </div>
@@ -704,13 +825,33 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const auth   = firebase.auth();
-const fsdb   = firebase.firestore();   // Firestore (users stored here from register)
-const rtdb   = firebase.database();   // Realtime DB (income, transactions)
+const fsdb   = firebase.firestore();
+const rtdb   = firebase.database();
 
-let CU   = null; // currentUser
-let UD   = null; // userData (Firestore doc)
-let ALLU = {};   // all users cache
-let LAST_TX = {}; // cache of last loaded transactions (for CSV export)
+let CU   = null;
+let UD   = null;
+let ALLU = {};
+let LAST_TX = {};
+
+// Default settings — used as fallback until admin values load from rtdb 'settings'
+let SET = {
+  activationFee: 30, sponsorCommission: 4, matchingPercent: 5, cappingLimit: 1000,
+  roiRateMin: 12, roiRateMax: 15, roiReferralBonus: 5, cashbackLimit: 60,
+  clubPercent: 4, clubDirectReq: 10, clubMatchReq: 50, minInvestment: 100,
+  minWithdrawal: 10, withdrawalFeePercent: 10, lockMonths: 6, payoutCycleDays: 30,
+  actSponsorShare: 4, actCompanyShare: 5, actOpsShare: 21,
+  genLevels: [20,10,8,6,4,3,2],
+  ranks: [
+    {name:'No Rank',    icon:'☆', mReq:0,      sReq:0},
+    {name:'One Star',   icon:'⭐', mReq:50,     sReq:100},
+    {name:'Two Star',   icon:'⭐⭐', mReq:300,    sReq:300},
+    {name:'Three Star', icon:'⭐⭐⭐', mReq:1000,   sReq:1000},
+    {name:'Four Star',  icon:'⭐⭐⭐⭐', mReq:3000,   sReq:10000},
+    {name:'Five Star',  icon:'⭐⭐⭐⭐⭐', mReq:10000,  sReq:100000},
+    {name:'Six Star',   icon:'6⭐', mReq:30000,  sReq:300000},
+    {name:'Seven Star', icon:'7⭐', mReq:100000, sReq:10000000}
+  ]
+};
 
 // ── AUTH GUARD ───────────────────────────────────────
 auth.onAuthStateChanged(async user => {
@@ -721,56 +862,131 @@ auth.onAuthStateChanged(async user => {
 
 async function loadAll() {
   try {
-    // 1. Load current user from Firestore (where register.html saved it)
+    await loadSettings();
+
     const docSnap = await fsdb.collection('users').doc(CU.uid).get();
     if (!docSnap.exists) { toast('User data not found. Please re-login.'); return; }
     UD = { id: CU.uid, ...docSnap.data() };
 
-    // 2. Load all users for team/tree
     const allSnap = await fsdb.collection('users').get();
     ALLU = {};
     allSnap.forEach(d => { ALLU[d.id] = { id: d.id, ...d.data() }; });
 
     renderAll();
     loadRTDBData();
+    loadNotices();
 
-    // 3. Live listener for RTDB income
     rtdb.ref('users/' + CU.uid + '/income').on('value', snap => {
-      if (snap.exists() && UD) {
-        UD.income = snap.val();
-        renderIncomeCards();
-      }
+      if (snap.exists() && UD) { UD.income = snap.val(); renderIncomeCards(); }
     });
 
-    // 4. Live listener for RTDB transactions
     rtdb.ref('transactions/' + CU.uid).on('value', snap => {
-      if (snap.exists()) renderTransactions(snap.val());
-      else renderTransactions({});
+      renderTransactions(snap.exists() ? snap.val() : {});
+    });
+
+    // Live: deposit requests (so status updates the moment admin approves)
+    rtdb.ref('deposits/' + CU.uid).on('value', snap => {
+      renderDeposits(snap.exists() ? snap.val() : {});
+    });
+
+    // Live: settings (so admin changes reflect instantly without reload)
+    rtdb.ref('settings').on('value', snap => {
+      if (snap.exists()) { Object.assign(SET, snap.val()); applySettingsToUI(); if(UD) renderIncomeCards(); }
+    });
+
+    // Live: notices
+    rtdb.ref('notices').on('value', snap => {
+      renderNotices(snap.exists() ? snap.val() : {});
     });
 
   } catch(e) { toast('Error: ' + e.message); }
 }
 
-async function loadRTDBData() {
-  // Load income from RTDB
-  const incSnap = await rtdb.ref('users/' + CU.uid + '/income').get();
-  if (incSnap.exists()) { UD.income = incSnap.val(); renderIncomeCards(); }
+// ── DYNAMIC ADMIN SETTINGS ───────────────────────────
+async function loadSettings() {
+  try {
+    const snap = await rtdb.ref('settings').get();
+    if (snap.exists()) Object.assign(SET, snap.val());
+  } catch(e) { /* fall back to defaults silently */ }
+  applySettingsToUI();
+}
 
-  // Load wallet balance from RTDB
+function applySettingsToUI() {
+  set('setActivationFee', '$'+SET.activationFee);
+  set('setSponsorComm',   '$'+SET.sponsorCommission+' / referral');
+  set('setMatchPercent',  SET.matchingPercent+'%');
+  set('setCapLimit',      '$'+SET.cappingLimit.toLocaleString());
+  set('setRoiRefBonus',   '$'+SET.roiReferralBonus+' / investor');
+  set('refBonusLbl',      '$'+SET.sponsorCommission);
+  set('ovMatchCapLbl',    '$'+SET.cappingLimit.toLocaleString());
+  set('actBannerFee',     '$'+SET.activationFee);
+  set('actFeeLbl',        '$'+SET.activationFee);
+  set('actBtnFee',        '$'+SET.activationFee);
+  set('setMinWd',         '$'+SET.minWithdrawal);
+  set('setPayoutCycle',   'Every '+SET.payoutCycleDays+' days');
+  set('setLockPeriod',    SET.lockMonths+' months');
+  set('setWdFee',         SET.withdrawalFeePercent+'%');
+  set('roiRateD',         SET.roiRateMin+'%'+(SET.roiRateMax&&SET.roiRateMax!==SET.roiRateMin?'–'+SET.roiRateMax+'%':''));
+  set('cbLimitD',         '$'+SET.cashbackLimit.toFixed(2));
+
+  document.getElementById('roiInfoBox').innerHTML =
+    `💡 Min $${SET.minInvestment} | Monthly ROI: <strong>${SET.roiRateMin}%${SET.roiRateMax&&SET.roiRateMax!==SET.roiRateMin?'–'+SET.roiRateMax+'%':''}</strong> (admin-set) | Paid every ${SET.payoutCycleDays} days | 50% direct + 50% generation bonus (7 levels) | Capital withdrawal after ${SET.lockMonths} months with ${SET.withdrawalFeePercent}% fee`;
+
+  document.getElementById('cashbackInfoBox').innerHTML =
+    `💡 ${SET.clubPercent? '': ''}Daily cashback pool distributed equally among activated members. Max: <strong>$${SET.cashbackLimit.toFixed(2)}</strong>. Stops once limit is reached.`;
+
+  document.getElementById('clubInfoBox').innerHTML =
+    `🏆 ${SET.clubPercent}% of company joining volume distributed equally. Eligibility: min <strong>${SET.clubDirectReq} direct referrals</strong> OR <strong>$${SET.clubMatchReq} matching income</strong>.`;
+
+  document.getElementById('clubAboutText').innerHTML =
+    `${SET.clubPercent}% of total company joining volume shared equally among all eligible members monthly.<br><br>Qualify with: <strong style="color:var(--green)">${SET.clubDirectReq} direct referrals</strong> or <strong style="color:var(--green)">$${SET.clubMatchReq} matching income</strong>.`;
+
+  set('actBreakSponsor', '$'+SET.actSponsorShare);
+  set('actBreakCompany', '$'+SET.actCompanyShare);
+  set('actBreakOps',     '$'+SET.actOpsShare);
+  set('actBreakTotal',   '$'+SET.activationFee);
+
+  const gl = SET.genLevels || [20,10,8,6,4,3,2];
+  gl.forEach((pct,i)=> set('genLvl'+(i+1), pct+'%'));
+
+  // Ranks table (dynamic)
+  const ranksBody = document.getElementById('ranksAllTb');
+  if (ranksBody && SET.ranks) {
+    ranksBody.innerHTML = SET.ranks.slice(1).map(r=>
+      `<tr><td>${r.icon} ${r.name}</td><td>${r.mReq.toLocaleString()}</td><td>$${r.sReq.toLocaleString()}</td></tr>`
+    ).join('');
+  }
+}
+
+// ── NOTICE BOARD ──────────────────────────────────────
+function loadNotices() { /* handled via live listener in loadAll */ }
+function renderNotices(noticesObj) {
+  const el = document.getElementById('noticeScroll');
+  const entries = Object.entries(noticesObj||{}).sort(([,a],[,b])=>(b.createdAt||0)-(a.createdAt||0));
+  if (!entries.length) {
+    el.innerHTML = `<div class="notice-item"><span class="notice-dot"></span><div>Welcome to Life Line Meta! Stay tuned for updates from admin.</div></div>`;
+    return;
+  }
+  el.innerHTML = entries.map(([id,n])=>`
+    <div class="notice-item">
+      <span class="notice-dot"></span>
+      <div style="flex:1">${(n.text||'').toString()}</div>
+      <span class="notice-date">${n.createdAt?new Date(n.createdAt).toLocaleDateString():''}</span>
+    </div>`).join('');
+}
+
+async function loadRTDBData() {
   const walSnap = await rtdb.ref('users/' + CU.uid + '/walletBalance').get();
   if (walSnap.exists()) { UD.walletBalance = walSnap.val(); renderWallet(); }
 
-  // Load ROI settings
-  const rateSnap = await rtdb.ref('settings/roiRate').get();
-  if (rateSnap.exists()) document.getElementById('roiRateD').textContent = rateSnap.val() + '%';
-
-  // Load investments
   const invSnap = await rtdb.ref('investments/' + CU.uid).get();
   if (invSnap.exists()) renderROIPlans(invSnap.val());
 
-  // Load withdrawal requests
   const wdSnap = await rtdb.ref('withdrawals/' + CU.uid).get();
   if (wdSnap.exists()) renderWalletHistory(wdSnap.val());
+
+  const depSnap = await rtdb.ref('deposits/' + CU.uid).get();
+  renderDeposits(depSnap.exists() ? depSnap.val() : {});
 }
 
 // ── RENDER ALL ────────────────────────────────────────
@@ -779,25 +995,36 @@ function renderAll() {
   const name = u.fullName || u.username || (CU.email ? CU.email.split('@')[0] : 'User');
   const init = name[0].toUpperCase();
 
-  // Sidebar
-  document.getElementById('avInit').textContent   = init;
+  document.getElementById('avInit').innerHTML = u.profilePicUrl ? `<img src="${u.profilePicUrl}">` : init;
   document.getElementById('sbName').textContent   = name;
   document.getElementById('sbStatus').textContent = u.isActive ? '✅ Active' : '⚠️ Inactive';
 
-  // Greeting
   const h = new Date().getHours();
   const g = h<12?'Good Morning':h<17?'Good Afternoon':'Good Evening';
   document.getElementById('greetMsg').textContent = g + ', ' + name + '!';
 
-  // Activation banner
   document.getElementById('actBanner').style.display = u.isActive ? 'none' : 'flex';
 
-  // Profile page
-  document.getElementById('pfAv').textContent         = init;
+  document.getElementById('pfAv').textContent = init;
+  if (u.profilePicUrl) {
+    document.getElementById('pfAvWrap').innerHTML = `<img src="${u.profilePicUrl}">`;
+    document.getElementById('picPreview').src = u.profilePicUrl;
+    document.getElementById('picPreview').style.display = 'block';
+    document.getElementById('picPreviewInit').style.display = 'none';
+  } else {
+    document.getElementById('picPreviewInit').textContent = init;
+  }
+  if (u.signatureUrl) {
+    document.getElementById('sigPreview').src = u.signatureUrl;
+    document.getElementById('sigPreview').style.display = 'block';
+    document.getElementById('sigPreviewEmpty').style.display = 'none';
+  }
+
   document.getElementById('pfNameD').textContent       = name;
   document.getElementById('pfEmailD').textContent      = u.email || CU.email || '';
   document.getElementById('pfName').value              = u.fullName || '';
   document.getElementById('pfUsername').value          = u.username || '';
+  document.getElementById('pfEmail').value              = u.email || CU.email || '';
   document.getElementById('pfPhone').value             = u.mobile || '';
   document.getElementById('pfCountry').value           = u.country || '';
   document.getElementById('pfWallet').value            = u.paymentWallet || '';
@@ -805,9 +1032,9 @@ function renderAll() {
     ? '<span class="pill pg">✅ Active</span>'
     : '<span class="pill py">⚠️ Inactive</span>';
 
-  // Account info
   document.getElementById('infoUID').textContent      = CU.uid;
   document.getElementById('infoUsername').textContent = u.username || '—';
+  document.getElementById('infoEmail').textContent     = u.email || CU.email || '—';
   document.getElementById('infoSponsor').textContent  = u.sponsorId || 'None (Root)';
   document.getElementById('infoJoined').textContent   = u.createdAt
     ? (u.createdAt.toDate ? u.createdAt.toDate().toLocaleDateString('en-BD') : new Date(u.createdAt).toLocaleDateString())
@@ -815,13 +1042,10 @@ function renderAll() {
   document.getElementById('infoStatus').textContent   = u.isActive ? '✅ Active' : '⚠️ Inactive';
   document.getElementById('infoMethod').textContent   = u.signupMethod || 'email';
 
-  // Referral link — uses window.location.origin, so it automatically follows
-  // whatever domain (including your custom domain) the dashboard is loaded from
   const refCode = u.myRefCode || u.username || CU.uid;
   const refLink = window.location.origin + '/register.html?ref=' + encodeURIComponent(refCode);
   document.getElementById('refLinkInput').value = refLink;
 
-  // Activation page
   if (u.isActive) {
     document.getElementById('activeCard').style.display   = 'block';
     document.getElementById('actFormCard').style.display  = 'none';
@@ -849,14 +1073,13 @@ function renderIncomeCards() {
   const wd      = parseFloat((UD && UD.totalWithdrawn) || 0);
   const invested= parseFloat((UD && UD.totalInvested)  || 0);
   const teamSales = parseFloat((UD && UD.teamSales) || 0);
+  const cap = SET.cappingLimit || 1000;
 
-  // Overview
   set('ovTotal',   '$'+total.toFixed(2));
   set('ovWallet',  '$'+wallet.toFixed(2));
   set('ovMatch',   '$'+match.toFixed(2));
-  setW('ovMatchP', Math.min((match/1000)*100,100)+'%');
+  setW('ovMatchP', Math.min((match/cap)*100,100)+'%');
 
-  // Income breakdown (overview)
   set('ibSponsor',  '$'+sponsor.toFixed(2));
   set('ibMatch',    '$'+match.toFixed(2));
   set('ibCashback', '$'+cb.toFixed(2));
@@ -864,7 +1087,6 @@ function renderIncomeCards() {
   set('ibRoi',      '$'+roi.toFixed(2));
   set('ibGen',      '$'+gen.toFixed(2));
 
-  // Income page
   set('incAll',           '$'+total.toFixed(2));
   set('incWd',            '$'+wd.toFixed(2));
   set('incTotalInv',      '$'+invested.toFixed(2));
@@ -874,36 +1096,32 @@ function renderIncomeCards() {
   set('incTypeClub',      '$'+club.toFixed(2));
   set('incTypeROI',       '$'+roi.toFixed(2));
   set('incTypeGen',       '$'+gen.toFixed(2));
-  set('incCapUsed',       '$'+total.toFixed(0)+' / $1000');
-  set('incCapLeft',       '$'+Math.max(0,1000-total).toFixed(2));
+  set('incCapUsed',       '$'+total.toFixed(0)+' / $'+cap);
+  set('incCapLeft',       '$'+Math.max(0,cap-total).toFixed(2));
 
-  // Wallet page
   renderWallet(wallet, total, wd);
 
-  // ROI summary
   set('roiTotalInv',    '$'+invested.toFixed(2));
   set('roiTotalEarned', '$'+roi.toFixed(2));
 
-  // Cashback
   set('cbEarned', '$'+cb.toFixed(2));
-  const cbPct = Math.min((cb/60)*100,100);
+  const limit = SET.cashbackLimit || 60;
+  const cbPct = Math.min((cb/limit)*100,100);
   setW('cbProg', cbPct+'%');
   const cbEl = document.getElementById('cbStatus');
-  if(cb >= 60) cbEl.innerHTML = '<span style="color:var(--red)">Limit Reached ($60)</span>';
+  if(cb >= limit) cbEl.innerHTML = '<span style="color:var(--red)">Limit Reached ($'+limit.toFixed(2)+')</span>';
   else if(UD && UD.isActive) cbEl.innerHTML = '<span style="color:var(--green)">✅ Eligible</span>';
   else cbEl.innerHTML = '<span style="color:var(--muted)">Not Activated</span>';
 
-  // Club
   const dirCount = Object.values(ALLU).filter(u=>u.sponsorId===CU.uid).length;
-  set('clubDir',   dirCount+' / 10');
-  set('clubMatch', '$'+match.toFixed(0)+' / $50');
+  set('clubDir',   dirCount+' / '+(SET.clubDirectReq||10));
+  set('clubMatch', '$'+match.toFixed(0)+' / $'+(SET.clubMatchReq||50));
   set('clubEarned','$'+club.toFixed(2));
-  const clubOk = dirCount>=10 || match>=50;
+  const clubOk = dirCount>=(SET.clubDirectReq||10) || match>=(SET.clubMatchReq||50);
   document.getElementById('clubEligBadge').innerHTML = clubOk
     ? '<span class="pill pg">✅ Eligible</span>'
     : '<span class="pill py">Not yet</span>';
 
-  // Rank
   renderRank(match, teamSales);
 }
 
@@ -911,14 +1129,15 @@ function renderWallet(wallet, total, wd) {
   const w = wallet !== undefined ? wallet : parseFloat((UD && UD.walletBalance)||0);
   const t = total  !== undefined ? total  : 0;
   const d = wd     !== undefined ? wd     : parseFloat((UD && UD.totalWithdrawn)||0);
+  const cap = SET.cappingLimit || 1000;
   set('walBalD',      '$'+w.toFixed(2));
   set('wTotalEarned', '$'+t.toFixed(2));
   set('wTotalWd',     '$'+d.toFixed(2));
-  set('wCapLeft',     '$'+Math.max(0,1000-t).toFixed(2));
+  set('wCapLeft',     '$'+Math.max(0,cap-t).toFixed(2));
 }
 
 // ── REFERRALS ────────────────────────────────────────
-let MY_REFS = []; // cached for search/filter
+let MY_REFS = [];
 
 function loadReferrals() {
   MY_REFS = Object.values(ALLU).filter(u => u.sponsorId === CU.uid);
@@ -930,7 +1149,7 @@ function loadReferrals() {
   set('tmDirRef',    MY_REFS.length);
   set('tmTotal',     MY_REFS.length);
   set('tmActive',    activeRef.length);
-  set('tmVol',       '$'+(activeRef.length*30));
+  set('tmVol',       '$'+(activeRef.length*(SET.activationFee||30)));
 
   renderReferralTable(MY_REFS);
 }
@@ -945,35 +1164,31 @@ function renderReferralTable(list) {
         <td style="color:var(--muted)">${u.email||'—'}</td>
         <td>${u.createdAt ? (u.createdAt.toDate?u.createdAt.toDate().toLocaleDateString():new Date(u.createdAt).toLocaleDateString()) : '—'}</td>
         <td><span class="pill ${u.isActive?'pg':'py'}">${u.isActive?'Active':'Inactive'}</span></td>
-        <td style="color:var(--green);font-weight:700">${u.isActive?'$4.00':'$0.00'}</td>
+        <td style="color:var(--green);font-weight:700">${u.isActive?'$'+(SET.sponsorCommission||4).toFixed(2):'$0.00'}</td>
       </tr>`).join('');
 }
 
-// New active function: live search/filter of direct referrals
 window.filterReferrals = () => {
   const q = document.getElementById('refSearch').value.trim().toLowerCase();
   if (!q) { renderReferralTable(MY_REFS); return; }
-  const filtered = MY_REFS.filter(u =>
+  renderReferralTable(MY_REFS.filter(u =>
     (u.fullName||'').toLowerCase().includes(q) ||
     (u.username||'').toLowerCase().includes(q) ||
     (u.email||'').toLowerCase().includes(q)
-  );
-  renderReferralTable(filtered);
+  ));
 };
 
-// ── BINARY TREE ──────────────────────────────────────
-let ALL_DOWNLINE = []; // cached for search/filter
+// ── BINARY TREE (3D) ──────────────────────────────────
+let ALL_DOWNLINE = [];
 
 function renderBinaryTree() {
   const container = document.getElementById('treeContainer');
   if (!UD) return;
 
-  // Count left and right leg
   const leftChild  = UD.leftChild;
   const rightChild = UD.rightChild;
   let leftCount = 0, rightCount = 0;
 
-  // BFS to count and collect all downline
   ALL_DOWNLINE = [];
   function bfsCount(uid, side, level) {
     if (!uid || !ALLU[uid]) return;
@@ -991,7 +1206,6 @@ function renderBinaryTree() {
   set('treeRightCount', rightCount);
   set('treeWeakerLeg',  leftCount <= rightCount ? 'Left' : 'Right');
 
-  // Build visual tree (you + level 1 + level 2)
   function makeNode(uid, label, isYou) {
     const u = uid && ALLU[uid];
     if (!uid) {
@@ -1015,7 +1229,6 @@ function renderBinaryTree() {
     </div>`;
   }
 
-  // Level 2 children
   function lvl2(uid) {
     const u = uid && ALLU[uid];
     const lc = u ? u.leftChild  : null;
@@ -1027,14 +1240,10 @@ function renderBinaryTree() {
   }
 
   container.innerHTML = `
-    <div style="display:flex;flex-direction:column;align-items:center;gap:0">
-      <!-- ROOT (YOU) -->
+    <div class="tree-3d-wrap" style="display:flex;flex-direction:column;align-items:center;gap:0">
       ${makeNode(CU.uid,'You',true)}
-      <!-- Vertical connector -->
       <div style="width:1px;height:20px;background:var(--border)"></div>
-      <!-- Horizontal line -->
       <div style="position:relative;width:200px;height:1px;background:${(leftChild||rightChild)?'var(--border)':'transparent'}"></div>
-      <!-- Level 1 -->
       <div style="display:flex;gap:40px;position:relative">
         <div style="display:flex;flex-direction:column;align-items:center;gap:0">
           <div style="width:1px;height:0px"></div>
@@ -1068,44 +1277,48 @@ function renderDownlineTable(list) {
       </tr>`).join('');
 }
 
-// New active function: live search/filter of full downline
 window.filterDownline = () => {
   const q = document.getElementById('downlineSearch').value.trim().toLowerCase();
   if (!q) { renderDownlineTable(ALL_DOWNLINE); return; }
-  const filtered = ALL_DOWNLINE.filter(({u}) =>
+  renderDownlineTable(ALL_DOWNLINE.filter(({u}) =>
     (u.fullName||'').toLowerCase().includes(q) ||
     (u.username||'').toLowerCase().includes(q)
-  );
-  renderDownlineTable(filtered);
+  ));
 };
 
-// ── RANK ─────────────────────────────────────────────
+// ── RANK (3D badge strip, fully dynamic from SET.ranks) ──
 function renderRank(matching, teamSales) {
-  const ranks = [
-    {name:'No Rank',    stars:'☆',         mReq:0,      sReq:0},
-    {name:'One Star',   stars:'⭐',         mReq:50,     sReq:100},
-    {name:'Two Star',   stars:'⭐⭐',       mReq:300,    sReq:300},
-    {name:'Three Star', stars:'⭐⭐⭐',     mReq:1000,   sReq:1000},
-    {name:'Four Star',  stars:'⭐⭐⭐⭐',   mReq:3000,   sReq:10000},
-    {name:'Five Star',  stars:'⭐⭐⭐⭐⭐', mReq:10000,  sReq:100000},
-    {name:'Six Star',   stars:'6⭐',        mReq:30000,  sReq:300000},
-    {name:'Seven Star', stars:'7⭐',        mReq:100000, sReq:10000000}
-  ];
+  const ranks = SET.ranks || [];
+  if (!ranks.length) return;
   let idx = 0;
   for(let i=1;i<ranks.length;i++) {
     if(matching>=ranks[i].mReq && teamSales>=ranks[i].sReq) idx=i;
   }
   const cur  = ranks[idx];
   const next = ranks[idx+1]||null;
-  set('rankStarsD', cur.stars);
+
+  const badge = document.getElementById('rankBadge3d');
+  badge.textContent = cur.icon || '☆';
+  badge.classList.toggle('norank', idx===0);
+
   set('rankNameD',  cur.name);
   set('infoRank',   cur.name);
+
+  // Tier strip — 3D circular badges, filled = unlocked
+  const tiersRow = document.getElementById('rankTiersRow');
+  tiersRow.innerHTML = ranks.slice(1).map((r,i)=>{
+    const tierIdx = i+1;
+    const unlocked = tierIdx <= idx;
+    const isCurrent = tierIdx === idx;
+    return `<div class="rank-tier ${unlocked?'unlocked':''} ${isCurrent?'current':''}" title="${r.name}">${tierIdx}</div>`;
+  }).join('');
+
   if(next){
-    set('rankNextHint', 'Next: '+next.name+' — need '+next.mReq+' matching + $'+next.sReq+' team sales');
+    set('rankNextHint', 'Next: '+next.name+' — need '+next.mReq.toLocaleString()+' matching + $'+next.sReq.toLocaleString()+' team sales');
     setW('rankMatchF', Math.min((matching/next.mReq)*100,100)+'%');
     setW('rankSalesF', Math.min((teamSales/next.sReq)*100,100)+'%');
-    set('rankMatchV', matching+'/'+next.mReq);
-    set('rankSalesV', '$'+teamSales+'/$'+next.sReq);
+    set('rankMatchV', matching+'/'+next.mReq.toLocaleString());
+    set('rankSalesV', '$'+teamSales+'/$'+next.sReq.toLocaleString());
   } else {
     set('rankNextHint','🏆 Highest rank achieved!');
   }
@@ -1143,7 +1356,6 @@ function renderTransactions(txObj) {
   set('incToday', '$'+todayTotal.toFixed(2));
   set('incMonth', '$'+monthTotal.toFixed(2));
 
-  // Overview recent 5
   document.getElementById('ovRecentTx').innerHTML = txns.slice(0,5).map(([id,t])=>`
     <tr>
       <td>${new Date(t.timestamp).toLocaleDateString()}</td>
@@ -1154,7 +1366,6 @@ function renderTransactions(txObj) {
     </tr>`).join('') ||
     '<tr><td colspan="3" style="text-align:center;color:var(--muted)">None</td></tr>';
 
-  // Wallet history
   renderWalletHistory(txObj);
 }
 
@@ -1179,14 +1390,15 @@ function renderROIPlans(plans) {
   tb.innerHTML = entries.length
     ? entries.map(([id,p],i)=>{
         if(p.status==='active') activeCnt++;
-        const lockEnd  = new Date(p.createdAt + 6*30*24*60*60*1000);
+        const lockMs = (SET.lockMonths||6)*30*24*60*60*1000;
+        const lockEnd  = new Date(p.createdAt + lockMs);
         const locked   = Date.now() < lockEnd.getTime();
-        if(!nextD && p.status==='active') nextD = new Date(p.createdAt+30*24*60*60*1000);
+        if(!nextD && p.status==='active') nextD = new Date(p.createdAt+(SET.payoutCycleDays||30)*24*60*60*1000);
         return `<tr>
           <td style="color:var(--muted)">${i+1}</td>
           <td style="color:var(--accent);font-weight:700">$${p.amount}</td>
           <td>${new Date(p.createdAt).toLocaleDateString()}</td>
-          <td style="color:var(--green)">${p.roiRate||12}%</td>
+          <td style="color:var(--green)">${p.roiRate||SET.roiRateMin}%</td>
           <td style="color:var(--gold)">$${(p.earnedROI||0).toFixed(2)}</td>
           <td>${lockEnd.toLocaleDateString()}</td>
           <td><span class="pill ${p.status==='active'?'pg':p.status==='pending'?'py':'pb'}">${p.status||'pending'}</span></td>
@@ -1199,6 +1411,86 @@ function renderROIPlans(plans) {
   set('roiActivePlans', activeCnt);
   set('roiNextDate', nextD ? nextD.toLocaleDateString() : '—');
 }
+
+// ── DEPOSIT REQUESTS (NEW) ────────────────────────────
+function renderDeposits(depObj) {
+  const tb = document.getElementById('depTb');
+  const entries = Object.entries(depObj||{}).sort(([,a],[,b])=>b.createdAt-a.createdAt);
+  let approvedTotal = 0, pendingCount = 0;
+  tb.innerHTML = entries.length
+    ? entries.map(([id,d],i)=>{
+        if (d.status==='approved') approvedTotal += d.amount||0;
+        if (d.status==='pending') pendingCount++;
+        return `<tr>
+          <td style="color:var(--muted)">${i+1}</td>
+          <td style="color:var(--accent);font-weight:700">$${(d.amount||0).toFixed(2)}</td>
+          <td>${d.method||'—'}</td>
+          <td style="font-family:monospace;font-size:.68rem;max-width:140px;overflow:hidden;text-overflow:ellipsis">${d.txid||'—'}</td>
+          <td>${new Date(d.createdAt).toLocaleDateString()}</td>
+          <td><span class="pill ${d.status==='approved'?'pg':d.status==='rejected'?'pr':'py'}">${d.status||'pending'}</span></td>
+        </tr>`;
+      }).join('')
+    : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:18px">No deposit requests yet</td></tr>';
+  set('depApprovedTotal', '$'+approvedTotal.toFixed(2));
+  set('depPendingCount', pendingCount);
+}
+
+window.submitDeposit = async () => {
+  const amt  = parseFloat(document.getElementById('depAmt').value);
+  const txid = document.getElementById('depTxid').value.trim();
+  if (!amt || amt <= 0) { toast('Enter a valid deposit amount'); return; }
+  if (!txid) { toast('Please enter transaction hash'); return; }
+  try {
+    await rtdb.ref('deposits/'+CU.uid).push({
+      amount:    amt,
+      method:    document.getElementById('depMethod').value,
+      txid,
+      status:    'pending',
+      createdAt: Date.now()
+    });
+    toast('✅ Deposit request submitted! Awaiting admin approval.');
+    document.getElementById('depAmt').value  = '';
+    document.getElementById('depTxid').value = '';
+  } catch(e) { toast('Error: '+e.message); }
+};
+
+// ── PROFILE PICTURE / SIGNATURE ──────────────────────
+window.previewFile = (inputId, imgId, fallbackId) => {
+  const file = document.getElementById(inputId).files[0];
+  if (!file) return;
+  if (file.size > 800*1024) { toast('Image too large — please choose a smaller file (under 800KB)'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById(imgId);
+    img.src = e.target.result;
+    img.style.display = 'block';
+    const fb = document.getElementById(fallbackId);
+    if (fb) fb.style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+};
+
+window.saveProfilePic = async () => {
+  const img = document.getElementById('picPreview');
+  if (!img.src || img.style.display==='none') { toast('Choose a photo first'); return; }
+  try {
+    await fsdb.collection('users').doc(CU.uid).update({ profilePicUrl: img.src });
+    UD.profilePicUrl = img.src;
+    document.getElementById('avInit').innerHTML = `<img src="${img.src}">`;
+    document.getElementById('pfAvWrap').innerHTML = `<img src="${img.src}">`;
+    toast('✅ Profile photo saved!');
+  } catch(e) { toast('Error: '+e.message); }
+};
+
+window.saveSignature = async () => {
+  const img = document.getElementById('sigPreview');
+  if (!img.src || img.style.display==='none') { toast('Choose a signature first'); return; }
+  try {
+    await fsdb.collection('users').doc(CU.uid).update({ signatureUrl: img.src });
+    UD.signatureUrl = img.src;
+    toast('✅ Signature saved!');
+  } catch(e) { toast('Error: '+e.message); }
+};
 
 // ── ACTIONS ──────────────────────────────────────────
 window.saveProfile = async () => {
@@ -1217,7 +1509,6 @@ window.saveProfile = async () => {
   } catch(e) { toast('Error: '+e.message); }
 };
 
-// New active function: change password via Firebase Auth (re-authenticates first)
 window.changePassword = async () => {
   const current = document.getElementById('cpCurrent').value;
   const next    = document.getElementById('cpNew').value;
@@ -1253,7 +1544,7 @@ window.submitActivation = async () => {
       email:     CU.email,
       name:      UD?.fullName || UD?.username || '',
       username:  UD?.username || '',
-      txid, method, amount: 30,
+      txid, method, amount: SET.activationFee || 30,
       status:    'pending',
       createdAt: Date.now()
     });
@@ -1266,14 +1557,15 @@ window.submitInvestment = async () => {
   if (!UD?.isActive) { toast('Activate your account first!'); return; }
   const amt  = parseFloat(document.getElementById('invAmt').value);
   const txid = document.getElementById('invTxid').value.trim();
-  if (!amt || amt < 100) { toast('Minimum investment is $100'); return; }
+  const minInv = SET.minInvestment || 100;
+  if (!amt || amt < minInv) { toast('Minimum investment is $'+minInv); return; }
   if (!txid) { toast('Please enter transaction hash'); return; }
   try {
     await rtdb.ref('investments/'+CU.uid).push({
       amount:    amt,
       method:    document.getElementById('invMethod').value,
       txid,
-      roiRate:   12,
+      roiRate:   SET.roiRateMin || 12,
       status:    'pending',
       earnedROI: 0,
       createdAt: Date.now()
@@ -1290,7 +1582,7 @@ window.submitInvestment = async () => {
 };
 
 window.withdrawCapital = async pid => {
-  if (!confirm('Withdraw capital? 10% fee will be deducted.')) return;
+  if (!confirm('Withdraw capital? A '+(SET.withdrawalFeePercent||10)+'% fee will be deducted.')) return;
   await rtdb.ref('investments/'+CU.uid+'/'+pid).update({
     status:'withdrawal_requested', wdRequestAt: Date.now()
   });
@@ -1302,7 +1594,8 @@ window.withdrawCapital = async pid => {
 window.submitWithdraw = async () => {
   const amt  = parseFloat(document.getElementById('wdAmt').value);
   const addr = document.getElementById('wdAddr').value.trim();
-  if (!amt || amt<10)  { toast('Min withdrawal $10'); return; }
+  const minWd = SET.minWithdrawal || 10;
+  if (!amt || amt<minWd)  { toast('Min withdrawal $'+minWd); return; }
   if (!addr)           { toast('Enter wallet address'); return; }
   const bal = parseFloat(UD?.walletBalance||0);
   if (amt > bal)       { toast('Insufficient balance'); return; }
@@ -1339,7 +1632,6 @@ window.hideWdForm  = ()=>{ document.getElementById('wdFormCard').style.display='
 
 window.doLogout = async ()=>{ await auth.signOut(); window.location.href='login.html'; };
 
-// New active function: manual data refresh (re-pulls Firestore + RTDB)
 window.refreshData = async () => {
   const btn = document.getElementById('refreshBtn');
   btn.classList.add('spinning');
@@ -1355,7 +1647,6 @@ window.refreshData = async () => {
   }
 };
 
-// New active function: export transaction history as CSV
 window.exportTxCSV = () => {
   const txns = Object.entries(LAST_TX).sort(([,a],[,b])=>b.timestamp-a.timestamp);
   if (!txns.length) { toast('No transactions to export'); return; }
@@ -1402,12 +1693,11 @@ window.showPage = (page, el) => {
   if(el) el.classList.add('active');
   const labels={
     overview:'Overview', profile:'Profile', referral:'Referral', tree:'Binary Tree',
-    team:'My Team', income:'Income Report', roi:'ROI Investment', wallet:'Wallet',
+    team:'My Team', income:'Income Report', deposit:'Deposit', roi:'ROI Investment', wallet:'Wallet',
     rank:'Rank Progress', cashback:'Cashback Pool', club:'Club Bonus', activation:'Activation'
   };
   document.getElementById('pgLabel').textContent = labels[page]||page;
   closeSidebar();
-  // Re-render tree when visiting
   if(page==='tree' && UD) renderBinaryTree();
 };
 
