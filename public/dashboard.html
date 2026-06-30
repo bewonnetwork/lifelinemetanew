@@ -37,6 +37,9 @@ nav a .ic{width:17px;text-align:center;font-size:.9rem}
 .pg-label{font-size:.87rem;font-weight:700;color:var(--muted)}
 .tb-right{display:flex;align-items:center;gap:10px}
 .theme-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 11px;font-size:.76rem;cursor:pointer}
+.refresh-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 11px;font-size:.76rem;cursor:pointer}
+.refresh-btn.spinning{animation:spin .8s linear infinite}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 
 /* MAIN */
 .main{margin-left:245px;padding-top:56px;min-height:100vh;transition:margin-left .3s}
@@ -136,6 +139,10 @@ tr:last-child td{border-bottom:none}
 .toast{position:fixed;bottom:20px;right:20px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:.81rem;z-index:9999;opacity:0;transform:translateY(14px);transition:.3s;pointer-events:none;max-width:270px}
 .toast.show{opacity:1;transform:translateY(0)}
 
+/* SEARCH BOX */
+.search-box{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:7px 12px;font-size:.78rem;color:var(--text);outline:none;width:100%;max-width:240px}
+.search-box:focus{border-color:var(--accent)}
+
 body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1e293b;--muted:#64748b}
 
 @media(max-width:768px){
@@ -198,6 +205,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     <span class="pg-label" id="pgLabel">Overview</span>
   </div>
   <div class="tb-right">
+    <button class="refresh-btn" id="refreshBtn" onclick="refreshData()" title="Reload your data">🔄 Refresh</button>
     <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️ Light</button>
     <button class="btn btn-o btn-sm" onclick="doLogout()">Logout</button>
   </div>
@@ -296,6 +304,16 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
       <div class="fg"><label>USDT TRC20 Wallet</label><input type="text" id="pfWallet" placeholder="T… wallet address"/></div>
       <button class="btn btn-p" onclick="saveProfile()">💾 Save Profile</button>
     </div>
+
+    <!-- Change Password (new active function) -->
+    <div class="card">
+      <div class="card-title">🔒 Change Password</div>
+      <div class="fg"><label>Current Password</label><input type="password" id="cpCurrent" placeholder="Current password"/></div>
+      <div class="fg"><label>New Password</label><input type="password" id="cpNew" placeholder="Min 6 characters"/></div>
+      <div class="fg"><label>Confirm New Password</label><input type="password" id="cpConfirm" placeholder="Repeat new password"/></div>
+      <button class="btn btn-p" onclick="changePassword()">Update Password</button>
+    </div>
+
     <div class="card">
       <div class="card-title">Account Info</div>
       <table style="width:100%;font-size:.8rem">
@@ -340,7 +358,10 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     </div>
   </div>
   <div class="card" style="max-width:840px">
-    <div class="card-title">Direct Referrals <small id="refCountLbl">0 total</small></div>
+    <div class="card-title">
+      Direct Referrals <small id="refCountLbl">0 total</small>
+    </div>
+    <input type="text" class="search-box" id="refSearch" placeholder="🔍 Search by name, username or email…" oninput="filterReferrals()" style="margin-bottom:11px">
     <div class="tw">
       <table>
         <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Joined</th><th>Status</th><th>Comm.</th></tr></thead>
@@ -369,6 +390,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
   </div>
   <div class="card" style="margin-top:0">
     <div class="card-title">All Downline Members</div>
+    <input type="text" class="search-box" id="downlineSearch" placeholder="🔍 Search downline…" oninput="filterDownline()" style="margin-bottom:11px">
     <div class="tw">
       <table>
         <thead><tr><th>Name</th><th>Username</th><th>Level</th><th>Side</th><th>Status</th><th>Joined</th></tr></thead>
@@ -442,7 +464,10 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
   </div>
 
   <div class="card">
-    <div class="card-title">Transaction History <small id="txCountLbl"></small></div>
+    <div class="card-title">
+      Transaction History <small id="txCountLbl"></small>
+      <button class="btn btn-o btn-sm" onclick="exportTxCSV()">⬇️ Export CSV</button>
+    </div>
     <div class="tw">
       <table>
         <thead><tr><th>Date & Time</th><th>Type</th><th>Note</th><th>Amount</th><th>Balance After</th><th>Status</th></tr></thead>
@@ -685,6 +710,7 @@ const rtdb   = firebase.database();   // Realtime DB (income, transactions)
 let CU   = null; // currentUser
 let UD   = null; // userData (Firestore doc)
 let ALLU = {};   // all users cache
+let LAST_TX = {}; // cache of last loaded transactions (for CSV export)
 
 // ── AUTH GUARD ───────────────────────────────────────
 auth.onAuthStateChanged(async user => {
@@ -702,6 +728,7 @@ async function loadAll() {
 
     // 2. Load all users for team/tree
     const allSnap = await fsdb.collection('users').get();
+    ALLU = {};
     allSnap.forEach(d => { ALLU[d.id] = { id: d.id, ...d.data() }; });
 
     renderAll();
@@ -788,7 +815,8 @@ function renderAll() {
   document.getElementById('infoStatus').textContent   = u.isActive ? '✅ Active' : '⚠️ Inactive';
   document.getElementById('infoMethod').textContent   = u.signupMethod || 'email';
 
-  // Referral link — uses username or uid as ref code (matching register.html myRefCode)
+  // Referral link — uses window.location.origin, so it automatically follows
+  // whatever domain (including your custom domain) the dashboard is loaded from
   const refCode = u.myRefCode || u.username || CU.uid;
   const refLink = window.location.origin + '/register.html?ref=' + encodeURIComponent(refCode);
   document.getElementById('refLinkInput').value = refLink;
@@ -890,23 +918,28 @@ function renderWallet(wallet, total, wd) {
 }
 
 // ── REFERRALS ────────────────────────────────────────
-function loadReferrals() {
-  const myRefs    = Object.values(ALLU).filter(u => u.sponsorId === CU.uid);
-  const activeRef = myRefs.filter(u => u.isActive);
+let MY_REFS = []; // cached for search/filter
 
-  set('ovDirRef',    myRefs.length);
+function loadReferrals() {
+  MY_REFS = Object.values(ALLU).filter(u => u.sponsorId === CU.uid);
+  const activeRef = MY_REFS.filter(u => u.isActive);
+
+  set('ovDirRef',    MY_REFS.length);
   set('ovDirRefSub', activeRef.length+' active');
-  set('refCountLbl', myRefs.length+' total');
-  set('tmDirRef',    myRefs.length);
-  set('tmTotal',     myRefs.length);
+  set('refCountLbl', MY_REFS.length+' total');
+  set('tmDirRef',    MY_REFS.length);
+  set('tmTotal',     MY_REFS.length);
   set('tmActive',    activeRef.length);
   set('tmVol',       '$'+(activeRef.length*30));
 
-  // Referral table
+  renderReferralTable(MY_REFS);
+}
+
+function renderReferralTable(list) {
   const rb = document.getElementById('refTbody');
-  rb.innerHTML = myRefs.length === 0
-    ? '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">No referrals yet. Share your link!</td></tr>'
-    : myRefs.map(u => `<tr>
+  rb.innerHTML = list.length === 0
+    ? '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">No referrals found</td></tr>'
+    : list.map(u => `<tr>
         <td style="font-weight:700">${u.fullName||'User'}</td>
         <td style="color:var(--muted)">@${u.username||'—'}</td>
         <td style="color:var(--muted)">${u.email||'—'}</td>
@@ -916,10 +949,23 @@ function loadReferrals() {
       </tr>`).join('');
 }
 
+// New active function: live search/filter of direct referrals
+window.filterReferrals = () => {
+  const q = document.getElementById('refSearch').value.trim().toLowerCase();
+  if (!q) { renderReferralTable(MY_REFS); return; }
+  const filtered = MY_REFS.filter(u =>
+    (u.fullName||'').toLowerCase().includes(q) ||
+    (u.username||'').toLowerCase().includes(q) ||
+    (u.email||'').toLowerCase().includes(q)
+  );
+  renderReferralTable(filtered);
+};
+
 // ── BINARY TREE ──────────────────────────────────────
+let ALL_DOWNLINE = []; // cached for search/filter
+
 function renderBinaryTree() {
   const container = document.getElementById('treeContainer');
-  const downlineTb = document.getElementById('downlineTbody');
   if (!UD) return;
 
   // Count left and right leg
@@ -928,13 +974,13 @@ function renderBinaryTree() {
   let leftCount = 0, rightCount = 0;
 
   // BFS to count and collect all downline
-  const allDownline = [];
+  ALL_DOWNLINE = [];
   function bfsCount(uid, side, level) {
     if (!uid || !ALLU[uid]) return;
     const u = ALLU[uid];
     if (side === 'left') leftCount++;
     else if (side === 'right') rightCount++;
-    allDownline.push({ u, side, level });
+    ALL_DOWNLINE.push({ u, side, level });
     if (u.leftChild)  bfsCount(u.leftChild,  side||'left',  level+1);
     if (u.rightChild) bfsCount(u.rightChild, side||'right', level+1);
   }
@@ -954,7 +1000,7 @@ function renderBinaryTree() {
           <div class="tree-name" style="color:var(--muted)">Empty</div>
           <div class="tree-status" style="color:var(--muted)">— slot —</div>
         </div>
-        ${label ? <div style="font-size:.64rem;color:var(--muted);margin-top:4px">${label}</div> : ''}
+        ${label ? `<div style="font-size:.64rem;color:var(--muted);margin-top:4px">${label}</div>` : ''}
       </div>`;
     }
     const name   = u ? (u.fullName||u.username||'User') : '?';
@@ -965,7 +1011,7 @@ function renderBinaryTree() {
         <div class="tree-name">${isYou ? '👤 '+name : name}</div>
         <div class="tree-status"><span class="pill ${active?'pg':'py'}" style="font-size:.6rem">${active?'Active':'Inactive'}</span></div>
       </div>
-      ${label ? <div style="font-size:.64rem;color:var(--muted);margin-top:4px">${label}</div> : ''}
+      ${label ? `<div style="font-size:.64rem;color:var(--muted);margin-top:4px">${label}</div>` : ''}
     </div>`;
   }
 
@@ -1005,10 +1051,14 @@ function renderBinaryTree() {
       </div>
     </div>`;
 
-  // Downline table
-  downlineTb.innerHTML = allDownline.length === 0
-    ? '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">No downline yet</td></tr>'
-    : allDownline.map(({u,side,level}) => `<tr>
+  renderDownlineTable(ALL_DOWNLINE);
+}
+
+function renderDownlineTable(list) {
+  const downlineTb = document.getElementById('downlineTbody');
+  downlineTb.innerHTML = list.length === 0
+    ? '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">No downline found</td></tr>'
+    : list.map(({u,side,level}) => `<tr>
         <td style="font-weight:700">${u.fullName||'User'}</td>
         <td style="color:var(--muted)">@${u.username||'—'}</td>
         <td><span class="pill pb">Level ${level}</span></td>
@@ -1017,6 +1067,17 @@ function renderBinaryTree() {
         <td>${u.createdAt?(u.createdAt.toDate?u.createdAt.toDate().toLocaleDateString():new Date(u.createdAt).toLocaleDateString()):'—'}</td>
       </tr>`).join('');
 }
+
+// New active function: live search/filter of full downline
+window.filterDownline = () => {
+  const q = document.getElementById('downlineSearch').value.trim().toLowerCase();
+  if (!q) { renderDownlineTable(ALL_DOWNLINE); return; }
+  const filtered = ALL_DOWNLINE.filter(({u}) =>
+    (u.fullName||'').toLowerCase().includes(q) ||
+    (u.username||'').toLowerCase().includes(q)
+  );
+  renderDownlineTable(filtered);
+};
 
 // ── RANK ─────────────────────────────────────────────
 function renderRank(matching, teamSales) {
@@ -1052,6 +1113,7 @@ function renderRank(matching, teamSales) {
 
 // ── TRANSACTIONS ─────────────────────────────────────
 function renderTransactions(txObj) {
+  LAST_TX = txObj || {};
   const txns = Object.entries(txObj).sort(([,a],[,b])=>b.timestamp-a.timestamp);
   set('txCountLbl', txns.length+' records');
 
@@ -1147,11 +1209,37 @@ window.saveProfile = async () => {
       paymentWallet: document.getElementById('pfWallet').value.trim(),
       updatedAt:     new Date()
     };
+    if (!updates.fullName) { toast('Name cannot be empty'); return; }
     await fsdb.collection('users').doc(CU.uid).update(updates);
     Object.assign(UD, updates);
     document.getElementById('sbName').textContent = UD.fullName||'User';
     toast('✅ Profile saved!');
   } catch(e) { toast('Error: '+e.message); }
+};
+
+// New active function: change password via Firebase Auth (re-authenticates first)
+window.changePassword = async () => {
+  const current = document.getElementById('cpCurrent').value;
+  const next    = document.getElementById('cpNew').value;
+  const confirmPw = document.getElementById('cpConfirm').value;
+
+  if (!current || !next || !confirmPw) { toast('Please fill all password fields'); return; }
+  if (next.length < 6) { toast('New password must be at least 6 characters'); return; }
+  if (next !== confirmPw) { toast('New passwords do not match'); return; }
+
+  try {
+    const credential = firebase.auth.EmailAuthProvider.credential(CU.email, current);
+    await CU.reauthenticateWithCredential(credential);
+    await CU.updatePassword(next);
+    toast('✅ Password updated successfully!');
+    document.getElementById('cpCurrent').value = '';
+    document.getElementById('cpNew').value = '';
+    document.getElementById('cpConfirm').value = '';
+  } catch(e) {
+    if (e.code === 'auth/wrong-password') toast('Current password is incorrect');
+    else if (e.code === 'auth/requires-recent-login') toast('Please log out and log in again, then retry');
+    else toast('Error: ' + e.message);
+  }
 };
 
 window.submitActivation = async () => {
@@ -1250,6 +1338,48 @@ window.showWdForm  = ()=>{ document.getElementById('wdFormCard').style.display='
 window.hideWdForm  = ()=>{ document.getElementById('wdFormCard').style.display='none'; };
 
 window.doLogout = async ()=>{ await auth.signOut(); window.location.href='login.html'; };
+
+// New active function: manual data refresh (re-pulls Firestore + RTDB)
+window.refreshData = async () => {
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  btn.disabled = true;
+  try {
+    await loadAll();
+    toast('✅ Data refreshed!');
+  } catch(e) {
+    toast('Refresh failed: ' + e.message);
+  } finally {
+    btn.classList.remove('spinning');
+    btn.disabled = false;
+  }
+};
+
+// New active function: export transaction history as CSV
+window.exportTxCSV = () => {
+  const txns = Object.entries(LAST_TX).sort(([,a],[,b])=>b.timestamp-a.timestamp);
+  if (!txns.length) { toast('No transactions to export'); return; }
+  const header = ['Date','Type','Note','Amount','Balance After','Status'];
+  const rows = txns.map(([id,t]) => [
+    new Date(t.timestamp).toLocaleString(),
+    t.type||'',
+    (t.note||'').replace(/,/g,';'),
+    (t.amount||0).toFixed(2),
+    (t.balance||0).toFixed(2),
+    t.status||''
+  ]);
+  const csv = [header, ...rows].map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = 'transactions_' + new Date().toISOString().slice(0,10) + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('✅ CSV exported!');
+};
 
 // ── HELPERS ──────────────────────────────────────────
 function set(id,val){ const el=document.getElementById(id); if(el) el.textContent=val; }
