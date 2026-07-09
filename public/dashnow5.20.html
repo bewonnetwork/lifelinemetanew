@@ -350,7 +350,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 <!-- ===== BINARY TREE ===== -->
 <div class="page" id="page-tree">
   <div class="pg-title">Binary Tree</div>
-  <div class="info-box">🌳 Left ও Right leg — green border = active member, dashboard= blank slot</div>
+  <div class="info-box">🌳 Left and Right leg — green border = active member, dashed = empty slot. The middle circle shows the summary.</div>
   <div class="card">
     <div class="card-title">Tree Summary</div>
     <div id="treeSummaryCircle" style="display:flex;justify-content:center;padding:14px 0"></div>
@@ -466,20 +466,11 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 <!-- ===== INVESTMENT HISTORY ===== -->
 <div class="page" id="page-investhist">
   <div class="pg-title">Investment History</div>
-  <div class="info-box">📊 all commission — any new ID / new sales to all explane।</div>
+  <div class="info-box">📊 All commission — details of which new ID / new sales it came from.</div>
   <div class="cards-grid" style="max-width:700px">
     <div class="sc cb"><div class="sc-lbl">Total Investments</div><div class="sc-val" id="ihTotalCount">0</div><div class="sc-ic">📊</div></div>
     <div class="sc cgr"><div class="sc-lbl">Total Amount</div><div class="sc-val" id="ihTotalAmt">$0</div><div class="sc-ic">💰</div></div>
     <div class="sc cg"><div class="sc-lbl">Commission Earned</div><div class="sc-val" id="ihTotalComm">$0</div><div class="sc-ic">🎯</div></div>
-  </div>
-  <div class="card">
-    <div class="card-title">My Activation & Investment Payments <small id="ownPayCountLbl"></small></div>
-    <div class="tw">
-      <table>
-        <thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Paid From</th><th>Status</th></tr></thead>
-        <tbody id="ownPayHistTb"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No history yet</td></tr></tbody>
-      </table>
-    </div>
   </div>
   <div class="card">
     <div class="card-title">Investment / Commission History</div>
@@ -546,42 +537,33 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
   <div class="card" style="max-width:900px">
     <div class="card-title">Wallet Transfer</div>
     <div class="wal-tabs">
-      <button class="wtab active" id="wtab_i2p" onclick="switchWTab('i2p')">Income → P2B (Won)</button>
-      <button class="wtab" id="wtab_m2p" onclick="switchWTab('m2p')">Main → P2B (any User)</button>
-      <button class="wtab" id="wtab_p2m" onclick="switchWTab('p2m')">P2B → Main (won)</button>
+      <button class="wtab active" id="wtab_i2p" onclick="switchWTab('i2p')">Income → P2B</button>
+      <button class="wtab" id="wtab_m2p" onclick="switchWTab('m2p')">Main → P2B</button>
       <button class="wtab" id="wtab_m2m" onclick="switchWTab('m2m')">Main → Main (P2P)</button>
       <button class="wtab" id="wtab_i2m" onclick="switchWTab('i2m')">Income → Main</button>
     </div>
 
     <div id="wform_i2p">
-      <div class="info-box">Income Wallet to won P2B Wallet  — no condiction, any amount, free transfer</div>
+      <div class="info-box">From Income Wallet to P2B Wallet — no conditions, any amount, free transfer.</div>
       <div class="fg"><label>Amount (USD)</label><input type="number" id="i2pAmt" placeholder="Any amount" min="0.01"/></div>
       <button class="btn btn-p" onclick="transferIncomeToP2B()" style="width:100%">Transfer Income → P2B</button>
     </div>
 
     <div id="wform_m2p" style="display:none">
-      <div class="info-box">Main Wallet  to any user P2B Wallet  — free, no fee but won to P2B  User ID will blank</div>
-      <div class="fg"><label>Receiver User ID / Username (blank won)</label><input type="text" id="m2pTarget" placeholder="Receiver's User ID / Username — if won keep blank"/></div>
+      <div class="info-box">From Main Wallet to P2B Wallet — free transfer.</div>
       <div class="fg"><label>Amount (USD)</label><input type="number" id="m2pAmt" placeholder="Amount" min="0.01"/></div>
       <button class="btn btn-p" onclick="transferMainToP2B()" style="width:100%">Transfer Main → P2B</button>
     </div>
 
-    <div id="wform_p2m" style="display:none">
-      <div class="info-box">⚠️P2B Wallet funds cannot be transferred directly to another user's P2B Wallet. First, transfer the balance from your P2B Wallet to your Main Wallet. Then, use the **Main → P2B (Any User)** option to send it to another user's P2B Wallet. This transfer is free of charge.
-      </div>
-      <div class="fg"><label>Amount (USD)</label><input type="number" id="p2mAmt" placeholder="Amount" min="0.01"/></div>
-      <button class="btn btn-p" onclick="transferP2BToMain()" style="width:100%">Transfer P2B → Main (won)</button>
-    </div>
-
     <div id="wform_m2m" style="display:none">
-      <div class="info-box">Main Wallet to any user এর Main Wallet এ — free transfer</div>
+      <div class="info-box">From Main Wallet to another user's Main Wallet — free transfer.</div>
       <div class="fg"><label>Receiver User ID / Username</label><input type="text" id="m2mTarget" placeholder="User ID or Username"/></div>
       <div class="fg"><label>Amount (USD)</label><input type="number" id="m2mAmt" placeholder="Amount" min="0.01"/></div>
       <button class="btn btn-p" onclick="transferMainToMain()" style="width:100%">Send to User (Main → Main)</button>
     </div>
 
     <div id="wform_i2m" style="display:none">
-      <div class="info-box" id="i2mChargeInfo">Income Wallet to Main Wallet do service charge</div>
+      <div class="info-box" id="i2mChargeInfo">From Income Wallet to Main Wallet — a service charge will be deducted.</div>
       <div class="fg"><label>Amount (USD)</label><input type="number" id="i2mAmt" placeholder="Amount" min="0.01" oninput="calcI2MPreview()"/></div>
       <div id="i2mPreview" style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:11px;margin-bottom:11px;font-size:.78rem;display:none">
         <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Amount</span><span id="i2mPrevAmt"></span></div>
@@ -660,8 +642,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 <!-- ===== CASHBACK ===== -->
 <div class="page" id="page-cashback">
   <div class="pg-title">Daily Cashback Pool</div>
-  <div class="info-box" id="cbInfoBox">💡 💡Distributed equally from the company joining volume. Once the limit is reached, you can upgrade your package.
-</div>
+  <div class="info-box" id="cbInfoBox">💡 Distributed equally from the company's joining volume. Once the limit is finished, you can upgrade.</div>
   <div class="cards-grid" style="max-width:640px">
     <div class="sc cb"><div class="sc-lbl">Cashback Earned</div><div class="sc-val" id="cbEarned">$0.00</div><div class="sc-ic">🎁</div></div>
     <div class="sc cg"><div class="sc-lbl">Current Limit</div><div class="sc-val" id="cbLimitD">$60.00</div><div class="sc-ic">🔒</div></div>
@@ -673,7 +654,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
   </div>
   <div class="card" id="cbUpgradeCard" style="max-width:640px;display:none">
     <div class="card-title">🔄 Upgrade Cashback Limit</div>
-    <div style="font-size:.78rem;color:var(--muted);margin-bottom:11px">your cashback limit have finished new limit please upgrade </div>
+    <div style="font-size:.78rem;color:var(--muted);margin-bottom:11px">Your cashback limit has been reached. Upgrade to get a new limit.</div>
     <button class="btn btn-g" onclick="requestCashbackUpgrade()" style="width:100%">🔄 Request Limit Upgrade</button>
   </div>
 </div>
@@ -681,7 +662,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 <!-- ===== CLUB ===== -->
 <div class="page" id="page-club">
   <div class="pg-title">Club Bonus</div>
-  <div class="info-box">🏆 Company joining volume form all distribute  equally, eligible members </div>
+  <div class="info-box">🏆 Distributed equally among eligible members from the company's joining volume.</div>
   <div class="two-col" style="max-width:700px">
     <div class="card">
       <div class="card-title">Your Eligibility</div>
@@ -694,8 +675,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     </div>
     <div class="card">
       <div class="card-title">About Club Bonus</div>
-      <div style="font-size:.78rem;color:var(--muted);line-height:1.75">The company joining volume is distributed equally among all eligible members on a monthly basis.
-      </div>
+      <div style="font-size:.78rem;color:var(--muted);line-height:1.75">Split equally each month among eligible members from the company's joining volume.</div>
     </div>
   </div>
 </div>
@@ -737,32 +717,12 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     </div>
 
     <div class="card">
-      <div class="card-title">🔗 Connect Wallet <small>Trust Wallet / MetaMask / TronLink</small></div>
-      <div class="info-box">Wallet connect and send — TxHash This will reduce the hassle of manually copying and pasting. However, the balance will be credited to the P2B Wallet only after it has been approved by the admin.
-(blockchain payment manualy will verify/div>
-      <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:11px">
-        <button class="btn btn-o" id="btnConnectMM" onclick="connectMetaMask()">🦊 Connect MetaMask/Trust (BEP-20)</button>
-        <button class="btn btn-o" id="btnConnectTron" onclick="connectTronLink()">🔴 Connect TronLink (TRC-20)</button>
-      </div>
-      <div id="walConnStatus" style="font-size:.75rem;color:var(--muted);margin-bottom:8px"></div>
-      <div id="walSendBox" style="display:none">
-        <div class="fg"><label>Send Amount (USDT)</label><input type="number" id="walSendAmt" placeholder="Min $30" min="30"/></div>
-        <button class="btn btn-p" onclick="sendUSDTFromWallet()" style="width:100%">💸 Send USDT via Connected Wallet</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">💳 Submit Deposit Request (Manual)</div>
-      <div class="info-box">Send USDT to admin wallet below → paste TxHash here → Admin approve then P2B Wallet will credit </div>
+      <div class="card-title">💳 Submit Deposit Request</div>
+      <div class="info-box">Send USDT to the admin wallet below → paste the TxHash here → once approved by Admin, it will be credited to your P2B Wallet.</div>
       <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:13px;margin-bottom:13px">
-        <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px">Admin USDT Wallet — TRC-20 (TRON)</div>
-        <div style="font-size:.82rem;color:var(--accent);word-break:break-all;font-family:monospace;margin-bottom:8px" id="adminWalletAddrTRC">Loading…</div>
-        <button class="btn btn-o btn-sm" onclick="copyAdminWallet('trc')">📋 Copy TRC-20 Address</button>
-      </div>
-      <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:13px;margin-bottom:13px">
-        <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px">Admin USDT Wallet — BEP-20 (BSC)</div>
-        <div style="font-size:.82rem;color:var(--accent);word-break:break-all;font-family:monospace;margin-bottom:8px" id="adminWalletAddrBEP">Loading…</div>
-        <button class="btn btn-o btn-sm" onclick="copyAdminWallet('bep')">📋 Copy BEP-20 Address</button>
+        <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px">Admin USDT Wallet (TRC20)</div>
+        <div style="font-size:.82rem;color:var(--accent);word-break:break-all;font-family:monospace;margin-bottom:8px" id="adminWalletAddr">Loading…</div>
+        <button class="btn btn-o btn-sm" onclick="copyAdminWallet()">📋 Copy Address</button>
       </div>
       <div class="fg">
         <label>Deposit Amount (USDT)</label>
@@ -772,6 +732,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
         <label>Network</label>
         <select id="frNetwork">
           <option>TRC-20 (TRON)</option>
+          <option>ERC-20 (Ethereum)</option>
           <option>BEP-20 (BSC)</option>
         </select>
       </div>
@@ -968,7 +929,7 @@ function applyDynamicChargeLabels() {
   const i2mCharge = parseFloat(SETTINGS.incomeToMainCharge != null ? SETTINGS.incomeToMainCharge : 5);
   const wdCharge   = parseFloat(SETTINGS.withdrawalFee != null ? SETTINGS.withdrawalFee : 5);
   const cbLimit    = parseFloat(SETTINGS.cashbackLimit || 60);
-  set('i2mChargeInfo', 'Income Wallet থেকে Main Wallet এ — '+i2mCharge+'% সার্ভিস চার্জ কাটা হবে।');
+  set('i2mChargeInfo', 'From Income Wallet to Main Wallet — a '+i2mCharge+'% service charge will be deducted.');
   set('wdChargeInfo', '('+wdCharge+'% withdraw charge)');
   set('cbLimitD', '$'+cbLimit.toFixed(2));
 }
@@ -1119,13 +1080,8 @@ function renderInvestHistory(plans) {
   // Gather generation/sponsor commissions that came from downline investment/activation
   const myRefs = Object.values(ALLU).filter(u => u.sponsorId === CU.uid);
   rtdb.ref('transactions/'+CU.uid).get().then(snap=>{
-    if (!snap.exists()) {
-      tb.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No history yet</td></tr>';
-      renderOwnPayHistory([]);
-      return;
-    }
-    const allTx = Object.values(snap.val());
-    const txs = allTx.filter(t=>
+    if (!snap.exists()) { tb.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No history yet</td></tr>'; return; }
+    const txs = Object.values(snap.val()).filter(t=>
       (t.type||'').toLowerCase().includes('generation') ||
       (t.type||'').toLowerCase().includes('sponsor') ||
       (t.type||'').toLowerCase().includes('roi referral')
@@ -1143,33 +1099,10 @@ function renderInvestHistory(plans) {
     }).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No history yet</td></tr>';
     set('ihTotalCount', txs.length);
     set('ihTotalComm', '$'+totalComm.toFixed(2));
-
-    // Own activation & investment payment history
-    const ownPay = allTx.filter(t=>
-      (t.type||'').toLowerCase().includes('activation payment') ||
-      (t.type||'').toLowerCase().includes('investment payment')
-    ).sort((a,b)=>b.timestamp-a.timestamp);
-    renderOwnPayHistory(ownPay);
   });
   const invEntries = Object.values(plans||{});
   const totalAmt = invEntries.reduce((s,p)=>s+(p.amount||0),0);
   set('ihTotalAmt', '$'+totalAmt.toFixed(0));
-}
-
-function renderOwnPayHistory(list) {
-  const tb = document.getElementById('ownPayHistTb');
-  if (!tb) return;
-  set('ownPayCountLbl', list.length+' entries');
-  tb.innerHTML = list.length ? list.map(t=>{
-    const isAct = (t.type||'').toLowerCase().includes('activation');
-    return `<tr>
-      <td style="font-size:.72rem">${new Date(t.timestamp).toLocaleDateString()+' '+new Date(t.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td>
-      <td><span class="pill ${isAct?'pg':'pb'}">${isAct?'Activation':'Investment'}</span></td>
-      <td style="font-weight:700;color:var(--red)">$${Math.abs(t.amount||0).toFixed(2)}</td>
-      <td style="color:var(--muted);font-size:.72rem">P2B Wallet</td>
-      <td><span class="pill ${t.status==='completed'?'pg':'py'}">${t.status||'completed'}</span></td>
-    </tr>`;
-  }).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No history yet</td></tr>';
 }
 
 // ── BINARY TREE ──────────────────────────────────────
@@ -1430,7 +1363,7 @@ window.submitActivation = async () => {
   if (UD && UD.isActive) { toast('Already active!'); return; }
   const fee = parseFloat(SETTINGS.activationFee||30);
   const p2b = parseFloat(UD.p2bWallet||0);
-  if (p2b < fee) { toast('❌ P2B Wallet এ পর্যাপ্ত ব্যালেন্স নেই। প্রয়োজন $'+fee.toFixed(2)); return; }
+  if (p2b < fee) { toast('❌ Insufficient balance in P2B Wallet. Required: $'+fee.toFixed(2)); return; }
   try {
     const p2bRef = rtdb.ref('users/'+CU.uid+'/p2bWallet');
     const newP2B = p2b - fee;
@@ -1460,7 +1393,7 @@ window.submitInvestment = async () => {
   const minInv = parseFloat(SETTINGS.minInvestment||100);
   if (!amt || amt < minInv) { toast('Minimum investment is $'+minInv); return; }
   const p2b = parseFloat(UD.p2bWallet||0);
-  if (p2b < amt) { toast('❌ P2B Wallet এ পর্যাপ্ত ব্যালেন্স নেই।'); return; }
+  if (p2b < amt) { toast('❌ Insufficient balance in P2B Wallet.'); return; }
   try {
     const p2bRef = rtdb.ref('users/'+CU.uid+'/p2bWallet');
     const newP2B = p2b - amt;
@@ -1507,13 +1440,13 @@ window.requestCashbackUpgrade = async () => {
       currentEarned: (UD.income&&UD.income.cashback)||0,
       status:'pending', createdAt: Date.now()
     });
-    toast('✅ Upgrade request পাঠানো হয়েছে। Admin অনুমোদন দিলে নতুন limit পাবে।');
+    toast('✅ Upgrade request sent. Once admin approves, you will get the new limit.');
   } catch(e){ toast('Error: '+e.message); }
 };
 
 // ── WALLET TRANSFER ACTIONS ──────────────────────────
 window.switchWTab = (tab) => {
-  ['i2p','m2p','p2m','m2m','i2m'].forEach(t=>{
+  ['i2p','m2p','m2m','i2m'].forEach(t=>{
     document.getElementById('wtab_'+t).classList.toggle('active', t===tab);
     document.getElementById('wform_'+t).style.display = t===tab ? 'block':'none';
   });
@@ -1521,9 +1454,9 @@ window.switchWTab = (tab) => {
 
 window.transferIncomeToP2B = async () => {
   const amt = parseFloat(document.getElementById('i2pAmt').value);
-  if (!amt || amt<=0) { toast('সঠিক amount দাও'); return; }
+  if (!amt || amt<=0) { toast('Enter a valid amount'); return; }
   const income = parseFloat(UD.incomeWallet||0);
-  if (amt > income) { toast('❌ Income Wallet এ পর্যাপ্ত ব্যালেন্স নেই'); return; }
+  if (amt > income) { toast('❌ Insufficient balance in Income Wallet'); return; }
   try {
     const newIncome = income - amt;
     const newP2B    = parseFloat(UD.p2bWallet||0) + amt;
@@ -1531,66 +1464,26 @@ window.transferIncomeToP2B = async () => {
     await rtdb.ref('users/'+CU.uid+'/p2bWallet').set(newP2B);
     UD.incomeWallet = newIncome; UD.p2bWallet = newP2B;
     await rtdb.ref('transactions/'+CU.uid).push({ type:'Transfer Income→P2B', amount:amt, note:'Free transfer', timestamp:Date.now(), status:'completed' });
-    toast('✅ Transfer সম্পন্ন!');
+    toast('✅ Transfer complete!');
     document.getElementById('i2pAmt').value='';
     renderWalletCards();
   } catch(e){ toast('Error: '+e.message); }
 };
 
 window.transferMainToP2B = async () => {
-  const targetRaw = document.getElementById('m2pTarget').value.trim();
   const amt = parseFloat(document.getElementById('m2pAmt').value);
-  if (!amt || amt<=0) { toast('সঠিক amount দাও'); return; }
+  if (!amt || amt<=0) { toast('Enter a valid amount'); return; }
   const main = parseFloat(UD.walletBalance||0);
-  if (amt > main) { toast('❌ Main Wallet এ পর্যাপ্ত ব্যালেন্স নেই'); return; }
-
-  // Determine target: empty = self, otherwise look up by id/memberId/username
-  let targetId = CU.uid;
-  let targetLabel = 'নিজের P2B Wallet';
-  if (targetRaw) {
-    const target = Object.values(ALLU).find(u => u.id===targetRaw || u.memberId===targetRaw || u.username===targetRaw);
-    if (!target) { toast('❌ User খুঁজে পাওয়া যায়নি'); return; }
-    targetId = target.id;
-    targetLabel = target.fullName || target.username || target.id;
-  }
-
+  if (amt > main) { toast('❌ Insufficient balance in Main Wallet'); return; }
   try {
     const newMain = main - amt;
+    const newP2B  = parseFloat(UD.p2bWallet||0) + amt;
     await rtdb.ref('users/'+CU.uid+'/walletBalance').set(newMain);
-    UD.walletBalance = newMain;
-
-    const tRef  = rtdb.ref('users/'+targetId+'/p2bWallet');
-    const tSnap = await tRef.get();
-    const tNewP2B = parseFloat(tSnap.exists()?tSnap.val():0)+amt;
-    await tRef.set(tNewP2B);
-    if (targetId === CU.uid) UD.p2bWallet = tNewP2B;
-
-    await rtdb.ref('transactions/'+CU.uid).push({ type:'Transfer Main→P2B', amount:-amt, note:(targetId===CU.uid?'নিজের P2B Wallet এ':'To '+targetLabel+' P2B Wallet')+' (Free)', timestamp:Date.now(), status:'completed' });
-    if (targetId !== CU.uid) {
-      await rtdb.ref('transactions/'+targetId).push({ type:'Received Main→P2B', amount:amt, note:'From '+(UD.fullName||UD.username||CU.uid), timestamp:Date.now(), status:'completed' });
-    }
-
-    toast('✅ $'+amt.toFixed(2)+' পাঠানো হয়েছে '+targetLabel+' এর P2B Wallet এ!');
-    document.getElementById('m2pTarget').value='';
-    document.getElementById('m2pAmt').value='';
-    renderWalletCards();
-  } catch(e){ toast('Error: '+e.message); }
-};
-
-window.transferP2BToMain = async () => {
-  const amt = parseFloat(document.getElementById('p2mAmt').value);
-  if (!amt || amt<=0) { toast('সঠিক amount দাও'); return; }
-  const p2b = parseFloat(UD.p2bWallet||0);
-  if (amt > p2b) { toast('❌ P2B Wallet এ পর্যাপ্ত ব্যালেন্স নেই'); return; }
-  try {
-    const newP2B  = p2b - amt;
-    const newMain = parseFloat(UD.walletBalance||0) + amt;
     await rtdb.ref('users/'+CU.uid+'/p2bWallet').set(newP2B);
-    await rtdb.ref('users/'+CU.uid+'/walletBalance').set(newMain);
-    UD.p2bWallet = newP2B; UD.walletBalance = newMain;
-    await rtdb.ref('transactions/'+CU.uid).push({ type:'Transfer P2B→Main', amount:amt, note:'Free transfer', timestamp:Date.now(), status:'completed' });
-    toast('✅ Transfer সম্পন্ন! এখন Main → P2B (যেকোনো User) ট্যাব দিয়ে অন্যকে পাঠাতে পারো।');
-    document.getElementById('p2mAmt').value='';
+    UD.walletBalance = newMain; UD.p2bWallet = newP2B;
+    await rtdb.ref('transactions/'+CU.uid).push({ type:'Transfer Main→P2B', amount:amt, note:'Free transfer', timestamp:Date.now(), status:'completed' });
+    toast('✅ Transfer complete!');
+    document.getElementById('m2pAmt').value='';
     renderWalletCards();
   } catch(e){ toast('Error: '+e.message); }
 };
@@ -1598,14 +1491,14 @@ window.transferP2BToMain = async () => {
 window.transferMainToMain = async () => {
   const targetRaw = document.getElementById('m2mTarget').value.trim();
   const amt = parseFloat(document.getElementById('m2mAmt').value);
-  if (!targetRaw) { toast('Receiver ID/Username দাও'); return; }
-  if (!amt || amt<=0) { toast('সঠিক amount দাও'); return; }
+  if (!targetRaw) { toast('Enter receiver ID/Username'); return; }
+  if (!amt || amt<=0) { toast('Enter a valid amount'); return; }
   const main = parseFloat(UD.walletBalance||0);
-  if (amt > main) { toast('❌ Main Wallet এ পর্যাপ্ত ব্যালেন্স নেই'); return; }
+  if (amt > main) { toast('❌ Insufficient balance in Main Wallet'); return; }
 
   const target = Object.values(ALLU).find(u => u.id===targetRaw || u.memberId===targetRaw || u.username===targetRaw);
-  if (!target) { toast('❌ User খুঁজে পাওয়া যায়নি'); return; }
-  if (target.id === CU.uid) { toast('নিজেকে transfer করা যাবে না'); return; }
+  if (!target) { toast('❌ User not found'); return; }
+  if (target.id === CU.uid) { toast('Cannot transfer to yourself'); return; }
 
   try {
     const newMain = main - amt;
@@ -1619,7 +1512,7 @@ window.transferMainToMain = async () => {
     await rtdb.ref('transactions/'+CU.uid).push({ type:'P2P Transfer Sent', amount:-amt, note:'To '+(target.fullName||target.username||target.id), timestamp:Date.now(), status:'completed' });
     await rtdb.ref('transactions/'+target.id).push({ type:'P2P Transfer Received', amount:amt, note:'From '+(UD.fullName||UD.username||CU.uid), timestamp:Date.now(), status:'completed' });
 
-    toast('✅ '+(target.fullName||target.username)+' কে $'+amt.toFixed(2)+' পাঠানো হয়েছে!');
+    toast('✅ Sent $'+amt.toFixed(2)+' to '+(target.fullName||target.username)+'!');
     document.getElementById('m2mTarget').value=''; document.getElementById('m2mAmt').value='';
     renderWalletCards();
   } catch(e){ toast('Error: '+e.message); }
@@ -1640,9 +1533,9 @@ window.calcI2MPreview = () => {
 
 window.transferIncomeToMain = async () => {
   const amt = parseFloat(document.getElementById('i2mAmt').value);
-  if (!amt || amt<=0) { toast('সঠিক amount দাও'); return; }
+  if (!amt || amt<=0) { toast('Enter a valid amount'); return; }
   const income = parseFloat(UD.incomeWallet||0);
-  if (amt > income) { toast('❌ Income Wallet এ পর্যাপ্ত ব্যালেন্স নেই'); return; }
+  if (amt > income) { toast('❌ Insufficient balance in Income Wallet'); return; }
   const chargePct = parseFloat(SETTINGS.incomeToMainCharge != null ? SETTINGS.incomeToMainCharge : 5)/100;
   const charge = amt*chargePct;
   const net = amt-charge;
@@ -1653,7 +1546,7 @@ window.transferIncomeToMain = async () => {
     await rtdb.ref('users/'+CU.uid+'/walletBalance').set(newMain);
     UD.incomeWallet = newIncome; UD.walletBalance = newMain;
     await rtdb.ref('transactions/'+CU.uid).push({ type:'Transfer Income→Main', amount:net, note:'Charge: $'+charge.toFixed(2)+' ('+(chargePct*100)+'%)', timestamp:Date.now(), status:'completed' });
-    toast('✅ Transfer সম্পন্ন! $'+net.toFixed(2)+' Main Wallet এ যোগ হয়েছে।');
+    toast('✅ Transfer complete! $'+net.toFixed(2)+' added to Main Wallet.');
     document.getElementById('i2mAmt').value='';
     document.getElementById('i2mPreview').style.display='none';
     renderWalletCards();
@@ -1776,13 +1669,11 @@ async function loadFundRequestPage() {
   if (!CU) return;
 
   try {
-    const trcSnap = await rtdb.ref('settings/adminWalletTRC').get();
-    const bepSnap = await rtdb.ref('settings/adminWalletBEP').get();
-    document.getElementById('adminWalletAddrTRC').textContent = trcSnap.exists() ? trcSnap.val() : 'Contact admin for wallet address';
-    document.getElementById('adminWalletAddrBEP').textContent = bepSnap.exists() ? bepSnap.val() : 'Contact admin for wallet address';
+    const setSnap = await rtdb.ref('settings/adminWallet').get();
+    const addr = setSnap.exists() ? setSnap.val() : 'Contact admin for wallet address';
+    document.getElementById('adminWalletAddr').textContent = addr;
   } catch(e) {
-    document.getElementById('adminWalletAddrTRC').textContent = 'Contact admin for wallet address';
-    document.getElementById('adminWalletAddrBEP').textContent = 'Contact admin for wallet address';
+    document.getElementById('adminWalletAddr').textContent = 'Contact admin for wallet address';
   }
 
   try {
@@ -1824,115 +1715,12 @@ async function loadFundRequestPage() {
   }
 }
 
-window.copyAdminWallet = (net) => {
-  const elId = net==='bep' ? 'adminWalletAddrBEP' : 'adminWalletAddrTRC';
-  const addr = document.getElementById(elId).textContent;
+window.copyAdminWallet = () => {
+  const addr = document.getElementById('adminWalletAddr').textContent;
   if (!addr || addr === 'Loading…' || addr.includes('Contact')) return toast('Wallet address not set by admin yet');
   navigator.clipboard.writeText(addr)
     .then(()=>toast('✅ Wallet address copied!'))
     .catch(()=>toast('Copy failed'));
-};
-
-// ── WALLET CONNECT (BEP-20 via MetaMask/Trust, TRC-20 via TronLink) ──
-// NOTE: Free Firebase plan এ blockchain payment auto-verify করা যায় না (Cloud
-// Functions থেকে বাইরের API কল ব্লক থাকে)। তাই এখানে wallet connect শুধু
-// send করা সহজ করে দেয় — TxHash তারপরও Submit Deposit Request ফর্মে বসিয়ে
-// admin কে manual approve করতে হবে, ঠিক আগের মতোই।
-let WALLET_MODE = null; // 'evm' | 'tron'
-let WALLET_ADDR = null;
-
-// Minimal ERC20/BEP20 USDT transfer ABI (transfer function only)
-const USDT_TRANSFER_ABI = [{
-  "constant": false,
-  "inputs": [{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],
-  "name": "transfer",
-  "outputs": [{"name":"","type":"bool"}],
-  "type": "function"
-}];
-const USDT_BEP20_CONTRACT = "0x55d398326f99059fF775485246999027B3197955"; // USDT on BSC
-
-window.connectMetaMask = async () => {
-  if (typeof window.ethereum === 'undefined') {
-    toast('❌ MetaMask/Trust Wallet পাওয়া যায়নি। মোবাইলে Trust Wallet browser থেকে এই পেজ খোলো।');
-    return;
-  }
-  try {
-    const accounts = await window.ethereum.request({ method:'eth_requestAccounts' });
-    WALLET_ADDR = accounts[0];
-    WALLET_MODE = 'evm';
-    // Ensure BSC network
-    try {
-      await window.ethereum.request({
-        method:'wallet_switchEthereumChain',
-        params:[{ chainId:'0x38' }] // BSC mainnet
-      });
-    } catch(switchErr) {
-      if (switchErr.code === 4902) {
-        await window.ethereum.request({
-          method:'wallet_addEthereumChain',
-          params:[{
-            chainId:'0x38', chainName:'BNB Smart Chain',
-            nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18},
-            rpcUrls:['https://bsc-dataseed.binance.org/'],
-            blockExplorerUrls:['https://bscscan.com']
-          }]
-        });
-      }
-    }
-    document.getElementById('walConnStatus').innerHTML = '✅ Connected: <span style="color:var(--green);font-family:monospace">'+WALLET_ADDR.slice(0,8)+'…'+WALLET_ADDR.slice(-6)+'</span> (BEP-20)';
-    document.getElementById('walSendBox').style.display = 'block';
-    document.getElementById('frNetwork').value = 'BEP-20 (BSC)';
-    toast('✅ Wallet connected!');
-  } catch(e) { toast('Connect failed: '+e.message); }
-};
-
-window.connectTronLink = async () => {
-  if (typeof window.tronWeb === 'undefined' || !window.tronWeb.ready) {
-    toast('❌ TronLink পাওয়া যায়নি। TronLink extension/app দিয়ে এই পেজ খোলো।');
-    return;
-  }
-  try {
-    WALLET_ADDR = window.tronWeb.defaultAddress.base58;
-    WALLET_MODE = 'tron';
-    document.getElementById('walConnStatus').innerHTML = '✅ Connected: <span style="color:var(--green);font-family:monospace">'+WALLET_ADDR.slice(0,8)+'…'+WALLET_ADDR.slice(-6)+'</span> (TRC-20)';
-    document.getElementById('walSendBox').style.display = 'block';
-    document.getElementById('frNetwork').value = 'TRC-20 (TRON)';
-    toast('✅ TronLink connected!');
-  } catch(e) { toast('Connect failed: '+e.message); }
-};
-
-window.sendUSDTFromWallet = async () => {
-  const amt = parseFloat(document.getElementById('walSendAmt').value);
-  if (!amt || amt < 30) { toast('Minimum $30'); return; }
-  if (!WALLET_MODE) { toast('আগে wallet connect করো'); return; }
-
-  try {
-    if (WALLET_MODE === 'evm') {
-      const bepAddr = document.getElementById('adminWalletAddrBEP').textContent;
-      if (!bepAddr || bepAddr.includes('Contact')) { toast('Admin BEP-20 address সেট করা নেই'); return; }
-      const value = BigInt(Math.round(amt * 1e18)).toString(16); // USDT-BEP20 uses 18 decimals
-      const data = '0xa9059cbb' // transfer(address,uint256) selector
-        + bepAddr.replace('0x','').padStart(64,'0')
-        + value.padStart(64,'0');
-      const txHash = await window.ethereum.request({
-        method:'eth_sendTransaction',
-        params:[{ from:WALLET_ADDR, to:USDT_BEP20_CONTRACT, data }]
-      });
-      document.getElementById('frTxHash').value = txHash;
-      document.getElementById('frAmount').value = amt;
-      toast('✅ Transaction পাঠানো হয়েছে! এখন নিচের ফর্মে "Submit Fund Request" চাপো।');
-    } else if (WALLET_MODE === 'tron') {
-      const trcAddr = document.getElementById('adminWalletAddrTRC').textContent;
-      if (!trcAddr || trcAddr.includes('Contact')) { toast('Admin TRC-20 address সেট করা নেই'); return; }
-      const USDT_TRC20_CONTRACT = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'; // USDT on TRON mainnet
-      const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
-      const amountSun = Math.round(amt * 1e6); // USDT-TRC20 uses 6 decimals
-      const tx = await contract.transfer(trcAddr, amountSun).send();
-      document.getElementById('frTxHash').value = typeof tx === 'string' ? tx : (tx.txid||'');
-      document.getElementById('frAmount').value = amt;
-      toast('✅ Transaction পাঠানো হয়েছে! এখন নিচের ফর্মে "Submit Fund Request" চাপো।');
-    }
-  } catch(e) { toast('❌ Transaction failed: '+(e.message||e)); }
 };
 
 window.submitFundRequest = async () => {
@@ -1966,7 +1754,7 @@ window.submitFundRequest = async () => {
       createdAt: Date.now()
     });
 
-    toast('✅ Fund request submitted! অনুমোদনের পর P2B Wallet এ credit হবে।');
+    toast('✅ Fund request submitted! It will be credited to your P2B Wallet after approval.');
     document.getElementById('frAmount').value  = '';
     document.getElementById('frTxHash').value  = '';
     document.getElementById('frNote').value    = '';
