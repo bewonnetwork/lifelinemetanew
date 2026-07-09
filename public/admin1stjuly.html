@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Life Line Meta – Admin Panel</title>
+<style>
+:root{
+  --bg:#0b0f1a;--surface:#111827;--card:#1a2235;--border:#1e2d45;
+  --accent:#00c6ff;--accent2:#7c3aed;--gold:#f59e0b;--green:#10b981;
+  --red:#ef4444;--text:#e2e8f0;--muted:#64748b;--radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+button{cursor:pointer;font-family:inherit}
+
+/* LOGIN */
+#loginWrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:2.2rem;width:100%;max-width:400px}
+.login-logo{text-align:center;margin-bottom:1.5rem}
+.login-logo .icon{width:58px;height:58px;background:linear-gradient(135deg,#ef4444,#f59e0b);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:.6rem}
+.login-logo h1{font-size:1.3rem;font-weight:900;background:linear-gradient(135deg,#ef4444,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.login-logo p{font-size:.75rem;color:var(--muted)}
+
+/* SIDEBAR */
+.sidebar{position:fixed;top:0;left:0;height:100vh;width:245px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;transition:transform .3s}
+.logo-area{padding:16px 18px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-area img{width:38px;height:38px;border-radius:50%;border:2px solid var(--red);object-fit:cover}
+.logo-area img:not([src]), .logo-area img[src=""]{display:none}
+.logo-text h2{font-size:.95rem;font-weight:900;background:linear-gradient(90deg,#ef4444,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-text p{font-size:.6rem;color:var(--muted)}
+nav{flex:1;padding:7px 0;overflow-y:auto}
+nav a{display:flex;align-items:center;gap:10px;padding:9px 18px;font-size:.81rem;color:var(--muted);border-left:3px solid transparent;transition:.2s;cursor:pointer;user-select:none;white-space:nowrap}
+nav a:hover{color:var(--text);background:rgba(239,68,68,.05)}
+nav a.active{color:var(--text);background:rgba(239,68,68,.07);border-left-color:#ef4444}
+nav a .ic{width:16px;text-align:center;font-size:.88rem}
+.sb-footer{padding:11px 18px;border-top:1px solid var(--border);font-size:.75rem;color:var(--muted)}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:245px;right:0;height:54px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:99;transition:left .3s}
+.menu-btn{display:none;background:none;border:none;color:var(--text);font-size:1.3rem;padding:4px 8px}
+.pg-label{font-size:.86rem;font-weight:700;color:var(--muted)}
+.tb-right{display:flex;align-items:center;gap:9px}
+
+/* MAIN */
+.main{margin-left:245px;padding-top:54px;min-height:100vh;transition:margin-left .3s}
+.page{display:none;padding:18px}
+.page.active{display:block}
+.pg-title{font-size:1.2rem;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:.4rem}
+
+/* CARDS */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:16px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:15px;position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;top:-18px;right:-18px;width:70px;height:70px;border-radius:50%;opacity:.07}
+.sc.cb::before{background:var(--accent)}.sc.cp::before{background:var(--accent2)}.sc.cg::before{background:var(--gold)}.sc.cgr::before{background:var(--green)}.sc.cr::before{background:var(--red)}
+.sc-lbl{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.sc-val{font-size:1.55rem;font-weight:800;margin-bottom:2px}
+.cb .sc-val{color:var(--accent)}.cp .sc-val{color:var(--accent2)}.cg .sc-val{color:var(--gold)}.cgr .sc-val{color:var(--green)}.cr .sc-val{color:var(--red)}
+.sc-sub{font-size:.68rem;color:var(--muted)}
+.sc-ic{position:absolute;bottom:10px;right:10px;font-size:1.3rem;opacity:.2}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:15px;margin-bottom:13px}
+.card-title{font-size:.86rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.card-title small{font-size:.69rem;color:var(--muted);font-weight:400}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}
+
+/* TABLE */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.77rem}
+th{color:var(--muted);font-weight:600;padding:7px 9px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;font-size:.68rem;text-transform:uppercase;letter-spacing:.3px}
+td{padding:8px 9px;border-bottom:1px solid rgba(30,45,69,.4);white-space:nowrap;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(0,198,255,.03)}
+.pill{display:inline-block;padding:2px 7px;border-radius:20px;font-size:.67rem;font-weight:700}
+.pg{background:rgba(16,185,129,.15);color:var(--green)}
+.py{background:rgba(245,158,11,.15);color:var(--gold)}
+.pr{background:rgba(239,68,68,.15);color:var(--red)}
+.pb{background:rgba(0,198,255,.15);color:var(--accent)}
+.pp{background:rgba(124,58,237,.15);color:var(--accent2)}
+
+/* FORM */
+.fg{margin-bottom:11px}
+.fg label{display:block;font-size:.71rem;color:var(--muted);margin-bottom:3px;font-weight:600}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:8px 11px;color:var(--text);font-size:.84rem;outline:none;transition:.2s;font-family:inherit}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent)}
+.fg textarea{resize:vertical;min-height:70px}
+
+/* BUTTONS */
+.btn{padding:7px 14px;border-radius:9px;font-size:.78rem;font-weight:700;border:none;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:.3rem}
+.btn:hover{opacity:.85;transform:translateY(-1px)}
+.btn-p{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+.btn-g{background:linear-gradient(90deg,var(--gold),#d97706);color:#000}
+.btn-gr{background:var(--green);color:#fff}
+.btn-r{background:var(--red);color:#fff}
+.btn-o{background:none;border:1px solid var(--border);color:var(--text)}
+.btn-sm{padding:3px 8px;font-size:.69rem}
+.btn-w{width:100%;padding:10px;font-size:.86rem}
+
+/* POOL BOX */
+.pool-box{background:linear-gradient(135deg,rgba(0,198,255,.07),rgba(124,58,237,.07));border:1px solid rgba(0,198,255,.18);border-radius:14px;padding:1.3rem;margin-bottom:14px}
+.pool-amt{font-size:2.2rem;font-weight:900;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+/* SETTINGS */
+.set-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.set-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
+.set-card h4{font-size:.83rem;font-weight:700;color:var(--accent);margin-bottom:11px;display:flex;align-items:center;gap:.35rem}
+.set-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:.5rem}
+.set-row label{font-size:.78rem;color:var(--muted);flex:1}
+.set-row input[type=number],.set-row input[type=text],.set-row select{width:95px;padding:.38rem .55rem;background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:.82rem;outline:none}
+.set-row input:focus{border-color:var(--accent)}
+
+/* NOTIF BADGE */
+.nbadge{background:var(--red);color:#fff;border-radius:99px;padding:.08rem .45rem;font-size:.65rem;margin-left:auto;min-width:18px;text-align:center}
+
+/* SEARCH */
+.search-bar{padding:.55rem .9rem;background:var(--bg);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:.82rem;outline:none;min-width:210px}
+.search-bar:focus{border-color:var(--accent)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:1.6rem;width:100%;max-width:460px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:1rem;font-weight:700;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center}
+.mclose{background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer}
+
+/* TOAST */
+.toast{position:fixed;bottom:18px;right:18px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 15px;font-size:.8rem;z-index:9999;opacity:0;transform:translateY(12px);transition:.3s;pointer-events:none;max-width:260px}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* PROGRESS */
+.prog{height:5px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:6px}
+.prog-f{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .5s}
+
+/* INFO BOX */
+.info-box{background:rgba(0,198,255,.05);border:1px solid rgba(0,198,255,.15);border-radius:9px;padding:10px 13px;font-size:.76rem;color:var(--accent);margin-bottom:12px;line-height:1.7}
+
+body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1e293b;--muted:#64748b}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:98}
+.overlay.show{display:block}
+@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.topbar{left:0}.menu-btn{display:block}.two-col{grid-template-columns:1fr}.cards-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:440px){.cards-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="loginWrap">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="icon">⚙️</div>
+      <h1>Admin Panel</h1>
+      <p>Life Line Meta — Secure Access</p>
+    </div>
+    <div class="fg"><label>Admin Email</label><input type="email" id="aEmail" placeholder="admin@lifelinemeta.com"/></div>
+    <div class="fg"><label>Password</label><input type="password" id="aPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()"/></div>
+    <button class="btn btn-g btn-w" onclick="adminLogin()">🔐 Sign In to Admin</button>
+  </div>
+</div>
+
+<!-- ═══ ADMIN PANEL ═══ -->
+<div id="adminPanel" style="display:none">
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo-area">
+      <img src="assets/images/logo.jpeg" alt="" onerror="this.style.display='none'">
+      <div class="logo-text"><h2>Life Line Meta</h2><p>Admin Control Panel</p></div>
+    </div>
+    <nav>
+      <a class="active" onclick="showPage('overview',this)"><span class="ic">📊</span> Overview</a>
+      <a onclick="showPage('users',this)"><span class="ic">👥</span> All Users</a>
+      <a onclick="showPage('activations',this)"><span class="ic">✅</span> Activations <span class="nbadge" id="actBadge"></span></a>
+      <a onclick="showPage('investments',this)"><span class="ic">📈</span> Investments <span class="nbadge" id="invBadge"></span></a>
+      <a onclick="showPage('withdrawals',this)"><span class="ic">💸</span> Withdrawals <span class="nbadge" id="wdBadge"></span></a>
+      <a onclick="showPage('cashback',this)"><span class="ic">🎁</span> Cashback Pool</a>
+      <a onclick="showPage('clubbonus',this)"><span class="ic">🏆</span> Club Bonus</a>
+      <a onclick="showPage('roi_dist',this)"><span class="ic">🔄</span> ROI Distribution</a>
+      <a onclick="showPage('income_mgr',this)"><span class="ic">💰</span> Income Manager</a>
+      <a onclick="showPage('settings',this)"><span class="ic">⚙️</span> Settings</a>
+      <a onclick="showPage('reports',this)"><span class="ic">📋</span> Reports</a>
+      <a onclick="adminLogout()" style="color:var(--red);margin-top:6px"><span class="ic">🚪</span> Logout</a>
+    </nav>
+    <div class="sb-footer">Admin: <span id="adminEmailD">—</span></div>
+  </aside>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:9px">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="pg-label" id="pgLabel">Overview</span>
+    </div>
+    <div class="tb-right">
+      <button class="btn btn-o btn-sm" onclick="toggleTheme()" id="themeBtn">☀ Light</button>
+      <a href="index.html" class="btn btn-o btn-sm">← User Panel</a>
+      <button class="btn btn-r btn-sm" onclick="adminLogout()">Logout</button>
+    </div>
+  </div>
+
+  <main class="main">
+
+    <!-- ===== OVERVIEW ===== -->
+    <div class="page active" id="page-overview">
+      <div class="pg-title">📊 Admin Overview</div>
+      <div class="cards-grid">
+        <div class="sc cb"><div class="sc-lbl">Total Users</div><div class="sc-val" id="ovUsers">0</div><div class="sc-sub">Registered</div><div class="sc-ic">👥</div></div>
+        <div class="sc cgr"><div class="sc-lbl">Active Users</div><div class="sc-val" id="ovActive">0</div><div class="sc-sub">Activated $30</div><div class="sc-ic">✅</div></div>
+        <div class="sc cg"><div class="sc-lbl">Total Invested</div><div class="sc-val" id="ovInvested">$0</div><div class="sc-sub">ROI pool</div><div class="sc-ic">📈</div></div>
+        <div class="sc cp"><div class="sc-lbl">Company Fund</div><div class="sc-val" id="ovCompFund">$0</div><div class="sc-sub">$5/activation</div><div class="sc-ic">🏦</div></div>
+        <div class="sc cr"><div class="sc-lbl">Cashback Pool</div><div class="sc-val" id="ovCBPool">$0</div><div class="sc-sub">3% joining vol</div><div class="sc-ic">🎁</div></div>
+        <div class="sc cg"><div class="sc-lbl">Club Pool</div><div class="sc-val" id="ovClubPool">$0</div><div class="sc-sub">4% joining vol</div><div class="sc-ic">🏆</div></div>
+        <div class="sc cb"><div class="sc-lbl">Total Withdrawn</div><div class="sc-val" id="ovWithdrawn">$0</div><div class="sc-sub">Paid out</div><div class="sc-ic">💸</div></div>
+        <div class="sc cp"><div class="sc-lbl">Joining Volume</div><div class="sc-val" id="ovJoinVol">$0</div><div class="sc-sub">Total activations</div><div class="sc-ic">💵</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">⏳ Pending Actions</div>
+          <table style="font-size:.8rem;width:100%">
+            <tr><td style="color:var(--muted);padding:7px 0">Activation Requests</td><td style="color:var(--gold);font-weight:700" id="pendAct">0</td><td><button class="btn btn-o btn-sm" onclick="showPage('activations',null)">View</button></td></tr>
+            <tr><td style="color:var(--muted);padding:7px 0">Investment Requests</td><td style="color:var(--accent);font-weight:700" id="pendInv">0</td><td><button class="btn btn-o btn-sm" onclick="showPage('investments',null)">View</button></td></tr>
+            <tr><td style="color:var(--muted);padding:7px 0">Withdrawal Requests</td><td style="color:var(--green);font-weight:700" id="pendWd">0</td><td><button class="btn btn-o btn-sm" onclick="showPage('withdrawals',null)">View</button></td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-title">🔄 Quick Actions</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn btn-p" onclick="showPage('cashback',null)">🎁 Distribute Cashback Pool</button>
+            <button class="btn btn-g" onclick="showPage('clubbonus',null)">🏆 Distribute Club Bonus</button>
+            <button class="btn btn-gr" onclick="showPage('roi_dist',null)">🔄 Run ROI Distribution</button>
+            <button class="btn btn-o" onclick="showPage('settings',null)">⚙️ Change Commission Rates</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">👥 Recent Registrations</div>
+        <div class="tw">
+          <table><thead><tr><th>Name</th><th>Email</th><th>Username</th><th>Status</th><th>Joined</th></tr></thead>
+          <tbody id="recentRegTb"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:14px">Loading…</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== USERS ===== -->
+    <div class="page" id="page-users">
+      <div class="pg-title">👥 All Users</div>
+      <div class="card">
+        <div class="card-title">
+          User Management
+          <input class="search-bar" id="userSearch" placeholder="Search name / email / username…" oninput="filterUsers()"/>
+        </div>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Sponsor</th><th>Status</th><th>Wallet</th><th>Directs</th><th>Joined</th><th>Actions</th></tr></thead>
+            <tbody id="usersTb"><tr><td colspan="9" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ACTIVATIONS ===== -->
+    <div class="page" id="page-activations">
+      <div class="pg-title">✅ Activation Requests</div>
+      <div class="card">
+        <div class="tw">
+          <table>
+            <thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Method</th><th>TxID</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="actTb"><tr><td colspan="8" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== INVESTMENTS ===== -->
+    <div class="page" id="page-investments">
+      <div class="pg-title">📈 Investment Requests</div>
+      <div class="card">
+        <div class="tw">
+          <table>
+            <thead><tr><th>Date</th><th>User</th><th>Amount</th><th>Method</th><th>TxID</th><th>ROI%</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="invTb"><tr><td colspan="8" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== WITHDRAWALS ===== -->
+    <div class="page" id="page-withdrawals">
+      <div class="pg-title">💸 Withdrawal Requests</div>
+      <div class="card">
+        <div class="tw">
+          <table>
+            <thead><tr><th>Date</th><th>User</th><th>Email</th><th>Amount</th><th>Address</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="wdTb"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CASHBACK POOL ===== -->
+    <div class="page" id="page-cashback">
+      <div class="pg-title">🎁 Daily Cashback Pool</div>
+      <div class="pool-box">
+        <div style="font-size:.75rem;color:var(--muted);margin-bottom:.3rem">Current Pool Balance</div>
+        <div class="pool-amt" id="cbPoolAmt">$0.00</div>
+        <div style="font-size:.76rem;color:var(--muted);margin-top:.4rem">3% of total joining volume — distribute manually to all eligible active users.</div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">📊 Pool Stats</div>
+          <table style="font-size:.79rem;width:100%">
+            <tr><td style="color:var(--muted);padding:6px 0">Total Distributed</td><td style="color:var(--green);font-weight:700" id="cbTotalDist">$0.00</td></tr>
+            <tr><td style="color:var(--muted);padding:6px 0">Eligible Users</td><td id="cbEligible">0</td></tr>
+            <tr><td style="color:var(--muted);padding:6px 0">Per Member (if now)</td><td style="color:var(--accent);font-weight:700" id="cbPerMember">$0.00</td></tr>
+            <tr><td style="color:var(--muted);padding:6px 0">Per-user Limit</td><td style="color:var(--gold)">$60.00 (2× activation)</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-title">💰 Distribute Now</div>
+          <div class="fg"><label>Amount to Distribute ($)</label><input type="number" id="cbDistAmt" placeholder="e.g. 500"/></div>
+          <div class="fg"><label>Note (optional)</label><input type="text" id="cbDistNote" placeholder="Daily cashback round 1"/></div>
+          <button class="btn btn-p btn-w" onclick="distributeCashback()">🚀 Distribute to All Eligible</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📋 Distribution History</div>
+        <div class="tw">
+          <table><thead><tr><th>Date</th><th>Total Amount</th><th>Per Member</th><th>Members</th><th>Note</th></tr></thead>
+          <tbody id="cbHistTb"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:14px">No history</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CLUB BONUS ===== -->
+    <div class="page" id="page-clubbonus">
+      <div class="pg-title">🏆 Club Bonus Distribution</div>
+      <div class="pool-box" style="background:linear-gradient(135deg,rgba(245,158,11,.07),rgba(124,58,237,.07));border-color:rgba(245,158,11,.2)">
+        <div style="font-size:.75rem;color:var(--muted);margin-bottom:.3rem">Club Bonus Pool</div>
+        <div class="pool-amt" style="background:linear-gradient(90deg,var(--gold),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="clubPoolAmt">$0.00</div>
+        <div style="font-size:.76rem;color:var(--muted);margin-top:.4rem">4% of joining volume — eligible: ≥10 directs OR ≥$50 matching income.</div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">📊 Club Stats</div>
+          <table style="font-size:.79rem;width:100%">
+            <tr><td style="color:var(--muted);padding:6px 0">Eligible Members</td><td id="clubEligible">0</td></tr>
+            <tr><td style="color:var(--muted);padding:6px 0">Per Member (if now)</td><td style="color:var(--gold);font-weight:700" id="clubPerMember">$0.00</td></tr>
+            <tr><td style="color:var(--muted);padding:6px 0">Total Distributed</td><td style="color:var(--green);font-weight:700" id="clubTotalDist">$0.00</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-title">💰 Distribute Club Bonus</div>
+          <div class="fg"><label>Amount ($)</label><input type="number" id="clubDistAmt" placeholder="Amount"/></div>
+          <div class="fg"><label>Note</label><input type="text" id="clubDistNote" placeholder="Monthly club bonus"/></div>
+          <button class="btn btn-g btn-w" onclick="distributeClub()">🚀 Distribute Club Bonus</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📋 Club Distribution History</div>
+        <div class="tw">
+          <table><thead><tr><th>Date</th><th>Amount</th><th>Per Member</th><th>Members</th><th>Note</th></tr></thead>
+          <tbody id="clubHistTb"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:14px">No history</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ROI DISTRIBUTION ===== -->
+    <div class="page" id="page-roi_dist">
+      <div class="pg-title">🔄 ROI Distribution</div>
+      <div class="info-box">💡 50% of monthly ROI goes directly to investor. Remaining 50% distributed as generation bonus across 7 upline levels. Sponsor also gets 5% of ROI as referral bonus.</div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">⚡ Run ROI Distribution</div>
+          <div class="fg"><label>ROI Rate Override (%) — leave blank to use saved setting</label><input type="number" id="roiDistRate" placeholder="e.g. 13" min="1" max="100"/></div>
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px;margin-bottom:11px;font-size:.77rem">
+            <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Current Rate</span><span style="color:var(--green);font-weight:700" id="roiCurRateD">—</span></div>
+            <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Active Investments</span><span id="roiActiveInvD">0</span></div>
+            <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Total Invested</span><span id="roiTotalInvD">$0</span></div>
+          </div>
+          <button class="btn btn-gr btn-w" onclick="runROIDist()">🚀 Run ROI Distribution Now</button>
+        </div>
+        <div class="card">
+          <div class="card-title">📊 Generation Bonus Split</div>
+          <table style="font-size:.78rem;width:100%">
+            <tr><td style="color:var(--muted);padding:5px 0">Level 1</td><td style="color:var(--gold);font-weight:700" id="gbL1">20%</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Level 2</td><td style="color:var(--accent)" id="gbL2">10%</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Level 3</td><td style="color:var(--accent)" id="gbL3">8%</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Level 4</td><td style="color:var(--green)" id="gbL4">6%</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Level 5</td><td style="color:var(--green)" id="gbL5">4%</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Level 6</td><td style="color:var(--muted)" id="gbL6">3%</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Level 7</td><td style="color:var(--muted)" id="gbL7">2%</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📋 Active Investments</div>
+        <div class="tw">
+          <table><thead><tr><th>User</th><th>Email</th><th>Amount</th><th>ROI%</th><th>Start</th><th>ROI Earned</th><th>Status</th></tr></thead>
+          <tbody id="roiInvTb"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:14px">Loading…</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== INCOME MANAGER ===== -->
+    <div class="page" id="page-income_mgr">
+      <div class="pg-title">💰 Income Manager</div>
+      <div class="info-box">Manually credit or debit income to any user's wallet. All changes are recorded in transaction history.</div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">➕ Manual Credit / Debit</div>
+          <div class="fg"><label>User Email or UID</label><input type="text" id="incMgrUser" placeholder="user@email.com or UID"/></div>
+          <div class="fg"><label>Income Type</label>
+            <select id="incMgrType">
+              <option value="sponsor">Sponsor Commission</option>
+              <option value="matching">Matching Bonus</option>
+              <option value="cashback">Daily Cashback</option>
+              <option value="club">Club Bonus</option>
+              <option value="roi">ROI Return</option>
+              <option value="generation">Generation Bonus</option>
+              <option value="manual_credit">Manual Credit</option>
+              <option value="manual_debit">Manual Debit</option>
+            </select>
+          </div>
+          <div class="fg"><label>Amount ($)</label><input type="number" id="incMgrAmt" placeholder="Amount" min="0.01"/></div>
+          <div class="fg"><label>Note</label><input type="text" id="incMgrNote" placeholder="Reason / description"/></div>
+          <button class="btn btn-p btn-w" onclick="applyIncomeManual()">✅ Apply</button>
+        </div>
+        <div class="card">
+          <div class="card-title">📋 Recent Manual Adjustments</div>
+          <div class="tw">
+            <table><thead><tr><th>Date</th><th>User</th><th>Type</th><th>Amount</th></tr></thead>
+            <tbody id="incMgrHistTb"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:14px">None yet</td></tr></tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SETTINGS ===== -->
+    <div class="page" id="page-settings">
+      <div class="pg-title">⚙️ Commission & System Settings</div>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:14px">All changes save to Firebase Realtime Database instantly and apply platform-wide.</p>
+      <div class="set-grid">
+
+        <div class="set-card">
+          <h4>💳 Activation</h4>
+          <div class="set-row"><label>Activation Fee ($)</label><input type="number" id="s_actFee" min="1"/></div>
+          <div class="set-row"><label>Company Fund ($)</label><input type="number" id="s_compFund" min="0"/></div>
+          <div class="set-row"><label>Sponsor Commission ($)</label><input type="number" id="s_sponsorComm" min="0" step=".01"/></div>
+          <div class="set-row"><label>Cashback Limit ($)</label><input type="number" id="s_cbLimit" min="0"/></div>
+        </div>
+
+        <div class="set-card">
+          <h4>🤝 MLM Bonuses</h4>
+          <div class="set-row"><label>Matching Bonus (%)</label><input type="number" id="s_matchPct" min="0" max="100" step=".01"/></div>
+          <div class="set-row"><label>Daily Cap ($)</label><input type="number" id="s_dailyCap" min="1"/></div>
+          <div class="set-row"><label>Cashback Pool (%)</label><input type="number" id="s_cbPct" min="0" max="100" step=".01"/></div>
+        </div>
+
+        <div class="set-card">
+          <h4>🏆 Club Bonus</h4>
+          <div class="set-row"><label>Club Pool (%)</label><input type="number" id="s_clubPct" min="0" max="100" step=".01"/></div>
+          <div class="set-row"><label>Min Directs</label><input type="number" id="s_clubMinDir" min="0"/></div>
+          <div class="set-row"><label>Min Matching ($)</label><input type="number" id="s_clubMinMatch" min="0"/></div>
+        </div>
+
+        <div class="set-card">
+          <h4>📈 ROI</h4>
+          <div class="set-row"><label>ROI Rate (%) now</label><input type="number" id="s_roiRate" min="0" max="100" step=".01"/></div>
+          <div class="set-row"><label>ROI Min (%)</label><input type="number" id="s_roiMin" min="0" step=".01"/></div>
+          <div class="set-row"><label>ROI Max (%)</label><input type="number" id="s_roiMax" min="0" step=".01"/></div>
+          <div class="set-row"><label>ROI Sponsor Bonus (%)</label><input type="number" id="s_roiSpBonus" min="0" step=".01"/></div>
+          <div class="set-row"><label>Lock Period (months)</label><input type="number" id="s_lockMonths" min="1"/></div>
+          <div class="set-row"><label>Capital WD Charge (%)</label><input type="number" id="s_wdCharge" min="0" max="100"/></div>
+        </div>
+
+        <div class="set-card">
+          <h4>🌐 Generation Bonus (%)</h4>
+          <div class="set-row"><label>Level 1</label><input type="number" id="s_g1" min="0" max="100" step=".01"/></div>
+          <div class="set-row"><label>Level 2</label><input type="number" id="s_g2" min="0" max="100" step=".01"/></div>
+          <div class="set-row"><label>Level 3</label><input type="number" id="s_g3" min="0" max="100" step=".01"/></div>
+          <div class="set-row"><label>Level 4</label><input type="number" id="s_g4" min="0" max="100" step=".01"/></div>
+          <div class="set-row"><label>Level 5</label><input type="number" id="s_g5" min="0" max="100" step=".01"/></div>
+          <div class="set-row"><label>Level 6</label><input type="number" id="s_g6" min="0" max="100" step=".01"/></div>
+          <div class="set-row"><label>Level 7</label><input type="number" id="s_g7" min="0" max="100" step=".01"/></div>
+        </div>
+
+        <div class="set-card">
+          <h4>🔐 Admin Emails</h4>
+          <div class="fg"><label>Admin Email 1</label><input type="email" id="s_admin1" placeholder="admin@example.com"/></div>
+          <div class="fg"><label>Admin Email 2</label><input type="email" id="s_admin2" placeholder="backup@example.com"/></div>
+        </div>
+
+      </div>
+      <button class="btn btn-gr" style="margin-top:6px;padding:10px 28px;font-size:.88rem" onclick="saveSettings()">💾 Save All Settings</button>
+    </div>
+
+    <!-- ===== REPORTS ===== -->
+    <div class="page" id="page-reports">
+      <div class="pg-title">📋 Reports & Analytics</div>
+      <div class="cards-grid">
+        <div class="sc cb"><div class="sc-lbl">Total Joining Volume</div><div class="sc-val" id="repJoinVol">$0</div><div class="sc-ic">💵</div></div>
+        <div class="sc cgr"><div class="sc-lbl">Total Commissions Paid</div><div class="sc-val" id="repCommPaid">$0</div><div class="sc-ic">💰</div></div>
+        <div class="sc cg"><div class="sc-lbl">Net Company Revenue</div><div class="sc-val" id="repRevenue">$0</div><div class="sc-ic">🏦</div></div>
+        <div class="sc cp"><div class="sc-lbl">ROI Paid Out</div><div class="sc-val" id="repROIPaid">$0</div><div class="sc-ic">📈</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">📊 Income Breakdown Summary</div>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Income Type</th><th>Total Paid</th><th>% of Volume</th></tr></thead>
+            <tbody id="repBreakdownTb"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📋 All Transactions (Last 100)</div>
+        <div class="tw">
+          <table><thead><tr><th>Date</th><th>User</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody id="repAllTxTb"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- USER DETAIL MODAL -->
+<div class="modal-overlay" id="userModal">
+  <div class="modal">
+    <div class="modal-title">👤 User Details <button class="mclose" onclick="closeModal()">×</button></div>
+    <div id="userModalContent"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyA3G2bMOJ_HSDYXJPuM70tVjfbkHlMftr4",
+  authDomain:"livelinemeta.firebaseapp.com",
+  databaseURL:"https://livelinemeta-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"livelinemeta",
+  storageBucket:"livelinemeta.firebasestorage.app",
+  messagingSenderId:"206900805598",
+  appId:"1:206900805598:web:10e6b39100af201b4e674f"
+});
+const auth = firebase.auth();
+const fsdb = firebase.firestore();
+const rtdb = firebase.database();
+
+const ADMIN_EMAILS = ['Irimu049@gmail.com','admin@lifelinemeta.com'];
+let CU=null, ALLU={}, ST={}, manualHistory=[];
+
+// ── DEFAULT SETTINGS ──
+const DEFS = {
+  activationFee:30, companyFund:5, sponsorCommission:4, cashbackLimit:60,
+  matchingBonus:5, dailyCap:1000, cashbackPercent:3, clubBonusPercent:4,
+  clubMinDirects:10, clubMinMatching:50,
+  roiRate:13, roiMin:12, roiMax:15, roiSponsorBonus:5,
+  lockMonths:6, capitalWdCharge:10,
+  genBonus:{l1:20,l2:10,l3:8,l4:6,l5:4,l6:3,l7:2},
+  cashbackPool:0, clubPool:0, companyFundBalance:0,
+  totalJoiningVolume:0, totalWithdrawn:0,
+  adminEmail1:'Irimu049@gmail.com', adminEmail2:'admin@lifelinemeta.com'
+};
+
+// ── AUTH ──
+auth.onAuthStateChanged(async user => {
+  if (user && ADMIN_EMAILS.includes(user.email)) {
+    CU = user;
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    document.getElementById('adminEmailD').textContent = user.email;
+    await loadSettings();
+    await loadAllData();
+    setupListeners();
+  } else if (user) {
+    toast('Not authorized as admin');
+    await auth.signOut();
+  }
+});
+
+window.adminLogin = async () => {
+  const email = document.getElementById('aEmail').value.trim();
+  const pass  = document.getElementById('aPass').value;
+  if (!email||!pass) return toast('Enter email and password');
+  try { await auth.signInWithEmailAndPassword(email, pass); }
+  catch(e) { toast('Login failed: '+e.message); }
+};
+
+window.adminLogout = async () => { await auth.signOut(); location.reload(); };
+
+// ── LOAD ──
+async function loadSettings() {
+  const snap = await rtdb.ref('settings').get();
+  ST = snap.exists() ? {...DEFS,...snap.val()} : {...DEFS};
+  fillSettingInputs();
+  updateGenBonusDisplay();
+}
+
+async function loadAllData() {
+  // Load all Firestore users
+  const snap = await fsdb.collection('users').get();
+  ALLU = {};
+  snap.forEach(d => { ALLU[d.id] = {id:d.id,...d.data()}; });
+  renderOverview();
+  renderUsersTable(ALLU);
+}
+
+function setupListeners() {
+  // Listen activation requests
+  rtdb.ref('activationRequests').on('value', snap => {
+    const data = snap.exists() ? snap.val() : {};
+    renderActivations(data);
+    const pending = Object.values(data).filter(r=>r.status==='pending').length;
+    set('actBadge', pending||''); set('pendAct', pending);
+  });
+  // Listen investment requests
+  rtdb.ref('investments').on('value', snap => {
+    const data = snap.exists() ? snap.val() : {};
+    renderInvestments(data);
+    renderROIInvestments(data);
+    let pending=0, activeInv=0, totalInv=0;
+    Object.values(data).forEach(userInvs => {
+      Object.values(userInvs).forEach(inv => {
+        if(inv.status==='pending') pending++;
+        if(inv.status==='active'){activeInv++;totalInv+=inv.amount||0;}
+      });
+    });
+    set('invBadge',pending||''); set('pendInv',pending);
+    set('roiActiveInvD',activeInv); set('roiTotalInvD','$'+totalInv.toFixed(0));
+    set('ovInvested','$'+totalInv.toFixed(0));
+  });
+  // Listen withdrawal requests
+  rtdb.ref('withdrawals').on('value', snap => {
+    const data = snap.exists() ? snap.val() : {};
+    renderWithdrawals(data);
+    let pending=0, totalWd=0;
+    Object.values(data).forEach(userWds => {
+      Object.values(userWds).forEach(w => {
+        if(w.status==='pending') pending++;
+        if(w.status==='completed') totalWd+=w.amount||0;
+      });
+    });
+    set('wdBadge',pending||''); set('pendWd',pending);
+    set('ovWithdrawn','$'+totalWd.toFixed(0));
+  });
+  // Pools & settings live
+  rtdb.ref('settings').on('value', snap => {
+    if(snap.exists()) {
+      ST = {...DEFS,...snap.val()};
+      set('ovCBPool','$'+(ST.cashbackPool||0).toFixed(0));
+      set('ovClubPool','$'+(ST.clubPool||0).toFixed(0));
+      set('ovCompFund','$'+(ST.companyFundBalance||0).toFixed(0));
+      set('ovJoinVol','$'+(ST.totalJoiningVolume||0).toFixed(0));
+      set('cbPoolAmt','$'+(ST.cashbackPool||0).toFixed(2));
+      set('clubPoolAmt','$'+(ST.clubPool||0).toFixed(2));
+      set('roiCurRateD',(ST.roiRate||13)+'%');
+      updateGenBonusDisplay();
+    }
+  });
+}
+
+// ── OVERVIEW ──
+function renderOverview() {
+  const users = Object.values(ALLU);
+  const active = users.filter(u=>u.isActive).length;
+  set('ovUsers', users.length);
+  set('ovActive', active);
+  // Recent regs
+  const recent = users.sort((a,b)=>{
+    const ta = a.createdAt ? (a.createdAt.toDate?a.createdAt.toDate():new Date(a.createdAt)) : new Date(0);
+    const tb = b.createdAt ? (b.createdAt.toDate?b.createdAt.toDate():new Date(b.createdAt)) : new Date(0);
+    return tb-ta;
+  }).slice(0,8);
+  document.getElementById('recentRegTb').innerHTML = recent.map(u=>`<tr>
+    <td style="font-weight:700">${u.fullName||'User'}</td>
+    <td style="color:var(--muted)">${u.email||'—'}</td>
+    <td>@${u.username||'—'}</td>
+    <td><span class="pill ${u.isActive?'pg':'py'}">${u.isActive?'Active':'Inactive'}</span></td>
+    <td>${formatDate(u.createdAt)}</td>
+  </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No users</td></tr>';
+  // Reports
+  renderReports();
+}
+
+// ── USERS TABLE ──
+let _allUsersCache = {};
+function renderUsersTable(users) {
+  _allUsersCache = users;
+  const arr = Object.values(users);
+  document.getElementById('usersTb').innerHTML = arr.length ? arr.map(u=>`<tr>
+    <td style="font-weight:700">${u.fullName||'User'}</td>
+    <td style="color:var(--muted)">@${u.username||'—'}</td>
+    <td>${u.email||'—'}</td>
+    <td style="color:var(--muted)">${u.sponsorId||'—'}</td>
+    <td><span class="pill ${u.isActive?'pg':'py'}">${u.isActive?'Active':'Inactive'}</span></td>
+    <td style="color:var(--green);font-weight:700">$${(u.walletBalance||0).toFixed(2)}</td>
+    <td>${countDirects(u.id)}</td>
+    <td>${formatDate(u.createdAt)}</td>
+    <td style="display:flex;gap:4px;flex-wrap:wrap">
+      <button class="btn btn-p btn-sm" onclick="viewUser('${u.id}')">View</button>
+      ${!u.isActive?`<button class="btn btn-gr btn-sm" onclick="quickActivate('${u.id}')">Activate</button>`:''}
+      <button class="btn btn-o btn-sm" onclick="openAdjustWallet('${u.id}','${u.fullName||u.email||'User'}')">Adjust</button>
+    </td>
+  </tr>`).join('') : '<tr><td colspan="9" style="text-align:center;color:var(--muted)">No users</td></tr>';
+}
+
+window.filterUsers = () => {
+  const q = document.getElementById('userSearch').value.toLowerCase();
+  const filtered = {};
+  Object.entries(_allUsersCache).forEach(([k,u])=>{
+    if((u.fullName||'').toLowerCase().includes(q)||(u.email||'').toLowerCase().includes(q)||(u.username||'').toLowerCase().includes(q))
+      filtered[k]=u;
+  });
+  renderUsersTable(filtered);
+};
+
+function countDirects(uid){ return Object.values(ALLU).filter(u=>u.sponsorId===uid).length; }
+
+window.viewUser = (uid) => {
+  const u = ALLU[uid]; if(!u) return;
+  const directs = countDirects(uid);
+  document.getElementById('userModalContent').innerHTML = `
+    <div style="background:var(--bg);border-radius:10px;padding:12px;margin-bottom:12px">
+      <div style="font-size:1.05rem;font-weight:800;margin-bottom:4px">${u.fullName||'User'}</div>
+      <div style="color:var(--muted);font-size:.78rem">${u.email} — @${u.username||'—'}</div>
+      <div style="margin-top:6px"><span class="pill ${u.isActive?'pg':'py'}">${u.isActive?'Active':'Inactive'}</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.79rem">
+      ${infoRow('UID',uid.slice(0,12)+'…')}${infoRow('Phone',u.mobile||'—')}
+      ${infoRow('Country',u.country||'—')}${infoRow('Sponsor',u.sponsorId||'None')}
+      ${infoRow('Wallet Bal','$'+(u.walletBalance||0).toFixed(2))}${infoRow('Directs',directs)}
+      ${infoRow('Total Invested','$'+(u.totalInvested||0).toFixed(2))}${infoRow('Joined',formatDate(u.createdAt))}
+      ${infoRow('USDT Wallet',u.paymentWallet||'—')}${infoRow('Signup',u.signupMethod||'email')}
+    </div>
+    <div style="margin-top:12px;display:flex;gap:7px;flex-wrap:wrap">
+      ${!u.isActive?`<button class="btn btn-gr btn-sm" onclick="quickActivate('${uid}');closeModal()">✅ Activate</button>`:''}
+      <button class="btn btn-p btn-sm" onclick="openAdjustWallet('${uid}','${u.fullName||u.email}');closeModal()">💰 Adjust Wallet</button>
+      <button class="btn btn-r btn-sm" onclick="if(confirm('Block user?'))blockUser('${uid}')">🚫 Block</button>
+    </div>`;
+  document.getElementById('userModal').classList.add('open');
+};
+
+function infoRow(k,v){ return `<div style="background:var(--bg);border-radius:7px;padding:7px 10px"><div style="font-size:.67rem;color:var(--muted)">${k}</div><div style="font-weight:600;margin-top:1px">${v}</div></div>`; }
+window.closeModal = () => document.getElementById('userModal').classList.remove('open');
+
+window.quickActivate = async (uid) => {
+  if(!confirm('Activate this user?')) return;
+  await activateUser(uid, 'Admin manual activation');
+  toast('✅ User activated!');
+  await loadAllData();
+};
+
+window.blockUser = async (uid) => {
+  await fsdb.collection('users').doc(uid).update({isActive:false, blocked:true});
+  toast('User blocked'); await loadAllData();
+};
+
+// ── ACTIVATION LOGIC ──
+async function activateUser(uid, note) {
+  const u = ALLU[uid]; if(!u||u.isActive) return;
+  // Mark active in Firestore
+  await fsdb.collection('users').doc(uid).update({ isActive:true, activatedAt: new Date() });
+  // Company fund
+  const newCF = (ST.companyFundBalance||0) + (ST.companyFund||5);
+  // Pools
+  const fee = ST.activationFee||30;
+  const newCBPool   = (ST.cashbackPool||0)   + fee*(ST.cashbackPercent||3)/100;
+  const newClubPool = (ST.clubPool||0)        + fee*(ST.clubBonusPercent||4)/100;
+  const newJoinVol  = (ST.totalJoiningVolume||0) + fee;
+  await rtdb.ref('settings').update({
+    companyFundBalance:newCF, cashbackPool:newCBPool,
+    clubPool:newClubPool, totalJoiningVolume:newJoinVol
+  });
+  // Sponsor commission
+  if (u.sponsorId) {
+    const sponsor = Object.values(ALLU).find(s => s.myRefCode===u.sponsorId||s.username===u.sponsorId||s.id===u.sponsorId);
+    if (sponsor) {
+      const comm = ST.sponsorCommission||4;
+      const newBal = (sponsor.walletBalance||0) + comm;
+      await fsdb.collection('users').doc(sponsor.id).update({ walletBalance:newBal });
+      await rtdb.ref(`users/${sponsor.id}/income/sponsor`).transaction(v=>(v||0)+comm);
+      await rtdb.ref(`transactions/${sponsor.id}`).push({
+        type:'Sponsor Commission', amount:comm, note:`Referral activated: ${u.fullName||u.email}`,
+        status:'completed', timestamp:Date.now(), balance:newBal
+      });
+      // Matching bonus (5%) to sponsor's sponsor
+      if (sponsor.sponsorId) {
+        const upline = Object.values(ALLU).find(s=>s.myRefCode===sponsor.sponsorId||s.username===sponsor.sponsorId||s.id===sponsor.sponsorId);
+        if (upline) {
+          const mb = comm * (ST.matchingBonus||5)/100;
+          const uBal = (upline.walletBalance||0)+mb;
+          await fsdb.collection('users').doc(upline.id).update({walletBalance:uBal});
+          await rtdb.ref(`users/${upline.id}/income/matching`).transaction(v=>(v||0)+mb);
+          await rtdb.ref(`transactions/${upline.id}`).push({
+            type:'Matching Bonus',amount:mb,note:`From ${u.fullName||u.email}'s activation`,
+            status:'completed',timestamp:Date.now(),balance:uBal
+          });
+        }
+      }
+    }
+  }
+  ALLU[uid].isActive = true;
+}
+
+// ── ACTIVATIONS TABLE ──
+function renderActivations(data) {
+  const rows = [];
+  Object.entries(data).sort(([,a],[,b])=>b.createdAt-a.createdAt).forEach(([key,r])=>{
+    rows.push(`<tr>
+      <td>${new Date(r.createdAt).toLocaleDateString()}</td>
+      <td style="font-weight:700">${r.name||'—'}</td>
+      <td>${r.email||'—'}</td>
+      <td>${r.method||'—'}</td>
+      <td style="font-family:monospace;font-size:.71rem;max-width:100px;overflow:hidden;text-overflow:ellipsis">${r.txid||'—'}</td>
+      <td style="color:var(--gold);font-weight:700">$${r.amount||30}</td>
+      <td><span class="pill ${r.status==='approved'?'pg':r.status==='rejected'?'pr':'py'}">${r.status||'pending'}</span></td>
+      <td style="display:flex;gap:4px">
+        ${r.status==='pending'?`
+          <button class="btn btn-gr btn-sm" onclick="approveActivation('${key}','${r.uid}')">✓ Approve</button>
+          <button class="btn btn-r btn-sm" onclick="rejectActivation('${key}')">✗ Reject</button>`
+        :'<span style="color:var(--muted);font-size:.71rem">Done</span>'}
+      </td>
+    </tr>`);
+  });
+  document.getElementById('actTb').innerHTML = rows.join('') || '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:16px">No requests</td></tr>';
+}
+
+window.approveActivation = async (key, uid) => {
+  if(!confirm('Approve activation?')) return;
+  await activateUser(uid, 'Activation request approved');
+  await rtdb.ref(`activationRequests/${key}`).update({status:'approved'});
+  await loadAllData();
+  toast('✅ Activation approved!');
+};
+
+window.rejectActivation = async (key) => {
+  if(!confirm('Reject activation?')) return;
+  await rtdb.ref(`activationRequests/${key}`).update({status:'rejected'});
+  toast('Activation rejected');
+};
+
+// ── INVESTMENTS TABLE ──
+function renderInvestments(data) {
+  const rows = [];
+  Object.entries(data).forEach(([uid, invs]) => {
+    const u = ALLU[uid];
+    Object.entries(invs).sort(([,a],[,b])=>b.createdAt-a.createdAt).forEach(([iid,inv])=>{
+      rows.push(`<tr>
+        <td>${new Date(inv.createdAt).toLocaleDateString()}</td>
+        <td style="font-weight:700">${u?u.fullName||u.email:'UID:'+uid.slice(0,8)}</td>
+        <td style="color:var(--accent);font-weight:700">$${inv.amount}</td>
+        <td>${inv.method||'—'}</td>
+        <td style="font-family:monospace;font-size:.7rem;max-width:90px;overflow:hidden;text-overflow:ellipsis">${inv.txid||'—'}</td>
+        <td style="color:var(--green)">${inv.roiRate||ST.roiRate||13}%</td>
+        <td><span class="pill ${inv.status==='active'?'pg':inv.status==='pending'?'py':'pb'}">${inv.status||'pending'}</span></td>
+        <td style="display:flex;gap:4px">
+          ${inv.status==='pending'?`
+            <button class="btn btn-gr btn-sm" onclick="approveInvestment('${uid}','${iid}')">✓</button>
+            <button class="btn btn-r btn-sm" onclick="rejectInvestment('${uid}','${iid}')">✗</button>`
+          :'<span style="color:var(--muted);font-size:.7rem">Done</span>'}
+        </td>
+      </tr>`);
+    });
+  });
+  document.getElementById('invTb').innerHTML = rows.join('') || '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:16px">No requests</td></tr>';
+}
+
+window.approveInvestment = async (uid,iid) => {
+  if(!confirm('Approve investment?')) return;
+  await rtdb.ref(`investments/${uid}/${iid}`).update({status:'active'});
+  // ROI sponsor bonus
+  const invSnap = await rtdb.ref(`investments/${uid}/${iid}`).get();
+  const inv = invSnap.val();
+  const u = ALLU[uid];
+  if(u && u.sponsorId) {
+    const sponsor = Object.values(ALLU).find(s=>s.myRefCode===u.sponsorId||s.username===u.sponsorId||s.id===u.sponsorId);
+    if(sponsor) {
+      const bonus = (inv.amount||0) * (ST.roiSponsorBonus||5)/100;
+      const nb = (sponsor.walletBalance||0)+bonus;
+      await fsdb.collection('users').doc(sponsor.id).update({walletBalance:nb});
+      await rtdb.ref(`users/${sponsor.id}/income/roi`).transaction(v=>(v||0)+bonus);
+      await rtdb.ref(`transactions/${sponsor.id}`).push({
+        type:'ROI Referral Bonus',amount:bonus,note:`Investment by ${u.fullName||u.email}`,
+        status:'completed',timestamp:Date.now(),balance:nb
+      });
+    }
+  }
+  toast('✅ Investment approved!');
+};
+
+window.rejectInvestment = async (uid,iid) => {
+  if(!confirm('Reject?')) return;
+  await rtdb.ref(`investments/${uid}/${iid}`).update({status:'rejected'});
+  toast('Rejected');
+};
+
+// ── WITHDRAWALS TABLE ──
+function renderWithdrawals(data) {
+  const rows = [];
+  Object.entries(data).forEach(([uid, wds]) => {
+    const u = ALLU[uid];
+    Object.entries(wds).sort(([,a],[,b])=>b.createdAt-a.createdAt).forEach(([wid,w])=>{
+      rows.push(`<tr>
+        <td>${new Date(w.createdAt).toLocaleDateString()}</td>
+        <td style="font-weight:700">${u?u.fullName||u.email:'UID:'+uid.slice(0,8)}</td>
+        <td>${u?u.email:'—'}</td>
+        <td style="color:var(--green);font-weight:700">$${w.amount}</td>
+        <td style="font-family:monospace;font-size:.7rem;max-width:110px;overflow:hidden;text-overflow:ellipsis">${w.address||'—'}</td>
+        <td><span class="pill ${w.status==='completed'?'pg':w.status==='pending'?'py':'pr'}">${w.status||'pending'}</span></td>
+        <td style="display:flex;gap:4px">
+          ${w.status==='pending'?`
+            <button class="btn btn-gr btn-sm" onclick="approveWithdrawal('${uid}','${wid}',${w.amount})">✓ Pay</button>
+            <button class="btn btn-r btn-sm" onclick="rejectWithdrawal('${uid}','${wid}',${w.amount})">✗</button>`
+          :'<span style="color:var(--muted);font-size:.7rem">Done</span>'}
+        </td>
+      </tr>`);
+    });
+  });
+  document.getElementById('wdTb').innerHTML = rows.join('') || '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:16px">No requests</td></tr>';
+}
+
+window.approveWithdrawal = async (uid,wid,amount) => {
+  if(!confirm(`Confirm payment of $${amount}?`)) return;
+  await rtdb.ref(`withdrawals/${uid}/${wid}`).update({status:'completed'});
+  const u = ALLU[uid];
+  if(u) {
+    const newWd = (u.totalWithdrawn||0)+amount;
+    await fsdb.collection('users').doc(uid).update({totalWithdrawn:newWd});
+    await rtdb.ref('settings/totalWithdrawn').transaction(v=>(v||0)+amount);
+  }
+  toast('✅ Withdrawal marked as paid!');
+};
+
+window.rejectWithdrawal = async (uid,wid,amount) => {
+  if(!confirm('Reject and refund?')) return;
+  await rtdb.ref(`withdrawals/${uid}/${wid}`).update({status:'rejected'});
+  const u = ALLU[uid];
+  if(u){
+    const nb=(u.walletBalance||0)+amount;
+    await fsdb.collection('users').doc(uid).update({walletBalance:nb});
+    await rtdb.ref(`transactions/${uid}`).push({
+      type:'Withdrawal Refund',amount,note:'Rejected — refunded',
+      status:'completed',timestamp:Date.now(),balance:nb
+    });
+  }
+  toast('Withdrawal rejected & refunded');
+};
+
+// ── CASHBACK DISTRIBUTION ──
+window.distributeCashback = async () => {
+  const amt  = parseFloat(document.getElementById('cbDistAmt').value);
+  const note = document.getElementById('cbDistNote').value || 'Daily cashback';
+  if(!amt||amt<=0) return toast('Enter valid amount');
+  const poolBal = ST.cashbackPool||0;
+  if(amt>poolBal) return toast(`Pool only has $${poolBal.toFixed(2)}`);
+  const limit = ST.cashbackLimit||60;
+  const eligible = Object.values(ALLU).filter(u=>u.isActive && (u.cashbackReceived||0)<limit);
+  if(!eligible.length) return toast('No eligible users');
+  const perMember = amt / eligible.length;
+  let distributed = 0;
+  for(const u of eligible) {
+    const got = u.cashbackReceived||0;
+    const canGet = Math.min(perMember, limit-got);
+    if(canGet<=0) continue;
+    distributed += canGet;
+    const newBal = (u.walletBalance||0)+canGet;
+    await fsdb.collection('users').doc(u.id).update({
+      walletBalance:newBal, cashbackReceived:(got+canGet)
+    });
+    await rtdb.ref(`users/${u.id}/income/cashback`).transaction(v=>(v||0)+canGet);
+    await rtdb.ref(`transactions/${u.id}`).push({
+      type:'Daily Cashback',amount:canGet,note,
+      status:'completed',timestamp:Date.now(),balance:newBal
+    });
+  }
+  const newPool = Math.max(0, poolBal-distributed);
+  await rtdb.ref('settings/cashbackPool').set(newPool);
+  await rtdb.ref('cashbackHistory').push({date:Date.now(),amount:distributed,perMember,members:eligible.length,note});
+  toast(`✅ Distributed $${distributed.toFixed(2)} to ${eligible.length} members`);
+  document.getElementById('cbDistAmt').value='';
+  loadCashbackPage();
+};
+
+async function loadCashbackPage() {
+  const snap = await rtdb.ref('cashbackHistory').get();
+  const hist = snap.exists()?snap.val():{};
+  const arr = Object.values(hist).sort((a,b)=>b.date-a.date);
+  document.getElementById('cbHistTb').innerHTML = arr.length
+    ? arr.map(h=>`<tr>
+        <td>${new Date(h.date).toLocaleDateString()}</td>
+        <td class="pill pg">$${(h.amount||0).toFixed(2)}</td>
+        <td>$${(h.perMember||0).toFixed(2)}</td>
+        <td>${h.members}</td>
+        <td>${h.note||'—'}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No history</td></tr>';
+  let totalDist=0;
+  arr.forEach(h=>totalDist+=h.amount||0);
+  set('cbTotalDist','$'+totalDist.toFixed(2));
+  const limit=ST.cashbackLimit||60;
+  const elig=Object.values(ALLU).filter(u=>u.isActive&&(u.cashbackReceived||0)<limit);
+  set('cbEligible',elig.length);
+  set('cbPerMember',elig.length>0?'$'+((ST.cashbackPool||0)/elig.length).toFixed(2):'$0.00');
+}
+
+// ── CLUB DISTRIBUTION ──
+window.distributeClub = async () => {
+  const amt  = parseFloat(document.getElementById('clubDistAmt').value);
+  const note = document.getElementById('clubDistNote').value || 'Monthly club bonus';
+  if(!amt||amt<=0) return toast('Enter valid amount');
+  const poolBal = ST.clubPool||0;
+  if(amt>poolBal) return toast(`Club pool only has $${poolBal.toFixed(2)}`);
+  const minDir=ST.clubMinDirects||10, minMatch=ST.clubMinMatching||50;
+  const eligible = Object.values(ALLU).filter(u=>{
+    if(!u.isActive) return false;
+    const directs = countDirects(u.id);
+    // matching income from RTDB would be better; approximate from Firestore
+    return directs>=minDir; // simplified check
+  });
+  if(!eligible.length) return toast('No eligible club members');
+  const perMember = amt/eligible.length;
+  for(const u of eligible) {
+    const nb=(u.walletBalance||0)+perMember;
+    await fsdb.collection('users').doc(u.id).update({walletBalance:nb});
+    await rtdb.ref(`users/${u.id}/income/club`).transaction(v=>(v||0)+perMember);
+    await rtdb.ref(`transactions/${u.id}`).push({
+      type:'Club Bonus',amount:perMember,note,status:'completed',timestamp:Date.now(),balance:nb
+    });
+  }
+  await rtdb.ref('settings/clubPool').transaction(v=>Math.max(0,(v||0)-amt));
+  await rtdb.ref('clubHistory').push({date:Date.now(),amount:amt,perMember,members:eligible.length,note});
+  toast(`✅ Club bonus: $${amt.toFixed(2)} → ${eligible.length} members`);
+  document.getElementById('clubDistAmt').value='';
+  loadClubPage();
+};
+
+async function loadClubPage() {
+  const snap = await rtdb.ref('clubHistory').get();
+  const hist = snap.exists()?snap.val():{};
+  const arr = Object.values(hist).sort((a,b)=>b.date-a.date);
+  document.getElementById('clubHistTb').innerHTML = arr.length
+    ? arr.map(h=>`<tr>
+        <td>${new Date(h.date).toLocaleDateString()}</td>
+        <td class="pill py">$${(h.amount||0).toFixed(2)}</td>
+        <td>$${(h.perMember||0).toFixed(2)}</td>
+        <td>${h.members}</td>
+        <td>${h.note||'—'}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No history</td></tr>';
+  let td=0; arr.forEach(h=>td+=h.amount||0);
+  set('clubTotalDist','$'+td.toFixed(2));
+  const minDir=ST.clubMinDirects||10;
+  const elig=Object.values(ALLU).filter(u=>u.isActive&&countDirects(u.id)>=minDir);
+  set('clubEligible',elig.length);
+  set('clubPerMember',elig.length>0?'$'+((ST.clubPool||0)/elig.length).toFixed(2):'$0.00');
+}
+
+// ── ROI DISTRIBUTION ──
+function renderROIInvestments(data) {
+  const rows=[];
+  Object.entries(data).forEach(([uid,invs])=>{
+    const u=ALLU[uid];
+    Object.entries(invs).forEach(([iid,inv])=>{
+      if(inv.status!=='active') return;
+      rows.push(`<tr>
+        <td style="font-weight:700">${u?u.fullName||u.email:'UID:'+uid.slice(0,8)}</td>
+        <td>${u?u.email:'—'}</td>
+        <td style="color:var(--accent);font-weight:700">$${inv.amount}</td>
+        <td style="color:var(--green)">${inv.roiRate||ST.roiRate||13}%</td>
+        <td>${new Date(inv.createdAt).toLocaleDateString()}</td>
+        <td style="color:var(--gold)">$${(inv.earnedROI||0).toFixed(2)}</td>
+        <td><span class="pill pg">Active</span></td>
+      </tr>`);
+    });
+  });
+  document.getElementById('roiInvTb').innerHTML = rows.join('') || '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:14px">No active investments</td></tr>';
+}
+
+window.runROIDist = async () => {
+  const rateOverride = parseFloat(document.getElementById('roiDistRate').value);
+  const rate = rateOverride > 0 ? rateOverride : (ST.roiRate||13);
+  if(!confirm(`Run ROI distribution at ${rate}%?`)) return;
+  const gb = ST.genBonus||{l1:20,l2:10,l3:8,l4:6,l5:4,l6:3,l7:2};
+  const invSnap = await rtdb.ref('investments').get();
+  if(!invSnap.exists()) return toast('No investments found');
+  const allInvs = invSnap.val();
+  let count=0, totalDist=0;
+  for(const [uid, invs] of Object.entries(allInvs)) {
+    const u=ALLU[uid]; if(!u) continue;
+    for(const [iid, inv] of Object.entries(invs)) {
+      if(inv.status!=='active') continue;
+      const monthly = inv.amount * rate/100;
+      const userShare = monthly*0.5;
+      const genPool   = monthly*0.5;
+      // Credit investor 50%
+      const newBal = (u.walletBalance||0)+userShare;
+      await fsdb.collection('users').doc(uid).update({walletBalance:newBal});
+      await rtdb.ref(`users/${uid}/income/roi`).transaction(v=>(v||0)+userShare);
+      await rtdb.ref(`investments/${uid}/${iid}`).update({earnedROI:(inv.earnedROI||0)+userShare});
+      await rtdb.ref(`transactions/${uid}`).push({
+        type:'ROI Return (50%)',amount:userShare,note:`Monthly ROI at ${rate}%`,
+        status:'completed',timestamp:Date.now(),balance:newBal
+      });
+      // Generation bonus up 7 levels
+      let curUid = uid;
+      const lvlKeys=['l1','l2','l3','l4','l5','l6','l7'];
+      for(let lvl=0;lvl<7;lvl++) {
+        const curU=ALLU[curUid]; if(!curU||!curU.sponsorId) break;
+        const up=Object.values(ALLU).find(s=>s.myRefCode===curU.sponsorId||s.username===curU.sponsorId||s.id===curU.sponsorId);
+        if(!up) break;
+        const pct=(gb[lvlKeys[lvl]]||0)/100;
+        const genAmt=genPool*pct;
+        if(genAmt>0) {
+          const upBal=(up.walletBalance||0)+genAmt;
+          await fsdb.collection('users').doc(up.id).update({walletBalance:upBal});
+          await rtdb.ref(`users/${up.id}/income/generation`).transaction(v=>(v||0)+genAmt);
+          await rtdb.ref(`transactions/${up.id}`).push({
+            type:`Generation Bonus L${lvl+1}`,amount:genAmt,
+            note:`From ${u.fullName||u.email}'s ROI`,
+            status:'completed',timestamp:Date.now(),balance:upBal
+          });
+          ALLU[up.id].walletBalance = upBal;
+        }
+        curUid=up.id;
+      }
+      count++; totalDist+=monthly;
+    }
+  }
+  toast(`✅ ROI done! ${count} investments, $${totalDist.toFixed(2)} total`);
+  await loadAllData();
+};
+
+// ── INCOME MANAGER ──
+window.applyIncomeManual = async () => {
+  const userQ  = document.getElementById('incMgrUser').value.trim();
+  const type   = document.getElementById('incMgrType').value;
+  const amt    = parseFloat(document.getElementById('incMgrAmt').value);
+  const note   = document.getElementById('incMgrNote').value.trim() || 'Admin adjustment';
+  if(!userQ||!amt) return toast('Fill all fields');
+  // Find user
+  const u = Object.values(ALLU).find(u=>u.email===userQ||u.id===userQ||u.username===userQ);
+  if(!u) return toast('User not found');
+  const isDebit = type==='manual_debit';
+  const change  = isDebit ? -Math.abs(amt) : Math.abs(amt);
+  const newBal  = Math.max(0,(u.walletBalance||0)+change);
+  await fsdb.collection('users').doc(u.id).update({walletBalance:newBal});
+  if(!isDebit) await rtdb.ref(`users/${u.id}/income/${type}`).transaction(v=>(v||0)+amt);
+  await rtdb.ref(`transactions/${u.id}`).push({
+    type:isDebit?'Admin Debit':'Admin Credit ('+type+')',
+    amount:change, note, status:'completed', timestamp:Date.now(), balance:newBal
+  });
+  manualHistory.unshift({date:new Date().toLocaleDateString(), user:u.fullName||u.email, type, amount:change});
+  renderManualHist();
+  toast(`✅ $${Math.abs(change).toFixed(2)} ${isDebit?'debited from':'credited to'} ${u.fullName||u.email}`);
+  ALLU[u.id].walletBalance=newBal;
+};
+
+window.openAdjustWallet = (uid, name) => {
+  document.getElementById('incMgrUser').value = ALLU[uid]?.email||uid;
+  showPage('income_mgr', null);
+  toast(`Adjusting wallet for ${name}`);
+};
+
+function renderManualHist() {
+  const tb=document.getElementById('incMgrHistTb');
+  tb.innerHTML = manualHistory.slice(0,20).map(h=>`<tr>
+    <td>${h.date}</td><td>${h.user}</td><td>${h.type}</td>
+    <td style="color:${h.amount>0?'var(--green)':'var(--red)'};font-weight:700">
+      ${h.amount>0?'+':''}$${Math.abs(h.amount).toFixed(2)}
+    </td>
+  </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--muted)">None</td></tr>';
+}
+
+// ── SETTINGS ──
+function fillSettingInputs() {
+  const sf=(id,v)=>{ const e=document.getElementById(id);if(e)e.value=v; };
+  sf('s_actFee',ST.activationFee||30); sf('s_compFund',ST.companyFund||5);
+  sf('s_sponsorComm',ST.sponsorCommission||4); sf('s_cbLimit',ST.cashbackLimit||60);
+  sf('s_matchPct',ST.matchingBonus||5); sf('s_dailyCap',ST.dailyCap||1000);
+  sf('s_cbPct',ST.cashbackPercent||3); sf('s_clubPct',ST.clubBonusPercent||4);
+  sf('s_clubMinDir',ST.clubMinDirects||10); sf('s_clubMinMatch',ST.clubMinMatching||50);
+  sf('s_roiRate',ST.roiRate||13); sf('s_roiMin',ST.roiMin||12); sf('s_roiMax',ST.roiMax||15);
+  sf('s_roiSpBonus',ST.roiSponsorBonus||5); sf('s_lockMonths',ST.lockMonths||6);
+  sf('s_wdCharge',ST.capitalWdCharge||10);
+  sf('s_g1',ST.genBonus?.l1||20); sf('s_g2',ST.genBonus?.l2||10);
+  sf('s_g3',ST.genBonus?.l3||8);  sf('s_g4',ST.genBonus?.l4||6);
+  sf('s_g5',ST.genBonus?.l5||4);  sf('s_g6',ST.genBonus?.l6||3);
+  sf('s_g7',ST.genBonus?.l7||2);
+  sf('s_admin1',ST.adminEmail1||'Irimu049@gmail.com');
+  sf('s_admin2',ST.adminEmail2||'admin@lifelinemeta.com');
+}
+
+function updateGenBonusDisplay() {
+  const gb=ST.genBonus||{l1:20,l2:10,l3:8,l4:6,l5:4,l6:3,l7:2};
+  ['l1','l2','l3','l4','l5','l6','l7'].forEach((k,i)=>set('gbL'+(i+1),(gb[k]||0)+'%'));
+}
+
+window.saveSettings = async () => {
+  const gv=id=>parseFloat(document.getElementById(id)?.value)||0;
+  const newST = {
+    activationFee:gv('s_actFee'), companyFund:gv('s_compFund'),
+    sponsorCommission:gv('s_sponsorComm'), cashbackLimit:gv('s_cbLimit'),
+    matchingBonus:gv('s_matchPct'), dailyCap:gv('s_dailyCap'),
+    cashbackPercent:gv('s_cbPct'), clubBonusPercent:gv('s_clubPct'),
+    clubMinDirects:gv('s_clubMinDir'), clubMinMatching:gv('s_clubMinMatch'),
+    roiRate:gv('s_roiRate'), roiMin:gv('s_roiMin'), roiMax:gv('s_roiMax'),
+    roiSponsorBonus:gv('s_roiSpBonus'), lockMonths:gv('s_lockMonths'),
+    capitalWdCharge:gv('s_wdCharge'),
+    genBonus:{
+      l1:gv('s_g1'),l2:gv('s_g2'),l3:gv('s_g3'),l4:gv('s_g4'),
+      l5:gv('s_g5'),l6:gv('s_g6'),l7:gv('s_g7')
+    },
+    adminEmail1: document.getElementById('s_admin1')?.value||'',
+    adminEmail2: document.getElementById('s_admin2')?.value||'',
+    // preserve pool balances
+    cashbackPool:ST.cashbackPool||0, clubPool:ST.clubPool||0,
+    companyFundBalance:ST.companyFundBalance||0,
+    totalJoiningVolume:ST.totalJoiningVolume||0, totalWithdrawn:ST.totalWithdrawn||0
+  };
+  await rtdb.ref('settings').set(newST);
+  ST=newST;
+  toast('✅ Settings saved!');
+};
+
+// ── REPORTS ──
+function renderReports() {
+  const joinVol = ST.totalJoiningVolume||0;
+  set('repJoinVol','$'+joinVol.toFixed(0));
+  const commPaid = joinVol*(((ST.sponsorCommission||4)/30)*Object.values(ALLU).filter(u=>u.isActive).length);
+  set('repCommPaid','$'+(ST.totalJoiningVolume?(ST.companyFundBalance||0):0).toFixed(0));
+  set('repRevenue','$'+(ST.companyFundBalance||0).toFixed(2));
+  const breakdown=[
+    {type:'Sponsor Commission ($4/activation)',total:(Object.values(ALLU).filter(u=>u.isActive).length*(ST.sponsorCommission||4)).toFixed(2)},
+    {type:'Company Fund ($5/activation)',total:(ST.companyFundBalance||0).toFixed(2)},
+    {type:'Cashback Pool (3% vol)',total:((ST.cashbackPool||0)+(ST.totalJoiningVolume||0)*(ST.cashbackPercent||3)/100).toFixed(2)},
+    {type:'Club Pool (4% vol)',total:((ST.clubPool||0)+(ST.totalJoiningVolume||0)*(ST.clubBonusPercent||4)/100).toFixed(2)},
+  ];
+  document.getElementById('repBreakdownTb').innerHTML = breakdown.map(b=>`<tr>
+    <td>${b.type}</td>
+    <td style="color:var(--green);font-weight:700">$${b.total}</td>
+    <td style="color:var(--muted)">${joinVol>0?((b.total/joinVol)*100).toFixed(1)+'%':'—'}</td>
+  </tr>`).join('');
+}
+
+// ── HELPERS ──
+function formatDate(val) {
+  if(!val) return '—';
+  try { return (val.toDate?val.toDate():new Date(val)).toLocaleDateString(); } catch(e){ return '—'; }
+}
+function set(id,val){ const el=document.getElementById(id);if(el)el.textContent=val; }
+function toast(msg){ const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3200); }
+
+// ── NAV ──
+window.showPage = (page,el) => {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const target=document.getElementById('page-'+page);
+  if(target) target.classList.add('active');
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const labels={overview:'Overview',users:'All Users',activations:'Activations',
+    investments:'Investments',withdrawals:'Withdrawals',cashback:'Cashback Pool',
+    clubbonus:'Club Bonus',roi_dist:'ROI Distribution',income_mgr:'Income Manager',
+    settings:'Settings',reports:'Reports'};
+  set('pgLabel',labels[page]||page);
+  closeSidebar();
+  if(page==='cashback') loadCashbackPage();
+  if(page==='clubbonus') loadClubPage();
+  if(page==='reports') renderReports();
+};
+
+window.toggleSidebar=()=>{ document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('show'); };
+window.closeSidebar=()=>{ document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); };
+let _light=false;
+window.toggleTheme=()=>{ _light=!_light; document.body.classList.toggle('light',_light); set('themeBtn',_light?'🌙 Dark':'☀ Light'); };
+</script>
+</body>
+</html>

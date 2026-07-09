@@ -167,6 +167,7 @@ tr:last-child td{border-bottom:none}
 
     <div class="nav-sec">Finance</div>
     <a data-perm="withdrawals" onclick="showPage('withdrawals',this)"><span class="ic">💸</span> Withdrawals <span id="wdBadge" style="background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:.65rem;margin-left:auto"></span></a>
+    <a data-perm="fundrequests" onclick="showPage('fundrequests',this)"><span class="ic">💵</span> Fund Requests <span id="frBadge" style="background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:.65rem;margin-left:auto"></span></a>
     <a data-perm="investments" onclick="showPage('investments',this)"><span class="ic">📈</span> Investments</a>
     <a data-perm="transactions" onclick="showPage('transactions',this)"><span class="ic">📋</span> Transactions</a>
     <a data-perm="vouchers" onclick="showPage('vouchers',this)"><span class="ic">🎫</span> Gift Vouchers</a>
@@ -347,6 +348,39 @@ tr:last-child td{border-bottom:none}
       <table>
         <thead><tr><th>#</th><th>User</th><th>Amount</th><th>Wallet Address</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
         <tbody id="wdTb"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FUND REQUESTS ===== -->
+<div class="page" id="page-fundrequests">
+  <div class="pg-title">Fund Requests</div>
+  <div class="info-box">💵 Two types: <strong>Deposit Claim</strong> (user says they sent money externally — verify proof/TxID before approving) and <strong>Advance/Loan Request</strong> (user asking admin to credit funds directly, no prior payment). Approving either credits the user's wallet balance.</div>
+  <div class="cards-grid" style="max-width:700px">
+    <div class="sc cr"><div class="sc-lbl">Pending</div><div class="sc-val" id="frPendCount">0</div><div class="sc-ic">⏳</div></div>
+    <div class="sc cgr"><div class="sc-lbl">Approved</div><div class="sc-val" id="frApprCount">0</div><div class="sc-ic">✅</div></div>
+    <div class="sc cg"><div class="sc-lbl">Total Credited</div><div class="sc-val" id="frTotalCredited">$0</div><div class="sc-ic">💰</div></div>
+  </div>
+  <div class="search-bar">
+    <select id="frFilterSel" onchange="filterFundRequests()">
+      <option value="all">All</option>
+      <option value="pending">Pending</option>
+      <option value="approved">Approved</option>
+      <option value="rejected">Rejected</option>
+    </select>
+    <select id="frTypeSel" onchange="filterFundRequests()">
+      <option value="all">All Types</option>
+      <option value="deposit">Deposit Claim</option>
+      <option value="advance">Advance / Loan Request</option>
+    </select>
+    <button class="btn btn-o btn-sm" onclick="loadFundRequests()">↻ Refresh</button>
+  </div>
+  <div class="card">
+    <div class="tw">
+      <table>
+        <thead><tr><th>#</th><th>User</th><th>Type</th><th>Amount</th><th>Method/Note</th><th>Proof/TxID</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="frTb"><tr><td colspan="9" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -778,12 +812,13 @@ const rtdb  = firebase.database();   // Realtime DB — income, tx, investments
 const SUPER_ADMIN_EMAILS = ['admin@lifelinemeta.com','superadmin@lifelinemeta.com'];
 
 // Full permission set (page keys must match data-perm in sidebar)
-const ALL_PERMS = ['overview','users','activations','tree','withdrawals','investments','transactions',
+const ALL_PERMS = ['overview','users','activations','tree','withdrawals','fundrequests','investments','transactions',
   'vouchers','cashback','clubbonus','roi','settings','ranks','announce','reports','subadmins','activitylog','backup'];
 
 let ALLU     = {}; // all Firestore users
 let ALL_ACT  = {}; // activation requests (RTDB)
 let ALL_WD   = {}; // withdrawals (RTDB)
+let ALL_FR   = {}; // fund requests (RTDB)
 let ALL_INV  = {}; // investments (RTDB)
 let ALL_TX   = []; // all transactions (RTDB)
 let ALL_VOU  = {}; // gift vouchers (RTDB)
@@ -842,6 +877,7 @@ async function loadAll() {
   await loadUsers();
   if (hasPerm('activations')) await loadActivations();
   if (hasPerm('withdrawals')) await loadWithdrawals();
+  if (hasPerm('fundrequests')) await loadFundRequests();
   if (hasPerm('investments')) await loadInvestments();
   if (hasPerm('transactions')) await loadAllTx();
   if (hasPerm('vouchers')) await loadVouchers();
@@ -1479,6 +1515,90 @@ window.rejectWD = async (key, uid, amount) => {
   logActivity('Reject Withdrawal', ALLU[uid]?.username||uid, '$'+amount);
   renderWithdrawals(Object.entries(ALL_WD));
   toast('Withdrawal rejected. Amount refunded to user.');
+};
+
+// ── FUND REQUESTS ──────────────────────────────────────
+window.loadFundRequests = async () => {
+  const snap = await rtdb.ref('fundRequests').get();
+  ALL_FR = {};
+  if (snap.exists()) {
+    Object.entries(snap.val()).forEach(([uid, reqs]) => {
+      Object.entries(reqs).forEach(([rid, r]) => {
+        ALL_FR[uid+'__'+rid] = { ...r, uid };
+      });
+    });
+  }
+  renderFundRequests(Object.entries(ALL_FR));
+};
+
+function renderFundRequests(entries) {
+  entries.sort(([,a],[,b]) => b.createdAt - a.createdAt);
+  const pending  = entries.filter(([,r]) => r.status === 'pending');
+  const approved = entries.filter(([,r]) => r.status === 'approved');
+  const totalCredited = approved.reduce((s,[,r]) => s + (r.amount||0), 0);
+  set('frPendCount', pending.length);
+  set('frApprCount', approved.length);
+  set('frTotalCredited', '$'+totalCredited.toFixed(0));
+  const badge = document.getElementById('frBadge');
+  badge.textContent = pending.length > 0 ? pending.length : '';
+
+  const tb = document.getElementById('frTb');
+  tb.innerHTML = entries.length ? entries.map(([key,r],i) => `<tr>
+    <td style="color:var(--muted)">${i+1}</td>
+    <td style="font-weight:600">${ALLU[r.uid]?.fullName||ALLU[r.uid]?.username||r.uid?.slice(0,10)+'…'||'—'}</td>
+    <td><span class="pill ${r.type==='advance'?'pp':'pb'}">${r.type==='advance'?'Advance/Loan':'Deposit Claim'}</span></td>
+    <td style="color:var(--green);font-weight:700">$${(r.amount||0).toFixed(2)}</td>
+    <td style="font-size:.73rem;color:var(--muted);max-width:160px;white-space:normal">${r.note||r.method||'—'}</td>
+    <td style="font-family:monospace;font-size:.7rem;max-width:110px;overflow:hidden;text-overflow:ellipsis" title="${r.proof||r.txid||''}">${(r.proof||r.txid||'—').toString().slice(0,18)}</td>
+    <td style="font-size:.73rem">${r.createdAt?new Date(r.createdAt).toLocaleDateString():'—'}</td>
+    <td><span class="pill ${r.status==='approved'?'pg':r.status==='rejected'?'pr':'py'}">${r.status||'pending'}</span></td>
+    <td style="display:flex;gap:5px">
+      ${r.status==='pending'?`
+        <button class="btn btn-gr btn-sm" onclick="approveFundReq('${key}','${r.uid}',${r.amount||0})">✅ Approve</button>
+        <button class="btn btn-r btn-sm" onclick="rejectFundReq('${key}')">✕ Reject</button>`:'—'}
+    </td>
+  </tr>`).join('')
+  : '<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:16px">No fund requests</td></tr>';
+}
+
+window.filterFundRequests = () => {
+  const f = document.getElementById('frFilterSel').value;
+  const t = document.getElementById('frTypeSel').value;
+  let entries = Object.entries(ALL_FR);
+  if (f !== 'all') entries = entries.filter(([,r]) => r.status === f);
+  if (t !== 'all') entries = entries.filter(([,r]) => r.type === t);
+  renderFundRequests(entries);
+};
+
+window.approveFundReq = async (key, uid, amount) => {
+  const r = ALL_FR[key];
+  const label = r.type === 'advance' ? 'advance/loan credit' : 'deposit claim';
+  if (!confirm('Approve this '+label+' of $'+amount+' and credit the user\'s wallet?')) return;
+  const [, rid] = key.split('__');
+  await rtdb.ref('fundRequests/'+uid+'/'+rid).update({ status:'approved', approvedAt:Date.now(), approvedBy:CURRENT_ADMIN.email });
+  const wRef = rtdb.ref('users/'+uid+'/walletBalance');
+  const wSnap = await wRef.get();
+  const newBal = parseFloat(wSnap.exists()?wSnap.val():0) + amount;
+  await wRef.set(newBal);
+  await rtdb.ref('transactions/'+uid).push({
+    type: r.type === 'advance' ? 'Advance Credit' : 'Deposit Credit', amount:amount,
+    note: (r.type==='advance'?'Advance/loan approved by admin':'Deposit claim approved')+(r.note?(' — '+r.note):''),
+    timestamp:Date.now(), status:'completed', balance:newBal
+  });
+  ALL_FR[key].status = 'approved';
+  logActivity('Approve Fund Request', ALLU[uid]?.username||uid, r.type+' $'+amount);
+  renderFundRequests(Object.entries(ALL_FR));
+  toast('✅ $'+amount+' credited to user wallet.');
+};
+
+window.rejectFundReq = async key => {
+  if (!confirm('Reject this fund request?')) return;
+  const [uid, rid] = key.split('__');
+  await rtdb.ref('fundRequests/'+uid+'/'+rid).update({ status:'rejected', rejectedAt:Date.now(), rejectedBy:CURRENT_ADMIN.email });
+  ALL_FR[key].status = 'rejected';
+  logActivity('Reject Fund Request', ALLU[uid]?.username||uid, '');
+  renderFundRequests(Object.entries(ALL_FR));
+  toast('Fund request rejected.');
 };
 
 // ── INVESTMENTS ───────────────────────────────────────
@@ -2219,7 +2339,7 @@ window.doLogout   = async () => { await auth.signOut(); window.location.href='lo
 // ── NAV ──────────────────────────────────────────────
 const PAGE_LABELS = {
   overview:'Overview', users:'All Users', activations:'Activations', tree:'Binary Tree',
-  withdrawals:'Withdrawals', investments:'Investments', transactions:'Transactions', vouchers:'Gift Vouchers',
+  withdrawals:'Withdrawals', fundrequests:'Fund Requests', investments:'Investments', transactions:'Transactions', vouchers:'Gift Vouchers',
   cashback:'Cashback Pool', clubbonus:'Club Bonus', roi:'ROI Management',
   settings:'Settings', ranks:'Ranks', announce:'Announcements', reports:'Reports',
   subadmins:'Sub-Admins', activitylog:'Activity Log', backup:'Backup & Restore'
@@ -2240,6 +2360,7 @@ window.showPage = (page, el) => {
   if(page==='activitylog') loadActivityLog();
   if(page==='backup') loadBackups();
   if(page==='vouchers') loadVouchers();
+  if(page==='fundrequests') loadFundRequests();
 };
 
 window.toggleSidebar = () => {

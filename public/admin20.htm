@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Life Line Meta – Super Admin</title>
+<style>
+:root{
+  --bg:#060a12;--surface:#0c1420;--card:#101e32;--border:#162238;
+  --accent:#00d4ff;--accent2:#8b5cf6;--gold:#f59e0b;--green:#10b981;
+  --red:#ef4444;--orange:#f97316;--pink:#ec4899;
+  --text:#e2e8f0;--muted:#64748b;--radius:11px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+button{cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:inherit}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+.sb{position:fixed;top:0;left:0;height:100vh;width:232px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;transition:transform .3s;overflow-y:auto}
+.sb-logo{padding:14px 14px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;flex-shrink:0}
+.sb-logo img{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);flex-shrink:0}
+.sb-logo h2{font-size:.88rem;font-weight:900;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sb-logo p{font-size:.58rem;color:var(--red);font-weight:800;text-transform:uppercase;letter-spacing:.8px}
+.ns{padding:8px 12px 2px;font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-weight:700}
+nav a{display:flex;align-items:center;gap:8px;padding:8px 12px;font-size:.76rem;color:var(--muted);border-left:3px solid transparent;transition:.18s;cursor:pointer;user-select:none}
+nav a:hover{color:var(--text);background:rgba(0,212,255,.05)}
+nav a.active{color:var(--text);background:rgba(0,212,255,.07);border-left-color:var(--accent)}
+nav a .ic{width:15px;text-align:center;font-size:.8rem}
+.nb{background:var(--red);color:#fff;border-radius:9px;padding:1px 5px;font-size:.6rem;margin-left:auto}
+
+.topbar{position:fixed;top:0;left:232px;right:0;height:50px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:199;transition:left .3s}
+.menu-btn{display:none;background:none;border:none;color:var(--text);font-size:1.2rem;padding:4px}
+.tb-r{display:flex;align-items:center;gap:9px}
+.ab{background:rgba(239,68,68,.14);color:var(--red);border:1px solid rgba(239,68,68,.22);border-radius:6px;padding:2px 8px;font-size:.67rem;font-weight:800}
+
+.main{margin-left:232px;padding-top:50px;min-height:100vh;transition:margin-left .3s}
+.pg{display:none;padding:16px}
+.pg.active{display:block}
+.pg-title{font-size:1.1rem;font-weight:800;margin-bottom:13px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:7px}
+
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:13px;position:relative;overflow:hidden}
+.sc::after{content:'';position:absolute;top:-15px;right:-15px;width:60px;height:60px;border-radius:50%;opacity:.07}
+.cb::after{background:var(--accent)}.cp::after{background:var(--accent2)}.cg2::after{background:var(--gold)}.cgr::after{background:var(--green)}.cr::after{background:var(--red)}.co::after{background:var(--orange)}.cpk::after{background:var(--pink)}
+.sl{font-size:.64rem;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px}
+.sv{font-size:1.4rem;font-weight:800}
+.cb .sv{color:var(--accent)}.cp .sv{color:var(--accent2)}.cg2 .sv{color:var(--gold)}.cgr .sv{color:var(--green)}.cr .sv{color:var(--red)}.co .sv{color:var(--orange)}.cpk .sv{color:var(--pink)}
+.ss{font-size:.65rem;color:var(--muted);margin-top:2px}
+.si{position:absolute;bottom:10px;right:10px;font-size:1.2rem;opacity:.17}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.ct{font-size:.82rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:5px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.73rem}
+th{color:var(--muted);font-weight:600;padding:7px 9px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;font-size:.65rem;text-transform:uppercase}
+td{padding:8px 9px;border-bottom:1px solid rgba(22,34,56,.5);white-space:nowrap;vertical-align:middle}
+tr:hover td{background:rgba(0,212,255,.02)}
+tr:last-child td{border-bottom:none}
+.pill{display:inline-block;padding:1px 7px;border-radius:20px;font-size:.64rem;font-weight:700}
+.pg{background:rgba(16,185,129,.15);color:var(--green)}
+.py{background:rgba(245,158,11,.15);color:var(--gold)}
+.pr{background:rgba(239,68,68,.15);color:var(--red)}
+.pb{background:rgba(0,212,255,.15);color:var(--accent)}
+.pp{background:rgba(139,92,246,.15);color:var(--accent2)}
+.ppk{background:rgba(236,72,153,.15);color:var(--pink)}
+
+.btn{padding:6px 13px;border-radius:7px;font-size:.72rem;font-weight:700;border:none;cursor:pointer;transition:.15s;white-space:nowrap}
+.btn:hover{opacity:.82}
+.btn-p{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+.btn-gr{background:var(--green);color:#fff}
+.btn-r{background:var(--red);color:#fff}
+.btn-g{background:var(--gold);color:#000}
+.btn-o{background:none;border:1px solid var(--border);color:var(--text)}
+.btn-pk{background:var(--pink);color:#fff}
+.btn-or{background:var(--orange);color:#fff}
+.btn-sm{padding:2px 8px;font-size:.66rem}
+
+.fg{margin-bottom:11px}
+.fg label{display:block;font-size:.69rem;color:var(--muted);margin-bottom:3px;font-weight:600}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 10px;color:var(--text);font-size:.8rem;outline:none;transition:.2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent)}
+.fg textarea{resize:vertical;min-height:65px}
+
+.sb2{display:flex;gap:8px;margin-bottom:11px;flex-wrap:wrap}
+.sb2 input{flex:1;min-width:160px;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:7px 11px;color:var(--text);font-size:.77rem;outline:none}
+.sb2 input:focus{border-color:var(--accent)}
+.sb2 select{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:7px 9px;color:var(--text);font-size:.77rem;outline:none}
+
+.ib{background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.13);border-radius:8px;padding:9px 12px;font-size:.73rem;color:var(--accent);margin-bottom:11px;line-height:1.7}
+.wb{background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.15);border-radius:8px;padding:9px 12px;font-size:.73rem;color:var(--gold);margin-bottom:11px;line-height:1.7}
+.rb2{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:8px;padding:9px 12px;font-size:.73rem;color:var(--red);margin-bottom:11px;line-height:1.7}
+
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;align-items:center;justify-content:center;padding:10px}
+.mbg.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;width:90%;max-width:500px;max-height:92vh;overflow-y:auto}
+.mt{font-size:.9rem;font-weight:800;margin-bottom:13px;display:flex;align-items:center;justify-content:space-between}
+.mc{background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer}
+
+.tog{position:relative;display:inline-block;width:38px;height:20px;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0}
+.sldr{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:20px;transition:.3s}
+.sldr:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+input:checked+.sldr{background:var(--green)}
+input:checked+.sldr:before{transform:translateX(18px)}
+.tw-row{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.tw-lbl{font-size:.77rem;font-weight:600}
+
+.prog{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:5px}
+.prog-f{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px}
+
+.mob-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:198}
+.mob-ov.show{display:block}
+.toast{position:fixed;bottom:16px;right:16px;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:9px 15px;font-size:.77rem;z-index:9999;opacity:0;transform:translateY(12px);transition:.3s;pointer-events:none;max-width:280px}
+.toast.show{opacity:1;transform:translateY(0)}
+
+.ni{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:9px;position:relative}
+.ni .dx{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--muted);font-size:.9rem;cursor:pointer}
+
+@media(max-width:800px){
+  .sb{transform:translateX(-100%)}
+  .sb.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .topbar{left:0}
+  .menu-btn{display:block}
+  .two-col{grid-template-columns:1fr}
+  .cg{grid-template-columns:1fr 1fr}
+}
+@media(max-width:420px){.cg{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="mob-ov" id="mobOv" onclick="closeSB()"></div>
+
+<aside class="sb" id="sbEl">
+  <div class="sb-logo">
+    <img src="assets/images/logo.jpeg" alt="LLM"
+         onerror="this.onerror=null;this.src='assets/logo/livelinemeta.png';this.onerror=function(){this.style.display='none'}">
+    <div><h2>Life Line Meta</h2><p>Super Admin</p></div>
+  </div>
+  <nav>
+    <div class="ns">Dashboard</div>
+    <a class="active" onclick="sp('overview',this)"><span class="ic">🏠</span> Overview</a>
+    <div class="ns">Users</div>
+    <a onclick="sp('users',this)"><span class="ic">👥</span> All Users <span class="nb" id="nb-u"></span></a>
+    <a onclick="sp('activations',this)"><span class="ic">✅</span> Activations <span class="nb" id="nb-a"></span></a>
+    <a onclick="sp('edituser',this)"><span class="ic">✏</span> Edit User</a>
+    <a onclick="sp('subadmin',this)"><span class="ic">🛡</span> Sub-Admins</a>
+    <a onclick="sp('tree',this)"><span class="ic">🌳</span> Binary Tree</a>
+    <div class="ns">Finance</div>
+    <a onclick="sp('withdrawals',this)"><span class="ic">💸</span> Withdrawals <span class="nb" id="nb-w"></span></a>
+    <a onclick="sp('investments',this)"><span class="ic">📈</span> Investments</a>
+    <a onclick="sp('fundac',this)"><span class="ic">🏦</span> Fund Account</a>
+    <a onclick="sp('transactions',this)"><span class="ic">📋</span> Transactions</a>
+    <div class="ns">Income</div>
+    <a onclick="sp('cashback',this)"><span class="ic">🎁</span> Cashback Pool</a>
+    <a onclick="sp('clubbonus',this)"><span class="ic">🏆</span> Club Bonus</a>
+    <a onclick="sp('roi',this)"><span class="ic">💰</span> ROI</a>
+    <a onclick="sp('matching',this)"><span class="ic">🤝</span> Matching</a>
+    <a onclick="sp('voucher',this)"><span class="ic">🎟</span> Gift Voucher</a>
+    <div class="ns">System</div>
+    <a onclick="sp('settings',this)"><span class="ic">⚙</span> Global Settings</a>
+    <a onclick="sp('ranks',this)"><span class="ic">⭐</span> Ranks</a>
+    <a onclick="sp('buttons',this)"><span class="ic">🔘</span> Dashboard Buttons</a>
+    <a onclick="sp('notices',this)"><span class="ic">📢</span> Notices</a>
+    <a onclick="sp('reports',this)"><span class="ic">📊</span> Reports</a>
+    <a onclick="sp('backup',this)"><span class="ic">💾</span> Backup & Restore</a>
+    <div style="height:8px"></div>
+    <a onclick="doLogout()" style="color:var(--red)"><span class="ic">🚪</span> Logout</a>
+  </nav>
+</aside>
+
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:8px">
+    <button class="menu-btn" onclick="toggleSB()">☰</button>
+    <span style="font-size:.82rem;font-weight:700;color:var(--muted)" id="pgLbl">Overview</span>
+  </div>
+  <div class="tb-r">
+    <span class="ab">🛡 SUPER ADMIN</span>
+    <span style="font-size:.72rem;color:var(--muted)" id="aEmail">—</span>
+    <button class="btn btn-o btn-sm" onclick="doLogout()">Logout</button>
+  </div>
+</div>
+
+<main class="main">
+
+<!-- OVERVIEW -->
+<div class="pg active" id="pg-overview">
+  <div class="pg-title">Super Admin Dashboard</div>
+  <div class="cg">
+    <div class="sc cb"><div class="sl">Total Users</div><div class="sv" id="ov-u">0</div><div class="ss" id="ov-ua">0 active</div><div class="si">👥</div></div>
+    <div class="sc cgr"><div class="sl">Revenue</div><div class="sv" id="ov-r">$0</div><div class="ss">Activation fees</div><div class="si">💵</div></div>
+    <div class="sc cg2"><div class="sl">Company Fund</div><div class="sv" id="ov-f">$0</div><div class="ss">$5 per activation</div><div class="si">🏦</div></div>
+    <div class="sc cp"><div class="sl">Total Invested</div><div class="sv" id="ov-i">$0</div><div class="ss">ROI plans</div><div class="si">📈</div></div>
+    <div class="sc cr"><div class="sl">Pending Act.</div><div class="sv" id="ov-pa">0</div><div class="ss">Awaiting approval</div><div class="si">⏳</div></div>
+    <div class="sc cr"><div class="sl">Pending WD</div><div class="sv" id="ov-pw">0</div><div class="ss">Awaiting payment</div><div class="si">💸</div></div>
+    <div class="sc co"><div class="sl">Blocked Users</div><div class="sv" id="ov-bl">0</div><div class="ss">Income disabled</div><div class="si">🚫</div></div>
+    <div class="sc cpk"><div class="sl">Vouchers</div><div class="sv" id="ov-vo">0</div><div class="ss">Active</div><div class="si">🎟</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Quick Actions</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <button class="btn btn-p" onclick="runCashback()">💰 Cashback</button>
+        <button class="btn btn-g" onclick="runClub()">🏆 Club Bonus</button>
+        <button class="btn btn-gr" onclick="runROI()">📈 ROI Payout</button>
+        <button class="btn btn-or" onclick="runMatching()">🤝 Matching</button>
+        <button class="btn btn-pk" onclick="sp('voucher',null)">🎟 Voucher</button>
+        <button class="btn btn-o" onclick="sp('backup',null)">💾 Backup</button>
+      </div>
+      <hr style="border-color:var(--border);margin-bottom:10px"/>
+      <div style="font-size:.75rem">
+        <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:var(--muted)">Cashback Pool (3%)</span><span id="ov-cb" style="color:var(--accent);font-weight:700">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:var(--muted)">Club Pool (4%)</span><span id="ov-cl" style="color:var(--gold);font-weight:700">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:var(--muted)">ROI Rate</span><span id="ov-rr" style="color:var(--green);font-weight:700">12%</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:var(--muted)">Matching %</span><span id="ov-mp" style="color:var(--accent2);font-weight:700">5%</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">Latest Activations <button class="btn btn-sm btn-o" onclick="sp('activations',null)">All</button></div>
+      <div class="tw"><table><thead><tr><th>User</th><th>Date</th><th>Status</th><th>Act</th></tr></thead><tbody id="ov-at"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:12px">Loading…</td></tr></tbody></table></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Active Notices <button class="btn btn-sm btn-p" onclick="sp('notices',null)">Manage</button></div>
+    <div id="ov-no" style="font-size:.77rem;color:var(--muted)">Loading…</div>
+  </div>
+</div>
+
+<!-- ALL USERS -->
+<div class="pg" id="pg-users">
+  <div class="pg-title">All Users</div>
+  <div class="sb2">
+    <input type="text" id="u-s" placeholder="Search name, username, email, ID…" oninput="filterU()"/>
+    <select id="u-f" onchange="filterU()"><option value="all">All</option><option value="active">Active</option><option value="inactive">Inactive</option><option value="blocked">Blocked</option></select>
+    <button class="btn btn-o btn-sm" onclick="loadUsers()">↻</button>
+    <button class="btn btn-p btn-sm" onclick="xCSV('users')">⬇ CSV</button>
+    <button class="btn btn-r btn-sm" onclick="delAllUsers()">🗑 Delete All</button>
+  </div>
+  <div class="card">
+    <div class="ct">Users <small id="u-c" style="color:var(--muted);font-weight:400"></small></div>
+    <div class="tw"><table>
+      <thead><tr><th>#</th><th>ID</th><th>Name</th><th>Username</th><th>Email</th><th>Joining Date</th><th>Sponsor By</th><th>Status</th><th>Income</th><th>Withdraw</th><th>Blocked</th><th>Actions</th></tr></thead>
+      <tbody id="u-tb"><tr><td colspan="12" style="text-align:center;color:var(--muted);padding:14px">Loading…</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ACTIVATIONS -->
+<div class="pg" id="pg-activations">
+  <div class="pg-title">Activation Requests</div>
+  <div class="ib">💡 $4 → Sponsor | $5 → Company Fund | $21 → Operations. Verify TxID before approving.</div>
+  <div class="sb2">
+    <select id="ac-f" onchange="filterAct()"><option value="all">All</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select>
+    <button class="btn btn-o btn-sm" onclick="loadAct()">↻</button>
+    <button class="btn btn-gr btn-sm" onclick="approveAllAct()">✅ Approve All Pending</button>
+  </div>
+  <div class="card">
+    <div class="ct">Requests <small id="ac-c" style="color:var(--muted);font-weight:400"></small></div>
+    <div class="tw"><table>
+      <thead><tr><th>#</th><th>ID</th><th>Name</th><th>Username</th><th>Email</th><th>Method</th><th>TxID</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="ac-tb"><tr><td colspan="10" style="text-align:center;color:var(--muted);padding:14px">Loading…</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- EDIT USER -->
+<div class="pg" id="pg-edituser">
+  <div class="pg-title">Edit User</div>
+  <div class="card" style="max-width:480px">
+    <div class="fg"><label>Search (ID / Username / Email)</label>
+      <div style="display:flex;gap:8px"><input type="text" id="eu-q" placeholder="Enter to search"/><button class="btn btn-p btn-sm" onclick="searchEU()">Find</button></div>
+    </div>
+  </div>
+  <div class="card" id="eu-card" style="max-width:620px;display:none">
+    <div class="ct" id="eu-title">Edit User</div>
+    <div class="two-col">
+      <div class="fg"><label>Full Name</label><input type="text" id="eu-name"/></div>
+      <div class="fg"><label>Username</label><input type="text" id="eu-uname"/></div>
+      <div class="fg"><label>Email</label><input type="email" id="eu-email"/></div>
+      <div class="fg"><label>Mobile</label><input type="text" id="eu-mob"/></div>
+      <div class="fg"><label>Country</label><input type="text" id="eu-ctry"/></div>
+      <div class="fg"><label>USDT Wallet</label><input type="text" id="eu-wal"/></div>
+      <div class="fg"><label>Sponsor ID (change upline)</label><input type="text" id="eu-sp"/></div>
+      <div class="fg"><label>Wallet Balance ($)</label><input type="number" id="eu-bal"/></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      <button class="btn btn-gr" onclick="saveEU()">💾 Save</button>
+      <button class="btn btn-or" onclick="cutTree()">✂ Cut Tree</button>
+      <button class="btn btn-p" onclick="loginAs()">🔑 Login As User</button>
+      <button class="btn btn-r" onclick="deleteU()">🗑 Delete</button>
+    </div>
+    <hr style="border-color:var(--border);margin-bottom:12px"/>
+    <div class="ct">Flags & Controls</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:11px">
+      <div class="tw-row"><label class="tog"><input type="checkbox" id="eu-inc" checked/><span class="sldr"></span></label><span class="tw-lbl">Income Active</span></div>
+      <div class="tw-row"><label class="tog"><input type="checkbox" id="eu-wd" checked/><span class="sldr"></span></label><span class="tw-lbl">Withdrawal Active</span></div>
+      <div class="tw-row"><label class="tog"><input type="checkbox" id="eu-act" checked/><span class="sldr"></span></label><span class="tw-lbl">Account Active</span></div>
+      <div class="tw-row"><label class="tog"><input type="checkbox" id="eu-blk"/><span class="sldr"></span></label><span class="tw-lbl" style="color:var(--red)">Blocked</span></div>
+    </div>
+    <button class="btn btn-or" onclick="saveFlags()">Save Flags</button>
+    <input type="hidden" id="eu-uid"/>
+  </div>
+</div>
+
+<!-- SUB-ADMIN -->
+<div class="pg" id="pg-subadmin">
+  <div class="pg-title">Sub-Admin Management</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Create Sub-Admin</div>
+      <div class="fg"><label>User ID or Email</label><input type="text" id="sa-q" placeholder="User ID or email"/></div>
+      <div class="fg"><label>Role Name</label><input type="text" id="sa-role" placeholder="e.g. Finance Manager"/></div>
+      <div class="fg"><label>Permissions</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:5px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:.74rem;cursor:pointer"><input type="checkbox" id="p-u" checked/> Users</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.74rem;cursor:pointer"><input type="checkbox" id="p-a"/> Activations</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.74rem;cursor:pointer"><input type="checkbox" id="p-w"/> Withdrawals</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.74rem;cursor:pointer"><input type="checkbox" id="p-i"/> Investments</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.74rem;cursor:pointer"><input type="checkbox" id="p-d"/> Distributions</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.74rem;cursor:pointer"><input type="checkbox" id="p-s"/> Settings</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.74rem;cursor:pointer"><input type="checkbox" id="p-r"/> Reports</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.74rem;cursor:pointer"><input type="checkbox" id="p-n"/> Notices</label>
+        </div>
+      </div>
+      <button class="btn btn-p" onclick="createSA()" style="width:100%">🛡 Create Sub-Admin</button>
+    </div>
+    <div class="card">
+      <div class="ct">Current Sub-Admins <button class="btn btn-o btn-sm" onclick="loadSA()">↻</button></div>
+      <div class="tw"><table><thead><tr><th>User</th><th>Role</th><th>Permissions</th><th>Action</th></tr></thead><tbody id="sa-tb"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:14px">None</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- BINARY TREE -->
+<div class="pg" id="pg-tree">
+  <div class="pg-title">Binary Tree</div>
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+    <input type="text" id="tr-q" placeholder="Username or email…" style="flex:1;min-width:160px;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:7px 10px;color:var(--text);font-size:.77rem;outline:none"/>
+    <button class="btn btn-p btn-sm" onclick="searchTree()">Search</button>
+    <button class="btn btn-o btn-sm" onclick="loadRootTree()">Root</button>
+  </div>
+  <div class="card"><div class="ct" id="tr-lbl">Tree</div><div style="overflow-x:auto;padding:10px 0;min-height:180px" id="tr-view"><div style="text-align:center;color:var(--muted);padding:28px">Loading…</div></div></div>
+</div>
+
+<!-- WITHDRAWALS -->
+<div class="pg" id="pg-withdrawals">
+  <div class="pg-title">Withdrawal Management</div>
+  <div class="cg" style="max-width:660px">
+    <div class="sc cr"><div class="sl">Pending</div><div class="sv" id="wd-p">0</div><div class="si">⏳</div></div>
+    <div class="sc cgr"><div class="sl">Approved Today</div><div class="sv" id="wd-a">0</div><div class="si">✅</div></div>
+    <div class="sc cg2"><div class="sl">Total Paid</div><div class="sv" id="wd-t">$0</div><div class="si">💸</div></div>
+  </div>
+  <div class="sb2">
+    <select id="wd-f" onchange="filterWD()"><option value="all">All</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select>
+    <button class="btn btn-o btn-sm" onclick="loadWD()">↻</button>
+    <button class="btn btn-gr btn-sm" onclick="approveAllWD()">✅ Approve All Pending</button>
+    <button class="btn btn-o btn-sm" onclick="xCSV('withdrawals')">⬇ CSV</button>
+  </div>
+  <div class="card"><div class="tw"><table>
+    <thead><tr><th>#</th><th>User</th><th>Amount</th><th>Wallet</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody id="wd-tb"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:14px">Loading…</td></tr></tbody>
+  </table></div></div>
+</div>
+
+<!-- INVESTMENTS -->
+<div class="pg" id="pg-investments">
+  <div class="pg-title">Investment Management</div>
+  <div class="cg" style="max-width:620px">
+    <div class="sc cp"><div class="sl">Total Invested</div><div class="sv" id="iv-t">$0</div><div class="si">📈</div></div>
+    <div class="sc cgr"><div class="sl">Active Plans</div><div class="sv" id="iv-a">0</div><div class="si">✅</div></div>
+    <div class="sc cg2"><div class="sl">ROI Paid</div><div class="sv" id="iv-r">$0</div><div class="si">💰</div></div>
+  </div>
+  <div class="card">
+    <div class="ct">Plans <button class="btn btn-o btn-sm" onclick="loadInv()">↻</button></div>
+    <div class="tw"><table>
+      <thead><tr><th>User</th><th>Amount</th><th>ROI%</th><th>Date</th><th>Earned</th><th>Unlock</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="iv-tb"><tr><td colspan="8" style="text-align:center;color:var(--muted);padding:14px">Loading…</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- FUND ACCOUNT -->
+<div class="pg" id="pg-fundac">
+  <div class="pg-title">Company Fund Account</div>
+  <div class="cg" style="max-width:660px">
+    <div class="sc cg2"><div class="sl">Fund Balance</div><div class="sv" id="fd-b">$0</div><div class="ss">$5 per activation</div><div class="si">🏦</div></div>
+    <div class="sc cgr"><div class="sl">Total In</div><div class="sv" id="fd-i">$0</div><div class="si">⬇</div></div>
+    <div class="sc cr"><div class="sl">Total Out</div><div class="sv" id="fd-o">$0</div><div class="si">⬆</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Fund Operations</div>
+      <div class="fg"><label>Operation</label><select id="fd-op"><option value="add">Add to Fund</option><option value="withdraw">Withdraw from Fund</option><option value="distribute">Distribute to All Users</option></select></div>
+      <div class="fg"><label>Amount ($)</label><input type="number" id="fd-amt" placeholder="Amount"/></div>
+      <div class="fg"><label>Note</label><input type="text" id="fd-note" placeholder="Reason"/></div>
+      <button class="btn btn-p" onclick="fundOp()" style="width:100%">Execute</button>
+    </div>
+    <div class="card">
+      <div class="ct">Fund History</div>
+      <div class="tw"><table><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Note</th></tr></thead><tbody id="fd-tb"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:12px">No records</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- TRANSACTIONS -->
+<div class="pg" id="pg-transactions">
+  <div class="pg-title">All Transactions</div>
+  <div class="sb2">
+    <input type="text" id="tx-s" placeholder="Search user or type…" oninput="filterTX()"/>
+    <select id="tx-t" onchange="filterTX()"><option value="all">All Types</option><option value="Sponsor Commission">Sponsor</option><option value="Matching Bonus">Matching</option><option value="Daily Cashback">Cashback</option><option value="ROI Payout">ROI</option><option value="Club Bonus">Club</option><option value="Withdrawal">Withdrawal</option><option value="Generation Bonus">Generation</option></select>
+    <input type="date" id="tx-df" title="From"/>
+    <input type="date" id="tx-dt" title="To"/>
+    <button class="btn btn-p btn-sm" onclick="filterTX()">Filter</button>
+    <button class="btn btn-o btn-sm" onclick="xCSV('transactions')">⬇ CSV</button>
+  </div>
+  <div class="card">
+    <div class="ct">Transactions <small id="tx-c" style="color:var(--muted);font-weight:400"></small></div>
+    <div class="tw"><table>
+      <thead><tr><th>Date & Time</th><th>User</th><th>Type</th><th>Amount</th><th>Note</th><th>Status</th></tr></thead>
+      <tbody id="tx-tb"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:14px">Loading…</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- CASHBACK -->
+<div class="pg" id="pg-cashback">
+  <div class="pg-title">Cashback Pool</div>
+  <div class="ib">3% of joining volume. Max per user = <strong>Joining Fee × Multiplier</strong> (default $30 × 2 = $60). Only activated IDs qualify.</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Pool Settings</div>
+      <div class="fg"><label>Pool % of Volume</label><input type="number" id="cb-p" value="3" step="0.5"/></div>
+      <div class="fg"><label>Joining Fee ($)</label><input type="number" id="cb-jf" value="30"/></div>
+      <div class="fg"><label>Cashback Multiplier (×)</label><input type="number" id="cb-m" value="2" step="0.5"/></div>
+      <button class="btn btn-o" onclick="saveCBSet()" style="width:100%;margin-bottom:9px">💾 Save Settings</button>
+      <hr style="border-color:var(--border);margin-bottom:9px"/>
+      <table style="width:100%;font-size:.77rem">
+        <tr><td style="color:var(--muted);padding:5px 0">Volume</td><td style="font-weight:700" id="cb-v">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Pool Size</td><td style="color:var(--accent);font-weight:700" id="cb-ps">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Eligible</td><td id="cb-el">0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Per Member</td><td style="color:var(--gold);font-weight:700" id="cb-pm">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Max per User</td><td style="color:var(--red);font-weight:700" id="cb-mx">$60</td></tr>
+      </table>
+      <button class="btn btn-p" onclick="runCashback()" style="width:100%;margin-top:10px">💰 Distribute Now</button>
+    </div>
+    <div class="card">
+      <div class="ct">History</div>
+      <div class="tw"><table><thead><tr><th>Date</th><th>Pool</th><th>Members</th><th>Per User</th></tr></thead><tbody id="cb-h"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:12px">No history</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- CLUB BONUS -->
+<div class="pg" id="pg-clubbonus">
+  <div class="pg-title">Club Bonus</div>
+  <div class="ib">4% of joining volume. Eligibility: min direct refs OR min matching income — both admin-configurable.</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Club Settings</div>
+      <div class="fg"><label>Club Pool %</label><input type="number" id="cl-p" value="4" step="0.5"/></div>
+      <div class="fg"><label>Min Direct Refs</label><input type="number" id="cl-r" value="10"/></div>
+      <div class="fg"><label>OR Min Matching ($)</label><input type="number" id="cl-m" value="50"/></div>
+      <button class="btn btn-o" onclick="saveClubSet()" style="width:100%;margin-bottom:9px">💾 Save</button>
+      <hr style="border-color:var(--border);margin-bottom:9px"/>
+      <table style="width:100%;font-size:.77rem">
+        <tr><td style="color:var(--muted);padding:5px 0">Pool</td><td style="color:var(--gold);font-weight:700" id="cl-pl">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Eligible</td><td id="cl-el">0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Per Member</td><td style="color:var(--green);font-weight:700" id="cl-pm">$0</td></tr>
+      </table>
+      <button class="btn btn-g" onclick="runClub()" style="width:100%;margin-top:10px">🏆 Distribute Now</button>
+    </div>
+    <div class="card">
+      <div class="ct">Eligible Members</div>
+      <div class="tw"><table><thead><tr><th>User</th><th>Dir Refs</th><th>Matching</th><th>Reason</th></tr></thead><tbody id="cl-tb"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:12px">Loading…</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ROI -->
+<div class="pg" id="pg-roi">
+  <div class="pg-title">ROI Management</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">ROI Settings</div>
+      <div class="fg"><label>Monthly ROI Rate (12–15%)</label><input type="number" id="ro-r" min="12" max="15" step="0.5" value="12"/></div>
+      <div class="fg"><label>Direct Payout to Investor (%)</label><input type="number" id="ro-d" value="50"/></div>
+      <div class="fg"><label>Min Investment ($)</label><input type="number" id="ro-mi" value="100"/></div>
+      <div class="fg"><label>Capital Lock (months)</label><input type="number" id="ro-lk" value="6"/></div>
+      <div class="fg"><label>Capital Withdrawal Fee (%)</label><input type="number" id="ro-wf" value="10"/></div>
+      <div class="fg"><label>ROI Referral Bonus to Sponsor ($)</label><input type="number" id="ro-sp" value="5"/></div>
+      <button class="btn btn-gr" onclick="saveROISet()" style="width:100%;margin-bottom:9px">💾 Save Settings</button>
+      <button class="btn btn-p" onclick="runROI()" style="width:100%">📈 Run ROI Payout Now</button>
+    </div>
+    <div class="card">
+      <div class="ct">Generation Levels</div>
+      <div class="tw"><table><thead><tr><th>Level</th><th>Default</th><th>Set %</th></tr></thead><tbody id="gl-tb"></tbody></table></div>
+      <button class="btn btn-o" onclick="saveGL()" style="width:100%;margin-top:10px">Save Levels</button>
+    </div>
+  </div>
+</div>
+
+<!-- MATCHING -->
+<div class="pg" id="pg-matching">
+  <div class="pg-title">Matching Bonus</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Matching Settings</div>
+      <div class="fg"><label>Matching Bonus (%)</label><input type="number" id="ma-p" value="5" step="0.5"/></div>
+      <div class="fg"><label>Matching Cap per User ($)</label><input type="number" id="ma-c" value="1000"/></div>
+      <div class="wb">⚠ Calculated on weaker leg volume × %. Lifetime cap applies.</div>
+      <button class="btn btn-or" onclick="saveMatchSet()" style="width:100%;margin-bottom:9px">💾 Save</button>
+      <button class="btn btn-p" onclick="runMatching()" style="width:100%">🤝 Run Matching Now</button>
+    </div>
+    <div class="card">
+      <div class="ct">Matching Stats</div>
+      <table style="font-size:.78rem;width:100%">
+        <tr><td style="color:var(--muted);padding:5px 0">Rate</td><td style="color:var(--accent2);font-weight:700" id="ma-r">5%</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Cap</td><td style="color:var(--red);font-weight:700" id="ma-cp">$1000</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Total Paid</td><td style="color:var(--green);font-weight:700" id="ma-tp">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">At Cap</td><td id="ma-ac">0</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- GIFT VOUCHER -->
+<div class="pg" id="pg-voucher">
+  <div class="pg-title">Gift Vouchers</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Create Voucher</div>
+      <div class="fg"><label>Value ($)</label><input type="number" id="vo-a" placeholder="e.g. 30"/></div>
+      <div class="fg"><label>Quantity</label><input type="number" id="vo-q" value="1" min="1"/></div>
+      <div class="fg"><label>Expiry Date</label><input type="date" id="vo-e"/></div>
+      <div class="fg"><label>Assign to User (optional)</label><input type="text" id="vo-u" placeholder="Username or UID"/></div>
+      <div class="fg"><label>Note</label><input type="text" id="vo-n" placeholder="Gift reason"/></div>
+      <button class="btn btn-pk" onclick="createVoucher()" style="width:100%">🎟 Generate Voucher(s)</button>
+    </div>
+    <div class="card">
+      <div class="ct">Vouchers <button class="btn btn-o btn-sm" onclick="loadVouchers()">↻</button></div>
+      <div class="tw"><table><thead><tr><th>Code</th><th>Value</th><th>Assigned</th><th>Used</th><th>Expiry</th><th>Del</th></tr></thead><tbody id="vo-tb"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:12px">Loading…</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- GLOBAL SETTINGS -->
+<div class="pg" id="pg-settings">
+  <div class="pg-title">Global Settings</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Activation & Commission</div>
+      <div class="fg"><label>Activation Fee ($)</label><input type="number" id="gs-af" value="30"/></div>
+      <div class="fg"><label>Sponsor Commission ($)</label><input type="number" id="gs-sc" value="4"/></div>
+      <div class="fg"><label>Company Fund per Act ($)</label><input type="number" id="gs-cf" value="5"/></div>
+      <div class="fg"><label>User Capping Limit ($)</label><input type="number" id="gs-cp" value="1000"/></div>
+      <button class="btn btn-p" onclick="saveGS('act')">Save</button>
+    </div>
+    <div class="card">
+      <div class="ct">System Controls</div>
+      <div class="tw-row" style="margin-bottom:10px"><label class="tog"><input type="checkbox" id="gs-ro" checked/><span class="sldr"></span></label><span class="tw-lbl">Registration Open</span></div>
+      <div class="tw-row" style="margin-bottom:10px"><label class="tog"><input type="checkbox" id="gs-wo" checked/><span class="sldr"></span></label><span class="tw-lbl">Withdrawals Open</span></div>
+      <div class="tw-row" style="margin-bottom:10px"><label class="tog"><input type="checkbox" id="gs-io" checked/><span class="sldr"></span></label><span class="tw-lbl">Investment Open</span></div>
+      <div class="tw-row" style="margin-bottom:10px"><label class="tog"><input type="checkbox" id="gs-mt"/><span class="sldr"></span></label><span class="tw-lbl" style="color:var(--red)">Maintenance Mode</span></div>
+      <button class="btn btn-or" onclick="saveGS('sys')" style="width:100%">Save Controls</button>
+    </div>
+    <div class="card">
+      <div class="ct">Daily Activity Log</div>
+      <div class="tw" style="max-height:200px;overflow-y:auto"><table><thead><tr><th>Time</th><th>Action</th><th>By</th></tr></thead><tbody id="al-tb"><tr><td colspan="3" style="text-align:center;color:var(--muted);padding:12px">Loading…</td></tr></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="ct">Cashback Double Setting</div>
+      <div class="ib" style="font-size:.71rem">Cashback stops at Joining Fee × Multiplier (e.g. $30 × 2 = $60)</div>
+      <div class="fg"><label>Joining Fee ($)</label><input type="number" id="gs-jf" value="30"/></div>
+      <div class="fg"><label>Cashback Multiplier (×)</label><input type="number" id="gs-cm" value="2" step="0.5"/></div>
+      <button class="btn btn-p" onclick="saveGS('cb')">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- RANKS -->
+<div class="pg" id="pg-ranks">
+  <div class="pg-title">Rank Configuration</div>
+  <div class="card"><div class="tw"><table>
+    <thead><tr><th>Rank</th><th>Stars</th><th>Min Matching</th><th>Min Team Sales ($)</th><th>Members</th><th>Save</th></tr></thead>
+    <tbody id="rk-tb"></tbody>
+  </table></div></div>
+</div>
+
+<!-- DASHBOARD BUTTONS -->
+<div class="pg" id="pg-buttons">
+  <div class="pg-title">Dashboard Button Manager</div>
+  <div class="ib">Add/remove buttons from user dashboard. Buttons appear on user's overview page.</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Add Button</div>
+      <div class="fg"><label>Label</label><input type="text" id="bt-l" placeholder="e.g. Buy Package"/></div>
+      <div class="fg"><label>Icon (emoji)</label><input type="text" id="bt-i" placeholder="🎁"/></div>
+      <div class="fg"><label>Link / Page</label><input type="text" id="bt-lk" placeholder="activation or https://…"/></div>
+      <div class="fg"><label>Color</label><select id="bt-c"><option value="btn-p">Blue</option><option value="btn-gr">Green</option><option value="btn-g">Gold</option><option value="btn-pk">Pink</option><option value="btn-or">Orange</option><option value="btn-r">Red</option></select></div>
+      <div class="fg"><label>Show to</label><select id="bt-s"><option value="all">All Users</option><option value="active">Active Only</option><option value="inactive">Inactive Only</option></select></div>
+      <button class="btn btn-p" onclick="addBtn()" style="width:100%">➕ Add Button</button>
+    </div>
+    <div class="card">
+      <div class="ct">Current Buttons <button class="btn btn-o btn-sm" onclick="loadBtns()">↻</button></div>
+      <div id="bt-list"><div style="text-align:center;color:var(--muted);padding:14px">Loading…</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTICES -->
+<div class="pg" id="pg-notices">
+  <div class="pg-title">Notice Board</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Create Notice</div>
+      <div class="fg"><label>Title</label><input type="text" id="no-t" placeholder="Notice title"/></div>
+      <div class="fg"><label>Message</label><textarea id="no-m" placeholder="Notice content…"></textarea></div>
+      <div class="fg"><label>Type</label><select id="no-tp"><option value="info">ℹ Info</option><option value="success">✅ Success</option><option value="warning">⚠ Warning</option><option value="urgent">🔴 Urgent</option></select></div>
+      <div class="fg"><label>Show to</label><select id="no-tg"><option value="all">All Users</option><option value="active">Active Only</option><option value="inactive">Inactive Only</option></select></div>
+      <div class="fg"><label>Expiry (optional)</label><input type="date" id="no-ex"/></div>
+      <button class="btn btn-p" onclick="sendNotice()" style="width:100%">📢 Publish Notice</button>
+    </div>
+    <div class="card">
+      <div class="ct">Active Notices <button class="btn btn-o btn-sm" onclick="loadNotices()">↻</button></div>
+      <div id="no-list"><div style="text-align:center;color:var(--muted);padding:14px">Loading…</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- REPORTS -->
+<div class="pg" id="pg-reports">
+  <div class="pg-title">Reports</div>
+  <div class="cg">
+    <div class="sc cb"><div class="sl">Registrations</div><div class="sv" id="rp-r">0</div><div class="si">👤</div></div>
+    <div class="sc cgr"><div class="sl">Revenue</div><div class="sv" id="rp-rv">$0</div><div class="si">💵</div></div>
+    <div class="sc cg2"><div class="sl">Commissions</div><div class="sv" id="rp-c">$0</div><div class="si">💸</div></div>
+    <div class="sc cp"><div class="sl">Fund</div><div class="sv" id="rp-f">$0</div><div class="si">🏦</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Income by Type</div>
+      <table style="font-size:.78rem;width:100%">
+        <tr><td style="color:var(--muted);padding:5px 0">Sponsor</td><td style="color:var(--green);font-weight:700" id="rp-sp">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Matching</td><td style="color:var(--accent);font-weight:700" id="rp-mt">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Cashback</td><td style="color:var(--gold);font-weight:700" id="rp-cb">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Club</td><td style="color:var(--accent2);font-weight:700" id="rp-cl">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">ROI</td><td style="color:var(--green);font-weight:700" id="rp-ro">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Generation</td><td style="color:var(--accent);font-weight:700" id="rp-gn">$0</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="ct">Export</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="fg"><label>Date Range</label><div style="display:flex;gap:6px"><input type="date" id="rp-df" style="flex:1"/><input type="date" id="rp-dt" style="flex:1"/></div></div>
+        <button class="btn btn-o" onclick="xCSV('users')">⬇ Users</button>
+        <button class="btn btn-o" onclick="xCSV('transactions')">⬇ Transactions</button>
+        <button class="btn btn-o" onclick="xCSV('withdrawals')">⬇ Withdrawals</button>
+        <button class="btn btn-o" onclick="xCSV('investments')">⬇ Investments</button>
+        <button class="btn btn-pk" onclick="fullBackup()">⬇ Full Backup (JSON)</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BACKUP & RESTORE -->
+<div class="pg" id="pg-backup">
+  <div class="pg-title">Backup & Restore</div>
+  <div class="rb2">⚠ Restore OVERWRITES current data. Always download a backup first!</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Create Backup</div>
+      <div class="fg"><label>Backup Type</label><select id="bk-t"><option value="full">Full Backup</option><option value="users">Users Only</option><option value="transactions">Transactions Only</option><option value="investments">Investments Only</option><option value="settings">Settings Only</option></select></div>
+      <button class="btn btn-p" onclick="doBackup()" style="width:100%;margin-bottom:9px">💾 Download Backup (JSON)</button>
+      <hr style="border-color:var(--border);margin-bottom:9px"/>
+      <div class="ct" style="font-size:.8rem">Backup Records</div>
+      <div class="tw"><table><thead><tr><th>Date</th><th>Type</th><th>Size</th><th>Del</th></tr></thead><tbody id="bk-tb"><tr><td colspan="4" style="text-align:center;color:var(--muted)">No records</td></tr></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="ct">Restore Data</div>
+      <div class="fg"><label>Upload Backup (.json)</label><input type="file" id="bk-f" accept=".json"/></div>
+      <div class="fg"><label>Restore Type</label><select id="bk-rt"><option value="full">Full Restore</option><option value="users">Users Only</option><option value="settings">Settings Only</option></select></div>
+      <div class="rb2" style="font-size:.71rem">This overwrites existing data with backup.</div>
+      <button class="btn btn-r" onclick="doRestore()" style="width:100%;margin-bottom:9px">🔄 Restore Now</button>
+      <hr style="border-color:var(--border);margin-bottom:9px"/>
+      <div class="ct" style="font-size:.8rem">Date-Wise Recovery</div>
+      <div class="fg"><label>Recover from date</label><input type="date" id="bk-rd"/></div>
+      <button class="btn btn-or" onclick="recoverDate()" style="width:100%">📅 Recover by Date</button>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- USER MODAL -->
+<div class="mbg" id="uModal"><div class="modal"><div class="mt">User Details <button class="mc" onclick="closeM('uModal')">✕</button></div><div id="uMBody">Loading…</div></div></div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+<script>
+const FB={apiKey:"AIzaSyA3G2bMOJ_HSDYXJPuM70tVjfbkHlMftr4",authDomain:"livelinemeta.firebaseapp.com",databaseURL:"https://livelinemeta-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"livelinemeta",storageBucket:"livelinemeta.firebasestorage.app",messagingSenderId:"206900805598",appId:"1:206900805598:web:10e6b39100af201b4e674f"};
+firebase.initializeApp(FB);
+const auth=firebase.auth(),fs=firebase.firestore(),db=firebase.database();
+
+let AU={},ACT={},WD={},INV={},TX=[],S={},CU='';
+const GLD=[20,10,8,6,4,3,2];
+const RD=[{n:'One Star',st:'⭐',m:50,s:100},{n:'Two Star',st:'⭐⭐',m:300,s:300},{n:'Three Star',st:'⭐⭐⭐',m:1000,s:1000},{n:'Four Star',st:'⭐⭐⭐⭐',m:3000,s:10000},{n:'Five Star',st:'⭐⭐⭐⭐⭐',m:10000,s:100000},{n:'Six Star',st:'6⭐',m:30000,s:300000},{n:'Seven Star',st:'7⭐',m:100000,s:10000000}];
+
+// ── AUTH ──────────────────────────────────────────────
+auth.onAuthStateChanged(async u=>{
+  if(!u){window.location.href='login.html';return;}
+  CU=u.uid;document.getElementById('aEmail').textContent=u.email||'';
+  await loadS();await loadUsers();await loadAct();await loadWD();await loadInv();await loadTX();
+  buildGL();buildRanks();computeOV();loadVouchers();loadNotices();loadSA();loadFundH();loadBtns();loadAL();loadRootTree();
+  logA('Admin Login',u.email);
+});
+
+// ── SETTINGS ─────────────────────────────────────────
+async function loadS(){const sn=await db.ref('settings').get();S=sn.exists()?sn.val():{};applyS();}
+function applyS(){
+  const G=(id,v)=>{const e=document.getElementById(id);if(e&&v!==undefined)e.value=v;};
+  G('ro-r',S.roiRate||12);G('ro-d',S.roiDirect||50);G('ro-mi',S.minInv||100);G('ro-lk',S.invLock||6);G('ro-wf',S.invFee||10);G('ro-sp',S.roiSpBonus||5);
+  G('gs-af',S.activationFee||30);G('gs-sc',S.sponsorComm||4);G('gs-cf',S.companyFund||5);G('gs-cp',S.userCap||1000);
+  G('gs-jf',S.joinFee||30);G('gs-cm',S.cbMultiplier||2);
+  G('cb-p',S.cashbackPct||3);G('cb-jf',S.joinFee||30);G('cb-m',S.cbMultiplier||2);
+  G('cl-p',S.clubPct||4);G('cl-r',S.clubMinRefs||10);G('cl-m',S.clubMinMatch||50);
+  G('ma-p',S.matchingPct||5);G('ma-c',S.matchingCap||1000);
+  s('ov-rr',(S.roiRate||12)+'%');s('ov-mp',(S.matchingPct||5)+'%');
+  s('ma-r',(S.matchingPct||5)+'%');s('ma-cp','$'+(S.matchingCap||1000));
+  if(S.regOpen!==undefined)document.getElementById('gs-ro').checked=S.regOpen;
+  if(S.wdOpen!==undefined)document.getElementById('gs-wo').checked=S.wdOpen;
+  if(S.invOpen!==undefined)document.getElementById('gs-io').checked=S.invOpen;
+  if(S.maintenance!==undefined)document.getElementById('gs-mt').checked=S.maintenance;
+  if(S.generationLevels)S.generationLevels.forEach((v,i)=>{const e=document.getElementById('gl-'+(i+1));if(e)e.value=v;});
+}
+
+// ── USERS ─────────────────────────────────────────────
+window.loadUsers=async()=>{const sn=await fs.collection('users').get();AU={};sn.forEach(d=>{AU[d.id]={id:d.id,...d.data()};});renderU(Object.values(AU));};
+function renderU(list){
+  s('u-c',list.length+' users');s('ov-u',Object.keys(AU).length);
+  const bl=Object.values(AU).filter(u=>u.blocked).length;s('ov-bl',bl);
+  const tb=document.getElementById('u-tb');
+  if(!list.length){tb.innerHTML='<tr><td colspan="12" style="text-align:center;color:var(--muted);padding:14px">No users</td></tr>';return;}
+  tb.innerHTML=list.map((u,i)=>{
+    const j=u.createdAt?(u.createdAt.toDate?u.createdAt.toDate().toLocaleDateString():new Date(u.createdAt).toLocaleDateString()):'—';
+    const spN=u.sponsorId?(AU[u.sponsorId]?.username||u.sponsorId.slice(0,8)+'…'):'Root';
+    return`<tr>
+      <td style="color:var(--muted)">${i+1}</td>
+      <td style="font-family:monospace;font-size:.66rem" title="${u.id}">${u.id.slice(0,10)}…</td>
+      <td style="font-weight:700">${u.fullName||'—'}</td>
+      <td style="color:var(--muted)">@${u.username||'—'}</td>
+      <td style="font-size:.7rem">${u.email||'—'}</td>
+      <td style="font-size:.7rem">${j}</td>
+      <td style="font-size:.72rem;color:var(--accent2)">${spN}</td>
+      <td><span class="pill ${u.isActive?'pg':'py'}">${u.isActive?'Active':'Inactive'}</span></td>
+      <td><span class="pill ${u.incomeOff?'pr':'pg'}">${u.incomeOff?'OFF':'ON'}</span></td>
+      <td><span class="pill ${u.withdrawOff?'pr':'pg'}">${u.withdrawOff?'OFF':'ON'}</span></td>
+      <td><span class="pill ${u.blocked?'pr':'pb'}">${u.blocked?'YES':'NO'}</span></td>
+      <td style="display:flex;gap:4px;flex-wrap:wrap">
+        <button class="btn btn-o btn-sm" onclick="viewU('${u.id}')">View</button>
+        <button class="btn btn-p btn-sm" onclick="qEdit('${u.id}')">Edit</button>
+        <button class="btn ${u.incomeOff?'btn-gr':'btn-r'} btn-sm" onclick="togInc('${u.id}',${!u.incomeOff})">${u.incomeOff?'Inc ON':'Inc OFF'}</button>
+        <button class="btn ${u.withdrawOff?'btn-gr':'btn-or'} btn-sm" onclick="togWD('${u.id}',${!u.withdrawOff})">${u.withdrawOff?'WD ON':'WD OFF'}</button>
+        <button class="btn ${u.blocked?'btn-gr':'btn-r'} btn-sm" onclick="togBlk('${u.id}',${!u.blocked})">${u.blocked?'Unblock':'Block'}</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+window.filterU=()=>{
+  const q=document.getElementById('u-s').value.toLowerCase(),f=document.getElementById('u-f').value;
+  let list=Object.values(AU);
+  if(q)list=list.filter(u=>(u.fullName||'').toLowerCase().includes(q)||(u.username||'').toLowerCase().includes(q)||(u.email||'').toLowerCase().includes(q)||(u.id||'').toLowerCase().includes(q));
+  if(f==='active')list=list.filter(u=>u.isActive);
+  else if(f==='inactive')list=list.filter(u=>!u.isActive);
+  else if(f==='blocked')list=list.filter(u=>u.blocked);
+  renderU(list);
+};
+window.togInc=async(uid,v)=>{await fs.collection('users').doc(uid).update({incomeOff:!v});AU[uid].incomeOff=!v;logA(v?'Income enabled':'Income disabled','UID:'+uid.slice(0,8));renderU(Object.values(AU));toast((v?'✅ Income enabled':'⛔ Income disabled'));};
+window.togWD=async(uid,v)=>{await fs.collection('users').doc(uid).update({withdrawOff:!v});AU[uid].withdrawOff=!v;renderU(Object.values(AU));toast((v?'✅ WD enabled':'⛔ WD disabled'));};
+window.togBlk=async(uid,v)=>{await fs.collection('users').doc(uid).update({blocked:v});AU[uid].blocked=v;logA(v?'User blocked':'Unblocked','UID:'+uid.slice(0,8));renderU(Object.values(AU));toast(v?'🚫 Blocked':'✅ Unblocked');};
+window.delAllUsers=async()=>{
+  if(!confirm('Delete ALL users?'))return;
+  const c=prompt('Type DELETE_ALL to confirm:');if(c!=='DELETE_ALL'){toast('Cancelled');return;}
+  const b=fs.batch();Object.keys(AU).forEach(uid=>b.delete(fs.collection('users').doc(uid)));
+  await b.commit();AU={};renderU([]);logA('All users deleted','Admin');toast('All users deleted');
+};
+window.viewU=uid=>{
+  const u=AU[uid];if(!u)return;
+  const j=u.createdAt?(u.createdAt.toDate?u.createdAt.toDate().toLocaleDateString():new Date(u.createdAt).toLocaleDateString()):'—';
+  document.getElementById('uMBody').innerHTML=`
+    <div style="background:var(--bg);border-radius:8px;padding:11px;margin-bottom:11px">
+      <div style="font-size:.95rem;font-weight:800">${u.fullName||'User'}</div>
+      <div style="color:var(--muted);font-size:.75rem">${u.email||'—'}</div>
+      <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
+        <span class="pill ${u.isActive?'pg':'py'}">${u.isActive?'Active':'Inactive'}</span>
+        ${u.blocked?'<span class="pill pr">Blocked</span>':''}${u.incomeOff?'<span class="pill pr">Income OFF</span>':''}${u.withdrawOff?'<span class="pill pr">WD OFF</span>':''}
+      </div>
+    </div>
+    <table style="width:100%;font-size:.76rem">
+      <tr><td style="color:var(--muted);padding:4px 0;width:110px">UID</td><td style="font-family:monospace;font-size:.68rem;word-break:break-all">${uid}</td></tr>
+      <tr><td style="color:var(--muted);padding:4px 0">Username</td><td>@${u.username||'—'}</td></tr>
+      <tr><td style="color:var(--muted);padding:4px 0">Mobile</td><td>${u.mobile||'—'}</td></tr>
+      <tr><td style="color:var(--muted);padding:4px 0">Country</td><td>${u.country||'—'}</td></tr>
+      <tr><td style="color:var(--muted);padding:4px 0">Sponsor</td><td style="font-size:.7rem">${u.sponsorId||'None'}</td></tr>
+      <tr><td style="color:var(--muted);padding:4px 0">Joined</td><td>${j}</td></tr>
+      <tr><td style="color:var(--muted);padding:4px 0">Left</td><td style="font-size:.7rem">${u.leftChild||'Empty'}</td></tr>
+      <tr><td style="color:var(--muted);padding:4px 0">Right</td><td style="font-size:.7rem">${u.rightChild||'Empty'}</td></tr>
+    </table>
+    <div style="display:flex;gap:7px;margin-top:11px;flex-wrap:wrap">
+      <button class="btn btn-p btn-sm" onclick="qEdit('${uid}');closeM('uModal')">✏ Edit</button>
+      <button class="btn btn-or btn-sm" onclick="adjBal('${uid}','${u.fullName||u.username||'User'}');closeM('uModal')">💰 Balance</button>
+      <button class="btn ${u.blocked?'btn-gr':'btn-r'} btn-sm" onclick="togBlk('${uid}',${!u.blocked});closeM('uModal')">${u.blocked?'Unblock':'Block'}</button>
+    </div>`;
+  document.getElementById('uModal').classList.add('show');
+};
+window.adjBal=(uid,name)=>{
+  const amt=parseFloat(prompt('Adjust balance for '+name+'\n(+ add, - deduct):'));
+  if(isNaN(amt))return;
+  db.ref('users/'+uid+'/walletBalance').get().then(sn=>{
+    const cur=parseFloat(sn.exists()?sn.val():0),nw=cur+amt;
+    db.ref('users/'+uid+'/walletBalance').set(nw);
+    db.ref('transactions/'+uid).push({type:'Admin Adjustment',amount:amt,note:'Admin manual adjustment',timestamp:Date.now(),status:'completed',balance:nw});
+    logA('Balance adjusted $'+amt,'User:'+name);toast('Balance adjusted $'+amt.toFixed(2));
+  });
+};
+window.qEdit=uid=>{document.getElementById('eu-q').value=uid;searchEU();sp('edituser',document.querySelector('nav a[onclick*="edituser"]'));};
+
+// ── EDIT USER ─────────────────────────────────────────
+window.searchEU=async()=>{
+  const q=document.getElementById('eu-q').value.trim();
+  const f=Object.values(AU).find(u=>u.id===q||(u.username||'').toLowerCase()===q.toLowerCase()||(u.email||'').toLowerCase()===q.toLowerCase());
+  if(!f){toast('User not found');return;}
+  document.getElementById('eu-uid').value=f.id;
+  document.getElementById('eu-title').textContent='Editing: '+(f.fullName||f.username||f.id.slice(0,12));
+  document.getElementById('eu-name').value=f.fullName||'';
+  document.getElementById('eu-uname').value=f.username||'';
+  document.getElementById('eu-email').value=f.email||'';
+  document.getElementById('eu-mob').value=f.mobile||'';
+  document.getElementById('eu-ctry').value=f.country||'';
+  document.getElementById('eu-wal').value=f.paymentWallet||'';
+  document.getElementById('eu-sp').value=f.sponsorId||'';
+  document.getElementById('eu-inc').checked=!f.incomeOff;
+  document.getElementById('eu-wd').checked=!f.withdrawOff;
+  document.getElementById('eu-act').checked=!!f.isActive;
+  document.getElementById('eu-blk').checked=!!f.blocked;
+  const ws=await db.ref('users/'+f.id+'/walletBalance').get();
+  document.getElementById('eu-bal').value=ws.exists()?ws.val():0;
+  document.getElementById('eu-card').style.display='block';
+};
+window.saveEU=async()=>{
+  const uid=document.getElementById('eu-uid').value;if(!uid)return;
+  const upd={fullName:document.getElementById('eu-name').value.trim(),username:document.getElementById('eu-uname').value.trim(),email:document.getElementById('eu-email').value.trim(),mobile:document.getElementById('eu-mob').value.trim(),country:document.getElementById('eu-ctry').value.trim(),paymentWallet:document.getElementById('eu-wal').value.trim(),sponsorId:document.getElementById('eu-sp').value.trim()||null,updatedAt:new Date()};
+  await fs.collection('users').doc(uid).update(upd);
+  await db.ref('users/'+uid+'/walletBalance').set(parseFloat(document.getElementById('eu-bal').value)||0);
+  Object.assign(AU[uid],upd);logA('User edited','UID:'+uid.slice(0,8));toast('✅ User updated!');renderU(Object.values(AU));
+};
+window.saveFlags=async()=>{
+  const uid=document.getElementById('eu-uid').value;if(!uid)return;
+  const fl={incomeOff:!document.getElementById('eu-inc').checked,withdrawOff:!document.getElementById('eu-wd').checked,isActive:document.getElementById('eu-act').checked,blocked:document.getElementById('eu-blk').checked};
+  await fs.collection('users').doc(uid).update(fl);Object.assign(AU[uid],fl);logA('Flags updated','UID:'+uid.slice(0,8));toast('✅ Flags saved!');renderU(Object.values(AU));
+};
+window.cutTree=async()=>{
+  const uid=document.getElementById('eu-uid').value;if(!uid||!confirm('Cut user from binary tree?'))return;
+  const u=AU[uid];
+  if(u.parentId&&AU[u.parentId]){const f=u.side==='left'?'leftChild':'rightChild';await fs.collection('users').doc(u.parentId).update({[f]:null});AU[u.parentId][f]=null;}
+  await fs.collection('users').doc(uid).update({parentId:null,side:null});
+  AU[uid].parentId=null;AU[uid].side=null;logA('User cut from tree','UID:'+uid.slice(0,8));toast('✅ Cut from tree');
+};
+window.loginAs=()=>{const uid=document.getElementById('eu-uid').value;if(!uid)return;window.open('dashboard.html?viewAs='+uid,'_blank');toast('Opening user dashboard…');};
+window.deleteU=async()=>{
+  const uid=document.getElementById('eu-uid').value;if(!uid||!confirm('Delete this user permanently?'))return;
+  await fs.collection('users').doc(uid).delete();
+  await db.ref('users/'+uid).remove();await db.ref('transactions/'+uid).remove();await db.ref('investments/'+uid).remove();await db.ref('withdrawals/'+uid).remove();
+  delete AU[uid];document.getElementById('eu-card').style.display='none';
+  logA('User deleted','UID:'+uid.slice(0,8));renderU(Object.values(AU));toast('User deleted');
+};
+
+// ── ACTIVATIONS ───────────────────────────────────────
+window.loadAct=async()=>{const sn=await db.ref('activationRequests').get();ACT=sn.exists()?sn.val():{};renderAct(Object.entries(ACT));};
+function renderAct(entries){
+  entries.sort(([,a],[,b])=>b.createdAt-a.createdAt);
+  const pend=entries.filter(([,a])=>a.status==='pending');
+  s('ov-pa',pend.length);s('ac-c',entries.length+' ('+pend.length+' pending)');
+  document.getElementById('nb-a').textContent=pend.length>0?pend.length:'';
+  const tb=document.getElementById('ac-tb');
+  tb.innerHTML=entries.length?entries.map(([id,a],i)=>`<tr>
+    <td style="color:var(--muted)">${i+1}</td>
+    <td style="font-family:monospace;font-size:.65rem" title="${a.uid||''}">${(a.uid||'').slice(0,10)}…</td>
+    <td style="font-weight:700">${a.name||'—'}</td>
+    <td>@${a.username||'—'}</td>
+    <td style="font-size:.7rem">${a.email||'—'}</td>
+    <td>${a.method||'USDT'}</td>
+    <td style="font-family:monospace;font-size:.67rem;max-width:100px;overflow:hidden;text-overflow:ellipsis" title="${a.txid||''}">${(a.txid||'—').slice(0,16)}…</td>
+    <td style="font-size:.7rem">${a.createdAt?new Date(a.createdAt).toLocaleDateString():'—'}</td>
+    <td><span class="pill ${a.status==='approved'?'pg':a.status==='rejected'?'pr':'py'}">${a.status||'pending'}</span></td>
+    <td style="display:flex;gap:4px">
+      ${a.status==='pending'?`<button class="btn btn-gr btn-sm" onclick="approveAct('${id}','${a.uid}')">✅</button><button class="btn btn-r btn-sm" onclick="rejectAct('${id}')">✕</button>`:'—'}
+    </td>
+  </tr>`).join(''):'<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:14px">No requests</td></tr>';
+  document.getElementById('ov-at').innerHTML=entries.slice(0,5).map(([id,a])=>`<tr>
+    <td style="font-weight:600">${a.name||'User'}</td>
+    <td style="font-size:.7rem">${a.createdAt?new Date(a.createdAt).toLocaleDateString():'—'}</td>
+    <td><span class="pill ${a.status==='approved'?'pg':a.status==='rejected'?'pr':'py'}">${a.status}</span></td>
+    <td>${a.status==='pending'?`<button class="btn btn-gr btn-sm" onclick="approveAct('${id}','${a.uid}')">✅</button>`:'—'}</td>
+  </tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--muted)">None</td></tr>';
+}
+window.filterAct=()=>{const f=document.getElementById('ac-f').value;renderAct(f==='all'?Object.entries(ACT):Object.entries(ACT).filter(([,a])=>a.status===f));};
+window.approveAct=async(id,uid)=>{
+  if(!uid)return;
+  await db.ref('activationRequests/'+id).update({status:'approved',approvedAt:Date.now()});
+  ACT[id].status='approved';
+  await fs.collection('users').doc(uid).update({isActive:true,activatedAt:new Date()});
+  if(AU[uid])AU[uid].isActive=true;
+  const u=AU[uid]||{},spC=parseFloat(S.sponsorComm||4),cF=parseFloat(S.companyFund||5);
+  if(u.sponsorId){
+    const wr=db.ref('users/'+u.sponsorId+'/walletBalance'),ws=await wr.get(),nw=parseFloat(ws.exists()?ws.val():0)+spC;
+    await wr.set(nw);
+    const ir=db.ref('users/'+u.sponsorId+'/income/sponsor'),is=await ir.get();
+    await ir.set(parseFloat(is.exists()?is.val():0)+spC);
+    await db.ref('transactions/'+u.sponsorId).push({type:'Sponsor Commission',amount:spC,note:'From '+(u.fullName||u.username||'User')+' activation',timestamp:Date.now(),status:'completed',balance:nw});
+  }
+  const cr=db.ref('settings/companyFundBalance'),cs=await cr.get();
+  await cr.set(parseFloat(cs.exists()?cs.val():0)+cF);
+  await db.ref('fundHistory').push({type:'Activation Fee',amount:cF,note:'User activation',timestamp:Date.now()});
+  logA('Activation approved','UID:'+uid.slice(0,8));
+  renderAct(Object.entries(ACT));computeOV();toast('✅ Activated! $'+spC+' → Sponsor, $'+cF+' → Fund');
+};
+window.rejectAct=async id=>{if(!confirm('Reject?'))return;await db.ref('activationRequests/'+id).update({status:'rejected'});ACT[id].status='rejected';renderAct(Object.entries(ACT));toast('Rejected');};
+window.approveAllAct=async()=>{
+  if(!confirm('Approve ALL pending?'))return;
+  const p=Object.entries(ACT).filter(([,a])=>a.status==='pending');
+  for(const[id,a]of p)await approveAct(id,a.uid);
+  toast('✅ All approved!');
+};
+
+// ── TREE ─────────────────────────────────────────────
+window.loadRootTree=async()=>{const r=Object.values(AU).find(u=>u.isRoot||!u.parentId);if(r)renderTree(r.id);else document.getElementById('tr-view').innerHTML='<p style="color:var(--muted);padding:20px">No root user yet.</p>';};
+window.searchTree=async()=>{const q=document.getElementById('tr-q').value.trim().toLowerCase();const f=Object.values(AU).find(u=>(u.username||'').toLowerCase()===q||(u.email||'').toLowerCase()===q||(u.id||'').toLowerCase()===q);if(f)renderTree(f.id);else toast('Not found: '+q);};
+function renderTree(uid){
+  const u=AU[uid];if(!u)return;
+  s('tr-lbl','Root: '+(u.fullName||u.username||uid));
+  function nH(nid,lbl){
+    if(!nid)return`<div style="display:flex;flex-direction:column;align-items:center"><div style="border:2px dashed var(--muted);border-radius:9px;padding:7px 11px;min-width:80px;text-align:center;opacity:.38;font-size:.7rem;color:var(--muted)">Empty<br><small>${lbl}</small></div></div>`;
+    const n=AU[nid],nm=n?(n.fullName||n.username||nid.slice(0,8)):nid.slice(0,8),act=n?n.isActive:false;
+    return`<div style="display:flex;flex-direction:column;align-items:center"><div style="border:2px solid ${nid===uid?'var(--accent)':act?'var(--green)':'var(--border)'};background:${nid===uid?'rgba(0,212,255,.08)':act?'rgba(16,185,129,.05)':'var(--card)'};border-radius:9px;padding:7px 11px;min-width:80px;text-align:center;cursor:pointer;font-size:.7rem" onclick="renderTree('${nid}')">
+      <div style="font-weight:800;font-size:.75rem;max-width:75px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nm}</div>
+      <div style="font-size:.6rem;color:var(--muted)">@${n?n.username:'?'}</div>
+      <span class="pill ${act?'pg':'py'}" style="margin-top:2px;font-size:.6rem">${act?'Act':'Inact'}</span>
+      <div style="font-size:.58rem;color:var(--muted);margin-top:1px">${lbl}</div>
+    </div></div>`;
+  }
+  function lvl2(pid){const n=pid?AU[pid]:null,lc=n?n.leftChild:null,rc=n?n.rightChild:null;return`<div style="display:flex;gap:12px">${nH(lc,'L')}${nH(rc,'R')}</div>`;}
+  const lc=u.leftChild,rc=u.rightChild;
+  document.getElementById('tr-view').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:0;padding:8px">
+    ${nH(uid,'YOU')}
+    <div style="width:1px;height:16px;background:${(lc||rc)?'var(--border)':'transparent'}"></div>
+    <div style="width:${(lc||rc)?160:0}px;height:1px;background:${(lc||rc)?'var(--border)':'transparent'}"></div>
+    <div style="display:flex;gap:30px">
+      <div style="display:flex;flex-direction:column;align-items:center">${nH(lc,'LEFT')}${lc?`<div style="width:1px;height:12px;background:var(--border)"></div>${lvl2(lc)}`:''}</div>
+      <div style="display:flex;flex-direction:column;align-items:center">${nH(rc,'RIGHT')}${rc?`<div style="width:1px;height:12px;background:var(--border)"></div>${lvl2(rc)}`:''}</div>
+    </div>
+  </div>`;
+}
+
+// ── WITHDRAWALS ───────────────────────────────────────
+window.loadWD=async()=>{const sn=await db.ref('withdrawals').get();WD={};if(sn.exists())Object.entries(sn.val()).forEach(([uid,ws])=>Object.entries(ws).forEach(([wid,w])=>{WD[uid+'__'+wid]={...w,uid};}));renderWD(Object.entries(WD));};
+function renderWD(entries){
+  entries.sort(([,a],[,b])=>b.createdAt-a.createdAt);
+  const p=entries.filter(([,w])=>w.status==='pending'),ap=entries.filter(([,w])=>w.status==='approved'),tot=ap.reduce((s,[,w])=>s+(w.amount||0),0);
+  s('ov-pw',p.length);s('wd-p',p.length);s('wd-a',ap.length);s('wd-t','$'+tot.toFixed(0));
+  document.getElementById('nb-w').textContent=p.length>0?p.length:'';
+  const tb=document.getElementById('wd-tb');
+  tb.innerHTML=entries.length?entries.map(([key,w],i)=>`<tr>
+    <td style="color:var(--muted)">${i+1}</td>
+    <td style="font-weight:600">${AU[w.uid]?.fullName||AU[w.uid]?.username||w.uid?.slice(0,10)||'—'}</td>
+    <td style="color:var(--green);font-weight:700">$${(w.amount||0).toFixed(2)}</td>
+    <td style="font-family:monospace;font-size:.68rem;max-width:120px;overflow:hidden;text-overflow:ellipsis" title="${w.address||''}">${(w.address||'—').slice(0,20)}…</td>
+    <td style="font-size:.7rem">${w.createdAt?new Date(w.createdAt).toLocaleDateString():'—'}</td>
+    <td><span class="pill ${w.status==='approved'?'pg':w.status==='rejected'?'pr':'py'}">${w.status||'pend'}</span></td>
+    <td style="display:flex;gap:4px">${w.status==='pending'?`<button class="btn btn-gr btn-sm" onclick="apWD('${key}',${w.amount||0},'${w.uid}')">✅ Pay</button><button class="btn btn-r btn-sm" onclick="rejWD('${key}',${w.amount||0},'${w.uid}')">✕</button>`:'—'}</td>
+  </tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:14px">No withdrawals</td></tr>';
+}
+window.filterWD=()=>{const f=document.getElementById('wd-f').value;renderWD(f==='all'?Object.entries(WD):Object.entries(WD).filter(([,w])=>w.status===f));};
+window.apWD=async(key,amount,uid)=>{
+  if(AU[uid]?.withdrawOff){toast('⛔ WD disabled for this user');return;}
+  if(!confirm('Pay $'+amount+'?'))return;
+  const[,wid]=key.split('__');
+  await db.ref('withdrawals/'+uid+'/'+wid).update({status:'approved',paidAt:Date.now()});
+  const wr=db.ref('users/'+uid+'/walletBalance'),ws=await wr.get(),nw=Math.max(0,parseFloat(ws.exists()?ws.val():0)-amount);
+  await wr.set(nw);
+  const tw=db.ref('users/'+uid+'/totalWithdrawn'),ts=await tw.get();await tw.set(parseFloat(ts.exists()?ts.val():0)+amount);
+  await db.ref('transactions/'+uid).push({type:'Withdrawal',amount:-amount,note:'Approved & paid',timestamp:Date.now(),status:'completed',balance:nw});
+  WD[key].status='approved';logA('WD approved $'+amount,'UID:'+uid.slice(0,8));renderWD(Object.entries(WD));toast('✅ Paid!');
+};
+window.rejWD=async(key,amount,uid)=>{
+  const[,wid]=key.split('__');
+  await db.ref('withdrawals/'+uid+'/'+wid).update({status:'rejected'});
+  const wr=db.ref('users/'+uid+'/walletBalance'),ws=await wr.get(),nw=parseFloat(ws.exists()?ws.val():0)+amount;
+  await wr.set(nw);
+  await db.ref('transactions/'+uid).push({type:'Withdrawal Refund',amount:amount,note:'Rejected — refunded',timestamp:Date.now(),status:'completed',balance:nw});
+  WD[key].status='rejected';renderWD(Object.entries(WD));toast('Rejected. Refunded $'+amount);
+};
+window.approveAllWD=async()=>{
+  if(!confirm('Approve ALL pending withdrawals?'))return;
+  const p=Object.entries(WD).filter(([,w])=>w.status==='pending');
+  for(const[k,w]of p)await apWD(k,w.amount||0,w.uid);
+  toast('✅ All paid!');
+};
+
+// ── INVESTMENTS ───────────────────────────────────────
+window.loadInv=async()=>{const sn=await db.ref('investments').get();INV={};if(sn.exists())Object.entries(sn.val()).forEach(([uid,pl])=>Object.entries(pl).forEach(([pid,p])=>{INV[uid+'__'+pid]={...p,uid};}));renderInv();};
+function renderInv(){
+  const e=Object.entries(INV).sort(([,a],[,b])=>b.createdAt-a.createdAt);
+  const tot=e.reduce((s,[,p])=>s+(p.amount||0),0),act=e.filter(([,p])=>p.status==='active').length,rp=e.reduce((s,[,p])=>s+(p.earnedROI||0),0);
+  s('iv-t','$'+tot.toFixed(0));s('iv-a',act);s('iv-r','$'+rp.toFixed(0));s('ov-i','$'+tot.toFixed(0));
+  const tb=document.getElementById('iv-tb');
+  tb.innerHTML=e.length?e.map(([key,p])=>{const unlk=new Date(p.createdAt+(parseFloat(S.invLock||6))*30*24*60*60*1000);
+    return`<tr>
+      <td style="font-weight:600">${AU[p.uid]?.fullName||AU[p.uid]?.username||p.uid?.slice(0,10)||'—'}</td>
+      <td style="color:var(--accent);font-weight:700">$${p.amount||0}</td>
+      <td style="color:var(--green)">${p.roiRate||12}%</td>
+      <td style="font-size:.7rem">${p.createdAt?new Date(p.createdAt).toLocaleDateString():'—'}</td>
+      <td style="color:var(--gold)">$${(p.earnedROI||0).toFixed(2)}</td>
+      <td style="font-size:.7rem">${unlk.toLocaleDateString()}</td>
+      <td><span class="pill ${p.status==='active'?'pg':p.status==='pending'?'py':'pb'}">${p.status||'pend'}</span></td>
+      <td style="display:flex;gap:4px">${p.status==='pending'?`<button class="btn btn-gr btn-sm" onclick="apInv('${key}')">✅</button>`:''}
+        <button class="btn btn-o btn-sm" onclick="setROIRate('${key}')">ROI%</button></td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:14px">No investments</td></tr>';
+}
+window.apInv=async key=>{
+  const[uid,pid]=key.split('__'),p=INV[key];
+  await db.ref('investments/'+uid+'/'+pid).update({status:'active',activatedAt:Date.now()});
+  INV[key].status='active';
+  const spB=parseFloat(S.roiSpBonus||5),u=AU[uid];
+  if(u?.sponsorId){
+    const wr=db.ref('users/'+u.sponsorId+'/walletBalance'),ws=await wr.get(),nw=parseFloat(ws.exists()?ws.val():0)+spB;
+    await wr.set(nw);
+    await db.ref('transactions/'+u.sponsorId).push({type:'ROI Referral Bonus',amount:spB,note:'From '+(u.fullName||'User')+' $'+p.amount,timestamp:Date.now(),status:'completed',balance:nw});
+  }
+  renderInv();logA('Investment activated $'+p.amount,'UID:'+uid.slice(0,8));toast('✅ Activated! Sponsor gets $'+spB);
+};
+window.setROIRate=async key=>{
+  const r=parseFloat(prompt('ROI rate (12-15):'));if(isNaN(r)||r<12||r>15){toast('Invalid');return;}
+  const[uid,pid]=key.split('__');await db.ref('investments/'+uid+'/'+pid).update({roiRate:r});
+  INV[key].roiRate=r;renderInv();toast('ROI → '+r+'%');
+};
+
+// ── FUND ──────────────────────────────────────────────
+window.fundOp=async()=>{
+  const op=document.getElementById('fd-op').value,amt=parseFloat(document.getElementById('fd-amt').value),note=document.getElementById('fd-note').value.trim();
+  if(!amt||amt<=0){toast('Enter valid amount');return;}
+  const fr=db.ref('settings/companyFundBalance'),fs2=await fr.get(),cur=parseFloat(fs2.exists()?fs2.val():0);
+  if(op==='add'){await fr.set(cur+amt);await db.ref('fundHistory').push({type:'Add',amount:amt,note,timestamp:Date.now()});toast('✅ $'+amt+' added');}
+  else if(op==='withdraw'){if(amt>cur){toast('Insufficient fund');return;}await fr.set(cur-amt);await db.ref('fundHistory').push({type:'Withdraw',amount:-amt,note,timestamp:Date.now()});toast('✅ $'+amt+' withdrawn');}
+  else if(op==='distribute'){
+    const users=Object.values(AU).filter(u=>u.isActive);if(!users.length){toast('No active users');return;}
+    const per=amt/users.length;
+    for(const u of users){const wr=db.ref('users/'+u.id+'/walletBalance'),ws=await wr.get(),nw=parseFloat(ws.exists()?ws.val():0)+per;await wr.set(nw);await db.ref('transactions/'+u.id).push({type:'Fund Distribution',amount:per,note:note||'Fund distribution',timestamp:Date.now(),status:'completed',balance:nw});}
+    await fr.set(cur-amt);toast('✅ $'+per.toFixed(4)+' to '+users.length+' users');
+  }
+  logA('Fund '+op+' $'+amt,'Admin');loadFundH();
+};
+async function loadFundH(){
+  const sn=await db.ref('settings/companyFundBalance').get();s('fd-b','$'+parseFloat(sn.exists()?sn.val():0).toFixed(2));
+  const hs=await db.ref('fundHistory').get(),tb=document.getElementById('fd-tb');
+  if(!hs.exists()){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted)">No records</td></tr>';return;}
+  const list=Object.values(hs.val()).sort((a,b)=>b.timestamp-a.timestamp);
+  let ti=0,to2=0;list.forEach(h=>{if((h.amount||0)>0)ti+=(h.amount||0);else to2+=Math.abs(h.amount||0);});
+  s('fd-i','$'+ti.toFixed(0));s('fd-o','$'+to2.toFixed(0));
+  tb.innerHTML=list.slice(0,20).map(h=>`<tr><td style="font-size:.7rem">${new Date(h.timestamp).toLocaleDateString()}</td><td>${h.type||'—'}</td><td style="color:${(h.amount||0)>0?'var(--green)':'var(--red)'};font-weight:700">${(h.amount||0)>0?'+':''}$${Math.abs(h.amount||0).toFixed(2)}</td><td style="font-size:.7rem;color:var(--muted)">${h.note||'—'}</td></tr>`).join('');
+}
+
+// ── TRANSACTIONS ──────────────────────────────────────
+window.loadTX=async()=>{const sn=await db.ref('transactions').get();TX=[];if(sn.exists())Object.entries(sn.val()).forEach(([uid,txs])=>Object.entries(txs).forEach(([tid,t])=>TX.push({...t,uid})));TX.sort((a,b)=>b.timestamp-a.timestamp);renderTX(TX);};
+function renderTX(list){
+  s('tx-c',list.length+' records');
+  const tb=document.getElementById('tx-tb');
+  tb.innerHTML=list.length?list.slice(0,300).map(t=>`<tr>
+    <td style="font-size:.68rem;color:var(--muted)">${new Date(t.timestamp).toLocaleDateString()+' '+new Date(t.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td>
+    <td style="font-size:.72rem">${AU[t.uid]?.fullName||AU[t.uid]?.username||t.uid?.slice(0,10)||'—'}</td>
+    <td>${t.type||'—'}</td>
+    <td style="font-weight:700;color:${(t.amount||0)>0?'var(--green)':'var(--red)'}">${(t.amount||0)>0?'+':''}$${Math.abs(t.amount||0).toFixed(2)}</td>
+    <td style="color:var(--muted);font-size:.7rem">${t.note||'—'}</td>
+    <td><span class="pill ${t.status==='completed'?'pg':'py'}">${t.status||'done'}</span></td>
+  </tr>`).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:14px">No transactions</td></tr>';
+}
+window.filterTX=()=>{
+  const q=document.getElementById('tx-s').value.toLowerCase(),tp=document.getElementById('tx-t').value;
+  const df=document.getElementById('tx-df').value,dt=document.getElementById('tx-dt').value;
+  let list=TX;
+  if(q)list=list.filter(t=>(AU[t.uid]?.fullName||'').toLowerCase().includes(q)||(AU[t.uid]?.username||'').toLowerCase().includes(q)||(t.type||'').toLowerCase().includes(q));
+  if(tp!=='all')list=list.filter(t=>t.type===tp);
+  if(df)list=list.filter(t=>t.timestamp>=new Date(df).getTime());
+  if(dt)list=list.filter(t=>t.timestamp<=new Date(dt).getTime()+86399999);
+  renderTX(list);
+};
+
+// ── CASHBACK ──────────────────────────────────────────
+window.saveCBSet=async()=>{
+  const pct=parseFloat(document.getElementById('cb-p').value)||3,jf=parseFloat(document.getElementById('cb-jf').value)||30,mul=parseFloat(document.getElementById('cb-m').value)||2;
+  await db.ref('settings').update({cashbackPct:pct,joinFee:jf,cbMultiplier:mul,cashbackLimit:jf*mul});
+  Object.assign(S,{cashbackPct:pct,joinFee:jf,cbMultiplier:mul,cashbackLimit:jf*mul});
+  s('cb-mx','$'+(jf*mul).toFixed(0));computeOV();toast('✅ Cashback settings saved');
+};
+window.runCashback=async()=>{
+  if(!confirm('Distribute cashback now?'))return;
+  const active=Object.values(AU).filter(u=>u.isActive&&!u.blocked&&!u.incomeOff);
+  const jf=parseFloat(S.joinFee||30),mul=parseFloat(S.cbMultiplier||2),cbLim=jf*mul;
+  const vol=active.length*jf,pool=vol*(parseFloat(S.cashbackPct||3)/100);
+  const elig=[];
+  for(const u of active){const sn=await db.ref('users/'+u.id+'/income/cashback').get();const earned=parseFloat(sn.exists()?sn.val():0);if(earned<cbLim)elig.push({...u,earned});}
+  if(!elig.length){toast('No eligible members');return;}
+  const per=pool/elig.length;
+  for(const u of elig){const give=Math.min(per,cbLim-u.earned);if(give<=0)continue;await db.ref('users/'+u.id+'/income/cashback').set(u.earned+give);const wr=db.ref('users/'+u.id+'/walletBalance'),ws=await wr.get(),nw=parseFloat(ws.exists()?ws.val():0)+give;await wr.set(nw);await db.ref('transactions/'+u.id).push({type:'Daily Cashback',amount:give,note:'Pool $'+pool.toFixed(2)+'/'+elig.length+' members',timestamp:Date.now(),status:'completed',balance:nw});}
+  await db.ref('cashbackHistory').push({pool:pool.toFixed(2),members:elig.length,perUser:per.toFixed(4),cbLimit:cbLim,timestamp:Date.now()});
+  logA('Cashback $'+pool.toFixed(2),'Admin');loadCBH();toast('✅ Cashback $'+per.toFixed(4)+' to '+elig.length+' members');
+};
+async function loadCBH(){
+  const sn=await db.ref('cashbackHistory').get(),tb=document.getElementById('cb-h');
+  if(!sn.exists()){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted)">None</td></tr>';return;}
+  const list=Object.values(sn.val()).sort((a,b)=>b.timestamp-a.timestamp);
+  tb.innerHTML=list.slice(0,10).map(h=>`<tr><td style="font-size:.7rem">${new Date(h.timestamp).toLocaleDateString()}</td><td style="color:var(--accent)">$${h.pool}</td><td>${h.members}</td><td style="color:var(--gold)">$${parseFloat(h.perUser).toFixed(4)}</td></tr>`).join('');
+}
+
+// ── CLUB BONUS ────────────────────────────────────────
+window.saveClubSet=async()=>{
+  const pct=parseFloat(document.getElementById('cl-p').value)||4,mr=parseFloat(document.getElementById('cl-r').value)||10,mm=parseFloat(document.getElementById('cl-m').value)||50;
+  await db.ref('settings').update({clubPct:pct,clubMinRefs:mr,clubMinMatch:mm});Object.assign(S,{clubPct:pct,clubMinRefs:mr,clubMinMatch:mm});computeOV();toast('✅ Club settings saved');
+};
+window.runClub=async()=>{
+  if(!confirm('Distribute club bonus?'))return;
+  const users=Object.values(AU),active=users.filter(u=>u.isActive&&!u.blocked&&!u.incomeOff);
+  const vol=active.length*(parseFloat(S.joinFee||30)),pool=vol*(parseFloat(S.clubPct||4)/100);
+  const mr=parseInt(S.clubMinRefs||10),mm=parseFloat(S.clubMinMatch||50),elig=[];
+  for(const u of active){const dir=users.filter(u2=>u2.sponsorId===u.id).length,msn=await db.ref('users/'+u.id+'/income/matching').get(),match=parseFloat(msn.exists()?msn.val():0);if(dir>=mr||match>=mm)elig.push(u);}
+  if(!elig.length){toast('No eligible club members');return;}
+  const per=pool/elig.length;
+  for(const u of elig){const cr=db.ref('users/'+u.id+'/income/club'),cs=await cr.get();await cr.set(parseFloat(cs.exists()?cs.val():0)+per);const wr=db.ref('users/'+u.id+'/walletBalance'),ws=await wr.get(),nw=parseFloat(ws.exists()?ws.val():0)+per;await wr.set(nw);await db.ref('transactions/'+u.id).push({type:'Club Bonus',amount:per,note:'Monthly club bonus',timestamp:Date.now(),status:'completed',balance:nw});}
+  await db.ref('clubHistory').push({pool:pool.toFixed(2),members:elig.length,perUser:per.toFixed(4),timestamp:Date.now()});
+  logA('Club bonus $'+pool.toFixed(2),'Admin');toast('✅ Club $'+per.toFixed(4)+' to '+elig.length+' members');
+};
+
+// ── ROI ───────────────────────────────────────────────
+window.saveROISet=async()=>{
+  const upd={roiRate:parseFloat(document.getElementById('ro-r').value)||12,roiDirect:parseFloat(document.getElementById('ro-d').value)||50,minInv:parseFloat(document.getElementById('ro-mi').value)||100,invLock:parseFloat(document.getElementById('ro-lk').value)||6,invFee:parseFloat(document.getElementById('ro-wf').value)||10,roiSpBonus:parseFloat(document.getElementById('ro-sp').value)||5};
+  await db.ref('settings').update(upd);Object.assign(S,upd);s('ov-rr',upd.roiRate+'%');
+  for(const[k,p]of Object.entries(INV)){if(p.status==='active'){const[uid,pid]=k.split('__');await db.ref('investments/'+uid+'/'+pid).update({roiRate:upd.roiRate});}}
+  toast('✅ ROI settings saved. Active plans updated.');logA('ROI rate '+upd.roiRate+'%','Admin');
+};
+window.runROI=async()=>{
+  if(!confirm('Run ROI payout for all active plans?'))return;
+  const dp=(parseFloat(S.roiDirect||50))/100,gp=1-dp,gls=(S.generationLevels||GLD).map(v=>v/100);let cnt=0;
+  for(const[key,p]of Object.entries(INV)){
+    if(p.status!=='active')continue;
+    const[uid,pid]=key.split('__'),u=AU[uid];if(u?.incomeOff||u?.blocked)continue;
+    const mROI=(p.amount||0)*(p.roiRate||12)/100,dAmt=mROI*dp,gAmt=mROI*gp;
+    const ir=db.ref('users/'+uid+'/income/roi'),is=await ir.get();await ir.set(parseFloat(is.exists()?is.val():0)+dAmt);
+    const wr=db.ref('users/'+uid+'/walletBalance'),ws=await wr.get(),nw=parseFloat(ws.exists()?ws.val():0)+dAmt;await wr.set(nw);
+    await db.ref('investments/'+uid+'/'+pid).update({earnedROI:(p.earnedROI||0)+mROI,lastROI:Date.now()});
+    await db.ref('transactions/'+uid).push({type:'ROI Payout ('+(dp*100)+'%)',amount:dAmt,note:'Monthly ROI on $'+p.amount,timestamp:Date.now(),status:'completed',balance:nw});
+    let cur=uid;
+    for(let l=0;l<7;l++){const par=AU[cur]?.sponsorId;if(!par||!AU[par])break;const pU=AU[par];if(pU.incomeOff||pU.blocked){cur=par;continue;}const la=gAmt*gls[l];if(la<=0){cur=par;continue;}
+      const gr=db.ref('users/'+par+'/income/generation'),gs=await gr.get();await gr.set(parseFloat(gs.exists()?gs.val():0)+la);
+      const gwr=db.ref('users/'+par+'/walletBalance'),gws=await gwr.get(),gnw=parseFloat(gws.exists()?gws.val():0)+la;await gwr.set(gnw);
+      await db.ref('transactions/'+par).push({type:'Generation Bonus L'+(l+1),amount:la,note:'From '+(u?.fullName||uid.slice(0,8))+' ROI',timestamp:Date.now(),status:'completed',balance:gnw});cur=par;}
+    cnt++;
+  }
+  logA('ROI distributed for '+cnt+' plans','Admin');toast('✅ ROI paid for '+cnt+' plan(s)');
+};
+
+// ── MATCHING ──────────────────────────────────────────
+window.saveMatchSet=async()=>{
+  const pct=parseFloat(document.getElementById('ma-p').value)||5,cap=parseFloat(document.getElementById('ma-c').value)||1000;
+  await db.ref('settings').update({matchingPct:pct,matchingCap:cap});Object.assign(S,{matchingPct:pct,matchingCap:cap});
+  s('ov-mp',pct+'%');s('ma-r',pct+'%');s('ma-cp','$'+cap);toast('✅ Matching settings saved');
+};
+window.runMatching=async()=>{
+  if(!confirm('Run matching bonus?'))return;
+  const users=Object.values(AU).filter(u=>u.isActive&&!u.blocked&&!u.incomeOff);
+  const pct=parseFloat(S.matchingPct||5)/100,cap=parseFloat(S.matchingCap||1000);
+  let atCap=0,totalPaid=0;
+  for(const u of users){
+    function legCnt(startUID){let cnt=0;const q=[startUID],vis=new Set();while(q.length){const c=q.shift();if(!c||vis.has(c))continue;vis.add(c);const n=AU[c];if(!n)continue;if(n.isActive)cnt++;if(n.leftChild)q.push(n.leftChild);if(n.rightChild)q.push(n.rightChild);}return cnt;}
+    const lv=u.leftChild?legCnt(u.leftChild)*30:0,rv=u.rightChild?legCnt(u.rightChild)*30:0,weaker=Math.min(lv,rv);
+    if(weaker<=0)continue;
+    const mr=db.ref('users/'+u.id+'/income/matching'),ms=await mr.get(),earned=parseFloat(ms.exists()?ms.val():0);
+    if(earned>=cap){atCap++;continue;}
+    const bonus=Math.min(weaker*pct,cap-earned);if(bonus<=0)continue;
+    await mr.set(earned+bonus);
+    const wr=db.ref('users/'+u.id+'/walletBalance'),ws=await wr.get(),nw=parseFloat(ws.exists()?ws.val():0)+bonus;await wr.set(nw);
+    await db.ref('transactions/'+u.id).push({type:'Matching Bonus',amount:bonus,note:'L:$'+lv+' R:$'+rv+' Weaker:$'+weaker,timestamp:Date.now(),status:'completed',balance:nw});
+    totalPaid+=bonus;
+  }
+  s('ma-tp','$'+totalPaid.toFixed(2));s('ma-ac',atCap);
+  logA('Matching $'+totalPaid.toFixed(2),'Admin');toast('✅ Matching: $'+totalPaid.toFixed(2));
+};
+
+// ── GEN LEVELS & RANKS ────────────────────────────────
+function buildGL(){
+  const defs=S.generationLevels||GLD;
+  document.getElementById('gl-tb').innerHTML=[20,10,8,6,4,3,2].map((d,i)=>`<tr><td>Level ${i+1}</td><td style="color:var(--gold)">${d}%</td><td><input type="number" id="gl-${i+1}" value="${defs[i]||d}" style="width:55px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 7px;color:var(--text);font-size:.75rem"/></td></tr>`).join('');
+}
+window.saveGL=async()=>{
+  const lvls=[1,2,3,4,5,6,7].map(i=>parseFloat(document.getElementById('gl-'+i)?.value)||0);
+  await db.ref('settings/generationLevels').set(lvls);S.generationLevels=lvls;toast('✅ Generation levels saved');
+};
+function buildRanks(){
+  const saved=S.ranks||{};
+  document.getElementById('rk-tb').innerHTML=RD.map((r,i)=>{const n=i+1,sr=saved['rank'+n]||{};
+    return`<tr><td>${r.n}</td><td>${r.st}</td>
+      <td><input type="number" id="rk-${n}m" value="${sr.minMatching||r.m}" style="width:75px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 7px;color:var(--text);font-size:.75rem"/></td>
+      <td><input type="number" id="rk-${n}s" value="${sr.minSales||r.s}" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 7px;color:var(--text);font-size:.75rem"/></td>
+      <td id="rk-${n}c" style="color:var(--muted)">0</td>
+      <td><button class="btn btn-gr btn-sm" onclick="saveRank(${n})">Save</button></td>
+    </tr>`;
+  }).join('');
+}
+window.saveRank=async n=>{
+  const m=parseFloat(document.getElementById('rk-'+n+'m').value),sv=parseFloat(document.getElementById('rk-'+n+'s').value);
+  await db.ref('settings/ranks/rank'+n).update({minMatching:m,minSales:sv});
+  if(!S.ranks)S.ranks={};S.ranks['rank'+n]={minMatching:m,minSales:sv};toast('⭐ Rank '+n+' saved!');
+};
+
+// ── VOUCHERS ──────────────────────────────────────────
+window.createVoucher=async()=>{
+  const amt=parseFloat(document.getElementById('vo-a').value),qty=parseInt(document.getElementById('vo-q').value)||1;
+  const expiry=document.getElementById('vo-e').value,uQ=document.getElementById('vo-u').value.trim(),note=document.getElementById('vo-n').value.trim();
+  if(!amt||amt<=0){toast('Enter valid amount');return;}
+  const aUID=uQ?Object.values(AU).find(u=>u.username===uQ||u.id===uQ)?.id||null:null;
+  for(let i=0;i<qty;i++){const code='LLM-'+Math.random().toString(36).slice(2,9).toUpperCase();await db.ref('vouchers/'+code).set({amount:amt,code,assignedTo:aUID||null,used:false,note:note||'',expiry:expiry||null,createdAt:Date.now()});}
+  logA('Voucher(s) created '+qty+'× $'+amt,'Admin');toast('✅ '+qty+' voucher(s) created');loadVouchers();
+};
+window.loadVouchers=async()=>{
+  const sn=await db.ref('vouchers').get(),tb=document.getElementById('vo-tb');
+  if(!sn.exists()){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted)">No vouchers</td></tr>';s('ov-vo',0);return;}
+  const list=Object.entries(sn.val());s('ov-vo',list.filter(([,v])=>!v.used).length);
+  tb.innerHTML=list.sort(([,a],[,b])=>b.createdAt-a.createdAt).map(([code,v])=>`<tr>
+    <td style="font-family:monospace;font-weight:700;color:var(--pink)">${code}</td>
+    <td style="color:var(--gold);font-weight:700">$${v.amount||0}</td>
+    <td style="font-size:.7rem">${v.assignedTo?(AU[v.assignedTo]?.username||v.assignedTo.slice(0,8)):'General'}</td>
+    <td><span class="pill ${v.used?'pr':'pg'}">${v.used?'Used':'Active'}</span></td>
+    <td style="font-size:.7rem">${v.expiry||'No expiry'}</td>
+    <td><button class="btn btn-r btn-sm" onclick="delVoucher('${code}')">🗑</button></td>
+  </tr>`).join('');
+};
+window.delVoucher=async code=>{await db.ref('vouchers/'+code).remove();toast('Deleted');loadVouchers();};
+
+// ── GLOBAL SETTINGS ───────────────────────────────────
+window.saveGS=async type=>{
+  let upd={};
+  if(type==='act')upd={activationFee:parseFloat(document.getElementById('gs-af').value)||30,sponsorComm:parseFloat(document.getElementById('gs-sc').value)||4,companyFund:parseFloat(document.getElementById('gs-cf').value)||5,userCap:parseFloat(document.getElementById('gs-cp').value)||1000};
+  else if(type==='sys')upd={regOpen:document.getElementById('gs-ro').checked,wdOpen:document.getElementById('gs-wo').checked,invOpen:document.getElementById('gs-io').checked,maintenance:document.getElementById('gs-mt').checked};
+  else if(type==='cb'){const jf=parseFloat(document.getElementById('gs-jf').value)||30,mul=parseFloat(document.getElementById('gs-cm').value)||2;upd={joinFee:jf,cbMultiplier:mul,cashbackLimit:jf*mul};}
+  await db.ref('settings').update(upd);Object.assign(S,upd);computeOV();toast('✅ Settings saved');logA('Settings updated','Admin');
+};
+
+// ── SUB-ADMINS ────────────────────────────────────────
+window.createSA=async()=>{
+  const q=document.getElementById('sa-q').value.trim(),role=document.getElementById('sa-role').value.trim()||'Sub-Admin';
+  const f=Object.values(AU).find(u=>u.id===q||(u.email||'').toLowerCase()===q.toLowerCase()||(u.username||'').toLowerCase()===q.toLowerCase());
+  if(!f){toast('User not found');return;}
+  const perms={users:document.getElementById('p-u').checked,activations:document.getElementById('p-a').checked,withdrawals:document.getElementById('p-w').checked,investments:document.getElementById('p-i').checked,distributions:document.getElementById('p-d').checked,settings:document.getElementById('p-s').checked,reports:document.getElementById('p-r').checked,notices:document.getElementById('p-n').checked};
+  await db.ref('subadmins/'+f.id).set({uid:f.id,email:f.email,name:f.fullName||f.username,role,perms,createdAt:Date.now()});
+  logA('Sub-admin created: '+f.email,'Admin');toast('✅ Sub-admin: '+f.fullName);loadSA();
+};
+window.loadSA=async()=>{
+  const sn=await db.ref('subadmins').get(),tb=document.getElementById('sa-tb');
+  if(!sn.exists()){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted)">None</td></tr>';return;}
+  tb.innerHTML=Object.entries(sn.val()).map(([uid,sa])=>`<tr>
+    <td style="font-weight:700">${sa.name||'User'}<br><span style="font-size:.67rem;color:var(--muted)">${sa.email||''}</span></td>
+    <td><span class="pill pp">${sa.role||'Sub-Admin'}</span></td>
+    <td style="font-size:.68rem;color:var(--muted)">${Object.entries(sa.perms||{}).filter(([,v])=>v).map(([k])=>k).join(', ')||'None'}</td>
+    <td><button class="btn btn-r btn-sm" onclick="removeSA('${uid}')">Remove</button></td>
+  </tr>`).join('');
+};
+window.removeSA=async uid=>{if(!confirm('Remove sub-admin?'))return;await db.ref('subadmins/'+uid).remove();toast('Removed');loadSA();};
+
+// ── NOTICES ───────────────────────────────────────────
+window.sendNotice=async()=>{
+  const t=document.getElementById('no-t').value.trim(),m=document.getElementById('no-m').value.trim();
+  if(!t||!m){toast('Fill title and message');return;}
+  await db.ref('notices').push({title:t,message:m,type:document.getElementById('no-tp').value,target:document.getElementById('no-tg').value,expiry:document.getElementById('no-ex').value||null,active:true,createdAt:Date.now()});
+  document.getElementById('no-t').value='';document.getElementById('no-m').value='';
+  logA('Notice: '+t,'Admin');toast('✅ Notice published!');loadNotices();
+};
+window.loadNotices=async()=>{
+  const sn=await db.ref('notices').get(),el=document.getElementById('no-list'),ov=document.getElementById('ov-no');
+  if(!sn.exists()){el.innerHTML='<div style="text-align:center;color:var(--muted);padding:14px">No notices</div>';ov.textContent='No notices';return;}
+  const list=Object.entries(sn.val()).sort(([,a],[,b])=>b.createdAt-a.createdAt).filter(([,n])=>n.active);
+  const tc={info:'var(--accent)',success:'var(--green)',warning:'var(--gold)',urgent:'var(--red)'};
+  el.innerHTML=list.slice(0,10).map(([id,n])=>`<div class="ni"><div style="font-weight:700;font-size:.8rem;color:${tc[n.type]||'var(--muted)'}">${n.title}</div><div style="font-size:.74rem;color:var(--muted);margin:3px 0">${n.message}</div><div style="font-size:.67rem;color:var(--muted);display:flex;gap:8px"><span>${new Date(n.createdAt).toLocaleDateString()}</span><span class="pill pb">${n.target||'all'}</span>${n.expiry?`<span>Exp: ${n.expiry}</span>`:''}</div><button class="dx" onclick="delNotice('${id}')">✕</button></div>`).join('')||'<div style="text-align:center;color:var(--muted);padding:14px">No active notices</div>';
+  ov.innerHTML=list.slice(0,3).map(([,n])=>`<div style="padding:5px 0;border-bottom:1px solid var(--border);font-size:.76rem"><strong>${n.title}</strong> — ${n.message.slice(0,60)}${n.message.length>60?'…':''}</div>`).join('')||'<div style="color:var(--muted)">No notices</div>';
+};
+window.delNotice=async id=>{await db.ref('notices/'+id).update({active:false});toast('Removed');loadNotices();};
+
+// ── DASHBOARD BUTTONS ─────────────────────────────────
+window.addBtn=async()=>{
+  const lbl=document.getElementById('bt-l').value.trim(),lk=document.getElementById('bt-lk').value.trim();
+  if(!lbl||!lk){toast('Fill label and link');return;}
+  await db.ref('dashboardButtons').push({label:lbl,icon:document.getElementById('bt-i').value.trim(),link:lk,color:document.getElementById('bt-c').value,show:document.getElementById('bt-s').value,active:true,createdAt:Date.now()});
+  document.getElementById('bt-l').value='';document.getElementById('bt-i').value='';document.getElementById('bt-lk').value='';
+  toast('✅ Button added!');loadBtns();logA('Dashboard button: '+lbl,'Admin');
+};
+window.loadBtns=async()=>{
+  const sn=await db.ref('dashboardButtons').get(),el=document.getElementById('bt-list');
+  if(!sn.exists()){el.innerHTML='<div style="text-align:center;color:var(--muted);padding:14px">No buttons</div>';return;}
+  const list=Object.entries(sn.val()).filter(([,b])=>b.active);
+  el.innerHTML=list.length?list.map(([id,b])=>`<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><span style="font-size:.82rem;font-weight:700">${b.icon||''} ${b.label}</span><div style="font-size:.68rem;color:var(--muted);margin-top:2px">→ ${b.link} | ${b.show} | ${b.color}</div></div><button class="btn btn-r btn-sm" onclick="rmBtn('${id}')">Remove</button></div>`).join(''):'<div style="text-align:center;color:var(--muted)">No buttons</div>';
+};
+window.rmBtn=async id=>{await db.ref('dashboardButtons/'+id).update({active:false});toast('Removed');loadBtns();};
+
+// ── BACKUP & RESTORE ──────────────────────────────────
+window.doBackup=async()=>{
+  const type=document.getElementById('bk-t').value;let data={};
+  if(type==='full'||type==='users'){const sn=await fs.collection('users').get();data.users={};sn.forEach(d=>{data.users[d.id]={...d.data(),_id:d.id};});}
+  if(type==='full'||type==='transactions'){const sn=await db.ref('transactions').get();if(sn.exists())data.transactions=sn.val();}
+  if(type==='full'||type==='investments'){const sn=await db.ref('investments').get();if(sn.exists())data.investments=sn.val();}
+  if(type==='full'||type==='settings'){const sn=await db.ref('settings').get();if(sn.exists())data.settings=sn.val();}
+  data._meta={type,createdAt:new Date().toISOString(),by:auth.currentUser?.email};
+  const json=JSON.stringify(data,null,2),fn='llm-backup-'+type+'-'+new Date().toISOString().slice(0,10)+'.json';
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.download=fn;a.click();
+  await db.ref('backups').push({type,filename:fn,size:Math.round(json.length/1024)+'KB',createdAt:Date.now()});
+  logA('Backup: '+type,'Admin');toast('✅ Downloaded: '+fn);loadBkList();
+};
+window.fullBackup=()=>{document.getElementById('bk-t').value='full';doBackup();};
+window.doRestore=async()=>{
+  const file=document.getElementById('bk-f').files[0];if(!file){toast('Select backup file');return;}
+  if(!confirm('⚠ RESTORE overwrites current data. Are you sure?'))return;
+  const type=document.getElementById('bk-rt').value;
+  const reader=new FileReader();
+  reader.onload=async e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if((type==='full'||type==='users')&&data.users){for(const[uid,u]of Object.entries(data.users)){const{_id,...rest}=u;await fs.collection('users').doc(uid).set(rest,{merge:true});}}
+      if(type==='full'&&data.transactions)await db.ref('transactions').set(data.transactions);
+      if(type==='full'&&data.investments)await db.ref('investments').set(data.investments);
+      if((type==='full'||type==='settings')&&data.settings)await db.ref('settings').set(data.settings);
+      logA('Backup restored: '+type,'Admin');toast('✅ Restore complete!');setTimeout(()=>loadAll&&loadAll(),1500);
+    }catch(err){toast('Error: '+err.message);}
+  };
+  reader.readAsText(file);
+};
+window.recoverDate=()=>{toast('⚠ Upload a backup file from that date using the restore function.');};
+
+async function loadBkList(){
+  try{
+    const sn=await db.ref('backups').get();
+    const tb=document.getElementById('bk-tb');
+    if(!sn.exists()){
+      tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:10px">No backup records</td></tr>';
+      return;
+    }
+    const list=Object.entries(sn.val()).sort(([,a],[,b])=>b.createdAt-a.createdAt);
+    tb.innerHTML=list.slice(0,15).map(([id,b])=>`
+      <tr>
+        <td style="font-size:.7rem;color:var(--muted)">${new Date(b.createdAt).toLocaleDateString()+' '+new Date(b.createdAt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td>
+        <td><span class="pill pb">${b.type||'full'}</span></td>
+        <td style="font-size:.72rem">${b.size||'—'}</td>
+        <td>
+          <button class="btn btn-r btn-sm" onclick="delBk('${id}')">🗑</button>
+        </td>
+      </tr>`).join('');
+  }catch(e){console.log('loadBkList:',e.message);}
+}
+
+window.delBk=async id=>{
+  if(!confirm('Delete this backup record?'))return;
+  await db.ref('backups/'+id).remove();
+  toast('Deleted');loadBkList();
+};
+
+async function loadAll(){
+  await loadS();await loadUsers();await loadAct();await loadWD();await loadInv();await loadTX();
+  buildGL();buildRanks();computeOV();
+  loadVouchers();loadNotices();loadSA();loadFundH();loadBtns();loadAL();loadRootTree();loadCBH();loadBkList();
+}
+
+// ── ACTIVITY LOG ─────────────────────────────────────
+async function logA(action,by){await db.ref('activityLog').push({action,by:by||auth.currentUser?.email||'Admin',timestamp:Date.now()});}
+async function loadAL(){
+  const sn=await db.ref('activityLog').get(),tb=document.getElementById('al-tb');
+  if(!sn.exists()){tb.innerHTML='<tr><td colspan="3" style="text-align:center;color:var(--muted)">No activity</td></tr>';return;}
+  const list=Object.values(sn.val()).sort((a,b)=>b.timestamp-a.timestamp);
+  tb.innerHTML=list.slice(0,30).map(l=>`<tr><td style="font-size:.67rem;color:var(--muted)">${new Date(l.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td><td style="font-size:.72rem">${l.action||'—'}</td><td style="font-size:.7rem;color:var(--muted)">${l.by||'—'}</td></tr>`).join('');
+}
+
+// ── COMPUTE OVERVIEW ─────────────────────────────────
+function computeOV(){
+  const users=Object.values(AU),active=users.filter(u=>u.isActive),rev=active.length*(parseFloat(S.activationFee)||30),fund=active.length*(parseFloat(S.companyFund)||5),comm=active.length*(parseFloat(S.sponsorComm)||4);
+  const cbPool=(rev*(parseFloat(S.cashbackPct||3)/100)).toFixed(2),clubPool=(rev*(parseFloat(S.clubPct||4)/100)).toFixed(2);
+  s('ov-u',users.length);s('ov-ua',active.length+' active');s('ov-r','$'+rev);s('ov-f','$'+fund);s('ov-cb','$'+cbPool);s('ov-cl','$'+clubPool);
+  const ivTot=Object.values(INV).reduce((st,p)=>st+(p.amount||0),0);s('ov-i','$'+ivTot.toFixed(0));
+  s('rp-r',users.length);s('rp-rv','$'+rev);s('rp-f','$'+fund);s('rp-c','$'+comm);
+  s('cb-v','$'+rev);s('cb-ps','$'+cbPool);s('cb-el',active.length);
+  const jf=parseFloat(S.joinFee||30),mul=parseFloat(S.cbMultiplier||2),cbLim=jf*mul;
+  s('cb-mx','$'+cbLim.toFixed(0));s('cb-pm',active.length>0?'$'+(parseFloat(cbPool)/active.length).toFixed(4):'$0');
+  s('cl-pl','$'+clubPool);
+  const mr=parseInt(S.clubMinRefs||10),celigU=users.filter(u=>users.filter(u2=>u2.sponsorId===u.id).length>=mr);
+  s('cl-el',celigU.length);s('cl-pm',celigU.length>0?'$'+(parseFloat(clubPool)/celigU.length).toFixed(2):'$0');
+  document.getElementById('cl-tb').innerHTML=celigU.length?celigU.map(u=>{const dr=users.filter(u2=>u2.sponsorId===u.id).length;return`<tr><td style="font-weight:600">${u.fullName||u.username||'User'}</td><td>${dr}</td><td>—</td><td><span class="pill pg">✅ Refs</span></td></tr>`;}).join(''):'<tr><td colspan="4" style="text-align:center;color:var(--muted)">None yet</td></tr>';
+  for(let n=1;n<=7;n++){const el=document.getElementById('rk-'+n+'c');if(el)el.textContent=active.filter(u=>(u.matching||0)>=[50,300,1000,3000,10000,30000,100000][n-1]).length;}
+}
+
+// ── EXPORT CSV ────────────────────────────────────────
+window.xCSV=async type=>{
+  let rows=[],fn=type+'_'+new Date().toISOString().slice(0,10)+'.csv';
+  if(type==='users'){rows=[['ID','Name','Username','Email','Country','Mobile','Sponsor','Joined','Status','Blocked','Income','Withdraw','Balance']];Object.values(AU).forEach(u=>{const j=u.createdAt?(u.createdAt.toDate?u.createdAt.toDate().toLocaleDateString():new Date(u.createdAt).toLocaleDateString()):'';rows.push([u.id,u.fullName||'',u.username||'',u.email||'',u.country||'',u.mobile||'',u.sponsorId||'',j,u.isActive?'Active':'Inactive',u.blocked?'Yes':'No',u.incomeOff?'OFF':'ON',u.withdrawOff?'OFF':'ON',u.walletBalance||0]);});}
+  else if(type==='transactions'){rows=[['Date','User','Type','Amount','Note','Status']];TX.forEach(t=>rows.push([new Date(t.timestamp).toLocaleDateString(),AU[t.uid]?.fullName||t.uid,t.type||'',t.amount||0,t.note||'',t.status||'']]);}
+  else if(type==='withdrawals'){rows=[['User','Amount','Address','Date','Status']];Object.entries(WD).forEach(([k,w])=>rows.push([AU[w.uid]?.fullName||w.uid,w.amount||0,w.address||'',w.createdAt?new Date(w.createdAt).toLocaleDateString():'',w.status||'']]);}
+  else if(type==='investments'){rows=[['User','Amount','ROI%','Date','Earned','Status']];Object.entries(INV).forEach(([k,p])=>rows.push([AU[p.uid]?.fullName||p.uid,p.amount||0,p.roiRate||12,p.createdAt?new Date(p.createdAt).toLocaleDateString():'',p.earnedROI||0,p.status||'']]);}
+  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=fn;a.click();
+  toast('⬇ Exported: '+fn);
+};
+
+// ── HELPERS ──────────────────────────────────────────
+function s(id,val){const e=document.getElementById(id);if(e)e.textContent=val;}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3500);}
+window.closeM=id=>document.getElementById(id).classList.remove('show');
+window.doLogout=async()=>{await auth.signOut();window.location.href='login.html';};
+
+const PLBLS={overview:'Overview',users:'All Users',activations:'Activations',edituser:'Edit User',subadmin:'Sub-Admins',tree:'Binary Tree',withdrawals:'Withdrawals',investments:'Investments',fundac:'Fund Account',transactions:'Transactions',cashback:'Cashback Pool',clubbonus:'Club Bonus',roi:'ROI Management',matching:'Matching Bonus',voucher:'Gift Vouchers',settings:'Global Settings',ranks:'Ranks',buttons:'Dashboard Buttons',notices:'Notices',reports:'Reports',backup:'Backup & Restore'};
+window.sp=(page,el)=>{
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));
+  const t=document.getElementById('pg-'+page);if(t)t.classList.add('active');
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+  if(el)el.classList.add('active');
+  document.getElementById('pgLbl').textContent=PLBLS[page]||page;
+  closeSB();
+  if(page==='tree')loadRootTree();
+  if(page==='notices')loadNotices();
+  if(page==='backup'){loadBkList();loadFundH();}
+  if(page==='cashback')loadCBH();
+  if(page==='fundac')loadFundH();
+};
+window.toggleSB=()=>{document.getElementById('sbEl').classList.toggle('open');document.getElementById('mobOv').classList.toggle('show');};
+window.closeSB=()=>{document.getElementById('sbEl').classList.remove('open');document.getElementById('mobOv').classList.remove('show');};
+</script>
+</body>
+</html>

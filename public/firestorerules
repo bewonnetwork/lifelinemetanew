@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper — check if caller is admin (stored in admins collection)
+    function isAdmin() {
+      return request.auth != null &&
+             exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Users — own doc read/write OR admin can read/write all
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read, write: if isAdmin();
+    }
+
+    // Admins collection — only admins can read, nobody can write from client
+    match /admins/{docId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+  }
+}

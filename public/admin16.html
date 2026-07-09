@@ -115,20 +115,6 @@ tr:last-child td{border-bottom:none}
 .prog{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:6px}
 .prog-f{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px}
 
-/* TOGGLE SWITCH */
-.tgl{position:relative;display:inline-block;width:38px;height:20px;flex-shrink:0}
-.tgl input{opacity:0;width:0;height:0}
-.tgl-sl{position:absolute;cursor:pointer;inset:0;background:var(--border);transition:.2s;border-radius:20px}
-.tgl-sl:before{position:absolute;content:"";height:14px;width:14px;left:3px;bottom:3px;background:#fff;transition:.2s;border-radius:50%}
-.tgl input:checked + .tgl-sl{background:var(--green)}
-.tgl input:checked + .tgl-sl:before{transform:translateX(18px)}
-.tgl input:disabled + .tgl-sl{opacity:.4;cursor:not-allowed}
-
-/* PERM CHIP */
-.perm-chip{display:inline-flex;align-items:center;gap:5px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:4px 10px 4px 12px;font-size:.72rem;cursor:pointer;user-select:none}
-.perm-chip.on{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,.06)}
-.perm-chip input{display:none}
-
 @media(max-width:860px){
   .sidebar{transform:translateX(-100%);transition:.3s}
   .sidebar.open{transform:translateX(0)}
@@ -156,35 +142,33 @@ tr:last-child td{border-bottom:none}
       <p>Admin Panel</p>
     </div>
   </div>
-  <nav id="navMenu">
+  <nav>
     <div class="nav-sec">Dashboard</div>
-    <a class="active" data-perm="overview" onclick="showPage('overview',this)"><span class="ic">🏠</span> Overview</a>
+    <a class="active" onclick="showPage('overview',this)"><span class="ic">🏠</span> Overview</a>
 
     <div class="nav-sec">Users</div>
-    <a data-perm="users" onclick="showPage('users',this)"><span class="ic">👥</span> All Users</a>
-    <a data-perm="activations" onclick="showPage('activations',this)"><span class="ic">✅</span> Activations <span id="actBadge" style="background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:.65rem;margin-left:auto"></span></a>
-    <a data-perm="tree" onclick="showPage('tree',this)"><span class="ic">🌳</span> Binary Tree</a>
+    <a onclick="showPage('users',this)"><span class="ic">👥</span> All Users</a>
+    <a onclick="showPage('activations',this)"><span class="ic">✅</span> Activations <span id="actBadge" style="background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:.65rem;margin-left:auto"></span></a>
+    <a onclick="showPage('tree',this)"><span class="ic">🌳</span> Binary Tree</a>
 
     <div class="nav-sec">Finance</div>
-    <a data-perm="withdrawals" onclick="showPage('withdrawals',this)"><span class="ic">💸</span> Withdrawals <span id="wdBadge" style="background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:.65rem;margin-left:auto"></span></a>
-    <a data-perm="investments" onclick="showPage('investments',this)"><span class="ic">📈</span> Investments</a>
-    <a data-perm="transactions" onclick="showPage('transactions',this)"><span class="ic">📋</span> Transactions</a>
-    <a data-perm="vouchers" onclick="showPage('vouchers',this)"><span class="ic">🎫</span> Gift Vouchers</a>
+    <a onclick="showPage('fundreqs',this)"><span class="ic">💳</span> Fund Requests <span id="frBadge" style="background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:.65rem;margin-left:auto"></span></a>
+    <a onclick="showPage('withdrawals',this)"><span class="ic">💸</span> Withdrawals <span id="wdBadge" style="background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:.65rem;margin-left:auto"></span></a>
+    <a onclick="showPage('investments',this)"><span class="ic">📈</span> Investments</a>
+    <a onclick="showPage('transactions',this)"><span class="ic">📋</span> Transactions</a>
 
     <div class="nav-sec">Income</div>
-    <a data-perm="cashback" onclick="showPage('cashback',this)"><span class="ic">🎁</span> Cashback Pool</a>
-    <a data-perm="clubbonus" onclick="showPage('clubbonus',this)"><span class="ic">🏆</span> Club Bonus</a>
-    <a data-perm="roi" onclick="showPage('roi',this)"><span class="ic">💰</span> ROI Management</a>
+    <a onclick="showPage('cashback',this)"><span class="ic">🎁</span> Cashback Pool</a>
+    <a onclick="showPage('clubbonus',this)"><span class="ic">🏆</span> Club Bonus</a>
+    <a onclick="showPage('roi',this)"><span class="ic">💰</span> ROI Management</a>
 
     <div class="nav-sec">System</div>
-    <a data-perm="settings" onclick="showPage('settings',this)"><span class="ic">⚙</span> Settings</a>
-    <a data-perm="ranks" onclick="showPage('ranks',this)"><span class="ic">⭐</span> Ranks</a>
-    <a data-perm="announce" onclick="showPage('announce',this)"><span class="ic">📢</span> Announcements</a
-    ><a data-perm="reports" onclick="showPage('reports',this)"><span class="ic">📊</span> Reports</a>
-    <a data-perm="subadmins" onclick="showPage('subadmins',this)"><span class="ic">🛡</span> Sub-Admins</a>
-    <a data-perm="activitylog" onclick="showPage('activitylog',this)"><span class="ic">🕒</span> Activity Log</a>
-    <a data-perm="backup" onclick="showPage('backup',this)"><span class="ic">💾</span> Backup &amp; Restore</a>
+    <a onclick="showPage('settings',this)"><span class="ic">⚙</span> Settings</a>
+    <a onclick="showPage('ranks',this)"><span class="ic">⭐</span> Ranks</a>
+    <a onclick="showPage('announce',this)"><span class="ic">📢</span> Announcements</a>
+    <a onclick="showPage('reports',this)"><span class="ic">📊</span> Reports</a>
 
+    <a onclick="showPage('datareset',this)" style="color:var(--orange)"><span class="ic">🗑</span> Data Reset</a>
     <div style="height:10px"></div>
     <a onclick="doLogout()" style="color:var(--red)"><span class="ic">🚪</span> Logout</a>
   </nav>
@@ -197,7 +181,7 @@ tr:last-child td{border-bottom:none}
     <span class="pg-lbl" id="pgLbl">Overview</span>
   </div>
   <div class="tb-right">
-    <span class="admin-badge" id="roleBadge">🛡 ADMIN</span>
+    <span class="admin-badge">🛡 ADMIN</span>
     <span style="font-size:.75rem;color:var(--muted)" id="adminEmailD">—</span>
     <button class="btn btn-o btn-sm" onclick="doLogout()">Logout</button>
   </div>
@@ -208,7 +192,6 @@ tr:last-child td{border-bottom:none}
 <!-- ===== OVERVIEW ===== -->
 <div class="page active" id="page-overview">
   <div class="pg-title">Admin Dashboard</div>
-  <div id="impersonateBanner"></div>
   <div class="cards-grid">
     <div class="sc cb"><div class="sc-lbl">Total Users</div><div class="sc-val" id="ovUsers">0</div><div class="sc-sub" id="ovActiveUsers">0 active</div><div class="sc-ic">👥</div></div>
     <div class="sc cgr"><div class="sc-lbl">Total Revenue</div><div class="sc-val" id="ovRevenue">$0</div><div class="sc-sub">Activation fees</div><div class="sc-ic">💵</div></div>
@@ -234,7 +217,6 @@ tr:last-child td{border-bottom:none}
         <button class="btn btn-p" style="width:100%" onclick="runCashback()">💰 Distribute Cashback Now</button>
         <button class="btn btn-g" style="width:100%" onclick="runClubBonus()">🏆 Distribute Club Bonus</button>
         <button class="btn btn-gr" style="width:100%" onclick="runROIDistrib()">📈 Run ROI Payout</button>
-        <button class="btn btn-r" style="width:100%" onclick="runDailyTax()">🧾 Run Daily Taxation</button>
         <hr style="border-color:var(--border)"/>
         <div style="font-size:.77rem">
           <div style="display:flex;justify-content:space-between;padding:5px 0"><span style="color:var(--muted)">Cashback Pool (3%)</span><span id="qsCashPool" style="color:var(--accent);font-weight:700">$0</span></div>
@@ -244,11 +226,6 @@ tr:last-child td{border-bottom:none}
         </div>
       </div>
     </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Dashboard Buttons (visible to users) <button class="btn btn-sm btn-o" onclick="showPage('settings',null)">Manage in Settings</button></div>
-    <div id="userBtnPreview" style="display:flex;gap:8px;flex-wrap:wrap"></div>
   </div>
 </div>
 
@@ -261,9 +238,6 @@ tr:last-child td{border-bottom:none}
       <option value="all">All Users</option>
       <option value="active">Active Only</option>
       <option value="inactive">Inactive Only</option>
-      <option value="blocked">Income Blocked</option>
-      <option value="wdblocked">Withdrawal Blocked</option>
-      <option value="banned">Banned</option>
     </select>
     <button class="btn btn-o btn-sm" onclick="loadUsers()">↻ Refresh</button>
     <button class="btn btn-p btn-sm" onclick="exportUsersCSV()">⬇ Export CSV</button>
@@ -272,8 +246,8 @@ tr:last-child td{border-bottom:none}
     <div class="card-title">Users <small id="userCountLbl" style="color:var(--muted);font-weight:400"></small></div>
     <div class="tw">
       <table>
-        <thead><tr><th>#</th><th>Name</th><th>Username</th><th>Email</th><th>Sponsor</th><th>Joined</th><th>Status</th><th>Income</th><th>Withdraw</th><th>Rank</th><th>Balance</th><th>Actions</th></tr></thead>
-        <tbody id="usersTb"><tr><td colspan="12" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr></tbody>
+        <thead><tr><th>#</th><th>Name</th><th>Username</th><th>Email</th><th>Sponsor</th><th>Joined</th><th>Status</th><th>Rank</th><th>Balance</th><th>Actions</th></tr></thead>
+        <tbody id="usersTb"><tr><td colspan="10" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -282,7 +256,7 @@ tr:last-child td{border-bottom:none}
 <!-- ===== ACTIVATIONS ===== -->
 <div class="page" id="page-activations">
   <div class="pg-title">Activation Requests</div>
-  <div class="info-box">💡 Each activation: <strong>$<span id="actInfoSponsor">4</span> → Sponsor</strong>, <strong>$<span id="actInfoFund">5</span> → Company Fund</strong>. Verify TxID on blockchain before approving.</div>
+  <div class="info-box">💡 Each activation: <strong>$4 → Sponsor</strong>, <strong>$5 → Company Fund</strong>, $21 operations. Verify TxID on blockchain before approving.</div>
   <div class="search-bar">
     <select id="actFilterSel" onchange="filterActivations()">
       <option value="all">All</option>
@@ -314,11 +288,8 @@ tr:last-child td{border-bottom:none}
       <button class="btn btn-o btn-sm" onclick="loadRootTree()">Root</button>
     </div>
   </div>
-  <div class="warn-box">✂ Click a node's "Cut" button to detach that user (and their whole sub-tree) from their current parent, then click "Attach" on the new target parent's empty slot to move them.</div>
   <div class="card">
-    <div class="card-title">Tree <small id="treeRootLabel" style="color:var(--muted);font-weight:400"></small>
-      <span id="cutClipboardLbl" style="color:var(--gold);font-weight:700"></span>
-    </div>
+    <div class="card-title">Tree <small id="treeRootLabel" style="color:var(--muted);font-weight:400"></small></div>
     <div style="overflow-x:auto;padding:10px 0" id="treeViewContainer">
       <div style="text-align:center;color:var(--muted);padding:30px">Loading tree…</div>
     </div>
@@ -360,7 +331,6 @@ tr:last-child td{border-bottom:none}
     <div class="sc cgr"><div class="sc-lbl">Active Plans</div><div class="sc-val" id="invActiveCount">0</div><div class="sc-ic">✅</div></div>
     <div class="sc cg"><div class="sc-lbl">ROI Paid Out</div><div class="sc-val" id="invROIPaid">$0</div><div class="sc-ic">💰</div></div>
   </div>
-  <div class="info-box">Sponsor referral bonus on new investments: <strong><span id="invInfoSponsorPct">5</span>%</strong> of invested amount (set in Settings).</div>
   <div class="card">
     <div class="card-title">All Investment Plans <button class="btn btn-o btn-sm" onclick="loadInvestments()">↻ Refresh</button></div>
     <div class="tw">
@@ -385,9 +355,6 @@ tr:last-child td{border-bottom:none}
       <option value="ROI Payout">ROI</option>
       <option value="Club Bonus">Club</option>
       <option value="Withdrawal">Withdrawal</option>
-      <option value="Admin Adjustment">Admin Adjustment</option>
-      <option value="Daily Tax">Daily Tax</option>
-      <option value="Gift Voucher">Gift Voucher</option>
     </select>
     <button class="btn btn-o btn-sm" onclick="loadAllTx()">↻ Refresh</button>
   </div>
@@ -402,34 +369,10 @@ tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- ===== GIFT VOUCHERS ===== -->
-<div class="page" id="page-vouchers">
-  <div class="pg-title">Gift Vouchers</div>
-  <div class="two-col">
-    <div class="card">
-      <div class="card-title">Create Voucher</div>
-      <div class="fg"><label>Voucher Code (leave blank to auto-generate)</label><input type="text" id="vCode" placeholder="e.g. WELCOME25"/></div>
-      <div class="fg"><label>Amount ($)</label><input type="number" id="vAmount" value="10"/></div>
-      <div class="fg"><label>Max Redemptions</label><input type="number" id="vMaxUses" value="1"/></div>
-      <div class="fg"><label>Expiry Date (optional)</label><input type="date" id="vExpiry"/></div>
-      <button class="btn btn-p" style="width:100%" onclick="createVoucher()">🎫 Create Voucher</button>
-    </div>
-    <div class="card">
-      <div class="card-title">Active / Past Vouchers <button class="btn btn-o btn-sm" onclick="loadVouchers()">↻ Refresh</button></div>
-      <div class="tw">
-        <table>
-          <thead><tr><th>Code</th><th>Amount</th><th>Uses</th><th>Expiry</th><th>Status</th><th></th></tr></thead>
-          <tbody id="vTb"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:14px">Loading…</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- ===== CASHBACK ===== -->
 <div class="page" id="page-cashback">
   <div class="pg-title">Cashback Pool</div>
-  <div class="info-box">💡 <span id="cbPctInfo">3</span>% of total company joining volume distributed equally among all eligible active members. Max per user: <strong>$<span id="cbLimitInfo">60</span></strong> (default = 2× activation fee, editable in Settings). Stops automatically at limit.</div>
+  <div class="info-box">3% of total company joining volume distributed equally among all eligible active members. Max per user: <strong>$60</strong> (2× of $30). Stops automatically at limit.</div>
   <div class="two-col">
     <div class="card">
       <div class="card-title">Pool Status</div>
@@ -488,15 +431,15 @@ tr:last-child td{border-bottom:none}
     <div class="card">
       <div class="card-title">ROI Rate Settings</div>
       <div class="fg">
-        <label>Monthly ROI Rate (%)</label>
-        <input type="number" id="roiRateInput" min="0" max="100" step="0.5" value="12" placeholder="12"/>
+        <label>Monthly ROI Rate (12–15%)</label>
+        <input type="number" id="roiRateInput" min="12" max="15" step="0.5" value="12" placeholder="12"/>
       </div>
       <div class="warn-box">⚠ This rate applies to ALL active investment plans on next distribution.</div>
       <button class="btn btn-gr" onclick="saveROIRate()" style="width:100%;margin-bottom:10px">💾 Save ROI Rate</button>
       <hr style="border-color:var(--border);margin:12px 0"/>
       <div class="card-title" style="font-size:.82rem">Run Distribution</div>
       <div class="fg"><label>Direct Payout to Investor</label><input type="number" id="roiDirectPct" value="50" min="0" max="100"/></div>
-      <div class="info-box" style="font-size:.72rem">Remaining % distributed as Generation Bonus (7 levels below)</div>
+      <div class="info-box" style="font-size:.72rem">Remaining % distributed as Generation Bonus (7 levels: 20,10,8,6,4,3,2)</div>
       <button class="btn btn-p" onclick="runROIDistrib()" style="width:100%">📈 Run ROI Distribution Now</button>
     </div>
     <div class="card">
@@ -509,7 +452,7 @@ tr:last-child td{border-bottom:none}
             <tr><td>Level 2</td><td style="color:var(--accent)">10%</td><td><input type="number" id="gl2" value="10" style="width:55px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 7px;color:var(--text);font-size:.77rem"/></td></tr>
             <tr><td>Level 3</td><td style="color:var(--accent)">8%</td><td><input type="number" id="gl3" value="8" style="width:55px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 7px;color:var(--text);font-size:.77rem"/></td></tr>
             <tr><td>Level 4</td><td style="color:var(--green)">6%</td><td><input type="number" id="gl4" value="6" style="width:55px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 7px;color:var(--text);font-size:.77rem"/></td></tr>
-            <tr><td>Level 5</td><td style="color:var(--green)">4%</td><td><input type="number" id="gl5" value="4" style="width:55px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 7px;color:var(--text);font-size:.77rem"/></td></tr>
+            <tr><td>Level 5</td><td style="color:var(--green)">4%</td><td><input type="number" id="gl5" value="4" style="width:55px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 7px;color:var(--text);font-size:.77fm"/></td></tr>
             <tr><td>Level 6</td><td>3%</td><td><input type="number" id="gl6" value="3" style="width:55px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 7px;color:var(--text);font-size:.77rem"/></td></tr>
             <tr><td>Level 7</td><td>2%</td><td><input type="number" id="gl7" value="2" style="width:55px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 7px;color:var(--text);font-size:.77rem"/></td></tr>
           </tbody>
@@ -522,7 +465,7 @@ tr:last-child td{border-bottom:none}
 
 <!-- ===== SETTINGS ===== -->
 <div class="page" id="page-settings">
-  <div class="pg-title">System Settings <small style="color:var(--muted);font-weight:400;font-size:.7rem">All values below are global &amp; apply instantly to the live app</small></div>
+  <div class="pg-title">System Settings</div>
   <div class="two-col">
     <div class="card">
       <div class="card-title">Activation & Commission</div>
@@ -530,6 +473,7 @@ tr:last-child td{border-bottom:none}
       <div class="fg"><label>Sponsor Commission ($)</label><input type="number" id="setSponsComm" value="4"/></div>
       <div class="fg"><label>Company Fund per Activation ($)</label><input type="number" id="setCompFund" value="5"/></div>
       <div class="fg"><label>User Capping Limit ($)</label><input type="number" id="setUserCap" value="1000"/></div>
+      <div class="fg"><label>Fund Deposit Commission (%) <span style="color:var(--accent)">[5% default]</span></label><input type="number" id="setInvComm" value="5" min="0" max="20"/></div>
       <button class="btn btn-p" onclick="saveSettings('activation')">Save</button>
     </div>
     <div class="card">
@@ -544,38 +488,16 @@ tr:last-child td{border-bottom:none}
       <div class="fg"><label>Minimum Investment ($)</label><input type="number" id="setMinInv" value="100"/></div>
       <div class="fg"><label>Capital Lock Period (months)</label><input type="number" id="setInvLock" value="6"/></div>
       <div class="fg"><label>Capital Withdrawal Fee (%)</label><input type="number" id="setInvFee" value="10"/></div>
-      <div class="fg"><label>Sponsor Bonus on Investment (%)</label><input type="number" id="setInvSponsorPct" value="5"/></div>
       <button class="btn btn-p" onclick="saveSettings('investment')">Save</button>
     </div>
     <div class="card">
       <div class="card-title">Pool Settings</div>
       <div class="fg"><label>Cashback Pool (%)</label><input type="number" id="setCBPct" value="3"/></div>
-      <div class="fg"><label>Cashback Limit Mode</label>
-        <select id="setCBLimitMode" onchange="toggleCBLimitMode()">
-          <option value="auto">Auto = 2× Activation Fee</option>
-          <option value="custom">Custom Fixed Amount</option>
-        </select>
-      </div>
-      <div class="fg" id="cbCustomWrap" style="display:none"><label>Custom Cashback Limit ($)</label><input type="number" id="setCBLimit" value="60"/></div>
+      <div class="fg"><label>Cashback Limit per User ($)</label><input type="number" id="setCBLimit" value="60"/></div>
       <div class="fg"><label>Club Bonus Pool (%)</label><input type="number" id="setClubPct" value="4"/></div>
       <div class="fg"><label>Club Min Direct Refs</label><input type="number" id="setClubMinRefs" value="10"/></div>
       <div class="fg"><label>Club Min Matching ($)</label><input type="number" id="setClubMinMatch" value="50"/></div>
       <button class="btn btn-p" onclick="saveSettings('pools')">Save</button>
-    </div>
-    <div class="card">
-      <div class="card-title">Daily Taxation</div>
-      <div class="fg"><label>Daily Tax on Wallet Balance (%)</label><input type="number" id="setDailyTaxPct" value="0" step="0.1"/></div>
-      <div class="fg"><label>Only Tax Inactive Users?</label>
-        <select id="setDailyTaxOnlyInactive"><option value="no">No — tax everyone</option><option value="yes">Yes — inactive only</option></select>
-      </div>
-      <div class="warn-box">⚠ Running "Daily Taxation" deducts this % from every eligible user's wallet balance. Use with care.</div>
-      <button class="btn btn-p" onclick="saveSettings('tax')">Save</button>
-    </div>
-    <div class="card">
-      <div class="card-title">User Dashboard Buttons</div>
-      <div style="font-size:.72rem;color:var(--muted);margin-bottom:10px">Toggle which action buttons appear on the user-side dashboard.</div>
-      <div id="dashBtnToggles" style="display:flex;flex-direction:column;gap:9px"></div>
-      <button class="btn btn-p" style="width:100%;margin-top:10px" onclick="saveDashButtons()">Save Button Visibility</button>
     </div>
   </div>
 </div>
@@ -658,76 +580,71 @@ tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- ===== SUB-ADMINS ===== -->
-<div class="page" id="page-subadmins">
-  <div class="pg-title">Sub-Admin Management</div>
-  <div class="info-box">🛡 Only the <strong>Super Admin</strong> can create, edit, or remove sub-admins. Sub-admins only see sidebar pages you grant them.</div>
-  <div class="two-col">
-    <div class="card">
-      <div class="card-title">Add Sub-Admin</div>
-      <div class="fg"><label>Email</label><input type="email" id="saEmail" placeholder="subadmin@example.com"/></div>
-      <div class="fg"><label>Display Name</label><input type="text" id="saName" placeholder="e.g. Finance Manager"/></div>
-      <div class="fg"><label>Temporary Password</label><input type="text" id="saPass" placeholder="min 6 characters"/></div>
-      <div class="fg">
-        <label>Permissions</label>
-        <div id="saPermChips" style="display:flex;flex-wrap:wrap;gap:7px"></div>
-      </div>
-      <button class="btn btn-p" style="width:100%" onclick="createSubAdmin()">➕ Create Sub-Admin</button>
-    </div>
-    <div class="card">
-      <div class="card-title">Existing Sub-Admins <button class="btn btn-o btn-sm" onclick="loadSubAdmins()">↻ Refresh</button></div>
-      <div class="tw">
-        <table>
-          <thead><tr><th>Name</th><th>Email</th><th>Permissions</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody id="saTb"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:14px">Loading…</td></tr></tbody>
-        </table>
-      </div>
-    </div>
+<!-- ===== FUND REQUESTS ===== -->
+<div class="page" id="page-fundreqs">
+  <div class="pg-title">Fund Requests</div>
+  <div class="info-box">💡 User fund submit করলে এখানে আসে। Approve করলে <strong>5% commission</strong> deduct → net amount wallet credit। Sponsor <strong>$4 referral bonus</strong> পাবে।</div>
+  <div class="cards-grid" style="max-width:700px">
+    <div class="sc cr"><div class="sc-lbl">Pending</div><div class="sc-val" id="frPendCount">0</div><div class="sc-ic">⏳</div></div>
+    <div class="sc cgr"><div class="sc-lbl">Approved</div><div class="sc-val" id="frApprCount">0</div><div class="sc-ic">✅</div></div>
+    <div class="sc cg"><div class="sc-lbl">Total Credited</div><div class="sc-val" id="frTotalAmt">$0</div><div class="sc-ic">💰</div></div>
   </div>
-</div>
-
-<!-- ===== ACTIVITY LOG ===== -->
-<div class="page" id="page-activitylog">
-  <div class="pg-title">Activity Log</div>
   <div class="search-bar">
-    <input type="text" id="logSearchInput" placeholder="Search admin, action, target…" oninput="filterLogs()"/>
-    <button class="btn btn-o btn-sm" onclick="loadActivityLog()">↻ Refresh</button>
+    <select id="frFilterSel" onchange="filterFundReqs()">
+      <option value="all">All</option>
+      <option value="pending">Pending</option>
+      <option value="approved">Approved</option>
+      <option value="rejected">Rejected</option>
+    </select>
+    <button class="btn btn-o btn-sm" onclick="loadFundRequests()">↻ Refresh</button>
   </div>
   <div class="card">
-    <div class="card-title">All Admin Actions <small id="logCountLbl" style="color:var(--muted);font-weight:400"></small></div>
     <div class="tw">
       <table>
-        <thead><tr><th>Date/Time</th><th>Admin</th><th>Action</th><th>Target</th><th>Details</th></tr></thead>
-        <tbody id="logTb"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr></tbody>
+        <thead><tr><th>#</th><th>User</th><th>Amount</th><th>Network</th><th>TxHash</th><th>Note</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="frTb"><tr><td colspan="9" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr></tbody>
       </table>
     </div>
   </div>
 </div>
 
-<!-- ===== BACKUP & RESTORE ===== -->
-<div class="page" id="page-backup">
-  <div class="pg-title">Backup &amp; Restore</div>
-  <div class="warn-box">⚠ Restoring will overwrite current live data with the selected backup snapshot. This cannot be undone — take a fresh backup first if unsure.</div>
+<!-- ===== DATA RESET ===== -->
+<div class="page" id="page-datareset">
+  <div class="pg-title">⚠️ Data Management</div>
+  <div class="warn-box">⚠️ এই tools শুধু testing-এর পর cleanup-এর জন্য। Deleted data আর ফিরে আসবে না।</div>
   <div class="two-col">
-    <div class="card">
-      <div class="card-title">Create Backup</div>
-      <div style="font-size:.77rem;color:var(--muted);margin-bottom:10px">Snapshots users, transactions, withdrawals, investments and settings as they are right now.</div>
-      <button class="btn btn-gr" style="width:100%" onclick="createBackup()">💾 Backup Now</button>
+    <div class="card" style="border-color:rgba(239,68,68,.3)">
+      <div class="card-title" style="color:var(--red)">🗑 Single User Delete</div>
+      <div class="fg">
+        <label>User UID (All Users page থেকে copy করো)</label>
+        <input type="text" id="delUid" placeholder="Firebase UID…"/>
+      </div>
+      <div style="font-size:.76rem;color:var(--muted);margin-bottom:12px;line-height:1.7">
+        এই user-এর সব data delete হবে:<br>
+        • RTDB: income, transactions, investments, withdrawals, fundRequests<br>
+        • Firestore: user document<br>
+        • activationRequests-এ এর entries
+      </div>
+      <button class="btn btn-r" onclick="deleteSingleUser()" style="width:100%">🗑 Delete This User</button>
+    </div>
+    <div class="card" style="border-color:rgba(239,68,68,.5)">
+      <div class="card-title" style="color:var(--red)">☢️ Reset ALL Test Data</div>
+      <div style="font-size:.76rem;color:var(--muted);margin-bottom:12px;line-height:1.7">
+        সব delete হবে:<br>
+        • RTDB: users, transactions, investments, withdrawals, activationRequests, fundRequests, announcements<br>
+        • Firestore: সব users collection<br>
+        • Settings থাকবে (delete হবে না)
+      </div>
+      <button class="btn btn-r" onclick="resetAllData()" style="width:100%">☢️ DELETE ALL DATA (Testing Only)</button>
     </div>
     <div class="card">
-      <div class="card-title">Restore from Backup</div>
-      <div class="fg"><label>Restore to on/before date</label><input type="date" id="restoreDateInput"/></div>
-      <button class="btn btn-o" style="width:100%;margin-bottom:8px" onclick="restoreByDate()">⏪ Restore Last Backup Before Date</button>
-      <div style="font-size:.72rem;color:var(--muted)">Or pick an exact snapshot from the list below.</div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title">Available Backups <button class="btn btn-o btn-sm" onclick="loadBackups()">↻ Refresh</button></div>
-    <div class="tw">
-      <table>
-        <thead><tr><th>Date/Time</th><th>Users</th><th>Size (approx)</th><th>Actions</th></tr></thead>
-        <tbody id="bkTb"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:14px">No backups yet</td></tr></tbody>
-      </table>
+      <div class="card-title">⚙️ Admin Wallet Address</div>
+      <div style="font-size:.76rem;color:var(--muted);margin-bottom:10px">Dashboard-এ users এই address দেখবে USDT পাঠানোর জন্য</div>
+      <div class="fg">
+        <label>USDT TRC20 Admin Wallet</label>
+        <input type="text" id="adminWalletInput" placeholder="TRC20 address…"/>
+      </div>
+      <button class="btn btn-gr" onclick="saveAdminWallet()">💾 Save Wallet Address</button>
     </div>
   </div>
 </div>
@@ -739,14 +656,6 @@ tr:last-child td{border-bottom:none}
   <div class="modal">
     <div class="modal-title">User Details <button class="modal-close" onclick="closeModal('userModal')">✕</button></div>
     <div id="userModalBody">Loading…</div>
-  </div>
-</div>
-
-<!-- USER EDIT MODAL -->
-<div class="modal-bg" id="editUserModal">
-  <div class="modal">
-    <div class="modal-title">Edit User <button class="modal-close" onclick="closeModal('editUserModal')">✕</button></div>
-    <div id="editUserModalBody">Loading…</div>
   </div>
 </div>
 
@@ -774,128 +683,36 @@ const auth  = firebase.auth();
 const fsdb  = firebase.firestore();   // Firestore — users
 const rtdb  = firebase.database();   // Realtime DB — income, tx, investments
 
-// Super admin emails (hardcoded — always full access, can manage sub-admins)
-const SUPER_ADMIN_EMAILS = ['admin@lifelinemeta.com','superadmin@lifelinemeta.com'];
-
-// Full permission set (page keys must match data-perm in sidebar)
-const ALL_PERMS = ['overview','users','activations','tree','withdrawals','investments','transactions',
-  'vouchers','cashback','clubbonus','roi','settings','ranks','announce','reports','subadmins','activitylog','backup'];
+// Admin emails allowed
+const ADMIN_EMAILS = ['admin@lifelinemeta.com','superadmin@lifelinemeta.com'];
 
 let ALLU     = {}; // all Firestore users
 let ALL_ACT  = {}; // activation requests (RTDB)
 let ALL_WD   = {}; // withdrawals (RTDB)
 let ALL_INV  = {}; // investments (RTDB)
 let ALL_TX   = []; // all transactions (RTDB)
-let ALL_VOU  = {}; // gift vouchers (RTDB)
-let ALL_LOGS = []; // activity logs (RTDB)
-let ALL_SUBADMINS = {}; // sub-admins (RTDB)
 let SETTINGS = {}; // settings (RTDB)
-
-let CURRENT_ADMIN = { email:null, uid:null, role:'superadmin', permissions: ALL_PERMS.slice(), name:'Admin' };
-let CUT_CLIPBOARD = null; // { uid, name } of user currently "cut" from tree
 
 // ── AUTH ─────────────────────────────────────────────
 auth.onAuthStateChanged(async user => {
   if (!user) { window.location.href = 'login.html'; return; }
+  // For development: allow any logged-in user
+  // In production add: if (!ADMIN_EMAILS.includes(user.email)) { auth.signOut(); ... }
   document.getElementById('adminEmailD').textContent = user.email || '';
-  CURRENT_ADMIN.email = user.email;
-  CURRENT_ADMIN.uid = user.uid;
-
-  if (SUPER_ADMIN_EMAILS.includes(user.email)) {
-    CURRENT_ADMIN.role = 'superadmin';
-    CURRENT_ADMIN.permissions = ALL_PERMS.slice();
-    CURRENT_ADMIN.name = 'Super Admin';
-  } else {
-    // Look up sub-admin record by email
-    const saSnap = await rtdb.ref('admins').orderByChild('email').equalTo(user.email).get();
-    if (saSnap.exists()) {
-      const [saId, saData] = Object.entries(saSnap.val())[0];
-      if (saData.disabled) { alert('Your admin access has been disabled.'); await auth.signOut(); window.location.href='login.html'; return; }
-      CURRENT_ADMIN.role = 'subadmin';
-      CURRENT_ADMIN.saId = saId;
-      CURRENT_ADMIN.permissions = saData.permissions || ['overview'];
-      CURRENT_ADMIN.name = saData.name || 'Sub-Admin';
-    } else {
-      // Not an admin at all — for dev convenience still allow with overview-only.
-      CURRENT_ADMIN.role = 'subadmin';
-      CURRENT_ADMIN.permissions = ['overview'];
-      CURRENT_ADMIN.name = user.email;
-    }
-  }
-  applyAdminUI();
   await loadAll();
 });
-
-function applyAdminUI() {
-  const badge = document.getElementById('roleBadge');
-  badge.textContent = CURRENT_ADMIN.role === 'superadmin' ? '🛡 SUPER ADMIN' : '🛡 SUB-ADMIN';
-  document.querySelectorAll('#navMenu a[data-perm]').forEach(a => {
-    const perm = a.getAttribute('data-perm');
-    a.style.display = CURRENT_ADMIN.permissions.includes(perm) ? '' : 'none';
-  });
-}
-
-function hasPerm(p){ return CURRENT_ADMIN.permissions.includes(p); }
 
 async function loadAll() {
   await loadSettings();
   await loadUsers();
-  if (hasPerm('activations')) await loadActivations();
-  if (hasPerm('withdrawals')) await loadWithdrawals();
-  if (hasPerm('investments')) await loadInvestments();
-  if (hasPerm('transactions')) await loadAllTx();
-  if (hasPerm('vouchers')) await loadVouchers();
-  if (hasPerm('subadmins')) await loadSubAdmins();
-  if (hasPerm('activitylog')) await loadActivityLog();
-  if (hasPerm('backup')) await loadBackups();
+  await loadActivations();
+  await loadWithdrawals();
+  await loadInvestments();
+  await loadAllTx();
+  await loadFundRequests();
   computeOverview();
   loadAnnouncements();
-  renderImpersonateBanner();
 }
-
-// ── ACTIVITY LOGGING ──────────────────────────────────
-async function logActivity(action, target, details) {
-  try {
-    await rtdb.ref('adminLogs').push({
-      adminEmail: CURRENT_ADMIN.email,
-      adminName: CURRENT_ADMIN.name,
-      action, target: target || '', details: details || '',
-      timestamp: Date.now()
-    });
-  } catch(e) { console.warn('log failed', e); }
-}
-
-window.loadActivityLog = async () => {
-  const snap = await rtdb.ref('adminLogs').limitToLast(500).get();
-  ALL_LOGS = [];
-  if (snap.exists()) {
-    Object.entries(snap.val()).forEach(([id,l]) => ALL_LOGS.push({ ...l, id }));
-  }
-  ALL_LOGS.sort((a,b) => b.timestamp - a.timestamp);
-  renderLogs(ALL_LOGS);
-};
-
-function renderLogs(list) {
-  set('logCountLbl', list.length + ' entries');
-  const tb = document.getElementById('logTb');
-  tb.innerHTML = list.length ? list.map(l => `<tr>
-    <td style="font-size:.72rem;color:var(--muted)">${new Date(l.timestamp).toLocaleString()}</td>
-    <td style="font-size:.73rem">${l.adminName||l.adminEmail||'—'}</td>
-    <td><span class="pill pb">${l.action||'—'}</span></td>
-    <td style="font-size:.73rem">${l.target||'—'}</td>
-    <td style="font-size:.72rem;color:var(--muted)">${l.details||'—'}</td>
-  </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">No activity yet</td></tr>';
-}
-
-window.filterLogs = () => {
-  const q = document.getElementById('logSearchInput').value.toLowerCase();
-  const list = ALL_LOGS.filter(l =>
-    (l.adminName||'').toLowerCase().includes(q) ||
-    (l.adminEmail||'').toLowerCase().includes(q) ||
-    (l.action||'').toLowerCase().includes(q) ||
-    (l.target||'').toLowerCase().includes(q));
-  renderLogs(list);
-};
 
 // ── SETTINGS ─────────────────────────────────────────
 async function loadSettings() {
@@ -906,118 +723,74 @@ async function loadSettings() {
   }
 }
 function applySettings() {
-  if (SETTINGS.roiRate)      { document.getElementById('roiRateInput').value = SETTINGS.roiRate; set('qsROIRate', SETTINGS.roiRate+'%'); }
-  if (SETTINGS.activationFee) document.getElementById('setActFee').value = SETTINGS.activationFee;
-  if (SETTINGS.sponsorComm)   document.getElementById('setSponsComm').value = SETTINGS.sponsorComm;
-  if (SETTINGS.companyFund)   document.getElementById('setCompFund').value = SETTINGS.companyFund;
-  if (SETTINGS.userCap)       document.getElementById('setUserCap').value = SETTINGS.userCap;
+  if (SETTINGS.roiRate)               { document.getElementById('roiRateInput').value = SETTINGS.roiRate; set('qsROIRate', SETTINGS.roiRate+'%'); }
+  if (SETTINGS.activationFee)         document.getElementById('setActFee').value = SETTINGS.activationFee;
+  if (SETTINGS.sponsorComm)           document.getElementById('setSponsComm').value = SETTINGS.sponsorComm;
+  if (SETTINGS.companyFund)           document.getElementById('setCompFund').value = SETTINGS.companyFund;
+  if (SETTINGS.userCap)               document.getElementById('setUserCap').value = SETTINGS.userCap;
+  if (SETTINGS.investmentCommission)  document.getElementById('setInvComm').value = SETTINGS.investmentCommission;
   if (SETTINGS.matchingPct)   document.getElementById('setMatchPct').value = SETTINGS.matchingPct;
-  if (SETTINGS.matchingCap)   document.getElementById('setMatchCap').value = SETTINGS.matchingCap;
-  if (SETTINGS.roiRefBonus)   document.getElementById('setROIRefBonus').value = SETTINGS.roiRefBonus;
-  if (SETTINGS.minInvestment) document.getElementById('setMinInv').value = SETTINGS.minInvestment;
-  if (SETTINGS.invLockMonths) document.getElementById('setInvLock').value = SETTINGS.invLockMonths;
-  if (SETTINGS.invFee)        document.getElementById('setInvFee').value = SETTINGS.invFee;
-  if (SETTINGS.invSponsorPct!==undefined) document.getElementById('setInvSponsorPct').value = SETTINGS.invSponsorPct;
   if (SETTINGS.cashbackPct)   document.getElementById('setCBPct').value = SETTINGS.cashbackPct;
-  if (SETTINGS.cashbackLimitMode) document.getElementById('setCBLimitMode').value = SETTINGS.cashbackLimitMode;
   if (SETTINGS.cashbackLimit) document.getElementById('setCBLimit').value = SETTINGS.cashbackLimit;
   if (SETTINGS.clubPct)       document.getElementById('setClubPct').value = SETTINGS.clubPct;
-  if (SETTINGS.clubMinRefs)   document.getElementById('setClubMinRefs').value = SETTINGS.clubMinRefs;
-  if (SETTINGS.clubMinMatch)  document.getElementById('setClubMinMatch').value = SETTINGS.clubMinMatch;
-  if (SETTINGS.dailyTaxPct!==undefined) document.getElementById('setDailyTaxPct').value = SETTINGS.dailyTaxPct;
-  if (SETTINGS.dailyTaxOnlyInactive) document.getElementById('setDailyTaxOnlyInactive').value = SETTINGS.dailyTaxOnlyInactive;
   if (SETTINGS.generationLevels) {
     SETTINGS.generationLevels.forEach((v,i) => {
       const el = document.getElementById('gl'+(i+1));
       if(el) el.value = v;
     });
   }
-  toggleCBLimitMode();
-  set('actInfoSponsor', SETTINGS.sponsorComm||4);
-  set('actInfoFund', SETTINGS.companyFund||5);
-  set('invInfoSponsorPct', SETTINGS.invSponsorPct!==undefined?SETTINGS.invSponsorPct:5);
-  set('cbPctInfo', SETTINGS.cashbackPct||3);
-  set('cbLimitInfo', effectiveCashbackLimit());
-  renderDashButtonToggles();
 }
-
-function effectiveCashbackLimit() {
-  if (SETTINGS.cashbackLimitMode === 'custom' && SETTINGS.cashbackLimit) return SETTINGS.cashbackLimit;
-  return 2 * parseFloat(SETTINGS.activationFee || 30); // auto = 2x activation fee
-}
-
-window.toggleCBLimitMode = () => {
-  const mode = document.getElementById('setCBLimitMode').value;
-  document.getElementById('cbCustomWrap').style.display = mode === 'custom' ? '' : 'none';
-};
-
-// Dashboard buttons visible on the user-side app (dynamic on/off switches)
-const DASH_BUTTONS = [
-  {key:'showWithdraw',  label:'Withdraw Button'},
-  {key:'showInvest',    label:'Invest Button'},
-  {key:'showActivate',  label:'Activate Button'},
-  {key:'showTree',      label:'My Team / Tree Button'},
-  {key:'showVoucher',   label:'Redeem Voucher Button'},
-  {key:'showCashback',  label:'Cashback Info Button'},
-  {key:'showROI',       label:'ROI / Investment Info Button'},
-];
-function renderDashButtonToggles() {
-  const wrap = document.getElementById('dashBtnToggles');
-  const cfg = SETTINGS.dashButtons || {};
-  wrap.innerHTML = DASH_BUTTONS.map(b => `
-    <label style="display:flex;align-items:center;justify-content:space-between;font-size:.79rem">
-      <span>${b.label}</span>
-      <span class="tgl"><input type="checkbox" id="dbtn_${b.key}" ${cfg[b.key]!==false?'checked':''}><span class="tgl-sl"></span></span>
-    </label>`).join('');
-  // Overview preview
-  const prev = document.getElementById('userBtnPreview');
-  if (prev) prev.innerHTML = DASH_BUTTONS.map(b => `<span class="pill ${cfg[b.key]!==false?'pg':'pr'}">${b.label}: ${cfg[b.key]!==false?'ON':'OFF'}</span>`).join('');
-}
-window.saveDashButtons = async () => {
-  const cfg = {};
-  DASH_BUTTONS.forEach(b => cfg[b.key] = document.getElementById('dbtn_'+b.key).checked);
-  await rtdb.ref('settings/dashButtons').set(cfg);
-  SETTINGS.dashButtons = cfg;
-  renderDashButtonToggles();
-  logActivity('Update Dashboard Buttons', 'settings', JSON.stringify(cfg));
-  toast('✅ Dashboard button visibility saved!');
-};
 
 // ── USERS ─────────────────────────────────────────────
 window.loadUsers = async () => {
-  const snap = await fsdb.collection('users').get();
-  ALLU = {};
-  snap.forEach(d => { ALLU[d.id] = { id:d.id, ...d.data() }; });
-  renderUsers(Object.values(ALLU));
+  const tb = document.getElementById('usersTb');
+  try {
+    tb.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr>';
+    const snap = await fsdb.collection('users').get();
+    ALLU = {};
+    snap.forEach(d => { ALLU[d.id] = { id:d.id, ...d.data() }; });
+
+    // Also load wallet balances from RTDB
+    for (const uid of Object.keys(ALLU)) {
+      try {
+        const wSnap = await rtdb.ref('users/'+uid+'/walletBalance').get();
+        if (wSnap.exists()) ALLU[uid].walletBalance = wSnap.val();
+        const invSnap = await rtdb.ref('users/'+uid+'/totalInvested').get();
+        if (invSnap.exists()) ALLU[uid].totalInvested = invSnap.val();
+      } catch(e) {}
+    }
+    renderUsers(Object.values(ALLU));
+  } catch(e) {
+    tb.innerHTML = `<tr><td colspan="10" style="text-align:center;color:var(--red);padding:16px">
+      ❌ Error loading users: ${e.message}<br>
+      <small style="color:var(--muted)">Check Firestore Rules — admin UID must be in /admins collection</small>
+    </td></tr>`;
+    console.error('loadUsers error:', e);
+  }
 };
 
 function renderUsers(list) {
   set('userCountLbl', list.length + ' users');
   const tb = document.getElementById('usersTb');
-  if (!list.length) { tb.innerHTML = '<tr><td colspan="12" style="text-align:center;color:var(--muted);padding:16px">No users found</td></tr>'; return; }
+  if (!list.length) { tb.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:16px">No users found</td></tr>'; return; }
   tb.innerHTML = list.map((u,i) => {
+    const inc = {};
+    const total = 0;
     const joined = u.createdAt ? (u.createdAt.toDate ? u.createdAt.toDate().toLocaleDateString() : new Date(u.createdAt).toLocaleDateString()) : '—';
-    const incomeOff = !!u.incomeBlocked;
-    const wdOff = !!u.withdrawBlocked;
     return `<tr>
       <td style="color:var(--muted)">${i+1}</td>
       <td style="font-weight:700">${u.fullName||'—'}</td>
       <td style="color:var(--muted)">@${u.username||'—'}</td>
       <td style="color:var(--muted);font-size:.73rem">${u.email||'—'}</td>
-      <td style="font-size:.73rem">${u.sponsorId ? (ALLU[u.sponsorId]?.username || u.sponsorId.slice(0,10)+'…') : 'Root'}</td>
+      <td style="font-size:.73rem">${u.sponsorId ? u.sponsorId.slice(0,10)+'…' : 'Root'}</td>
       <td style="font-size:.73rem">${joined}</td>
-      <td><span class="pill ${u.isBanned?'pr':u.isActive?'pg':'py'}">${u.isBanned?'Banned':u.isActive?'Active':'Inactive'}</span></td>
-      <td><span class="tgl" title="Toggle income for this user"><input type="checkbox" ${!incomeOff?'checked':''} onchange="toggleUserFlag('${u.id}','incomeBlocked',!this.checked)"><span class="tgl-sl"></span></span></td>
-      <td><span class="tgl" title="Toggle withdrawal for this user"><input type="checkbox" ${!wdOff?'checked':''} onchange="toggleUserFlag('${u.id}','withdrawBlocked',!this.checked)"><span class="tgl-sl"></span></span></td>
+      <td><span class="pill ${u.isActive?'pg':'py'}">${u.isActive?'Active':'Inactive'}</span></td>
       <td style="font-size:.72rem">${u.rank||'—'}</td>
       <td style="color:var(--green);font-weight:700">$${(u.walletBalance||0).toFixed(2)}</td>
       <td style="display:flex;gap:5px;flex-wrap:wrap">
         <button class="btn btn-o btn-sm" onclick="viewUser('${u.id}')">View</button>
-        <button class="btn btn-o btn-sm" onclick="openEditUser('${u.id}')">Edit</button>
         ${!u.isActive?`<button class="btn btn-gr btn-sm" onclick="activateUser('${u.id}')">Activate</button>`:''}
-        <button class="btn btn-r btn-sm" onclick="adjustBalance('${u.id}','${(u.fullName||u.username||'User').replace(/'/g,"")}')">Balance</button>
-        <button class="btn btn-p btn-sm" onclick="impersonateUser('${u.id}')">Login As</button>
-        <button class="btn btn-r btn-sm" onclick="deleteUser('${u.id}')">🗑 Delete</button>
+        <button class="btn btn-r btn-sm" onclick="adjustBalance('${u.id}','${u.fullName||u.username||'User'}')">Balance</button>
       </td>
     </tr>`;
   }).join('');
@@ -1031,19 +804,9 @@ window.filterUsers = () => {
     (u.fullName||'').toLowerCase().includes(q) ||
     (u.username||'').toLowerCase().includes(q)  ||
     (u.email||'').toLowerCase().includes(q));
-  if (f === 'active')     list = list.filter(u => u.isActive);
-  if (f === 'inactive')   list = list.filter(u => !u.isActive);
-  if (f === 'blocked')    list = list.filter(u => u.incomeBlocked);
-  if (f === 'wdblocked')  list = list.filter(u => u.withdrawBlocked);
-  if (f === 'banned')     list = list.filter(u => u.isBanned);
+  if (f === 'active')   list = list.filter(u => u.isActive);
+  if (f === 'inactive') list = list.filter(u => !u.isActive);
   renderUsers(list);
-};
-
-window.toggleUserFlag = async (uid, field, value) => {
-  await fsdb.collection('users').doc(uid).update({ [field]: value });
-  ALLU[uid] = { ...ALLU[uid], [field]: value };
-  logActivity(value ? `Block ${field}` : `Unblock ${field}`, ALLU[uid].username||uid, '');
-  toast((value?'🚫 Blocked: ':'✅ Unblocked: ') + field.replace('Blocked',''));
 };
 
 window.viewUser = uid => {
@@ -1054,9 +817,7 @@ window.viewUser = uid => {
     <div style="background:var(--bg);border-radius:9px;padding:13px;margin-bottom:13px">
       <div style="font-size:1rem;font-weight:800;margin-bottom:2px">${u.fullName||'User'}</div>
       <div style="color:var(--muted);font-size:.78rem;margin-bottom:6px">${u.email||'—'}</div>
-      <span class="pill ${u.isBanned?'pr':u.isActive?'pg':'py'}">${u.isBanned?'Banned':u.isActive?'Active':'Inactive'}</span>
-      <span class="pill ${u.incomeBlocked?'pr':'pg'}">Income ${u.incomeBlocked?'Blocked':'On'}</span>
-      <span class="pill ${u.withdrawBlocked?'pr':'pg'}">Withdraw ${u.withdrawBlocked?'Blocked':'On'}</span>
+      <span class="pill ${u.isActive?'pg':'py'}">${u.isActive?'Active':'Inactive'}</span>
     </div>
     <table style="width:100%;font-size:.79rem">
       <tr><td style="color:var(--muted);padding:5px 0;width:120px">UID</td><td style="font-family:monospace;font-size:.7rem;word-break:break-all">${uid}</td></tr>
@@ -1072,82 +833,47 @@ window.viewUser = uid => {
     </table>
     <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
       ${!u.isActive?`<button class="btn btn-gr btn-sm" onclick="activateUser('${uid}');closeModal('userModal')">✅ Activate</button>`:''}
-      <button class="btn btn-o btn-sm" onclick="openEditUser('${uid}');closeModal('userModal')">✏ Edit</button>
-      <button class="btn btn-o btn-sm" onclick="adjustBalance('${uid}','${(u.fullName||u.username||'User').replace(/'/g,"")}');closeModal('userModal')">💰 Adjust Balance</button>
-      <button class="btn btn-p btn-sm" onclick="impersonateUser('${uid}');closeModal('userModal')">👤 Login As User</button>
+      <button class="btn btn-o btn-sm" onclick="adjustBalance('${uid}','${u.fullName||u.username||'User'}');closeModal('userModal')">💰 Adjust Balance</button>
       <button class="btn btn-r btn-sm" onclick="banUser('${uid}');closeModal('userModal')">🚫 Ban User</button>
-      <button class="btn btn-r btn-sm" onclick="deleteUser('${uid}');closeModal('userModal')">🗑 Delete User</button>
     </div>`;
   document.getElementById('userModal').classList.add('show');
 };
 
-// ── EDIT USER (id/email/username/sponsor) ────────────
-window.openEditUser = uid => {
-  const u = ALLU[uid];
-  if (!u) return;
-  document.getElementById('editUserModalBody').innerHTML = `
-    <div class="fg"><label>Full Name</label><input type="text" id="euName" value="${(u.fullName||'').replace(/"/g,'&quot;')}"/></div>
-    <div class="fg"><label>Username</label><input type="text" id="euUsername" value="${(u.username||'').replace(/"/g,'&quot;')}"/></div>
-    <div class="fg"><label>Email</label><input type="email" id="euEmail" value="${(u.email||'').replace(/"/g,'&quot;')}"/></div>
-    <div class="fg"><label>Sponsor UID (change re-links sponsor only — use Binary Tree page to move tree position)</label><input type="text" id="euSponsor" value="${u.sponsorId||''}"/></div>
-    <div class="fg"><label>Rank</label><input type="text" id="euRank" value="${u.rank||''}"/></div>
-    <div class="warn-box" style="font-size:.7rem">Changing email here updates Firestore only, not Firebase Auth login credentials.</div>
-    <button class="btn btn-p" style="width:100%" onclick="saveEditUser('${uid}')">💾 Save Changes</button>
-  `;
-  document.getElementById('editUserModal').classList.add('show');
-};
-
-window.saveEditUser = async uid => {
-  const updates = {
-    fullName: document.getElementById('euName').value.trim(),
-    username: document.getElementById('euUsername').value.trim(),
-    email: document.getElementById('euEmail').value.trim(),
-    sponsorId: document.getElementById('euSponsor').value.trim(),
-    rank: document.getElementById('euRank').value.trim(),
-  };
-  await fsdb.collection('users').doc(uid).update(updates);
-  ALLU[uid] = { ...ALLU[uid], ...updates };
-  logActivity('Edit User', updates.username || uid, JSON.stringify(updates));
-  renderUsers(Object.values(ALLU));
-  closeModal('editUserModal');
-  toast('✅ User details updated');
-};
-
 window.activateUser = async uid => {
-  if (!confirm('Activate this user and pay sponsor commission?')) return;
+  if (!confirm('Activate this user and pay $4 to sponsor?')) return;
   try {
-    const sponsorComm = parseFloat(SETTINGS.sponsorComm ?? 4);
-    const companyFund = parseFloat(SETTINGS.companyFund ?? 5);
-
+    // Activate in Firestore
     await fsdb.collection('users').doc(uid).update({ isActive: true, activatedAt: new Date() });
 
     const u = ALLU[uid] || {};
     u.isActive = true;
 
+    // Pay sponsor $4 from RTDB
     if (u.sponsorId) {
       const sponsorIncRef = rtdb.ref('users/' + u.sponsorId + '/income/sponsor');
       const snap = await sponsorIncRef.get();
       const cur  = parseFloat(snap.exists() ? snap.val() : 0);
-      await sponsorIncRef.set(cur + sponsorComm);
+      await sponsorIncRef.set(cur + 4);
 
+      // Update sponsor wallet
       const wRef = rtdb.ref('users/' + u.sponsorId + '/walletBalance');
       const wSnap = await wRef.get();
-      const newSponsorBal = parseFloat(wSnap.exists() ? wSnap.val() : 0) + sponsorComm;
-      await wRef.set(newSponsorBal);
+      await wRef.set(parseFloat(wSnap.exists() ? wSnap.val() : 0) + 4);
 
+      // Log transaction for sponsor
       await rtdb.ref('transactions/' + u.sponsorId).push({
-        type:'Sponsor Commission', amount:sponsorComm,
+        type:'Sponsor Commission', amount:4,
         note:'From ' + (u.fullName||u.username||'User') + ' activation',
-        timestamp:Date.now(), status:'completed', balance:newSponsorBal
+        timestamp:Date.now(), status:'completed', balance: parseFloat(wSnap.exists() ? wSnap.val() : 0) + 4
       });
     }
 
+    // Add $5 to company fund
     const cfRef = rtdb.ref('settings/companyFundBalance');
     const cfSnap = await cfRef.get();
-    await cfRef.set(parseFloat(cfSnap.exists() ? cfSnap.val() : 0) + companyFund);
+    await cfRef.set(parseFloat(cfSnap.exists() ? cfSnap.val() : 0) + 5);
 
-    logActivity('Activate User', u.username||uid, `$${sponsorComm} to sponsor, $${companyFund} to fund`);
-    toast(`✅ User activated! $${sponsorComm} → Sponsor, $${companyFund} → Company Fund`);
+    toast('✅ User activated! $4 → Sponsor, $5 → Company Fund');
     ALLU[uid] = { ...ALLU[uid], isActive:true };
     renderUsers(Object.values(ALLU));
     computeOverview();
@@ -1158,21 +884,8 @@ window.banUser = async uid => {
   if (!confirm('Ban this user? They will be deactivated.')) return;
   await fsdb.collection('users').doc(uid).update({ isActive:false, isBanned:true });
   ALLU[uid] = { ...ALLU[uid], isActive:false, isBanned:true };
-  logActivity('Ban User', ALLU[uid].username||uid, '');
   renderUsers(Object.values(ALLU));
   toast('User banned.');
-};
-
-window.deleteUser = async uid => {
-  const u = ALLU[uid];
-  const confirmName = prompt('Type the username "'+(u?.username||'')+'" to confirm PERMANENT deletion of this user:');
-  if (confirmName !== (u?.username||'')) { toast('Deletion cancelled — username did not match.'); return; }
-  await fsdb.collection('users').doc(uid).delete();
-  await rtdb.ref('users/'+uid).remove();
-  logActivity('Delete User', u?.username||uid, 'Permanently deleted');
-  delete ALLU[uid];
-  renderUsers(Object.values(ALLU));
-  toast('🗑 User deleted permanently.');
 };
 
 window.adjustBalance = (uid, name) => {
@@ -1183,44 +896,12 @@ window.adjustBalance = (uid, name) => {
     rtdb.ref('users/' + uid + '/walletBalance').set(cur + amt).then(() => {
       rtdb.ref('transactions/' + uid).push({
         type:'Admin Adjustment', amount:amt,
-        note:'Manual balance adjustment by '+CURRENT_ADMIN.name,
+        note:'Manual balance adjustment by admin',
         timestamp:Date.now(), status:'completed', balance: cur + amt
       });
-      logActivity('Adjust Balance', name, (amt>=0?'+':'')+'$'+amt.toFixed(2));
       toast('Balance adjusted by $' + amt.toFixed(2));
     });
   });
-};
-
-window.impersonateUser = async uid => {
-  const u = ALLU[uid];
-  if (!confirm('Login as '+(u?.fullName||u?.username||'this user')+'? This opens their dashboard in a flagged impersonation session.')) return;
-  await rtdb.ref('impersonation/current').set({
-    targetUid: uid, targetName: u?.fullName||u?.username||uid,
-    byAdmin: CURRENT_ADMIN.email, startedAt: Date.now()
-  });
-  logActivity('Impersonate User', u?.username||uid, '');
-  toast('👤 Impersonation session started — open user.html in a new tab to view as this user.');
-  renderImpersonateBanner();
-};
-
-async function renderImpersonateBanner() {
-  const snap = await rtdb.ref('impersonation/current').get();
-  const el = document.getElementById('impersonateBanner');
-  if (!el) return;
-  if (snap.exists()) {
-    const d = snap.val();
-    el.innerHTML = `<div class="warn-box" style="display:flex;justify-content:space-between;align-items:center">
-      <span>👤 Active impersonation session: <strong>${d.targetName}</strong> (started by ${d.byAdmin})</span>
-      <button class="btn btn-r btn-sm" onclick="endImpersonation()">End Session</button>
-    </div>`;
-  } else { el.innerHTML = ''; }
-}
-window.endImpersonation = async () => {
-  await rtdb.ref('impersonation/current').remove();
-  logActivity('End Impersonation', '', '');
-  renderImpersonateBanner();
-  toast('Impersonation session ended.');
 };
 
 window.exportUsersCSV = () => exportCSV('users');
@@ -1258,6 +939,7 @@ function renderActivations(entries) {
   </tr>`).join('')
   : '<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:16px">No activation requests</td></tr>';
 
+  // Overview recent
   const ovTb = document.getElementById('ovActTb');
   ovTb.innerHTML = entries.slice(0,5).map(([id,a]) => `<tr>
     <td style="font-weight:600">${a.name||'User'}</td>
@@ -1278,7 +960,6 @@ window.approveAct = async (id, uid) => {
   await rtdb.ref('activationRequests/' + id).update({ status:'approved', approvedAt:Date.now() });
   ALL_ACT[id].status = 'approved';
   await activateUser(uid);
-  logActivity('Approve Activation', ALL_ACT[id].username||uid, '');
   renderActivations(Object.entries(ALL_ACT));
 };
 
@@ -1286,13 +967,13 @@ window.rejectAct = async id => {
   if (!confirm('Reject this activation request?')) return;
   await rtdb.ref('activationRequests/' + id).update({ status:'rejected' });
   ALL_ACT[id].status = 'rejected';
-  logActivity('Reject Activation', ALL_ACT[id].username||id, '');
   renderActivations(Object.entries(ALL_ACT));
   toast('Activation rejected.');
 };
 
-// ── BINARY TREE (with cut/attach) ─────────────────────
+// ── BINARY TREE ───────────────────────────────────────
 window.loadRootTree = async () => {
+  // Find root user (no parentId / isRoot=true)
   const rootUser = Object.values(ALLU).find(u => u.isRoot || !u.parentId);
   if (rootUser) renderAdminTree(rootUser.id);
   else { document.getElementById('treeViewContainer').innerHTML = '<p style="color:var(--muted);padding:20px">No root user found yet.</p>'; }
@@ -1307,58 +988,23 @@ window.searchTreeUser = async () => {
   else toast('User not found: ' + q);
 };
 
-window.cutTreeNode = (uid) => {
-  const u = ALLU[uid];
-  CUT_CLIPBOARD = { uid, name: u?.fullName||u?.username||uid };
-  document.getElementById('cutClipboardLbl').textContent = '✂ Cut: ' + CUT_CLIPBOARD.name + ' (click an empty slot to attach)';
-  toast('✂ '+CUT_CLIPBOARD.name+' cut — click an empty slot elsewhere to re-attach, or click Root/Search to browse first.');
-};
-
-window.attachTreeNode = async (parentUid, side) => {
-  if (!CUT_CLIPBOARD) { toast('Nothing cut yet — click "Cut" on a node first.'); return; }
-  if (CUT_CLIPBOARD.uid === parentUid) { toast('Cannot attach a user under themselves.'); return; }
-  if (!confirm('Attach '+CUT_CLIPBOARD.name+' as the '+side+' child of '+(ALLU[parentUid]?.fullName||parentUid)+'?')) return;
-
-  // detach from old parent
-  const movingUser = ALLU[CUT_CLIPBOARD.uid];
-  const oldParent = Object.values(ALLU).find(u => u.leftChild===CUT_CLIPBOARD.uid || u.rightChild===CUT_CLIPBOARD.uid);
-  if (oldParent) {
-    const field = oldParent.leftChild===CUT_CLIPBOARD.uid ? 'leftChild' : 'rightChild';
-    await fsdb.collection('users').doc(oldParent.id).update({ [field]: null });
-    ALLU[oldParent.id][field] = null;
-  }
-  // attach to new parent
-  const field = side === 'L' ? 'leftChild' : 'rightChild';
-  await fsdb.collection('users').doc(parentUid).update({ [field]: CUT_CLIPBOARD.uid, sponsorId: movingUser?.sponsorId || ALLU[parentUid].sponsorId });
-  ALLU[parentUid][field] = CUT_CLIPBOARD.uid;
-
-  logActivity('Move Tree Node', CUT_CLIPBOARD.name, 'Attached under '+(ALLU[parentUid]?.username||parentUid)+' ('+side+')');
-  toast('✅ Tree updated — '+CUT_CLIPBOARD.name+' moved.');
-  CUT_CLIPBOARD = null;
-  document.getElementById('cutClipboardLbl').textContent = '';
-  renderAdminTree(parentUid);
-};
-
 function renderAdminTree(rootUid) {
   const u = ALLU[rootUid];
   if (!u) { document.getElementById('treeViewContainer').innerHTML = '<p style="color:var(--muted);padding:20px">User not found.</p>'; return; }
   set('treeRootLabel', 'Root: ' + (u.fullName||u.username||rootUid));
 
-  function nodeHTML(uid, label, parentUidForAttach, side) {
-    if (!uid) return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px">
-      <div style="border:2px dashed var(--muted);border-radius:10px;padding:7px 12px;min-width:85px;text-align:center;opacity:.5;font-size:.72rem;color:var(--muted);cursor:pointer" onclick="attachTreeNode('${parentUidForAttach}','${side}')">Empty<br>${label}<br><span style="font-size:.62rem">(click to attach)</span></div></div>`;
+  function nodeHTML(uid, label) {
+    if (!uid) return `<div style="display:flex;flex-direction:column;align-items:center">
+      <div style="border:2px dashed var(--muted);border-radius:10px;padding:7px 12px;min-width:85px;text-align:center;opacity:.4;font-size:.72rem;color:var(--muted)">Empty<br>${label}</div></div>`;
     const n = ALLU[uid];
     const name = n ? (n.fullName||n.username||uid.slice(0,8)) : uid.slice(0,8);
     const active = n ? n.isActive : false;
-    return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px">
-      <div style="border:2px solid ${uid===rootUid?'var(--accent)':active?'var(--green)':'var(--border)'};background:${uid===rootUid?'rgba(0,212,255,.08)':active?'rgba(16,185,129,.06)':'var(--card)'};border-radius:10px;padding:7px 12px;min-width:85px;text-align:center;font-size:.73rem">
-        <div style="cursor:pointer" onclick="renderAdminTree('${uid}')">
-          <div style="font-weight:800;font-size:.78rem;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</div>
-          <div style="font-size:.62rem;color:var(--muted);margin-top:1px">@${n?n.username:'?'}</div>
-          <span class="pill ${active?'pg':'py'}" style="margin-top:3px">${active?'Active':'Inactive'}</span>
-          <div style="font-size:.6rem;color:var(--muted);margin-top:2px">${label}</div>
-        </div>
-        <button class="btn btn-r btn-sm" style="margin-top:4px;padding:2px 7px;font-size:.6rem" onclick="event.stopPropagation();cutTreeNode('${uid}')">✂ Cut</button>
+    return `<div style="display:flex;flex-direction:column;align-items:center">
+      <div style="border:2px solid ${uid===rootUid?'var(--accent)':active?'var(--green)':'var(--border)'};background:${uid===rootUid?'rgba(0,212,255,.08)':active?'rgba(16,185,129,.06)':'var(--card)'};border-radius:10px;padding:7px 12px;min-width:85px;text-align:center;cursor:pointer;font-size:.73rem" onclick="renderAdminTree('${uid}')">
+        <div style="font-weight:800;font-size:.78rem;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</div>
+        <div style="font-size:.62rem;color:var(--muted);margin-top:1px">@${n?n.username:'?'}</div>
+        <span class="pill ${active?'pg':'py'}" style="margin-top:3px">${active?'Active':'Inactive'}</span>
+        <div style="font-size:.6rem;color:var(--muted);margin-top:2px">${label}</div>
       </div>
     </div>`;
   }
@@ -1368,23 +1014,25 @@ function renderAdminTree(rootUid) {
     const lc = n ? n.leftChild  : null;
     const rc = n ? n.rightChild : null;
     return `<div style="display:flex;gap:14px">
-      ${nodeHTML(lc,'L',uid,'L')}${nodeHTML(rc,'R',uid,'R')}
+      ${nodeHTML(lc,'L')}${nodeHTML(rc,'R')}
     </div>`;
   }
 
   const lc = u.leftChild, rc = u.rightChild;
   document.getElementById('treeViewContainer').innerHTML = `
     <div style="display:flex;flex-direction:column;align-items:center;gap:0;padding:10px">
-      ${nodeHTML(rootUid,'YOU',null,null)}
+      ${nodeHTML(rootUid,'YOU')}
       <div style="width:1px;height:18px;background:var(--border)"></div>
       <div style="position:relative;width:${(lc||rc)?'180px':'0'};height:1px;background:${(lc||rc)?'var(--border)':'transparent'}"></div>
       <div style="display:flex;gap:36px">
         <div style="display:flex;flex-direction:column;align-items:center;gap:0">
-          ${nodeHTML(lc,'LEFT',rootUid,'L')}
+          ${lc?`<div style="width:1px;height:0px"></div>`:''}
+          ${nodeHTML(lc,'LEFT')}
           ${lc?`<div style="width:1px;height:14px;background:var(--border)"></div>${lvl2(lc)}`:''}
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:0">
-          ${nodeHTML(rc,'RIGHT',rootUid,'R')}
+          ${rc?`<div style="width:1px;height:0px"></div>`:''}
+          ${nodeHTML(rc,'RIGHT')}
           ${rc?`<div style="width:1px;height:14px;background:var(--border)"></div>${lvl2(rc)}`:''}
         </div>
       </div>
@@ -1442,23 +1090,24 @@ window.filterWithdrawals = () => {
 };
 
 window.approveWD = async (key, uid, amount) => {
-  if (ALLU[uid]?.withdrawBlocked) { toast('⚠ This user has withdrawals blocked by admin.'); if(!confirm('Withdrawals are blocked for this user. Approve anyway?')) return; }
   if (!confirm('Approve withdrawal of $'+amount+' and deduct from user balance?')) return;
   const [, wid] = key.split('__');
   await rtdb.ref('withdrawals/'+uid+'/'+wid).update({ status:'approved', paidAt:Date.now() });
+  // Deduct wallet
   const wRef = rtdb.ref('users/'+uid+'/walletBalance');
   const snap = await wRef.get();
   const newBal = Math.max(0, parseFloat(snap.exists()?snap.val():0) - amount);
   await wRef.set(newBal);
+  // Log
   await rtdb.ref('transactions/'+uid).push({
     type:'Withdrawal', amount:-amount,
     note:'Withdrawal approved & paid', timestamp:Date.now(), status:'completed', balance:newBal
   });
+  // Update totalWithdrawn
   const twRef = rtdb.ref('users/'+uid+'/totalWithdrawn');
   const twSnap = await twRef.get();
   await twRef.set(parseFloat(twSnap.exists()?twSnap.val():0)+amount);
   ALL_WD[key].status = 'approved';
-  logActivity('Approve Withdrawal', ALLU[uid]?.username||uid, '$'+amount);
   renderWithdrawals(Object.entries(ALL_WD));
   toast('✅ Withdrawal approved and paid!');
 };
@@ -1467,6 +1116,7 @@ window.rejectWD = async (key, uid, amount) => {
   if (!confirm('Reject and refund $'+amount+'?')) return;
   const [, wid] = key.split('__');
   await rtdb.ref('withdrawals/'+uid+'/'+wid).update({ status:'rejected' });
+  // Refund
   const wRef = rtdb.ref('users/'+uid+'/walletBalance');
   const snap = await wRef.get();
   await wRef.set(parseFloat(snap.exists()?snap.val():0) + amount);
@@ -1476,7 +1126,6 @@ window.rejectWD = async (key, uid, amount) => {
     balance: parseFloat(snap.exists()?snap.val():0)+amount
   });
   ALL_WD[key].status = 'rejected';
-  logActivity('Reject Withdrawal', ALLU[uid]?.username||uid, '$'+amount);
   renderWithdrawals(Object.entries(ALL_WD));
   toast('Withdrawal rejected. Amount refunded to user.');
 };
@@ -1505,14 +1154,13 @@ function renderInvestments(entries) {
   set('invROIPaid',    '$'+roiPaid.toFixed(0));
   set('ovInvested',    '$'+total.toFixed(0));
 
-  const lockMonths = parseFloat(SETTINGS.invLockMonths || 6);
   const tb = document.getElementById('invTb');
   tb.innerHTML = entries.length ? entries.map(([key,p]) => {
-    const unlockDate = new Date(p.createdAt + lockMonths*30*24*60*60*1000);
+    const unlockDate = new Date(p.createdAt + 6*30*24*60*60*1000);
     return `<tr>
       <td style="font-weight:600">${ALLU[p.uid]?.fullName||ALLU[p.uid]?.username||p.uid?.slice(0,10)||'—'}</td>
       <td style="color:var(--accent);font-weight:700">$${p.amount||0}</td>
-      <td style="color:var(--green)">${p.roiRate||SETTINGS.roiRate||12}%</td>
+      <td style="color:var(--green)">${p.roiRate||12}%</td>
       <td style="font-size:.73rem">${p.createdAt?new Date(p.createdAt).toLocaleDateString():'—'}</td>
       <td style="color:var(--gold)">$${(p.earnedROI||0).toFixed(2)}</td>
       <td style="font-size:.73rem">${unlockDate.toLocaleDateString()}</td>
@@ -1527,40 +1175,37 @@ function renderInvestments(entries) {
 }
 
 window.approveInv = async (key, uid, amount) => {
-  const sponsorPct = parseFloat(SETTINGS.invSponsorPct !== undefined ? SETTINGS.invSponsorPct : 5);
-  if (!confirm('Activate this investment? Sponsor gets '+sponsorPct+'% ('+'$'+(amount*sponsorPct/100).toFixed(2)+') bonus.')) return;
+  if (!confirm('Activate this investment? Sponsor gets $5 ROI referral bonus.')) return;
   const [, pid] = key.split('__');
   await rtdb.ref('investments/'+uid+'/'+pid).update({ status:'active', activatedAt:Date.now() });
   ALL_INV[key].status = 'active';
 
-  const bonusAmt = amount * sponsorPct / 100;
+  // ROI referral bonus $5 to sponsor
   const uData = ALLU[uid];
-  if (uData?.sponsorId && bonusAmt > 0) {
+  if (uData?.sponsorId) {
     const sRef = rtdb.ref('users/'+uData.sponsorId+'/walletBalance');
     const sSnap = await sRef.get();
-    const sNewBal = parseFloat(sSnap.exists()?sSnap.val():0)+bonusAmt;
+    const sNewBal = parseFloat(sSnap.exists()?sSnap.val():0)+5;
     await sRef.set(sNewBal);
     const siRef = rtdb.ref('users/'+uData.sponsorId+'/income/roi_referral');
     const siSnap = await siRef.get();
-    await siRef.set(parseFloat(siSnap.exists()?siSnap.val():0)+bonusAmt);
+    await siRef.set(parseFloat(siSnap.exists()?siSnap.val():0)+5);
     await rtdb.ref('transactions/'+uData.sponsorId).push({
-      type:'ROI Referral Bonus', amount:bonusAmt,
-      note:'From '+( uData.fullName||uData.username||'User')+' $'+amount+' investment ('+sponsorPct+'%)',
+      type:'ROI Referral Bonus', amount:5,
+      note:'From '+( uData.fullName||uData.username||'User')+' $'+amount+' investment',
       timestamp:Date.now(), status:'completed', balance:sNewBal
     });
   }
-  logActivity('Activate Investment', ALLU[uid]?.username||uid, '$'+amount);
   renderInvestments(Object.entries(ALL_INV));
-  toast('✅ Investment activated! Sponsor received $'+bonusAmt.toFixed(2)+' bonus.');
+  toast('✅ Investment activated! Sponsor received $5 ROI referral bonus.');
 };
 
 window.setInvROI = async key => {
-  const rate = parseFloat(prompt('Enter new ROI rate (%):'));
-  if (isNaN(rate)||rate<0) { toast('Invalid rate.'); return; }
+  const rate = parseFloat(prompt('Enter new ROI rate (12–15):'));
+  if (isNaN(rate)||rate<12||rate>15) { toast('Invalid rate. Must be 12–15.'); return; }
   const [uid, pid] = key.split('__');
   await rtdb.ref('investments/'+uid+'/'+pid).update({ roiRate:rate });
   ALL_INV[key].roiRate = rate;
-  logActivity('Set Investment ROI', ALLU[uid]?.username||uid, rate+'%');
   renderInvestments(Object.entries(ALL_INV));
   toast('ROI rate updated to '+rate+'%');
 };
@@ -1608,63 +1253,14 @@ window.filterTx = () => {
   renderTx(list);
 };
 
-// ── GIFT VOUCHERS ─────────────────────────────────────
-window.loadVouchers = async () => {
-  const snap = await rtdb.ref('vouchers').get();
-  ALL_VOU = snap.exists() ? snap.val() : {};
-  renderVouchers();
-};
-function renderVouchers() {
-  const entries = Object.entries(ALL_VOU).sort(([,a],[,b]) => (b.createdAt||0)-(a.createdAt||0));
-  const tb = document.getElementById('vTb');
-  tb.innerHTML = entries.length ? entries.map(([code,v]) => {
-    const used = v.usedCount || 0;
-    const expired = v.expiry && Date.now() > new Date(v.expiry).getTime();
-    const exhausted = used >= (v.maxUses||1);
-    const status = expired ? 'Expired' : exhausted ? 'Exhausted' : 'Active';
-    return `<tr>
-      <td style="font-family:monospace;font-weight:700">${code}</td>
-      <td style="color:var(--green);font-weight:700">$${v.amount}</td>
-      <td>${used}/${v.maxUses||1}</td>
-      <td style="font-size:.72rem">${v.expiry||'Never'}</td>
-      <td><span class="pill ${status==='Active'?'pg':status==='Expired'?'pr':'py'}">${status}</span></td>
-      <td><button class="btn btn-r btn-sm" onclick="deleteVoucher('${code}')">🗑</button></td>
-    </tr>`;
-  }).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:14px">No vouchers yet</td></tr>';
-}
-window.createVoucher = async () => {
-  let code = document.getElementById('vCode').value.trim().toUpperCase();
-  if (!code) code = 'GIFT' + Math.random().toString(36).slice(2,8).toUpperCase();
-  const amount = parseFloat(document.getElementById('vAmount').value);
-  const maxUses = parseInt(document.getElementById('vMaxUses').value) || 1;
-  const expiry = document.getElementById('vExpiry').value || null;
-  if (isNaN(amount) || amount <= 0) { toast('Enter a valid amount'); return; }
-  if (ALL_VOU[code]) { toast('Voucher code already exists'); return; }
-  await rtdb.ref('vouchers/'+code).set({ amount, maxUses, usedCount:0, expiry, createdAt:Date.now(), createdBy:CURRENT_ADMIN.email });
-  ALL_VOU[code] = { amount, maxUses, usedCount:0, expiry, createdAt:Date.now() };
-  logActivity('Create Voucher', code, '$'+amount+' x'+maxUses);
-  renderVouchers();
-  document.getElementById('vCode').value = '';
-  toast('🎫 Voucher '+code+' created!');
-};
-window.deleteVoucher = async code => {
-  if (!confirm('Delete voucher '+code+'?')) return;
-  await rtdb.ref('vouchers/'+code).remove();
-  delete ALL_VOU[code];
-  logActivity('Delete Voucher', code, '');
-  renderVouchers();
-  toast('Voucher deleted.');
-};
-
 // ── DISTRIBUTIONS ────────────────────────────────────
 window.runCashback = async () => {
   if (!confirm('Distribute cashback pool to all eligible members now?')) return;
   const users = Object.values(ALLU);
-  const activeUsers = users.filter(u => u.isActive && !u.incomeBlocked);
-  const actFee = parseFloat(SETTINGS.activationFee || 30);
-  const totalVolume = activeUsers.length * actFee;
+  const activeUsers = users.filter(u => u.isActive);
+  const totalVolume = activeUsers.length * 30;
   const cbPct = parseFloat(SETTINGS.cashbackPct || 3);
-  const cbLimit = effectiveCashbackLimit();
+  const cbLimit = parseFloat(SETTINGS.cashbackLimit || 60);
   const pool = totalVolume * cbPct / 100;
 
   const eligible = [];
@@ -1691,11 +1287,11 @@ window.runCashback = async () => {
       timestamp:Date.now(), status:'completed', balance:newBal
     });
   }
+  // Log distribution
   await rtdb.ref('cashbackHistory').push({
     pool:pool.toFixed(2), members:eligible.length,
     perUser:perUser.toFixed(4), timestamp:Date.now()
   });
-  logActivity('Run Cashback Distribution', '', '$'+pool.toFixed(2)+' / '+eligible.length+' members');
   toast('✅ Cashback distributed! $'+perUser.toFixed(4)+' per member');
   computeOverview();
 };
@@ -1703,9 +1299,8 @@ window.runCashback = async () => {
 window.runClubBonus = async () => {
   if (!confirm('Distribute club bonus to eligible members?')) return;
   const users = Object.values(ALLU);
-  const activeUsers = users.filter(u => u.isActive && !u.incomeBlocked);
-  const actFee = parseFloat(SETTINGS.activationFee || 30);
-  const totalVolume = activeUsers.length * actFee;
+  const activeUsers = users.filter(u => u.isActive);
+  const totalVolume = activeUsers.length * 30;
   const clubPct = parseFloat(SETTINGS.clubPct || 4);
   const pool = totalVolume * clubPct / 100;
   const minRefs  = parseInt(SETTINGS.clubMinRefs  || 10);
@@ -1739,7 +1334,6 @@ window.runClubBonus = async () => {
     pool:pool.toFixed(2), members:eligible.length,
     perUser:perUser.toFixed(4), timestamp:Date.now()
   });
-  logActivity('Run Club Bonus Distribution', '', '$'+pool.toFixed(2)+' / '+eligible.length+' members');
   toast('✅ Club bonus distributed! $'+perUser.toFixed(4)+' per eligible member');
 };
 
@@ -1752,11 +1346,11 @@ window.runROIDistrib = async () => {
 
   for (const [key, p] of Object.entries(ALL_INV)) {
     if (p.status !== 'active') continue;
-    if (ALLU[p.uid]?.incomeBlocked) continue;
-    const monthlyROI = (p.amount||0) * (p.roiRate||SETTINGS.roiRate||12) / 100;
+    const monthlyROI = (p.amount||0) * (p.roiRate||12) / 100;
     const directAmt = monthlyROI * directPct;
     const genAmt    = monthlyROI * genPct;
 
+    // Direct payout to investor
     const [uid, pid] = key.split('__');
     const incRef = rtdb.ref('users/'+uid+'/income/roi');
     const incSnap = await incRef.get();
@@ -1771,11 +1365,11 @@ window.runROIDistrib = async () => {
       note:'Monthly ROI on $'+p.amount+' investment', timestamp:Date.now(), status:'completed', balance:newBal
     });
 
+    // Generation bonus — walk up sponsor chain
     let curUID = uid;
     for (let lvl = 0; lvl < 7; lvl++) {
       const parent = ALLU[curUID]?.sponsorId;
       if (!parent || !ALLU[parent]) break;
-      if (ALLU[parent]?.incomeBlocked) { curUID = parent; continue; }
       const lvlAmt = genAmt * genLevels[lvl];
       if (lvlAmt <= 0) { curUID = parent; continue; }
       const gRef = rtdb.ref('users/'+parent+'/income/generation');
@@ -1794,68 +1388,41 @@ window.runROIDistrib = async () => {
     }
     count++;
   }
-  logActivity('Run ROI Distribution', '', count+' plan(s)');
   toast('✅ ROI distributed for '+count+' active plan(s)!');
-  loadAllTx();
-};
-
-window.runDailyTax = async () => {
-  const pct = parseFloat(SETTINGS.dailyTaxPct || 0);
-  if (!pct) { toast('Daily tax % is 0 — set it in Settings first.'); return; }
-  const onlyInactive = SETTINGS.dailyTaxOnlyInactive === 'yes';
-  if (!confirm('Deduct '+pct+'% from '+(onlyInactive?'inactive':'all')+' user wallet balances now?')) return;
-  const users = Object.values(ALLU).filter(u => onlyInactive ? !u.isActive : true);
-  let count = 0;
-  for (const u of users) {
-    const wRef = rtdb.ref('users/'+u.id+'/walletBalance');
-    const snap = await wRef.get();
-    const bal = parseFloat(snap.exists()?snap.val():0);
-    if (bal <= 0) continue;
-    const tax = bal * pct / 100;
-    const newBal = bal - tax;
-    await wRef.set(newBal);
-    await rtdb.ref('transactions/'+u.id).push({
-      type:'Daily Tax', amount:-tax,
-      note:'Daily taxation '+pct+'%', timestamp:Date.now(), status:'completed', balance:newBal
-    });
-    count++;
-  }
-  logActivity('Run Daily Taxation', '', pct+'% on '+count+' users');
-  toast('🧾 Daily tax applied to '+count+' user(s).');
   loadAllTx();
 };
 
 // ── SETTINGS SAVE ────────────────────────────────────
 window.saveROIRate = async () => {
   const rate = parseFloat(document.getElementById('roiRateInput').value);
-  if (isNaN(rate)||rate<0) { toast('Enter a valid rate'); return; }
+  if (isNaN(rate)||rate<12||rate>15) { toast('Rate must be 12–15%'); return; }
   await rtdb.ref('settings/roiRate').set(rate);
   SETTINGS.roiRate = rate;
   set('qsROIRate', rate+'%');
+  // Update all active plans
   for (const [key, p] of Object.entries(ALL_INV)) {
     if (p.status === 'active') {
       const [uid, pid] = key.split('__');
       await rtdb.ref('investments/'+uid+'/'+pid).update({ roiRate:rate });
     }
   }
-  logActivity('Update ROI Rate', '', rate+'%');
   toast('✅ ROI rate set to '+rate+'% for all active plans');
 };
 
 window.saveGenLevels = async () => {
   const levels = [1,2,3,4,5,6,7].map(i => parseFloat(document.getElementById('gl'+i).value)||0);
   await rtdb.ref('settings/generationLevels').set(levels);
-  logActivity('Update Generation Levels', '', JSON.stringify(levels));
   toast('✅ Generation levels saved');
 };
 
 window.saveSettings = async type => {
   const updates = {};
   if (type === 'activation') {
-    updates.activationFee = parseFloat(document.getElementById('setActFee').value);
-    updates.sponsorComm   = parseFloat(document.getElementById('setSponsComm').value);
-    updates.companyFund   = parseFloat(document.getElementById('setCompFund').value);
-    updates.userCap       = parseFloat(document.getElementById('setUserCap').value);
+    updates.activationFee         = parseFloat(document.getElementById('setActFee').value);
+    updates.sponsorComm           = parseFloat(document.getElementById('setSponsComm').value);
+    updates.companyFund           = parseFloat(document.getElementById('setCompFund').value);
+    updates.userCap               = parseFloat(document.getElementById('setUserCap').value);
+    updates.investmentCommission  = parseFloat(document.getElementById('setInvComm').value);
   } else if (type === 'matching') {
     updates.matchingPct   = parseFloat(document.getElementById('setMatchPct').value);
     updates.matchingCap   = parseFloat(document.getElementById('setMatchCap').value);
@@ -1864,22 +1431,15 @@ window.saveSettings = async type => {
     updates.minInvestment = parseFloat(document.getElementById('setMinInv').value);
     updates.invLockMonths = parseFloat(document.getElementById('setInvLock').value);
     updates.invFee        = parseFloat(document.getElementById('setInvFee').value);
-    updates.invSponsorPct = parseFloat(document.getElementById('setInvSponsorPct').value);
   } else if (type === 'pools') {
-    updates.cashbackPct       = parseFloat(document.getElementById('setCBPct').value);
-    updates.cashbackLimitMode = document.getElementById('setCBLimitMode').value;
-    updates.cashbackLimit     = parseFloat(document.getElementById('setCBLimit').value);
-    updates.clubPct           = parseFloat(document.getElementById('setClubPct').value);
-    updates.clubMinRefs       = parseFloat(document.getElementById('setClubMinRefs').value);
-    updates.clubMinMatch      = parseFloat(document.getElementById('setClubMinMatch').value);
-  } else if (type === 'tax') {
-    updates.dailyTaxPct = parseFloat(document.getElementById('setDailyTaxPct').value);
-    updates.dailyTaxOnlyInactive = document.getElementById('setDailyTaxOnlyInactive').value;
+    updates.cashbackPct   = parseFloat(document.getElementById('setCBPct').value);
+    updates.cashbackLimit = parseFloat(document.getElementById('setCBLimit').value);
+    updates.clubPct       = parseFloat(document.getElementById('setClubPct').value);
+    updates.clubMinRefs   = parseFloat(document.getElementById('setClubMinRefs').value);
+    updates.clubMinMatch  = parseFloat(document.getElementById('setClubMinMatch').value);
   }
   await rtdb.ref('settings').update(updates);
   Object.assign(SETTINGS, updates);
-  applySettings();
-  logActivity('Update Settings ('+type+')', '', JSON.stringify(updates));
   toast('✅ Settings saved!');
 };
 
@@ -1888,7 +1448,6 @@ window.saveRank = async n => {
     minMatching: parseFloat(document.getElementById('r'+n+'m').value),
     minSales:    parseFloat(document.getElementById('r'+n+'s').value)
   });
-  logActivity('Update Rank', 'Rank '+n, '');
   toast('⭐ Rank '+n+' saved!');
 };
 
@@ -1901,7 +1460,6 @@ window.sendAnn = async () => {
   await rtdb.ref('announcements').push({ title, message:msg, type, createdAt:Date.now() });
   document.getElementById('annTitle').value = '';
   document.getElementById('annMsg').value   = '';
-  logActivity('Send Announcement', title, type);
   toast('✅ Announcement sent!');
   loadAnnouncements();
 };
@@ -1919,197 +1477,21 @@ async function loadAnnouncements() {
     </div>`).join('');
 }
 
-// ── SUB-ADMINS ────────────────────────────────────────
-function renderPermChips() {
-  const wrap = document.getElementById('saPermChips');
-  wrap.innerHTML = ALL_PERMS.map(p => `
-    <label class="perm-chip" id="chip_${p}" onclick="event.preventDefault();document.getElementById('chkperm_${p}').checked=!document.getElementById('chkperm_${p}').checked;this.classList.toggle('on');">
-      <input type="checkbox" id="chkperm_${p}" ${p==='overview'?'checked':''}> ${p}
-    </label>`).join('');
-  document.getElementById('chip_overview')?.classList.add('on');
-}
-
-window.loadSubAdmins = async () => {
-  renderPermChips();
-  const snap = await rtdb.ref('admins').get();
-  ALL_SUBADMINS = snap.exists() ? snap.val() : {};
-  renderSubAdmins();
-};
-
-function renderSubAdmins() {
-  const entries = Object.entries(ALL_SUBADMINS);
-  const tb = document.getElementById('saTb');
-  tb.innerHTML = entries.length ? entries.map(([id,a]) => `<tr>
-    <td style="font-weight:700">${a.name||'—'}</td>
-    <td style="color:var(--muted);font-size:.75rem">${a.email}</td>
-    <td style="font-size:.7rem;color:var(--muted)">${(a.permissions||[]).join(', ')}</td>
-    <td><span class="pill ${a.disabled?'pr':'pg'}">${a.disabled?'Disabled':'Active'}</span></td>
-    <td style="display:flex;gap:5px;flex-wrap:wrap">
-      <button class="btn btn-o btn-sm" onclick="toggleSubAdmin('${id}',${!a.disabled})">${a.disabled?'Enable':'Disable'}</button>
-      <button class="btn btn-r btn-sm" onclick="removeSubAdmin('${id}')">🗑 Remove</button>
-    </td>
-  </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:14px">No sub-admins yet</td></tr>';
-}
-
-window.createSubAdmin = async () => {
-  if (CURRENT_ADMIN.role !== 'superadmin') { toast('Only Super Admin can create sub-admins.'); return; }
-  const email = document.getElementById('saEmail').value.trim();
-  const name  = document.getElementById('saName').value.trim();
-  const pass  = document.getElementById('saPass').value;
-  const perms = ALL_PERMS.filter(p => document.getElementById('chkperm_'+p)?.checked);
-  if (!email || !name || pass.length < 6) { toast('Fill all fields — password min 6 chars.'); return; }
-  if (!perms.length) { toast('Select at least one permission.'); return; }
-
-  try {
-    // NOTE: Creating the Firebase Auth account for this sub-admin should ideally be
-    // done via a Cloud Function (admin SDK) so it doesn't sign the super-admin out.
-    // Here we just register the permission record; pair it with an Auth account
-    // created separately (e.g. via Firebase console or a secondary auth instance).
-    await rtdb.ref('admins').push({
-      email, name, permissions:perms, disabled:false, createdAt:Date.now(), createdBy:CURRENT_ADMIN.email, tempPassNote:'Set this password in Firebase Auth console for '+email
-    });
-    logActivity('Create Sub-Admin', email, perms.join(','));
-    toast('✅ Sub-admin record created for '+email+'. Create their Firebase Auth login with the same email/password separately.');
-    document.getElementById('saEmail').value='';
-    document.getElementById('saName').value='';
-    document.getElementById('saPass').value='';
-    loadSubAdmins();
-  } catch(e) { toast('Error: '+e.message); }
-};
-
-window.toggleSubAdmin = async (id, disabled) => {
-  await rtdb.ref('admins/'+id).update({ disabled });
-  ALL_SUBADMINS[id].disabled = disabled;
-  logActivity(disabled?'Disable Sub-Admin':'Enable Sub-Admin', ALL_SUBADMINS[id].email, '');
-  renderSubAdmins();
-  toast(disabled?'Sub-admin disabled.':'Sub-admin enabled.');
-};
-
-window.removeSubAdmin = async id => {
-  if (!confirm('Remove this sub-admin permanently?')) return;
-  const email = ALL_SUBADMINS[id]?.email;
-  await rtdb.ref('admins/'+id).remove();
-  delete ALL_SUBADMINS[id];
-  logActivity('Remove Sub-Admin', email, '');
-  renderSubAdmins();
-  toast('Sub-admin removed.');
-};
-
-// ── BACKUP & RESTORE ─────────────────────────────────
-window.createBackup = async () => {
-  if (!confirm('Create a full backup snapshot now?')) return;
-  toast('💾 Creating backup… this may take a moment.');
-  try {
-    const [usersSnap, txSnap, wdSnap, invSnap, settingsSnap] = await Promise.all([
-      fsdb.collection('users').get(),
-      rtdb.ref('transactions').get(),
-      rtdb.ref('withdrawals').get(),
-      rtdb.ref('investments').get(),
-      rtdb.ref('settings').get(),
-    ]);
-    const usersData = {};
-    usersSnap.forEach(d => usersData[d.id] = d.data());
-    const backup = {
-      users: usersData,
-      transactions: txSnap.exists()?txSnap.val():{},
-      withdrawals: wdSnap.exists()?wdSnap.val():{},
-      investments: invSnap.exists()?invSnap.val():{},
-      settings: settingsSnap.exists()?settingsSnap.val():{},
-      createdAt: Date.now(),
-      createdBy: CURRENT_ADMIN.email,
-      userCount: Object.keys(usersData).length
-    };
-    const key = 'backup_' + Date.now();
-    await rtdb.ref('backups/'+key).set(backup);
-    logActivity('Create Backup', key, Object.keys(usersData).length+' users');
-    toast('✅ Backup created: '+key);
-    loadBackups();
-  } catch(e) { toast('Backup failed: '+e.message); }
-};
-
-window.loadBackups = async () => {
-  const snap = await rtdb.ref('backups').get();
-  const tb = document.getElementById('bkTb');
-  if (!snap.exists()) { tb.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:14px">No backups yet</td></tr>'; return; }
-  const entries = Object.entries(snap.val()).sort(([,a],[,b]) => b.createdAt - a.createdAt);
-  tb.innerHTML = entries.map(([key,b]) => `<tr>
-    <td style="font-size:.75rem">${new Date(b.createdAt).toLocaleString()}</td>
-    <td>${b.userCount||Object.keys(b.users||{}).length}</td>
-    <td style="font-size:.72rem;color:var(--muted)">${((JSON.stringify(b).length)/1024).toFixed(0)} KB</td>
-    <td style="display:flex;gap:5px">
-      <button class="btn btn-o btn-sm" onclick="restoreBackup('${key}')">⏪ Restore</button>
-      <button class="btn btn-r btn-sm" onclick="deleteBackup('${key}')">🗑</button>
-    </td>
-  </tr>`).join('');
-};
-
-window.restoreBackup = async key => {
-  if (!confirm('Restore backup '+key+'? This OVERWRITES current live data. This cannot be undone.')) return;
-  const doubleCheck = prompt('Type RESTORE to confirm:');
-  if (doubleCheck !== 'RESTORE') { toast('Restore cancelled.'); return; }
-  try {
-    const snap = await rtdb.ref('backups/'+key).get();
-    if (!snap.exists()) { toast('Backup not found.'); return; }
-    const b = snap.val();
-    // Restore Firestore users
-    const batch = fsdb.batch();
-    Object.entries(b.users||{}).forEach(([uid, udata]) => {
-      batch.set(fsdb.collection('users').doc(uid), udata);
-    });
-    await batch.commit();
-    // Restore RTDB nodes
-    await rtdb.ref('transactions').set(b.transactions||{});
-    await rtdb.ref('withdrawals').set(b.withdrawals||{});
-    await rtdb.ref('investments').set(b.investments||{});
-    await rtdb.ref('settings').set(b.settings||{});
-    logActivity('Restore Backup', key, (b.userCount||0)+' users restored');
-    toast('✅ Restore complete. Reloading data…');
-    await loadAll();
-  } catch(e) { toast('Restore failed: '+e.message); }
-};
-
-window.restoreByDate = async () => {
-  const dateVal = document.getElementById('restoreDateInput').value;
-  if (!dateVal) { toast('Pick a date first.'); return; }
-  const cutoff = new Date(dateVal + 'T23:59:59').getTime();
-  const snap = await rtdb.ref('backups').get();
-  if (!snap.exists()) { toast('No backups available.'); return; }
-  const entries = Object.entries(snap.val()).filter(([,b]) => b.createdAt <= cutoff).sort(([,a],[,b]) => b.createdAt - a.createdAt);
-  if (!entries.length) { toast('No backup found on or before that date.'); return; }
-  const [key, b] = entries[0];
-  toast('Found backup from '+new Date(b.createdAt).toLocaleString()+' — restoring…');
-  await restoreBackup(key);
-};
-
-window.deleteBackup = async key => {
-  if (!confirm('Delete this backup snapshot permanently?')) return;
-  await rtdb.ref('backups/'+key).remove();
-  logActivity('Delete Backup', key, '');
-  loadBackups();
-  toast('Backup deleted.');
-};
-
 // ── REPORTS ──────────────────────────────────────────
 function computeOverview() {
   const users  = Object.values(ALLU);
   const active = users.filter(u => u.isActive);
   const total  = users.length;
-  const actFee = parseFloat(SETTINGS.activationFee || 30);
-  const sponsorComm = parseFloat(SETTINGS.sponsorComm || 4);
-  const companyFund = parseFloat(SETTINGS.companyFund || 5);
-  const rev    = active.length * actFee;
-  const fund   = active.length * companyFund;
-  const comm   = active.length * sponsorComm;
-  const cbPct  = parseFloat(SETTINGS.cashbackPct||3);
-  const clubPct= parseFloat(SETTINGS.clubPct||4);
-  const cbLimit = effectiveCashbackLimit();
+  const rev    = active.length * 30;
+  const fund   = active.length * 5;
+  const comm   = active.length * 4;
 
   set('ovUsers',      total);
   set('ovActiveUsers', active.length + ' active');
   set('ovRevenue',    '$'+rev);
   set('ovFund',       '$'+fund);
-  set('qsCashPool',   '$'+(rev*cbPct/100).toFixed(2));
-  set('qsClubPool',   '$'+(rev*clubPct/100).toFixed(2));
+  set('qsCashPool',   '$'+(rev*0.03).toFixed(2));
+  set('qsClubPool',   '$'+(rev*0.04).toFixed(2));
   set('qsComm',       '$'+comm);
 
   set('rptReg',   total);
@@ -2117,16 +1499,19 @@ function computeOverview() {
   set('rptFund',  '$'+fund);
   set('rptComm',  '$'+comm);
 
+  // Cashback page
   set('cbVolume',    '$'+rev);
-  set('cbPool',      '$'+(rev*cbPct/100).toFixed(2));
-  const cbElig = active.filter(u => (u.cbEarned||0) < cbLimit).length;
+  set('cbPool',      '$'+(rev*0.03).toFixed(2));
+  const cbElig = active.filter(u => (u.cbEarned||0) < 60).length;
   set('cbEligCount', cbElig);
-  set('cbPerMember', cbElig>0 ? '$'+(rev*cbPct/100/cbElig).toFixed(4) : '$0');
-  set('cbLimitInfo', cbLimit);
+  set('cbPerMember', cbElig>0 ? '$'+(rev*0.03/cbElig).toFixed(4) : '$0');
 
-  const clubPool = rev * clubPct/100;
+  // Club page
+  const clubPool = rev * 0.04;
   set('clubPool', '$'+clubPool.toFixed(2));
+  // compute eligible
   const minRefs  = parseInt(SETTINGS.clubMinRefs||10);
+  const minMatch = parseFloat(SETTINGS.clubMinMatch||50);
   const clubElig = active.filter(u => {
     const dir = users.filter(u2 => u2.sponsorId === u.id).length;
     return dir >= minRefs;
@@ -2134,8 +1519,9 @@ function computeOverview() {
   set('clubEligCount',  clubElig.length);
   set('clubPerMember',  clubElig.length>0 ? '$'+(clubPool/clubElig.length).toFixed(2) : '$0');
 
+  // Club eligible table
   const ctb = document.getElementById('clubEligTb');
-  if (ctb) ctb.innerHTML = clubElig.length ? clubElig.map(u=>{
+  ctb.innerHTML = clubElig.length ? clubElig.map(u=>{
     const dir = users.filter(u2=>u2.sponsorId===u.id).length;
     return `<tr>
       <td style="font-weight:600">${u.fullName||u.username||'User'}</td>
@@ -2145,10 +1531,12 @@ function computeOverview() {
     </tr>`;
   }).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--muted)">None yet</td></tr>';
 
+  // Ranks count
   [50,300,1000,3000,10000,30000,100000].forEach((mReq,i) => {
     set('r'+(i+1)+'cnt', active.filter(u=>(u.matching||0)>=mReq).length);
   });
 
+  // Reports income totals (sum from users income)
   let tSponsor=0,tMatch=0,tCB=0,tClub=0,tROI=0,tGen=0;
   users.forEach(u=>{
     const inc=u.income||{};
@@ -2169,10 +1557,10 @@ window.exportCSV = type => {
   let rows = [], filename = 'export.csv';
   if (type === 'users') {
     filename = 'users.csv';
-    rows = [['Name','Username','Email','Country','Mobile','Sponsor','Joined','Status','IncomeBlocked','WithdrawBlocked','Balance']];
+    rows = [['Name','Username','Email','Country','Mobile','Sponsor','Joined','Status','Balance']];
     Object.values(ALLU).forEach(u => {
       const joined = u.createdAt?(u.createdAt.toDate?u.createdAt.toDate().toLocaleDateString():new Date(u.createdAt).toLocaleDateString()):'';
-      rows.push([u.fullName||'',u.username||'',u.email||'',u.country||'',u.mobile||'',u.sponsorId||'',joined,u.isActive?'Active':'Inactive',u.incomeBlocked?'Yes':'No',u.withdrawBlocked?'Yes':'No',u.walletBalance||0]);
+      rows.push([u.fullName||'',u.username||'',u.email||'',u.country||'',u.mobile||'',u.sponsorId||'',joined,u.isActive?'Active':'Inactive',u.walletBalance||0]);
     });
   } else if (type === 'withdrawals') {
     filename = 'withdrawals.csv';
@@ -2198,7 +1586,6 @@ window.exportCSV = type => {
   a.href    = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
   a.download= filename;
   a.click();
-  logActivity('Export CSV', type, '');
   toast('⬇ Exporting '+filename);
 };
 
@@ -2219,14 +1606,13 @@ window.doLogout   = async () => { await auth.signOut(); window.location.href='lo
 // ── NAV ──────────────────────────────────────────────
 const PAGE_LABELS = {
   overview:'Overview', users:'All Users', activations:'Activations', tree:'Binary Tree',
-  withdrawals:'Withdrawals', investments:'Investments', transactions:'Transactions', vouchers:'Gift Vouchers',
+  withdrawals:'Withdrawals', investments:'Investments', transactions:'Transactions',
   cashback:'Cashback Pool', clubbonus:'Club Bonus', roi:'ROI Management',
   settings:'Settings', ranks:'Ranks', announce:'Announcements', reports:'Reports',
-  subadmins:'Sub-Admins', activitylog:'Activity Log', backup:'Backup & Restore'
+  fundreqs:'Fund Requests', datareset:'Data Reset'
 };
 
 window.showPage = (page, el) => {
-  if (!hasPerm(page)) { toast('🚫 You do not have permission to view this page.'); return; }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   const t = document.getElementById('page-'+page);
   if(t) t.classList.add('active');
@@ -2236,10 +1622,215 @@ window.showPage = (page, el) => {
   closeSidebar();
   if(page==='tree') loadRootTree();
   if(page==='announce') loadAnnouncements();
-  if(page==='subadmins') loadSubAdmins();
-  if(page==='activitylog') loadActivityLog();
-  if(page==='backup') loadBackups();
-  if(page==='vouchers') loadVouchers();
+  if(page==='fundreqs') loadFundRequests();
+  if(page==='datareset') loadAdminWallet();
+};
+
+// ── FUND REQUESTS ────────────────────────────────────
+let ALL_FR = {};
+
+window.loadFundRequests = async () => {
+  try {
+    const snap = await rtdb.ref('fundRequests').get();
+    ALL_FR = snap.exists() ? snap.val() : {};
+    renderFundReqs(Object.entries(ALL_FR));
+  } catch(e) {
+    const tb = document.getElementById('frTb');
+    if (tb) tb.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--red);padding:16px">
+      ❌ Error: ${e.message}<br><small style="color:var(--muted)">Check RTDB Rules</small>
+    </td></tr>`;
+    console.error('loadFundRequests error:', e);
+  }
+};
+
+function renderFundReqs(entries) {
+  entries.sort(([,a],[,b]) => b.createdAt - a.createdAt);
+  const pending  = entries.filter(([,f]) => f.status === 'pending');
+  const approved = entries.filter(([,f]) => f.status === 'approved');
+  const total    = approved.reduce((s,[,f]) => s + (f.netCredited || 0), 0);
+
+  set('frPendCount', pending.length);
+  set('frApprCount', approved.length);
+  set('frTotalAmt',  '$'+total.toFixed(2));
+
+  // Nav badge
+  const badge = document.getElementById('frBadge');
+  if (badge) badge.textContent = pending.length > 0 ? pending.length : '';
+
+  const tb = document.getElementById('frTb');
+  if (!tb) return;
+  tb.innerHTML = entries.length ? entries.map(([id,f],i) => {
+    const uName = Object.values(ALLU).find(u => u.id === f.uid)?.fullName
+               || Object.values(ALLU).find(u => u.id === f.uid)?.username
+               || f.name || (f.uid||'').slice(0,10);
+    return `<tr>
+      <td style="color:var(--muted)">${i+1}</td>
+      <td>
+        <strong>${uName}</strong><br>
+        <span style="font-size:.67rem;color:var(--muted)">${f.email||''}</span>
+      </td>
+      <td style="color:var(--accent);font-weight:700">$${Number(f.amount||0).toFixed(2)}</td>
+      <td style="font-size:.73rem">${f.network||'TRC-20'}</td>
+      <td style="font-family:monospace;font-size:.67rem;max-width:110px;overflow:hidden;text-overflow:ellipsis" title="${f.txHash||''}">${(f.txHash||'—').slice(0,16)}…</td>
+      <td style="font-size:.72rem;color:var(--muted)">${f.note||'—'}</td>
+      <td style="font-size:.72rem">${f.createdAt?new Date(f.createdAt).toLocaleDateString():'—'}</td>
+      <td>
+        <span class="pill ${f.status==='approved'?'pg':f.status==='rejected'?'pr':'py'}">${f.status||'pending'}</span>
+        ${f.status==='approved'?`<br><span style="font-size:.65rem;color:var(--green)">Net: $${(f.netCredited||0).toFixed(2)}</span>`:''}
+      </td>
+      <td style="display:flex;gap:4px;flex-wrap:wrap">
+        ${f.status==='pending' ? `
+          <button class="btn btn-gr btn-sm" onclick="approveFundReq('${id}')">✅ Approve</button>
+          <button class="btn btn-r btn-sm" onclick="rejectFundReq('${id}')">✕</button>
+        ` : '—'}
+      </td>
+    </tr>`;
+  }).join('')
+  : '<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:16px">No fund requests yet</td></tr>';
+}
+
+window.filterFundReqs = () => {
+  const f = document.getElementById('frFilterSel').value;
+  renderFundReqs(f==='all' ? Object.entries(ALL_FR) : Object.entries(ALL_FR).filter(([,fr])=>fr.status===f));
+};
+
+window.approveFundReq = async (id) => {
+  const fr = ALL_FR[id];
+  if (!fr || fr.status !== 'pending') return toast('Already processed');
+  const commRate   = parseFloat(SETTINGS.investmentCommission || 5) / 100;
+  const amount     = Number(fr.amount);
+  const commAmt    = parseFloat((amount * commRate).toFixed(2));
+  const netAmt     = parseFloat((amount - commAmt).toFixed(2));
+  const sponsorBonus = parseFloat(SETTINGS.sponsorComm || 4);
+
+  if (!confirm(`Approve $${amount} deposit?\n• ${(commRate*100).toFixed(0)}% commission = $${commAmt}\n• Net credit to user = $${netAmt}\n• Sponsor gets $${sponsorBonus} referral bonus`)) return;
+
+  const uid = fr.uid;
+  try {
+    // 1. Credit user wallet
+    const wRef = rtdb.ref('users/'+uid+'/walletBalance');
+    const wSnap = await wRef.get();
+    const newBal = parseFloat(wSnap.exists()?wSnap.val():0) + netAmt;
+    await wRef.set(newBal);
+
+    // 2. Update totalInvested
+    const tiRef = rtdb.ref('users/'+uid+'/totalInvested');
+    const tiSnap = await tiRef.get();
+    await tiRef.set(parseFloat(tiSnap.exists()?tiSnap.val():0) + amount);
+
+    // 3. Transaction log for user
+    await rtdb.ref('transactions/'+uid).push({
+      type:'Fund Deposit Approved', amount:netAmt,
+      note:`$${amount} deposit — ${(commRate*100).toFixed(0)}% commission ($${commAmt}) deducted → Net $${netAmt} credited`,
+      timestamp:Date.now(), status:'completed', balance:newBal
+    });
+
+    // 4. Sponsor referral bonus
+    const userNode = await rtdb.ref('users/'+uid).get();
+    const userRTDB = userNode.exists() ? userNode.val() : {};
+    // Try RTDB sponsorId first, then Firestore
+    const sponsorUid = userRTDB.sponsorId || ALLU[uid]?.sponsorId;
+    if (sponsorUid) {
+      const sRef = rtdb.ref('users/'+sponsorUid+'/walletBalance');
+      const sSnap = await sRef.get();
+      const sBal  = parseFloat(sSnap.exists()?sSnap.val():0);
+      await sRef.set(sBal + sponsorBonus);
+      const siRef = rtdb.ref('users/'+sponsorUid+'/income/sponsor');
+      const siSnap = await siRef.get();
+      await siRef.set(parseFloat(siSnap.exists()?siSnap.val():0) + sponsorBonus);
+      await rtdb.ref('transactions/'+sponsorUid).push({
+        type:'Sponsor Commission', amount:sponsorBonus,
+        note:'From '+(fr.name||uid.slice(0,8))+' fund deposit ($'+amount+')',
+        timestamp:Date.now(), status:'completed', balance:sBal+sponsorBonus
+      });
+    }
+
+    // 5. Mark approved
+    await rtdb.ref('fundRequests/'+id).update({
+      status:'approved', approvedAt:Date.now(),
+      netCredited:netAmt, commissionDeducted:commAmt, commissionRate:commRate*100
+    });
+    ALL_FR[id] = {...ALL_FR[id], status:'approved', netCredited:netAmt};
+    renderFundReqs(Object.entries(ALL_FR));
+    computeOverview();
+    toast(`✅ Approved! Net $${netAmt} credited. Commission $${commAmt} deducted.`);
+  } catch(e) { toast('Error: '+e.message); }
+};
+
+window.rejectFundReq = async (id) => {
+  if (!confirm('Reject this fund request?')) return;
+  await rtdb.ref('fundRequests/'+id).update({ status:'rejected', rejectedAt:Date.now() });
+  ALL_FR[id].status = 'rejected';
+  renderFundReqs(Object.entries(ALL_FR));
+  toast('Fund request rejected.');
+};
+
+// ── ADMIN WALLET ──────────────────────────────────────
+window.loadAdminWallet = async () => {
+  const snap = await rtdb.ref('settings/adminWallet').get();
+  const el = document.getElementById('adminWalletInput');
+  if (el && snap.exists()) el.value = snap.val();
+};
+
+window.saveAdminWallet = async () => {
+  const addr = document.getElementById('adminWalletInput').value.trim();
+  if (!addr) return toast('Enter wallet address');
+  await rtdb.ref('settings/adminWallet').set(addr);
+  toast('✅ Admin wallet address saved!');
+};
+
+// ── DELETE SINGLE USER ────────────────────────────────
+window.deleteSingleUser = async () => {
+  const uid = document.getElementById('delUid').value.trim();
+  if (!uid) return toast('Enter a UID first');
+  const name = ALLU[uid]?.fullName || ALLU[uid]?.username || uid.slice(0,12);
+  if (!confirm(`Delete user "${name}"?\n\nThis removes:\n• RTDB: income, tx, investments, withdrawals, fundRequests\n• Firestore: user doc\n• activationRequests\n\n⚠️ CANNOT be undone!`)) return;
+  if (!confirm(`FINAL CONFIRM: Delete "${name}"?`)) return;
+  try {
+    // RTDB cleanup
+    await rtdb.ref('users/'+uid).remove();
+    await rtdb.ref('transactions/'+uid).remove();
+    await rtdb.ref('investments/'+uid).remove();
+    await rtdb.ref('withdrawals/'+uid).remove();
+
+    // Remove activation requests
+    const actSnap = await rtdb.ref('activationRequests').orderByChild('uid').equalTo(uid).get();
+    if (actSnap.exists()) for (const k of Object.keys(actSnap.val())) await rtdb.ref('activationRequests/'+k).remove();
+
+    // Remove fund requests
+    const frSnap = await rtdb.ref('fundRequests').orderByChild('uid').equalTo(uid).get();
+    if (frSnap.exists()) for (const k of Object.keys(frSnap.val())) await rtdb.ref('fundRequests/'+k).remove();
+
+    // Firestore doc
+    await fsdb.collection('users').doc(uid).delete();
+
+    delete ALLU[uid];
+    document.getElementById('delUid').value = '';
+    renderUsers(Object.values(ALLU));
+    computeOverview();
+    toast('✅ User deleted: '+name);
+  } catch(e) { toast('Error: '+e.message); }
+};
+
+// ── RESET ALL DATA ────────────────────────────────────
+window.resetAllData = async () => {
+  if (!confirm('⚠️ DELETE ALL DATA?\nUsers, transactions, investments, withdrawals, activations, fundRequests — everything!')) return;
+  const code = prompt('Type exactly "DELETE ALL" to confirm:');
+  if (code !== 'DELETE ALL') return toast('Cancelled. Wrong confirmation text.');
+  try {
+    toast('🗑 Deleting all data… please wait');
+    const paths = ['users','transactions','investments','withdrawals','activationRequests','fundRequests','announcements','cashbackHistory','clubBonusHistory'];
+    for (const p of paths) await rtdb.ref(p).remove();
+    const snap = await fsdb.collection('users').get();
+    const batch = fsdb.batch();
+    snap.forEach(doc => batch.delete(doc.ref));
+    await batch.commit();
+    ALLU={}; ALL_ACT={}; ALL_WD={}; ALL_INV={}; ALL_TX=[]; ALL_FR={};
+    renderUsers([]); renderActivations([]); renderWithdrawals([]);
+    renderInvestments([]); renderTx([]); renderFundReqs([]);
+    computeOverview();
+    toast('✅ All test data deleted!');
+  } catch(e) { toast('Error: '+e.message); }
 };
 
 window.toggleSidebar = () => {

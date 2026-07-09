@@ -1,3 +1,4 @@
+// dashboard 1july replace present dash9july have file//
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,6 +14,8 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 button{cursor:pointer;font-family:inherit}
+
+/* SIDEBAR */
 .sidebar{position:fixed;top:0;left:0;height:100vh;width:245px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;transition:transform .3s}
 .logo-area{padding:18px 18px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px}
 .logo-img{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);flex-shrink:0}
@@ -28,18 +31,26 @@ nav a .ic{width:17px;text-align:center;font-size:.9rem}
 .av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.82rem;color:#fff;flex-shrink:0}
 .um-info strong{font-size:.79rem;display:block;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .um-info span{font-size:.66rem;color:var(--muted)}
+
+/* TOPBAR */
 .topbar{position:fixed;top:0;left:245px;right:0;height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:99;transition:left .3s}
 .menu-btn{display:none;background:none;border:none;color:var(--text);font-size:1.3rem;padding:4px 8px}
 .pg-label{font-size:.87rem;font-weight:700;color:var(--muted)}
 .tb-right{display:flex;align-items:center;gap:10px}
 .theme-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 11px;font-size:.76rem;cursor:pointer}
+
+/* MAIN */
 .main{margin-left:245px;padding-top:56px;min-height:100vh;transition:margin-left .3s}
 .page{display:none;padding:20px}
 .page.active{display:block}
 .pg-title{font-size:1.25rem;font-weight:800;margin-bottom:16px}
 .pg-title span{font-size:.8rem;color:var(--muted);font-weight:400;margin-left:6px}
+
+/* BANNER */
 .banner{border-radius:12px;padding:13px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
 .banner-warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25)}
+
+/* CARDS */
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:13px;margin-bottom:18px}
 .sc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative;overflow:hidden}
 .sc::before{content:'';position:absolute;top:-20px;right:-20px;width:75px;height:75px;border-radius:50%;opacity:.07}
@@ -49,12 +60,18 @@ nav a .ic{width:17px;text-align:center;font-size:.9rem}
 .cb .sc-val{color:var(--accent)}.cp .sc-val{color:var(--accent2)}.cg .sc-val{color:var(--gold)}.cgr .sc-val{color:var(--green)}
 .sc-sub{font-size:.7rem;color:var(--muted)}
 .sc-ic{position:absolute;bottom:12px;right:12px;font-size:1.4rem;opacity:.2}
+
+/* PROGRESS */
 .prog{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:7px}
 .prog-f{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .5s}
+
+/* CARD */
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px}
 .card-title{font-size:.87rem;font-weight:700;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
 .card-title small{font-size:.7rem;color:var(--muted);font-weight:400}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:14px}
+
+/* TABLE */
 .tw{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:.78rem}
 th{color:var(--muted);font-weight:600;padding:7px 10px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;font-size:.7rem;text-transform:uppercase;letter-spacing:.3px}
@@ -66,10 +83,14 @@ tr:last-child td{border-bottom:none}
 .pr{background:rgba(239,68,68,.15);color:var(--red)}
 .pb{background:rgba(0,198,255,.15);color:var(--accent)}
 .pp{background:rgba(124,58,237,.15);color:var(--accent2)}
+
+/* FORM */
 .fg{margin-bottom:13px}
 .fg label{display:block;font-size:.73rem;color:var(--muted);margin-bottom:4px;font-weight:600}
 .fg input,.fg select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:9px 12px;color:var(--text);font-size:.85rem;outline:none;transition:.2s}
 .fg input:focus,.fg select:focus{border-color:var(--accent)}
+
+/* BUTTONS */
 .btn{padding:8px 16px;border-radius:9px;font-size:.79rem;font-weight:700;border:none;cursor:pointer;transition:.15s}
 .btn:hover{opacity:.85}
 .btn-p{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
@@ -78,9 +99,15 @@ tr:last-child td{border-bottom:none}
 .btn-o{background:none;border:1px solid var(--border);color:var(--text)}
 .btn-r{background:var(--red);color:#fff}
 .btn-sm{padding:3px 9px;font-size:.7rem}
+
+/* REF BOX */
 .ref-box{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:9px}
 .ref-box input{flex:1;background:none;border:none;color:var(--text);font-size:.78rem;outline:none}
+
+/* INFO BOX */
 .info-box{background:rgba(0,198,255,.05);border:1px solid rgba(0,198,255,.15);border-radius:9px;padding:11px 14px;font-size:.77rem;color:var(--accent);margin-bottom:13px;line-height:1.7}
+
+/* BINARY TREE */
 .tree-container{overflow-x:auto;padding:10px 0;min-height:200px}
 .tree-node{display:flex;flex-direction:column;align-items:center;position:relative}
 .tree-box{background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:8px 12px;text-align:center;min-width:90px;font-size:.73rem;cursor:default;transition:.2s;position:relative}
@@ -90,31 +117,28 @@ tr:last-child td{border-bottom:none}
 .tree-box.empty-node{border-style:dashed;border-color:var(--muted);opacity:.4}
 .tree-name{font-weight:700;font-size:.75rem;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tree-status{font-size:.62rem;margin-top:1px}
+.tree-children{display:flex;gap:30px;margin-top:0;position:relative;padding-top:20px}
+.tree-connector{position:absolute;top:0;left:50%;width:1px;height:20px;background:var(--border);transform:translateX(-50%)}
+.tree-h-line{position:absolute;top:0;height:1px;background:var(--border)}
+
+/* RANK */
 .rank-stars{font-size:1.5rem;letter-spacing:3px;margin:6px 0 3px}
 .rank-name-d{font-size:.93rem;font-weight:800;color:var(--gold)}
 .rank-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:.74rem}
 .rank-bar-row .rl{width:85px;color:var(--muted)}
 .rank-bar-row .rv{width:85px;text-align:right;color:var(--muted);font-size:.7rem}
+
+/* WALLET */
 .wal-bal{font-size:2rem;font-weight:800;color:var(--green)}
+
+/* OVERLAY & TOAST */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
 .overlay.show{display:block}
 .toast{position:fixed;bottom:20px;right:20px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:.81rem;z-index:9999;opacity:0;transform:translateY(14px);transition:.3s;pointer-events:none;max-width:270px}
 .toast.show{opacity:1;transform:translateY(0)}
+
 body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1e293b;--muted:#64748b}
-/* WALLET TABS (new) */
-.wal-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.wtab{padding:7px 14px;border-radius:9px;font-size:.78rem;font-weight:700;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:.2s}
-.wtab.active{background:var(--accent);border-color:var(--accent);color:#000}
-.wallet-card{border-radius:14px;padding:18px;position:relative;overflow:hidden;color:#fff;margin-bottom:14px}
-.wallet-card.wc-main{background:linear-gradient(135deg,#00c6ff,#7c3aed)}
-.wallet-card.wc-income{background:linear-gradient(135deg,#10b981,#059669)}
-.wallet-card.wc-p2b{background:linear-gradient(135deg,#f59e0b,#d97706)}
-.wallet-card .wc-lbl{font-size:.72rem;opacity:.85;text-transform:uppercase;letter-spacing:.5px}
-.wallet-card .wc-val{font-size:1.9rem;font-weight:800;margin:4px 0}
-.wallet-card .wc-sub{font-size:.7rem;opacity:.8}
-.copy-id-box{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:.75rem;margin-bottom:8px}
-.copy-id-box .cid-label{color:var(--muted);width:75px;flex-shrink:0}
-.copy-id-box .cid-val{flex:1;font-family:monospace;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%)}
   .sidebar.open{transform:translateX(0)}
@@ -150,8 +174,6 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     <a onclick="showPage('team',this)"><span class="ic">👥</span> My Team</a>
     <a onclick="showPage('income',this)"><span class="ic">💰</span> Income Report</a>
     <a onclick="showPage('roi',this)"><span class="ic">📈</span> ROI Investment</a>
-    <a onclick="showPage('investhist',this)"><span class="ic">📊</span> Investment History</a>
-    <a onclick="showPage('joining',this)"><span class="ic">🧾</span> Joining History</a>
     <a onclick="showPage('wallet',this)"><span class="ic">💳</span> Wallet</a>
     <a onclick="showPage('rank',this)"><span class="ic">⭐</span> Rank Progress</a>
     <a onclick="showPage('cashback',this)"><span class="ic">🎁</span> Cashback Pool</a>
@@ -197,20 +219,6 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     <button class="btn btn-g btn-sm" onclick="showPage('activation',null)">Activate Now →</button>
   </div>
 
-  <div class="card">
-    <div class="card-title">Your IDs <small>Copy your ID or your upline's ID</small></div>
-    <div class="copy-id-box">
-      <span class="cid-label">My User ID</span>
-      <span class="cid-val" id="myIdVal">—</span>
-      <button class="btn btn-o btn-sm" onclick="copyText('myIdVal')">📋 Copy</button>
-    </div>
-    <div class="copy-id-box">
-      <span class="cid-label">Upline ID</span>
-      <span class="cid-val" id="uplineIdVal">—</span>
-      <button class="btn btn-o btn-sm" onclick="copyText('uplineIdVal')">📋 Copy</button>
-    </div>
-  </div>
-
   <div class="cards-grid">
     <div class="sc cb">
       <div class="sc-lbl">Total Income</div>
@@ -219,7 +227,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
       <div class="sc-ic">💵</div>
     </div>
     <div class="sc cp">
-      <div class="sc-lbl">Main Wallet</div>
+      <div class="sc-lbl">Wallet Balance</div>
       <div class="sc-val" id="ovWallet">$0.00</div>
       <div class="sc-sub">Available</div>
       <div class="sc-ic">💳</div>
@@ -231,10 +239,11 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
       <div class="sc-ic">👥</div>
     </div>
     <div class="sc cgr">
-      <div class="sc-lbl">Income Wallet</div>
-      <div class="sc-val" id="ovIncomeWallet">$0.00</div>
-      <div class="sc-sub">All commissions</div>
-      <div class="sc-ic">🎯</div>
+      <div class="sc-lbl">Matching Income</div>
+      <div class="sc-val" id="ovMatch">$0.00</div>
+      <div class="sc-sub">Cap: $1,000</div>
+      <div class="sc-ic">🤝</div>
+      <div class="prog"><div class="prog-f" id="ovMatchP" style="width:0%"></div></div>
     </div>
   </div>
 
@@ -250,7 +259,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
             <tr><td>Daily Cashback</td><td id="ibCashback">$0.00</td><td><span class="pill pb">Pool</span></td></tr>
             <tr><td>Club Bonus</td><td id="ibClub">$0.00</td><td><span class="pill py">Check</span></td></tr>
             <tr><td>ROI Returns</td><td id="ibRoi">$0.00</td><td><span class="pill pg">Active</span></td></tr>
-            <tr><td>Generation Bonus</td><td id="ibGen">$0.00</td><td><span class="pill pb">Team</span></td></tr>
+            <tr><td>Generation Bonus</td><td id="ibGen">$0.00</td><td><span class="pill pb">7 Lvls</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -314,6 +323,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
         <input type="text" id="refLinkInput" readonly/>
         <button class="btn btn-p btn-sm" onclick="copyRef()">Copy</button>
       </div>
+      <div style="font-size:.7rem;color:var(--muted);margin-top:7px">Earn <strong style="color:var(--green)">$4</strong> for every activated referral</div>
       <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">
         <button class="btn btn-o btn-sm" onclick="shareWA()">📲 WhatsApp</button>
         <button class="btn btn-o btn-sm" onclick="shareTG()">✈️ Telegram</button>
@@ -321,26 +331,23 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
       </div>
     </div>
     <div class="card">
-      <div class="card-title">Your IDs</div>
-      <div class="copy-id-box">
-        <span class="cid-label">My ID</span>
-        <span class="cid-val" id="refMyIdVal">—</span>
-        <button class="btn btn-o btn-sm" onclick="copyText('refMyIdVal')">📋</button>
-      </div>
-      <div class="copy-id-box">
-        <span class="cid-label">Upline ID</span>
-        <span class="cid-val" id="refUplineIdVal">—</span>
-        <button class="btn btn-o btn-sm" onclick="copyText('refUplineIdVal')">📋</button>
-      </div>
+      <div class="card-title">Commission Structure</div>
+      <table style="font-size:.79rem;width:100%">
+        <tr><td style="color:var(--muted);padding:6px 0">Activation Fee</td><td style="color:var(--accent);font-weight:700">$30</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Sponsor Commission</td><td style="color:var(--green);font-weight:700">$4 / referral</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Matching Bonus</td><td style="color:var(--gold);font-weight:700">5%</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Capping Limit</td><td style="color:var(--red);font-weight:700">$1,000</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">ROI Referral Bonus</td><td style="color:var(--accent2);font-weight:700">$5 / investor</td></tr>
+      </table>
     </div>
   </div>
   <div class="card" style="max-width:840px">
     <div class="card-title">Direct Referrals <small id="refCountLbl">0 total</small></div>
     <div class="tw">
       <table>
-        <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Joined</th><th>Status</th></tr></thead>
+        <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Joined</th><th>Status</th><th>Comm.</th></tr></thead>
         <tbody id="refTbody">
-          <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">No referrals yet</td></tr>
+          <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">No referrals yet</td></tr>
         </tbody>
       </table>
     </div>
@@ -350,10 +357,11 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 <!-- ===== BINARY TREE ===== -->
 <div class="page" id="page-tree">
   <div class="pg-title">Binary Tree</div>
-  <div class="info-box">🌳 Left and Right leg — green border = active member, dashed = empty slot. The middle circle shows the summary.</div>
-  <div class="card">
-    <div class="card-title">Tree Summary</div>
-    <div id="treeSummaryCircle" style="display:flex;justify-content:center;padding:14px 0"></div>
+  <div class="info-box">🌳 Binary placement tree — Left and Right legs. Green border = active member. Dashed = empty slot.</div>
+  <div class="cards-grid" style="max-width:600px;margin-bottom:16px">
+    <div class="sc cb"><div class="sc-lbl">Left Leg</div><div class="sc-val" id="treeLeftCount">0</div><div class="sc-sub">Members</div></div>
+    <div class="sc cp"><div class="sc-lbl">Right Leg</div><div class="sc-val" id="treeRightCount">0</div><div class="sc-sub">Members</div></div>
+    <div class="sc cg"><div class="sc-lbl">Weaker Leg</div><div class="sc-val" id="treeWeakerLeg">—</div><div class="sc-sub">For matching</div></div>
   </div>
   <div class="card">
     <div class="card-title">Tree View <small>3 levels shown</small></div>
@@ -383,6 +391,23 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     <div class="sc cg"><div class="sc-lbl">Team Volume</div><div class="sc-val" id="tmVol">$0</div><div class="sc-ic">💰</div></div>
     <div class="sc cp"><div class="sc-lbl">Direct Refs</div><div class="sc-val" id="tmDirRef">0</div><div class="sc-ic">🔗</div></div>
   </div>
+  <div class="card" style="max-width:840px">
+    <div class="card-title">Generation Bonus Levels</div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Level</th><th>Bonus %</th><th>On ROI Pool</th></tr></thead>
+        <tbody>
+          <tr><td>Level 1</td><td style="color:var(--gold);font-weight:700">20%</td><td>Direct downline ROI</td></tr>
+          <tr><td>Level 2</td><td style="color:var(--accent)">10%</td><td>2nd generation</td></tr>
+          <tr><td>Level 3</td><td style="color:var(--accent)">8%</td><td>3rd generation</td></tr>
+          <tr><td>Level 4</td><td style="color:var(--green)">6%</td><td>4th generation</td></tr>
+          <tr><td>Level 5</td><td style="color:var(--green)">4%</td><td>5th generation</td></tr>
+          <tr><td>Level 6</td><td style="color:var(--muted)">3%</td><td>6th generation</td></tr>
+          <tr><td>Level 7</td><td style="color:var(--muted)">2%</td><td>7th generation</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <!-- ===== INCOME ===== -->
@@ -394,6 +419,8 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     <div class="sc cg"><div class="sc-lbl">All Time</div><div class="sc-val" id="incAll">$0.00</div><div class="sc-ic">🏆</div></div>
     <div class="sc cp"><div class="sc-lbl">Withdrawn</div><div class="sc-val" id="incWd">$0.00</div><div class="sc-ic">💸</div></div>
   </div>
+
+  <!-- Income by type -->
   <div class="two-col">
     <div class="card">
       <div class="card-title">Income by Type</div>
@@ -410,16 +437,19 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
       <div class="card-title">Quick Stats</div>
       <table style="font-size:.8rem;width:100%">
         <tr><td style="color:var(--muted);padding:6px 0">Total Invested</td><td style="color:var(--accent);font-weight:700" id="incTotalInv">$0.00</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Capping Used</td><td id="incCapUsed">$0 / $1000</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Cap Remaining</td><td style="color:var(--gold);font-weight:700" id="incCapLeft">$1000</td></tr>
       </table>
     </div>
   </div>
+
   <div class="card">
     <div class="card-title">Transaction History <small id="txCountLbl"></small></div>
     <div class="tw">
       <table>
-        <thead><tr><th>Date & Time</th><th>Type</th><th>Note</th><th>Amount</th><th>Status</th></tr></thead>
+        <thead><tr><th>Date & Time</th><th>Type</th><th>Note</th><th>Amount</th><th>Balance After</th><th>Status</th></tr></thead>
         <tbody id="incTxTable">
-          <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No transactions yet</td></tr>
+          <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:18px">No transactions yet</td></tr>
         </tbody>
       </table>
     </div>
@@ -429,19 +459,27 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 <!-- ===== ROI ===== -->
 <div class="page" id="page-roi">
   <div class="pg-title">ROI Investment</div>
-  <div class="info-box">💡 Min $100 | Payout every 30 days | Capital withdrawal after lock period (fee applies) | Payment from P2B Wallet</div>
+  <div class="info-box">💡 Min $100 | Monthly ROI: <strong>12%–15%</strong> (admin-set) | Paid every 30 days | 50% direct + 50% generation bonus (7 levels) | Capital withdrawal after 6 months with 10% fee</div>
   <div class="two-col" style="max-width:840px">
     <div class="card">
-      <div class="card-title">New Investment <small>Pay from P2B Wallet</small></div>
+      <div class="card-title">New Investment</div>
       <div class="fg"><label>Amount (USD)</label><input type="number" id="invAmt" placeholder="Min $100" min="100"/></div>
-      <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:11px;margin-bottom:11px;font-size:.77rem">
-        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">P2B Wallet Balance</span><span style="color:var(--gold);font-weight:700" id="invP2BBal">$0.00</span></div>
-        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Payout Cycle</span><span>Every 30 days</span></div>
+      <div class="fg"><label>Payment Method</label>
+        <select id="invMethod">
+          <option>USDT TRC20</option><option>USDT ERC20</option><option>BTC</option>
+        </select>
       </div>
-      <button class="btn btn-p" onclick="submitInvestment()" style="width:100%">Invest from P2B Wallet →</button>
+      <div class="fg"><label>Transaction Hash (TxID)</label><input type="text" id="invTxid" placeholder="Paste your TxID"/></div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:11px;margin-bottom:11px;font-size:.77rem">
+        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Monthly ROI</span><span style="color:var(--green);font-weight:700" id="roiRateD">12%</span></div>
+        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Payout Cycle</span><span>Every 30 days</span></div>
+        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Lock Period</span><span>6 months</span></div>
+        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Withdrawal Fee</span><span style="color:var(--red)">10%</span></div>
+      </div>
+      <button class="btn btn-p" onclick="submitInvestment()" style="width:100%">Submit Investment →</button>
     </div>
     <div class="card">
-      <div class="card-title">Investment Summary</div>
+      <div class="card-title">ROI Summary</div>
       <table style="width:100%;font-size:.8rem">
         <tr><td style="color:var(--muted);padding:6px 0">Total Invested</td><td style="color:var(--accent);font-weight:700" id="roiTotalInv">$0.00</td></tr>
         <tr><td style="color:var(--muted);padding:6px 0">Total ROI Earned</td><td style="color:var(--green);font-weight:700" id="roiTotalEarned">$0.00</td></tr>
@@ -454,44 +492,10 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     <div class="card-title">My Investment Plans</div>
     <div class="tw">
       <table>
-        <thead><tr><th>#</th><th>Amount</th><th>Date</th><th>Earned</th><th>Unlock Date</th><th>Status</th><th>Action</th></tr></thead>
+        <thead><tr><th>#</th><th>Amount</th><th>Date</th><th>ROI %</th><th>Earned</th><th>Unlock Date</th><th>Status</th><th>Action</th></tr></thead>
         <tbody id="roiPlansTb">
-          <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:18px">No investments yet</td></tr>
+          <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:18px">No investments yet</td></tr>
         </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ===== INVESTMENT HISTORY ===== -->
-<div class="page" id="page-investhist">
-  <div class="pg-title">Investment History</div>
-  <div class="info-box">📊 All commission — details of which new ID / new sales it came from.</div>
-  <div class="cards-grid" style="max-width:700px">
-    <div class="sc cb"><div class="sc-lbl">Total Investments</div><div class="sc-val" id="ihTotalCount">0</div><div class="sc-ic">📊</div></div>
-    <div class="sc cgr"><div class="sc-lbl">Total Amount</div><div class="sc-val" id="ihTotalAmt">$0</div><div class="sc-ic">💰</div></div>
-    <div class="sc cg"><div class="sc-lbl">Commission Earned</div><div class="sc-val" id="ihTotalComm">$0</div><div class="sc-ic">🎯</div></div>
-  </div>
-  <div class="card">
-    <div class="card-title">Investment / Commission History</div>
-    <div class="tw">
-      <table>
-        <thead><tr><th>Date</th><th>From (New ID)</th><th>Sales Amount</th><th>Commission</th><th>Type</th></tr></thead>
-        <tbody id="investHistTb"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No history yet</td></tr></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ===== JOINING HISTORY ===== -->
-<div class="page" id="page-joining">
-  <div class="pg-title">Joining History</div>
-  <div class="card">
-    <div class="card-title">My Downline Joining History <small id="joinCountLbl"></small></div>
-    <div class="tw">
-      <table>
-        <thead><tr><th>Date</th><th>Name</th><th>Username</th><th>Sponsor ID</th><th>Side</th><th>Status</th></tr></thead>
-        <tbody id="joiningHistTb"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:18px">No joining history yet</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -500,93 +504,43 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 <!-- ===== WALLET ===== -->
 <div class="page" id="page-wallet">
   <div class="pg-title">Wallet</div>
-
-  <div class="two-col" style="max-width:900px">
-    <div class="wallet-card wc-main">
-      <div class="wc-lbl">💳 Main Wallet</div>
-      <div class="wc-val" id="walMainD">$0.00</div>
-      <div class="wc-sub">Withdrawable</div>
+  <div class="card" style="max-width:600px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px">
+      <div>
+        <div style="font-size:.72rem;color:var(--muted);margin-bottom:2px">Available Balance</div>
+        <div class="wal-bal" id="walBalD">$0.00</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-p btn-sm" onclick="showWdForm()">Withdraw</button>
+        <button class="btn btn-o btn-sm" onclick="showPage('roi',null)">Invest</button>
+      </div>
     </div>
-    <div class="wallet-card wc-income">
-      <div class="wc-lbl">🎯 Income Wallet</div>
-      <div class="wc-val" id="walIncomeD">$0.00</div>
-      <div class="wc-sub">All commissions land here</div>
-    </div>
-  </div>
-  <div class="two-col" style="max-width:900px">
-    <div class="wallet-card wc-p2b">
-      <div class="wc-lbl">📦 P2B Wallet</div>
-      <div class="wc-val" id="walP2BD">$0.00</div>
-      <div class="wc-sub">For Activation & Investment</div>
-    </div>
-    <div class="card" style="margin-bottom:0">
-      <div class="card-title">Quick Stats</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
-        <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px;text-align:center">
-          <div style="font-size:.65rem;color:var(--muted)">Total Earned</div>
-          <div style="font-size:.95rem;font-weight:800;color:var(--green)" id="wTotalEarned">$0.00</div>
-        </div>
-        <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px;text-align:center">
-          <div style="font-size:.65rem;color:var(--muted)">Withdrawn</div>
-          <div style="font-size:.95rem;font-weight:800;color:var(--red)" id="wTotalWd">$0.00</div>
-        </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px;text-align:center">
+        <div style="font-size:.65rem;color:var(--muted)">Total Earned</div>
+        <div style="font-size:.95rem;font-weight:800;color:var(--green)" id="wTotalEarned">$0.00</div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px;text-align:center">
+        <div style="font-size:.65rem;color:var(--muted)">Withdrawn</div>
+        <div style="font-size:.95rem;font-weight:800;color:var(--red)" id="wTotalWd">$0.00</div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px;text-align:center">
+        <div style="font-size:.65rem;color:var(--muted)">Cap Left</div>
+        <div style="font-size:.95rem;font-weight:800;color:var(--gold)" id="wCapLeft">$1000</div>
       </div>
     </div>
   </div>
-
-  <div class="card" style="max-width:900px">
-    <div class="card-title">Wallet Transfer</div>
-    <div class="wal-tabs">
-      <button class="wtab active" id="wtab_i2p" onclick="switchWTab('i2p')">Income → P2B</button>
-      <button class="wtab" id="wtab_m2p" onclick="switchWTab('m2p')">Main → P2B</button>
-      <button class="wtab" id="wtab_m2m" onclick="switchWTab('m2m')">Main → Main (P2P)</button>
-      <button class="wtab" id="wtab_i2m" onclick="switchWTab('i2m')">Income → Main</button>
-    </div>
-
-    <div id="wform_i2p">
-      <div class="info-box">From Income Wallet to P2B Wallet — no conditions, any amount, free transfer.</div>
-      <div class="fg"><label>Amount (USD)</label><input type="number" id="i2pAmt" placeholder="Any amount" min="0.01"/></div>
-      <button class="btn btn-p" onclick="transferIncomeToP2B()" style="width:100%">Transfer Income → P2B</button>
-    </div>
-
-    <div id="wform_m2p" style="display:none">
-      <div class="info-box">From Main Wallet to P2B Wallet — free transfer.</div>
-      <div class="fg"><label>Amount (USD)</label><input type="number" id="m2pAmt" placeholder="Amount" min="0.01"/></div>
-      <button class="btn btn-p" onclick="transferMainToP2B()" style="width:100%">Transfer Main → P2B</button>
-    </div>
-
-    <div id="wform_m2m" style="display:none">
-      <div class="info-box">From Main Wallet to another user's Main Wallet — free transfer.</div>
-      <div class="fg"><label>Receiver User ID / Username</label><input type="text" id="m2mTarget" placeholder="User ID or Username"/></div>
-      <div class="fg"><label>Amount (USD)</label><input type="number" id="m2mAmt" placeholder="Amount" min="0.01"/></div>
-      <button class="btn btn-p" onclick="transferMainToMain()" style="width:100%">Send to User (Main → Main)</button>
-    </div>
-
-    <div id="wform_i2m" style="display:none">
-      <div class="info-box" id="i2mChargeInfo">From Income Wallet to Main Wallet — a service charge will be deducted.</div>
-      <div class="fg"><label>Amount (USD)</label><input type="number" id="i2mAmt" placeholder="Amount" min="0.01" oninput="calcI2MPreview()"/></div>
-      <div id="i2mPreview" style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:11px;margin-bottom:11px;font-size:.78rem;display:none">
-        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Amount</span><span id="i2mPrevAmt"></span></div>
-        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Service Charge</span><span id="i2mPrevCharge" style="color:var(--red)"></span></div>
-        <div style="display:flex;justify-content:space-between;padding:3px 0;border-top:1px solid var(--border);margin-top:4px"><span style="font-weight:700">You Get</span><span id="i2mPrevNet" style="color:var(--green);font-weight:800"></span></div>
-      </div>
-      <button class="btn btn-p" onclick="transferIncomeToMain()" style="width:100%">Transfer Income → Main</button>
-    </div>
-  </div>
-
-  <div class="card" style="max-width:900px" id="wdFormCard2">
-    <div class="card-title">Withdraw <small id="wdChargeInfo"></small></div>
+  <div class="card" id="wdFormCard" style="max-width:460px;display:none">
+    <div class="card-title">Withdrawal Request</div>
     <div class="fg"><label>Amount (USD)</label><input type="number" id="wdAmt" placeholder="Min $10"/></div>
     <div class="fg"><label>USDT TRC20 Address</label><input type="text" id="wdAddr" placeholder="Your TRC20 wallet address"/></div>
-    <div id="wdPreview" style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:11px;margin-bottom:11px;font-size:.78rem;display:none">
-      <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Amount</span><span id="wdPrevAmt"></span></div>
-      <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Withdraw Charge</span><span id="wdPrevCharge" style="color:var(--red)"></span></div>
-      <div style="display:flex;justify-content:space-between;padding:3px 0;border-top:1px solid var(--border);margin-top:4px"><span style="font-weight:700">You Receive</span><span id="wdPrevNet" style="color:var(--green);font-weight:800"></span></div>
+    <div style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);border-radius:9px;padding:9px;font-size:.74rem;color:var(--muted);margin-bottom:11px">⚠️ Processed 24–48 hrs. Min $10.</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-p" onclick="submitWithdraw()" style="flex:1">Submit</button>
+      <button class="btn btn-o" onclick="hideWdForm()">Cancel</button>
     </div>
-    <button class="btn btn-p" onclick="submitWithdraw()" style="width:100%">Submit Withdraw Request (Main Wallet)</button>
   </div>
-
-  <div class="card" style="max-width:900px">
+  <div class="card" style="max-width:600px">
     <div class="card-title">Wallet History</div>
     <div class="tw">
       <table>
@@ -642,27 +596,22 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 <!-- ===== CASHBACK ===== -->
 <div class="page" id="page-cashback">
   <div class="pg-title">Daily Cashback Pool</div>
-  <div class="info-box" id="cbInfoBox">💡 Distributed equally from the company's joining volume. Once the limit is finished, you can upgrade.</div>
+  <div class="info-box">💡 3% of total company joining volume distributed equally. Max: <strong>$60</strong> (2× of $30). Stops at 2×.</div>
   <div class="cards-grid" style="max-width:640px">
     <div class="sc cb"><div class="sc-lbl">Cashback Earned</div><div class="sc-val" id="cbEarned">$0.00</div><div class="sc-ic">🎁</div></div>
-    <div class="sc cg"><div class="sc-lbl">Current Limit</div><div class="sc-val" id="cbLimitD">$60.00</div><div class="sc-ic">🔒</div></div>
+    <div class="sc cg"><div class="sc-lbl">Limit</div><div class="sc-val">$60.00</div><div class="sc-ic">🔒</div></div>
     <div class="sc cgr">
       <div class="sc-lbl">Status</div>
       <div id="cbStatus" style="margin-top:8px;font-size:.83rem;font-weight:700">Checking…</div>
       <div class="prog" style="margin-top:8px"><div class="prog-f" id="cbProg" style="width:0%"></div></div>
     </div>
   </div>
-  <div class="card" id="cbUpgradeCard" style="max-width:640px;display:none">
-    <div class="card-title">🔄 Upgrade Cashback Limit</div>
-    <div style="font-size:.78rem;color:var(--muted);margin-bottom:11px">Your cashback limit has been reached. Upgrade to get a new limit.</div>
-    <button class="btn btn-g" onclick="requestCashbackUpgrade()" style="width:100%">🔄 Request Limit Upgrade</button>
-  </div>
 </div>
 
 <!-- ===== CLUB ===== -->
 <div class="page" id="page-club">
   <div class="pg-title">Club Bonus</div>
-  <div class="info-box">🏆 Distributed equally among eligible members from the company's joining volume.</div>
+  <div class="info-box">🏆 4% of company joining volume distributed equally. Eligibility: min <strong>10 direct referrals</strong> OR <strong>$50 matching income</strong>.</div>
   <div class="two-col" style="max-width:700px">
     <div class="card">
       <div class="card-title">Your Eligibility</div>
@@ -675,7 +624,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     </div>
     <div class="card">
       <div class="card-title">About Club Bonus</div>
-      <div style="font-size:.78rem;color:var(--muted);line-height:1.75">Split equally each month among eligible members from the company's joining volume.</div>
+      <div style="font-size:.78rem;color:var(--muted);line-height:1.75">4% of total company joining volume shared equally among all eligible members monthly.<br><br>Qualify with: <strong style="color:var(--green)">10 direct referrals</strong> or <strong style="color:var(--green)">$50 matching income</strong>.</div>
     </div>
   </div>
 </div>
@@ -690,13 +639,20 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
       <div style="color:var(--muted);font-size:.8rem">You have full access to all features</div>
     </div>
     <div class="card" id="actFormCard">
-      <div class="card-title">Activate Account <small>Pay from P2B Wallet</small></div>
-      <div class="info-box">One-time activation fee — pay directly from your P2B Wallet.</div>
+      <div class="card-title">Activate Account</div>
+      <div class="info-box">One-time fee of <strong>$30</strong> unlocks all income features.</div>
       <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:13px;margin-bottom:13px">
-        <div style="display:flex;justify-content:space-between;font-size:.78rem;padding:4px 0"><span>Activation Fee</span><span style="color:var(--gold);font-weight:800" id="actFeeD">$30</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:.78rem;padding:4px 0"><span>P2B Wallet Balance</span><span style="color:var(--accent);font-weight:700" id="actP2BBal">$0.00</span></div>
+        <div style="font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:7px;text-transform:uppercase">Fee Breakdown</div>
+        <div style="display:flex;justify-content:space-between;font-size:.78rem;padding:4px 0"><span>Sponsor Commission</span><span style="color:var(--green);font-weight:700">$4</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:.78rem;padding:4px 0"><span>Company Fund</span><span style="color:var(--accent2);font-weight:700">$5</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:.78rem;padding:4px 0"><span>Platform Operations</span><span style="color:var(--muted)">$21</span></div>
+        <div style="border-top:1px solid var(--border);margin-top:7px;padding-top:7px;display:flex;justify-content:space-between;font-weight:800"><span>Total</span><span style="color:var(--gold)">$30</span></div>
       </div>
-      <button class="btn btn-g" onclick="submitActivation()" style="width:100%;padding:12px;font-size:.88rem">⚡ Pay from P2B Wallet & Activate</button>
+      <div class="fg"><label>Payment Method</label>
+        <select id="actMethod"><option>USDT TRC20</option><option>USDT ERC20</option><option>BTC</option></select>
+      </div>
+      <div class="fg"><label>Transaction Hash (TxID)</label><input type="text" id="actTxid" placeholder="Paste your TxID here"/></div>
+      <button class="btn btn-g" onclick="submitActivation()" style="width:100%;padding:12px;font-size:.88rem">⚡ Pay $30 & Activate Account</button>
     </div>
   </div>
 </div>
@@ -706,6 +662,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
   <div class="pg-title">Fund Request</div>
   <div style="max-width:560px">
 
+    <!-- Pending banner -->
     <div class="card" id="frPendingBanner" style="display:none;background:rgba(245,158,11,.07);border-color:rgba(245,158,11,.3)">
       <div style="display:flex;align-items:center;gap:10px">
         <span style="font-size:1.4rem">⏳</span>
@@ -716,9 +673,12 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
       </div>
     </div>
 
+    <!-- Admin wallet info -->
     <div class="card">
       <div class="card-title">💳 Submit Deposit Request</div>
-      <div class="info-box">Send USDT to the admin wallet below → paste the TxHash here → once approved by Admin, it will be credited to your P2B Wallet.</div>
+      <div class="info-box">
+        Send USDT to admin wallet below → paste TxHash here → Admin approve করলে <strong>5% commission</strong> deduct হয়ে balance credit হবে।
+      </div>
       <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:13px;margin-bottom:13px">
         <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px">Admin USDT Wallet (TRC20)</div>
         <div style="font-size:.82rem;color:var(--accent);word-break:break-all;font-family:monospace;margin-bottom:8px" id="adminWalletAddr">Loading…</div>
@@ -726,7 +686,12 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
       </div>
       <div class="fg">
         <label>Deposit Amount (USDT)</label>
-        <input type="number" id="frAmount" placeholder="Min. $30" min="30"/>
+        <input type="number" id="frAmount" placeholder="Min. $30" min="30" oninput="calcFundPreview()"/>
+      </div>
+      <div id="frPreview" style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:11px;margin-bottom:11px;font-size:.78rem;display:none">
+        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">You Send</span><span id="frPrevSend" style="color:var(--accent);font-weight:700"></span></div>
+        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">5% Commission</span><span id="frPrevComm" style="color:var(--red)"></span></div>
+        <div style="display:flex;justify-content:space-between;padding:3px 0;border-top:1px solid var(--border);margin-top:4px"><span style="font-weight:700">Net Credited</span><span id="frPrevNet" style="color:var(--green);font-weight:800"></span></div>
       </div>
       <div class="fg">
         <label>Network</label>
@@ -744,14 +709,15 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
         <label>Note (optional)</label>
         <input type="text" id="frNote" placeholder="Any note for admin…"/>
       </div>
-      <button class="btn btn-p" onclick="submitFundRequest()" style="width:100%;padding:12px;font-size:.88rem">📤 Submit Fund Request (credits P2B Wallet)</button>
+      <button class="btn btn-p" onclick="submitFundRequest()" style="width:100%;padding:12px;font-size:.88rem">📤 Submit Fund Request</button>
     </div>
 
+    <!-- History -->
     <div class="card">
       <div class="card-title">Request History</div>
       <div class="tw">
         <table>
-          <thead><tr><th>Amount</th><th>Network</th><th>Credited</th><th>Status</th><th>Date</th></tr></thead>
+          <thead><tr><th>Amount</th><th>Network</th><th>Net Credited</th><th>Status</th><th>Date</th></tr></thead>
           <tbody id="frHistTb">
             <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">Loading…</td></tr>
           </tbody>
@@ -765,6 +731,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 
 <div class="toast" id="toast"></div>
 
+<!-- Firebase v9 compat (matches your register.html) -->
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
@@ -784,13 +751,12 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const auth   = firebase.auth();
-const fsdb   = firebase.firestore();
-const rtdb   = firebase.database();
+const fsdb   = firebase.firestore();   // Firestore (users stored here from register)
+const rtdb   = firebase.database();   // Realtime DB (income, transactions)
 
-let CU   = null;
-let UD   = null;
-let ALLU = {};
-let SETTINGS = {};
+let CU   = null; // currentUser
+let UD   = null; // userData (Firestore doc)
+let ALLU = {};   // all users cache
 
 // ── AUTH GUARD ───────────────────────────────────────
 auth.onAuthStateChanged(async user => {
@@ -801,29 +767,27 @@ auth.onAuthStateChanged(async user => {
 
 async function loadAll() {
   try {
+    // 1. Load current user from Firestore (where register.html saved it)
     const docSnap = await fsdb.collection('users').doc(CU.uid).get();
     if (!docSnap.exists) { toast('User data not found. Please re-login.'); return; }
     UD = { id: CU.uid, ...docSnap.data() };
 
+    // 2. Load all users for team/tree
     const allSnap = await fsdb.collection('users').get();
     allSnap.forEach(d => { ALLU[d.id] = { id: d.id, ...d.data() }; });
 
-    await loadSettings();
     renderAll();
     loadRTDBData();
 
+    // 3. Live listener for RTDB income
     rtdb.ref('users/' + CU.uid + '/income').on('value', snap => {
-      if (snap.exists() && UD) { UD.income = snap.val(); renderIncomeCards(); }
+      if (snap.exists() && UD) {
+        UD.income = snap.val();
+        renderIncomeCards();
+      }
     });
-    rtdb.ref('users/' + CU.uid + '/walletBalance').on('value', snap => {
-      if (UD) { UD.walletBalance = snap.exists()?snap.val():0; renderWalletCards(); }
-    });
-    rtdb.ref('users/' + CU.uid + '/incomeWallet').on('value', snap => {
-      if (UD) { UD.incomeWallet = snap.exists()?snap.val():0; renderWalletCards(); }
-    });
-    rtdb.ref('users/' + CU.uid + '/p2bWallet').on('value', snap => {
-      if (UD) { UD.p2bWallet = snap.exists()?snap.val():0; renderWalletCards(); }
-    });
+
+    // 4. Live listener for RTDB transactions
     rtdb.ref('transactions/' + CU.uid).on('value', snap => {
       if (snap.exists()) renderTransactions(snap.val());
       else renderTransactions({});
@@ -832,29 +796,24 @@ async function loadAll() {
   } catch(e) { toast('Error: ' + e.message); }
 }
 
-async function loadSettings() {
-  const snap = await rtdb.ref('settings').get();
-  SETTINGS = snap.exists() ? snap.val() : {};
-}
-
 async function loadRTDBData() {
+  // Load income from RTDB
   const incSnap = await rtdb.ref('users/' + CU.uid + '/income').get();
   if (incSnap.exists()) { UD.income = incSnap.val(); renderIncomeCards(); }
 
+  // Load wallet balance from RTDB
   const walSnap = await rtdb.ref('users/' + CU.uid + '/walletBalance').get();
-  UD.walletBalance = walSnap.exists() ? walSnap.val() : 0;
+  if (walSnap.exists()) { UD.walletBalance = walSnap.val(); renderWallet(); }
 
-  const incWSnap = await rtdb.ref('users/' + CU.uid + '/incomeWallet').get();
-  UD.incomeWallet = incWSnap.exists() ? incWSnap.val() : 0;
+  // Load ROI settings
+  const rateSnap = await rtdb.ref('settings/roiRate').get();
+  if (rateSnap.exists()) document.getElementById('roiRateD').textContent = rateSnap.val() + '%';
 
-  const p2bSnap = await rtdb.ref('users/' + CU.uid + '/p2bWallet').get();
-  UD.p2bWallet = p2bSnap.exists() ? p2bSnap.val() : 0;
-
-  renderWalletCards();
-
+  // Load investments
   const invSnap = await rtdb.ref('investments/' + CU.uid).get();
-  if (invSnap.exists()) { renderROIPlans(invSnap.val()); renderInvestHistory(invSnap.val()); }
+  if (invSnap.exists()) renderROIPlans(invSnap.val());
 
+  // Load withdrawal requests
   const wdSnap = await rtdb.ref('withdrawals/' + CU.uid).get();
   if (wdSnap.exists()) renderWalletHistory(wdSnap.val());
 }
@@ -865,16 +824,20 @@ function renderAll() {
   const name = u.fullName || u.username || (CU.email ? CU.email.split('@')[0] : 'User');
   const init = name[0].toUpperCase();
 
+  // Sidebar
   document.getElementById('avInit').textContent   = init;
   document.getElementById('sbName').textContent   = name;
   document.getElementById('sbStatus').textContent = u.isActive ? '✅ Active' : '⚠️ Inactive';
 
+  // Greeting
   const h = new Date().getHours();
   const g = h<12?'Good Morning':h<17?'Good Afternoon':'Good Evening';
   document.getElementById('greetMsg').textContent = g + ', ' + name + '!';
 
+  // Activation banner
   document.getElementById('actBanner').style.display = u.isActive ? 'none' : 'flex';
 
+  // Profile page
   document.getElementById('pfAv').textContent         = init;
   document.getElementById('pfNameD').textContent       = name;
   document.getElementById('pfEmailD').textContent      = u.email || CU.email || '';
@@ -887,6 +850,7 @@ function renderAll() {
     ? '<span class="pill pg">✅ Active</span>'
     : '<span class="pill py">⚠️ Inactive</span>';
 
+  // Account info
   document.getElementById('infoUID').textContent      = CU.uid;
   document.getElementById('infoUsername').textContent = u.username || '—';
   document.getElementById('infoSponsor').textContent  = u.sponsorId || 'None (Root)';
@@ -896,18 +860,12 @@ function renderAll() {
   document.getElementById('infoStatus').textContent   = u.isActive ? '✅ Active' : '⚠️ Inactive';
   document.getElementById('infoMethod').textContent   = u.signupMethod || 'email';
 
+  // Referral link — uses username or uid as ref code (matching register.html myRefCode)
   const refCode = u.myRefCode || u.username || CU.uid;
   const refLink = window.location.origin + '/register.html?ref=' + encodeURIComponent(refCode);
   document.getElementById('refLinkInput').value = refLink;
 
-  // ID copy boxes
-  const myId = u.memberId || CU.uid;
-  const uplineId = u.sponsorId || 'Root (No Upline)';
-  set('myIdVal', myId);
-  set('uplineIdVal', uplineId);
-  set('refMyIdVal', myId);
-  set('refUplineIdVal', uplineId);
-
+  // Activation page
   if (u.isActive) {
     document.getElementById('activeCard').style.display   = 'block';
     document.getElementById('actFormCard').style.display  = 'none';
@@ -915,23 +873,10 @@ function renderAll() {
     document.getElementById('activeCard').style.display   = 'none';
     document.getElementById('actFormCard').style.display  = 'block';
   }
-  set('actFeeD', '$'+(SETTINGS.activationFee||30));
 
   renderIncomeCards();
   loadReferrals();
   renderBinaryTree();
-  renderWalletCards();
-  applyDynamicChargeLabels();
-}
-
-// ── DYNAMIC CHARGE LABELS (admin controlled) ──────────
-function applyDynamicChargeLabels() {
-  const i2mCharge = parseFloat(SETTINGS.incomeToMainCharge != null ? SETTINGS.incomeToMainCharge : 5);
-  const wdCharge   = parseFloat(SETTINGS.withdrawalFee != null ? SETTINGS.withdrawalFee : 5);
-  const cbLimit    = parseFloat(SETTINGS.cashbackLimit || 60);
-  set('i2mChargeInfo', 'From Income Wallet to Main Wallet — a '+i2mCharge+'% service charge will be deducted.');
-  set('wdChargeInfo', '('+wdCharge+'% withdraw charge)');
-  set('cbLimitD', '$'+cbLimit.toFixed(2));
 }
 
 // ── INCOME CARDS ──────────────────────────────────────
@@ -949,10 +894,13 @@ function renderIncomeCards() {
   const invested= parseFloat((UD && UD.totalInvested)  || 0);
   const teamSales = parseFloat((UD && UD.teamSales) || 0);
 
+  // Overview
   set('ovTotal',   '$'+total.toFixed(2));
   set('ovWallet',  '$'+wallet.toFixed(2));
-  set('ovIncomeWallet', '$'+parseFloat((UD&&UD.incomeWallet)||0).toFixed(2));
+  set('ovMatch',   '$'+match.toFixed(2));
+  setW('ovMatchP', Math.min((match/1000)*100,100)+'%');
 
+  // Income breakdown (overview)
   set('ibSponsor',  '$'+sponsor.toFixed(2));
   set('ibMatch',    '$'+match.toFixed(2));
   set('ibCashback', '$'+cb.toFixed(2));
@@ -960,6 +908,7 @@ function renderIncomeCards() {
   set('ibRoi',      '$'+roi.toFixed(2));
   set('ibGen',      '$'+gen.toFixed(2));
 
+  // Income page
   set('incAll',           '$'+total.toFixed(2));
   set('incWd',            '$'+wd.toFixed(2));
   set('incTotalInv',      '$'+invested.toFixed(2));
@@ -969,27 +918,26 @@ function renderIncomeCards() {
   set('incTypeClub',      '$'+club.toFixed(2));
   set('incTypeROI',       '$'+roi.toFixed(2));
   set('incTypeGen',       '$'+gen.toFixed(2));
+  set('incCapUsed',       '$'+total.toFixed(0)+' / $1000');
+  set('incCapLeft',       '$'+Math.max(0,1000-total).toFixed(2));
 
+  // Wallet page
+  renderWallet(wallet, total, wd);
+
+  // ROI summary
   set('roiTotalInv',    '$'+invested.toFixed(2));
   set('roiTotalEarned', '$'+roi.toFixed(2));
 
-  const cbLimit = parseFloat(SETTINGS.cashbackLimit || 60);
+  // Cashback
   set('cbEarned', '$'+cb.toFixed(2));
-  const cbPct = Math.min((cb/cbLimit)*100,100);
+  const cbPct = Math.min((cb/60)*100,100);
   setW('cbProg', cbPct+'%');
   const cbEl = document.getElementById('cbStatus');
-  const cbUpgradeCard = document.getElementById('cbUpgradeCard');
-  if(cb >= cbLimit) {
-    cbEl.innerHTML = '<span style="color:var(--red)">Limit Reached ($'+cbLimit.toFixed(2)+')</span>';
-    if (cbUpgradeCard) cbUpgradeCard.style.display = 'block';
-  } else if(UD && UD.isActive) {
-    cbEl.innerHTML = '<span style="color:var(--green)">✅ Eligible</span>';
-    if (cbUpgradeCard) cbUpgradeCard.style.display = 'none';
-  } else {
-    cbEl.innerHTML = '<span style="color:var(--muted)">Not Activated</span>';
-    if (cbUpgradeCard) cbUpgradeCard.style.display = 'none';
-  }
+  if(cb >= 60) cbEl.innerHTML = '<span style="color:var(--red)">Limit Reached ($60)</span>';
+  else if(UD && UD.isActive) cbEl.innerHTML = '<span style="color:var(--green)">✅ Eligible</span>';
+  else cbEl.innerHTML = '<span style="color:var(--muted)">Not Activated</span>';
 
+  // Club
   const dirCount = Object.values(ALLU).filter(u=>u.sponsorId===CU.uid).length;
   set('clubDir',   dirCount+' / 10');
   set('clubMatch', '$'+match.toFixed(0)+' / $50');
@@ -999,26 +947,18 @@ function renderIncomeCards() {
     ? '<span class="pill pg">✅ Eligible</span>'
     : '<span class="pill py">Not yet</span>';
 
+  // Rank
   renderRank(match, teamSales);
 }
 
-// ── WALLET CARDS (Main / Income / P2B) ───────────────
-function renderWalletCards() {
-  const main   = parseFloat((UD&&UD.walletBalance)||0);
-  const income = parseFloat((UD&&UD.incomeWallet)||0);
-  const p2b    = parseFloat((UD&&UD.p2bWallet)||0);
-  set('walMainD',   '$'+main.toFixed(2));
-  set('walIncomeD', '$'+income.toFixed(2));
-  set('walP2BD',    '$'+p2b.toFixed(2));
-  set('ovWallet',   '$'+main.toFixed(2));
-  set('ovIncomeWallet', '$'+income.toFixed(2));
-  set('invP2BBal',  '$'+p2b.toFixed(2));
-  set('actP2BBal',  '$'+p2b.toFixed(2));
-
-  const inc = (UD && UD.income) || {};
-  const total = ['sponsor','matching','cashback','club','roi','generation'].reduce((s,k)=>s+parseFloat(inc[k]||0),0);
-  set('wTotalEarned', '$'+total.toFixed(2));
-  set('wTotalWd', '$'+parseFloat((UD&&UD.totalWithdrawn)||0).toFixed(2));
+function renderWallet(wallet, total, wd) {
+  const w = wallet !== undefined ? wallet : parseFloat((UD && UD.walletBalance)||0);
+  const t = total  !== undefined ? total  : 0;
+  const d = wd     !== undefined ? wd     : parseFloat((UD && UD.totalWithdrawn)||0);
+  set('walBalD',      '$'+w.toFixed(2));
+  set('wTotalEarned', '$'+t.toFixed(2));
+  set('wTotalWd',     '$'+d.toFixed(2));
+  set('wCapLeft',     '$'+Math.max(0,1000-t).toFixed(2));
 }
 
 // ── REFERRALS ────────────────────────────────────────
@@ -1034,75 +974,18 @@ function loadReferrals() {
   set('tmActive',    activeRef.length);
   set('tmVol',       '$'+(activeRef.length*30));
 
+  // Referral table
   const rb = document.getElementById('refTbody');
   rb.innerHTML = myRefs.length === 0
-    ? '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">No referrals yet. Share your link!</td></tr>'
+    ? '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">No referrals yet. Share your link!</td></tr>'
     : myRefs.map(u => `<tr>
         <td style="font-weight:700">${u.fullName||'User'}</td>
         <td style="color:var(--muted)">@${u.username||'—'}</td>
         <td style="color:var(--muted)">${u.email||'—'}</td>
         <td>${u.createdAt ? (u.createdAt.toDate?u.createdAt.toDate().toLocaleDateString():new Date(u.createdAt).toLocaleDateString()) : '—'}</td>
         <td><span class="pill ${u.isActive?'pg':'py'}">${u.isActive?'Active':'Inactive'}</span></td>
+        <td style="color:var(--green);font-weight:700">${u.isActive?'$4.00':'$0.00'}</td>
       </tr>`).join('');
-
-  renderJoiningHistory(myRefs);
-}
-
-// ── JOINING HISTORY ──────────────────────────────────
-function renderJoiningHistory(myRefs) {
-  const tb = document.getElementById('joiningHistTb');
-  if (!tb) return;
-  set('joinCountLbl', myRefs.length+' entries');
-  if (!myRefs.length) { tb.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:18px">No joining history yet</td></tr>'; return; }
-  const sorted = [...myRefs].sort((a,b)=>{
-    const ta = a.createdAt ? (a.createdAt.toDate?a.createdAt.toDate().getTime():new Date(a.createdAt).getTime()) : 0;
-    const tb2 = b.createdAt ? (b.createdAt.toDate?b.createdAt.toDate().getTime():new Date(b.createdAt).getTime()) : 0;
-    return tb2-ta;
-  });
-  tb.innerHTML = sorted.map(u=>{
-    const side = u.id===UD.leftChild?'LEFT':u.id===UD.rightChild?'RIGHT':'Direct';
-    const joined = u.createdAt ? (u.createdAt.toDate?u.createdAt.toDate().toLocaleDateString():new Date(u.createdAt).toLocaleDateString()) : '—';
-    return `<tr>
-      <td style="font-size:.72rem">${joined}</td>
-      <td style="font-weight:700">${u.fullName||'User'}</td>
-      <td style="color:var(--muted)">@${u.username||'—'}</td>
-      <td style="font-family:monospace;font-size:.68rem">${u.sponsorId||'—'}</td>
-      <td><span class="pill ${side==='LEFT'?'pb':side==='RIGHT'?'pp':'py'}">${side}</span></td>
-      <td><span class="pill ${u.isActive?'pg':'py'}">${u.isActive?'Active':'Inactive'}</span></td>
-    </tr>`;
-  }).join('');
-}
-
-// ── INVESTMENT HISTORY (commission from new IDs/sales) ─
-function renderInvestHistory(plans) {
-  const tb = document.getElementById('investHistTb');
-  if (!tb) return;
-  // Gather generation/sponsor commissions that came from downline investment/activation
-  const myRefs = Object.values(ALLU).filter(u => u.sponsorId === CU.uid);
-  rtdb.ref('transactions/'+CU.uid).get().then(snap=>{
-    if (!snap.exists()) { tb.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No history yet</td></tr>'; return; }
-    const txs = Object.values(snap.val()).filter(t=>
-      (t.type||'').toLowerCase().includes('generation') ||
-      (t.type||'').toLowerCase().includes('sponsor') ||
-      (t.type||'').toLowerCase().includes('roi referral')
-    ).sort((a,b)=>b.timestamp-a.timestamp);
-    let totalComm=0;
-    tb.innerHTML = txs.length ? txs.map(t=>{
-      totalComm += (t.amount||0);
-      return `<tr>
-        <td style="font-size:.72rem">${new Date(t.timestamp).toLocaleDateString()}</td>
-        <td style="color:var(--muted);font-size:.75rem">${t.note||'—'}</td>
-        <td>—</td>
-        <td style="color:var(--green);font-weight:700">$${(t.amount||0).toFixed(2)}</td>
-        <td><span class="pill pb">${t.type||'—'}</span></td>
-      </tr>`;
-    }).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No history yet</td></tr>';
-    set('ihTotalCount', txs.length);
-    set('ihTotalComm', '$'+totalComm.toFixed(2));
-  });
-  const invEntries = Object.values(plans||{});
-  const totalAmt = invEntries.reduce((s,p)=>s+(p.amount||0),0);
-  set('ihTotalAmt', '$'+totalAmt.toFixed(0));
 }
 
 // ── BINARY TREE ──────────────────────────────────────
@@ -1111,16 +994,18 @@ function renderBinaryTree() {
   const downlineTb = document.getElementById('downlineTbody');
   if (!UD) return;
 
+  // Count left and right leg
   const leftChild  = UD.leftChild;
   const rightChild = UD.rightChild;
-  let leftCount = 0, rightCount = 0, leftActive=0, rightActive=0;
+  let leftCount = 0, rightCount = 0;
 
+  // BFS to count and collect all downline
   const allDownline = [];
   function bfsCount(uid, side, level) {
     if (!uid || !ALLU[uid]) return;
     const u = ALLU[uid];
-    if (side === 'left') { leftCount++; if(u.isActive) leftActive++; }
-    else if (side === 'right') { rightCount++; if(u.isActive) rightActive++; }
+    if (side === 'left') leftCount++;
+    else if (side === 'right') rightCount++;
     allDownline.push({ u, side, level });
     if (u.leftChild)  bfsCount(u.leftChild,  side||'left',  level+1);
     if (u.rightChild) bfsCount(u.rightChild, side||'right', level+1);
@@ -1128,38 +1013,11 @@ function renderBinaryTree() {
   if (leftChild)  bfsCount(leftChild,  'left',  1);
   if (rightChild) bfsCount(rightChild, 'right', 1);
 
-  const leftCarry  = Math.max(0, leftCount - rightCount);
-  const rightCarry = Math.max(0, rightCount - leftCount);
-  const totalInvested = allDownline.reduce((s,{u})=>s+parseFloat(u.totalInvested||0),0);
+  set('treeLeftCount',  leftCount);
+  set('treeRightCount', rightCount);
+  set('treeWeakerLeg',  leftCount <= rightCount ? 'Left' : 'Right');
 
-  // Circle Summary
-  const circle = document.getElementById('treeSummaryCircle');
-  if (circle) {
-    circle.innerHTML = `
-      <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;justify-content:center">
-        <div style="text-align:center">
-          <div style="font-size:.7rem;color:var(--muted);margin-bottom:4px">LEFT</div>
-          <div style="font-weight:800;color:var(--accent)">${leftCount}</div>
-          <div style="font-size:.65rem;color:var(--green)">${leftActive} active</div>
-        </div>
-        <div style="width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 30% 30%, rgba(0,198,255,.25), rgba(124,58,237,.25));border:3px solid var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(0,198,255,.25)">
-          <div style="font-size:.65rem;color:var(--muted)">TOTAL TEAM</div>
-          <div style="font-size:1.5rem;font-weight:900">${leftCount+rightCount}</div>
-          <div style="font-size:.65rem;color:var(--green)">${leftActive+rightActive} active</div>
-          <div style="font-size:.63rem;color:var(--gold);margin-top:2px">$${totalInvested.toFixed(0)} invested</div>
-        </div>
-        <div style="text-align:center">
-          <div style="font-size:.7rem;color:var(--muted);margin-bottom:4px">RIGHT</div>
-          <div style="font-weight:800;color:var(--accent2)">${rightCount}</div>
-          <div style="font-size:.65rem;color:var(--green)">${rightActive} active</div>
-        </div>
-      </div>
-      <div style="display:flex;gap:20px;justify-content:center;margin-top:14px;font-size:.72rem;color:var(--muted)">
-        <span>Left Carry: <strong style="color:var(--accent)">${leftCarry}</strong></span>
-        <span>Right Carry: <strong style="color:var(--accent2)">${rightCarry}</strong></span>
-      </div>`;
-  }
-
+  // Build visual tree (you + level 1 + level 2)
   function makeNode(uid, label, isYou) {
     const u = uid && ALLU[uid];
     if (!uid) {
@@ -1182,6 +1040,7 @@ function renderBinaryTree() {
       ${label ? `<div style="font-size:.64rem;color:var(--muted);margin-top:4px">${label}</div>` : ''}
     </div>`;
   }
+  // Level 2 children
   function lvl2(uid) {
     const u = uid && ALLU[uid];
     const lc = u ? u.leftChild  : null;
@@ -1194,9 +1053,13 @@ function renderBinaryTree() {
 
   container.innerHTML = `
     <div style="display:flex;flex-direction:column;align-items:center;gap:0">
+      <!-- ROOT (YOU) -->
       ${makeNode(CU.uid,'You',true)}
+      <!-- Vertical connector -->
       <div style="width:1px;height:20px;background:var(--border)"></div>
+      <!-- Horizontal line -->
       <div style="position:relative;width:200px;height:1px;background:${(leftChild||rightChild)?'var(--border)':'transparent'}"></div>
+      <!-- Level 1 -->
       <div style="display:flex;gap:40px;position:relative">
         <div style="display:flex;flex-direction:column;align-items:center;gap:0">
           <div style="width:1px;height:0px"></div>
@@ -1213,6 +1076,7 @@ function renderBinaryTree() {
       </div>
     </div>`;
 
+  // Downline table
   downlineTb.innerHTML = allDownline.length === 0
     ? '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">No downline yet</td></tr>'
     : allDownline.map(({u,side,level}) => `<tr>
@@ -1247,7 +1111,7 @@ function renderRank(matching, teamSales) {
   set('rankNameD',  cur.name);
   set('infoRank',   cur.name);
   if(next){
-    set('rankNextHint', 'Next: '+next.name);
+    set('rankNextHint', 'Next: '+next.name+' — need '+next.mReq+' matching + $'+next.sReq+' team sales');
     setW('rankMatchF', Math.min((matching/next.mReq)*100,100)+'%');
     setW('rankSalesF', Math.min((teamSales/next.sReq)*100,100)+'%');
     set('rankMatchV', matching+'/'+next.mReq);
@@ -1278,15 +1142,17 @@ function renderTransactions(txObj) {
       <td style="font-weight:700;color:${t.amount>0?'var(--green)':'var(--red)'}">
         ${t.amount>0?'+':''}$${Math.abs(t.amount||0).toFixed(2)}
       </td>
+      <td style="color:var(--muted)">$${(t.balance||0).toFixed(2)}</td>
       <td><span class="pill ${t.status==='completed'?'pg':t.status==='pending'?'py':'pb'}">${t.status||'done'}</span></td>
     </tr>`;
   }).join('');
 
   document.getElementById('incTxTable').innerHTML = rows ||
-    '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No transactions yet</td></tr>';
+    '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:18px">No transactions yet</td></tr>';
   set('incToday', '$'+todayTotal.toFixed(2));
   set('incMonth', '$'+monthTotal.toFixed(2));
 
+  // Overview recent 5
   document.getElementById('ovRecentTx').innerHTML = txns.slice(0,5).map(([id,t])=>`
     <tr>
       <td>${new Date(t.timestamp).toLocaleDateString()}</td>
@@ -1297,8 +1163,8 @@ function renderTransactions(txObj) {
     </tr>`).join('') ||
     '<tr><td colspan="3" style="text-align:center;color:var(--muted)">None</td></tr>';
 
+  // Wallet history
   renderWalletHistory(txObj);
-  renderInvestHistory({});
 }
 
 function renderWalletHistory(txObj) {
@@ -1319,17 +1185,17 @@ function renderROIPlans(plans) {
   const tb = document.getElementById('roiPlansTb');
   const entries = Object.entries(plans).sort(([,a],[,b])=>b.createdAt-a.createdAt);
   let activeCnt=0, nextD=null;
-  const lockMonths = parseFloat(SETTINGS.invLockMonths||6);
   tb.innerHTML = entries.length
     ? entries.map(([id,p],i)=>{
         if(p.status==='active') activeCnt++;
-        const lockEnd  = new Date(p.createdAt + lockMonths*30*24*60*60*1000);
+        const lockEnd  = new Date(p.createdAt + 6*30*24*60*60*1000);
         const locked   = Date.now() < lockEnd.getTime();
         if(!nextD && p.status==='active') nextD = new Date(p.createdAt+30*24*60*60*1000);
         return `<tr>
           <td style="color:var(--muted)">${i+1}</td>
           <td style="color:var(--accent);font-weight:700">$${p.amount}</td>
           <td>${new Date(p.createdAt).toLocaleDateString()}</td>
+          <td style="color:var(--green)">${p.roiRate||12}%</td>
           <td style="color:var(--gold)">$${(p.earnedROI||0).toFixed(2)}</td>
           <td>${lockEnd.toLocaleDateString()}</td>
           <td><span class="pill ${p.status==='active'?'pg':p.status==='pending'?'py':'pb'}">${p.status||'pending'}</span></td>
@@ -1338,7 +1204,7 @@ function renderROIPlans(plans) {
             :'<span style="color:var(--muted);font-size:.7rem">'+(p.status==='pending'?'Awaiting':'Locked')+'</span>'}</td>
         </tr>`;
       }).join('')
-    : '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:18px">No investments yet</td></tr>';
+    : '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:18px">No investments yet</td></tr>';
   set('roiActivePlans', activeCnt);
   set('roiNextDate', nextD ? nextD.toLocaleDateString() : '—');
 }
@@ -1361,49 +1227,36 @@ window.saveProfile = async () => {
 
 window.submitActivation = async () => {
   if (UD && UD.isActive) { toast('Already active!'); return; }
-  const fee = parseFloat(SETTINGS.activationFee||30);
-  const p2b = parseFloat(UD.p2bWallet||0);
-  if (p2b < fee) { toast('❌ Insufficient balance in P2B Wallet. Required: $'+fee.toFixed(2)); return; }
+  const txid   = document.getElementById('actTxid').value.trim();
+  const method = document.getElementById('actMethod').value;
+  if (!txid) { toast('Please enter transaction hash'); return; }
   try {
-    const p2bRef = rtdb.ref('users/'+CU.uid+'/p2bWallet');
-    const newP2B = p2b - fee;
-    await p2bRef.set(newP2B);
-    UD.p2bWallet = newP2B;
-    await rtdb.ref('transactions/'+CU.uid).push({
-      type:'Activation Payment', amount:-fee,
-      note:'Paid from P2B Wallet', timestamp:Date.now(), status:'completed'
-    });
     await rtdb.ref('activationRequests').push({
       uid:       CU.uid,
       email:     CU.email,
       name:      UD?.fullName || UD?.username || '',
       username:  UD?.username || '',
-      txid:      'P2B-WALLET-PAYMENT', method:'P2B Wallet', amount: fee,
+      txid, method, amount: 30,
       status:    'pending',
       createdAt: Date.now()
     });
-    toast('✅ Payment done from P2B Wallet. Admin will approve soon.');
-    renderWalletCards();
+    toast('✅ Request submitted! Admin will approve soon.');
+    document.getElementById('actTxid').value = '';
   } catch(e) { toast('Error: '+e.message); }
 };
 
 window.submitInvestment = async () => {
   if (!UD?.isActive) { toast('Activate your account first!'); return; }
   const amt  = parseFloat(document.getElementById('invAmt').value);
-  const minInv = parseFloat(SETTINGS.minInvestment||100);
-  if (!amt || amt < minInv) { toast('Minimum investment is $'+minInv); return; }
-  const p2b = parseFloat(UD.p2bWallet||0);
-  if (p2b < amt) { toast('❌ Insufficient balance in P2B Wallet.'); return; }
+  const txid = document.getElementById('invTxid').value.trim();
+  if (!amt || amt < 100) { toast('Minimum investment is $100'); return; }
+  if (!txid) { toast('Please enter transaction hash'); return; }
   try {
-    const p2bRef = rtdb.ref('users/'+CU.uid+'/p2bWallet');
-    const newP2B = p2b - amt;
-    await p2bRef.set(newP2B);
-    UD.p2bWallet = newP2B;
     await rtdb.ref('investments/'+CU.uid).push({
       amount:    amt,
-      method:    'P2B Wallet',
-      txid:      'P2B-WALLET-PAYMENT',
-      roiRate:   SETTINGS.roiRate||12,
+      method:    document.getElementById('invMethod').value,
+      txid,
+      roiRate:   12,
       status:    'pending',
       earnedROI: 0,
       createdAt: Date.now()
@@ -1411,20 +1264,16 @@ window.submitInvestment = async () => {
     const newInv = (UD.totalInvested||0) + amt;
     await rtdb.ref('users/'+CU.uid+'/totalInvested').set(newInv);
     UD.totalInvested = newInv;
-    await rtdb.ref('transactions/'+CU.uid).push({
-      type:'Investment Payment', amount:-amt,
-      note:'Paid from P2B Wallet', timestamp:Date.now(), status:'completed'
-    });
-    toast('✅ Investment submitted from P2B Wallet! Admin will activate shortly.');
+    toast('✅ Investment submitted! Admin will activate shortly.');
     document.getElementById('invAmt').value  = '';
-    renderWalletCards();
+    document.getElementById('invTxid').value = '';
     const invSnap = await rtdb.ref('investments/'+CU.uid).get();
-    if(invSnap.exists()) { renderROIPlans(invSnap.val()); renderInvestHistory(invSnap.val()); }
+    if(invSnap.exists()) renderROIPlans(invSnap.val());
   } catch(e) { toast('Error: '+e.message); }
 };
 
 window.withdrawCapital = async pid => {
-  if (!confirm('Withdraw capital? Fee will be deducted as per admin settings.')) return;
+  if (!confirm('Withdraw capital? 10% fee will be deducted.')) return;
   await rtdb.ref('investments/'+CU.uid+'/'+pid).update({
     status:'withdrawal_requested', wdRequestAt: Date.now()
   });
@@ -1433,134 +1282,13 @@ window.withdrawCapital = async pid => {
   if(invSnap.exists()) renderROIPlans(invSnap.val());
 };
 
-window.requestCashbackUpgrade = async () => {
-  try {
-    await rtdb.ref('cashbackUpgradeRequests').push({
-      uid: CU.uid, email: CU.email, name: UD?.fullName||UD?.username||'',
-      currentEarned: (UD.income&&UD.income.cashback)||0,
-      status:'pending', createdAt: Date.now()
-    });
-    toast('✅ Upgrade request sent. Once admin approves, you will get the new limit.');
-  } catch(e){ toast('Error: '+e.message); }
-};
-
-// ── WALLET TRANSFER ACTIONS ──────────────────────────
-window.switchWTab = (tab) => {
-  ['i2p','m2p','m2m','i2m'].forEach(t=>{
-    document.getElementById('wtab_'+t).classList.toggle('active', t===tab);
-    document.getElementById('wform_'+t).style.display = t===tab ? 'block':'none';
-  });
-};
-
-window.transferIncomeToP2B = async () => {
-  const amt = parseFloat(document.getElementById('i2pAmt').value);
-  if (!amt || amt<=0) { toast('Enter a valid amount'); return; }
-  const income = parseFloat(UD.incomeWallet||0);
-  if (amt > income) { toast('❌ Insufficient balance in Income Wallet'); return; }
-  try {
-    const newIncome = income - amt;
-    const newP2B    = parseFloat(UD.p2bWallet||0) + amt;
-    await rtdb.ref('users/'+CU.uid+'/incomeWallet').set(newIncome);
-    await rtdb.ref('users/'+CU.uid+'/p2bWallet').set(newP2B);
-    UD.incomeWallet = newIncome; UD.p2bWallet = newP2B;
-    await rtdb.ref('transactions/'+CU.uid).push({ type:'Transfer Income→P2B', amount:amt, note:'Free transfer', timestamp:Date.now(), status:'completed' });
-    toast('✅ Transfer complete!');
-    document.getElementById('i2pAmt').value='';
-    renderWalletCards();
-  } catch(e){ toast('Error: '+e.message); }
-};
-
-window.transferMainToP2B = async () => {
-  const amt = parseFloat(document.getElementById('m2pAmt').value);
-  if (!amt || amt<=0) { toast('Enter a valid amount'); return; }
-  const main = parseFloat(UD.walletBalance||0);
-  if (amt > main) { toast('❌ Insufficient balance in Main Wallet'); return; }
-  try {
-    const newMain = main - amt;
-    const newP2B  = parseFloat(UD.p2bWallet||0) + amt;
-    await rtdb.ref('users/'+CU.uid+'/walletBalance').set(newMain);
-    await rtdb.ref('users/'+CU.uid+'/p2bWallet').set(newP2B);
-    UD.walletBalance = newMain; UD.p2bWallet = newP2B;
-    await rtdb.ref('transactions/'+CU.uid).push({ type:'Transfer Main→P2B', amount:amt, note:'Free transfer', timestamp:Date.now(), status:'completed' });
-    toast('✅ Transfer complete!');
-    document.getElementById('m2pAmt').value='';
-    renderWalletCards();
-  } catch(e){ toast('Error: '+e.message); }
-};
-
-window.transferMainToMain = async () => {
-  const targetRaw = document.getElementById('m2mTarget').value.trim();
-  const amt = parseFloat(document.getElementById('m2mAmt').value);
-  if (!targetRaw) { toast('Enter receiver ID/Username'); return; }
-  if (!amt || amt<=0) { toast('Enter a valid amount'); return; }
-  const main = parseFloat(UD.walletBalance||0);
-  if (amt > main) { toast('❌ Insufficient balance in Main Wallet'); return; }
-
-  const target = Object.values(ALLU).find(u => u.id===targetRaw || u.memberId===targetRaw || u.username===targetRaw);
-  if (!target) { toast('❌ User not found'); return; }
-  if (target.id === CU.uid) { toast('Cannot transfer to yourself'); return; }
-
-  try {
-    const newMain = main - amt;
-    await rtdb.ref('users/'+CU.uid+'/walletBalance').set(newMain);
-    UD.walletBalance = newMain;
-    const tRef  = rtdb.ref('users/'+target.id+'/walletBalance');
-    const tSnap = await tRef.get();
-    const tNewBal = parseFloat(tSnap.exists()?tSnap.val():0)+amt;
-    await tRef.set(tNewBal);
-
-    await rtdb.ref('transactions/'+CU.uid).push({ type:'P2P Transfer Sent', amount:-amt, note:'To '+(target.fullName||target.username||target.id), timestamp:Date.now(), status:'completed' });
-    await rtdb.ref('transactions/'+target.id).push({ type:'P2P Transfer Received', amount:amt, note:'From '+(UD.fullName||UD.username||CU.uid), timestamp:Date.now(), status:'completed' });
-
-    toast('✅ Sent $'+amt.toFixed(2)+' to '+(target.fullName||target.username)+'!');
-    document.getElementById('m2mTarget').value=''; document.getElementById('m2mAmt').value='';
-    renderWalletCards();
-  } catch(e){ toast('Error: '+e.message); }
-};
-
-window.calcI2MPreview = () => {
-  const amt = parseFloat(document.getElementById('i2mAmt').value);
-  const prev = document.getElementById('i2mPreview');
-  if (!amt || amt<=0) { prev.style.display='none'; return; }
-  const chargePct = parseFloat(SETTINGS.incomeToMainCharge != null ? SETTINGS.incomeToMainCharge : 5)/100;
-  const charge = amt*chargePct;
-  const net = amt-charge;
-  set('i2mPrevAmt', '$'+amt.toFixed(2));
-  set('i2mPrevCharge', '-$'+charge.toFixed(2));
-  set('i2mPrevNet', '$'+net.toFixed(2));
-  prev.style.display='block';
-};
-
-window.transferIncomeToMain = async () => {
-  const amt = parseFloat(document.getElementById('i2mAmt').value);
-  if (!amt || amt<=0) { toast('Enter a valid amount'); return; }
-  const income = parseFloat(UD.incomeWallet||0);
-  if (amt > income) { toast('❌ Insufficient balance in Income Wallet'); return; }
-  const chargePct = parseFloat(SETTINGS.incomeToMainCharge != null ? SETTINGS.incomeToMainCharge : 5)/100;
-  const charge = amt*chargePct;
-  const net = amt-charge;
-  try {
-    const newIncome = income - amt;
-    const newMain   = parseFloat(UD.walletBalance||0) + net;
-    await rtdb.ref('users/'+CU.uid+'/incomeWallet').set(newIncome);
-    await rtdb.ref('users/'+CU.uid+'/walletBalance').set(newMain);
-    UD.incomeWallet = newIncome; UD.walletBalance = newMain;
-    await rtdb.ref('transactions/'+CU.uid).push({ type:'Transfer Income→Main', amount:net, note:'Charge: $'+charge.toFixed(2)+' ('+(chargePct*100)+'%)', timestamp:Date.now(), status:'completed' });
-    toast('✅ Transfer complete! $'+net.toFixed(2)+' added to Main Wallet.');
-    document.getElementById('i2mAmt').value='';
-    document.getElementById('i2mPreview').style.display='none';
-    renderWalletCards();
-  } catch(e){ toast('Error: '+e.message); }
-};
-
 window.submitWithdraw = async () => {
   const amt  = parseFloat(document.getElementById('wdAmt').value);
   const addr = document.getElementById('wdAddr').value.trim();
-  const minWd = parseFloat(SETTINGS.minWithdrawal||10);
-  if (!amt || amt<minWd)  { toast('Min withdrawal $'+minWd); return; }
+  if (!amt || amt<10)  { toast('Min withdrawal $10'); return; }
   if (!addr)           { toast('Enter wallet address'); return; }
   const bal = parseFloat(UD?.walletBalance||0);
-  if (amt > bal)       { toast('Insufficient Main Wallet balance'); return; }
+  if (amt > bal)       { toast('Insufficient balance'); return; }
   try {
     await rtdb.ref('withdrawals/'+CU.uid).push({
       amount:    amt,
@@ -1571,31 +1299,8 @@ window.submitWithdraw = async () => {
     toast('✅ Withdrawal request submitted!');
     document.getElementById('wdAmt').value  = '';
     document.getElementById('wdAddr').value = '';
-    document.getElementById('wdPreview').style.display='none';
+    hideWdForm();
   } catch(e) { toast('Error: '+e.message); }
-};
-
-document.addEventListener('input', (e)=>{
-  if (e.target && e.target.id==='wdAmt') {
-    const amt = parseFloat(e.target.value);
-    const prev = document.getElementById('wdPreview');
-    if (!amt || amt<=0) { prev.style.display='none'; return; }
-    const chargePct = parseFloat(SETTINGS.withdrawalFee != null ? SETTINGS.withdrawalFee : 5)/100;
-    const charge = amt*chargePct;
-    const net = amt-charge;
-    set('wdPrevAmt', '$'+amt.toFixed(2));
-    set('wdPrevCharge', '-$'+charge.toFixed(2));
-    set('wdPrevNet', '$'+net.toFixed(2));
-    prev.style.display='block';
-  }
-});
-
-window.copyText = (elId) => {
-  const el = document.getElementById(elId);
-  const val = el.textContent;
-  navigator.clipboard.writeText(val)
-    .then(()=>toast('✅ Copied: '+val))
-    .catch(()=>toast('Copy failed'));
 };
 
 window.copyRef = () => {
@@ -1612,6 +1317,8 @@ window.shareTG = () => {
   const l=document.getElementById('refLinkInput').value;
   window.open('https://t.me/share/url?url='+encodeURIComponent(l)+'&text=Join+Life+Line+Meta','_blank');
 };
+window.showWdForm  = ()=>{ document.getElementById('wdFormCard').style.display='block'; };
+window.hideWdForm  = ()=>{ document.getElementById('wdFormCard').style.display='none'; };
 
 window.doLogout = async ()=>{ await auth.signOut(); window.location.href='login.html'; };
 
@@ -1636,8 +1343,7 @@ window.showPage = (page, el) => {
   if(el) el.classList.add('active');
   const labels={
     overview:'Overview', profile:'Profile', referral:'Referral', tree:'Binary Tree',
-    team:'My Team', income:'Income Report', roi:'ROI Investment', investhist:'Investment History',
-    joining:'Joining History', wallet:'Wallet',
+    team:'My Team', income:'Income Report', roi:'ROI Investment', wallet:'Wallet',
     rank:'Rank Progress', cashback:'Cashback Pool', club:'Club Bonus', activation:'Activation',
     fundrequest:'Fund Request'
   };
@@ -1645,7 +1351,6 @@ window.showPage = (page, el) => {
   closeSidebar();
   if(page==='tree' && UD) renderBinaryTree();
   if(page==='fundrequest') loadFundRequestPage();
-  if(page==='joining' && UD) loadReferrals();
 };
 
 window.toggleSidebar = ()=>{
@@ -1668,6 +1373,7 @@ window.toggleTheme = ()=>{
 async function loadFundRequestPage() {
   if (!CU) return;
 
+  // Load admin wallet address from settings
   try {
     const setSnap = await rtdb.ref('settings/adminWallet').get();
     const addr = setSnap.exists() ? setSnap.val() : 'Contact admin for wallet address';
@@ -1676,6 +1382,7 @@ async function loadFundRequestPage() {
     document.getElementById('adminWalletAddr').textContent = 'Contact admin for wallet address';
   }
 
+  // Load user's fund request history — filter client-side (no index needed)
   try {
     const snap = await rtdb.ref('fundRequests').get();
     const allReqs = snap.exists() ? snap.val() : {};
@@ -1683,6 +1390,7 @@ async function loadFundRequestPage() {
       .filter(([,f]) => f.uid === CU.uid)
       .sort(([,a],[,b]) => b.createdAt - a.createdAt);
 
+    // Check if any pending
     const pending = list.find(([,f]) => f.status === 'pending');
     const banner  = document.getElementById('frPendingBanner');
     if (pending) {
@@ -1697,13 +1405,14 @@ async function loadFundRequestPage() {
       if (badge) badge.style.display = 'none';
     }
 
+    // Render history
     const tb = document.getElementById('frHistTb');
     tb.innerHTML = list.length ? list.map(([id,f]) => {
       const sc = f.status==='approved'?'pg':f.status==='rejected'?'pr':'py';
       return `<tr>
         <td style="font-weight:700;color:var(--accent)">$${Number(f.amount||0).toFixed(2)}</td>
         <td style="font-size:.73rem">${f.network||'TRC-20'}</td>
-        <td style="color:var(--green);font-weight:700">${f.status==='approved'?'$'+Number(f.netCredited!=null?f.netCredited:f.amount||0).toFixed(2):'—'}</td>
+        <td style="color:var(--green);font-weight:700">${f.status==='approved'?'$'+Number(f.netCredited||0).toFixed(2):'—'}</td>
         <td><span class="pill ${sc}">${f.status||'pending'}</span></td>
         <td style="font-size:.72rem;color:var(--muted)">${f.createdAt?new Date(f.createdAt).toLocaleDateString():'—'}</td>
       </tr>`;
@@ -1714,6 +1423,18 @@ async function loadFundRequestPage() {
       '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">Error: ' + e.message + '</td></tr>';
   }
 }
+
+window.calcFundPreview = () => {
+  const amt = parseFloat(document.getElementById('frAmount').value);
+  const prev = document.getElementById('frPreview');
+  if (!amt || amt < 1) { prev.style.display='none'; return; }
+  const comm = parseFloat((amt * 0.05).toFixed(2));
+  const net  = parseFloat((amt - comm).toFixed(2));
+  document.getElementById('frPrevSend').textContent = '$' + amt.toFixed(2);
+  document.getElementById('frPrevComm').textContent = '-$' + comm.toFixed(2);
+  document.getElementById('frPrevNet').textContent  = '$' + net.toFixed(2);
+  prev.style.display = 'block';
+};
 
 window.copyAdminWallet = () => {
   const addr = document.getElementById('adminWalletAddr').textContent;
@@ -1734,6 +1455,7 @@ window.submitFundRequest = async () => {
   if (!txHash) return toast('Please enter your Transaction Hash (TxID)');
 
   try {
+    // Check no duplicate pending — read all then filter by uid client-side
     const snap = await rtdb.ref('fundRequests').get();
     if (snap.exists()) {
       const myReqs = Object.values(snap.val()).filter(f => f.uid === CU.uid);
@@ -1749,15 +1471,15 @@ window.submitFundRequest = async () => {
       txHash,
       network,
       note,
-      creditTarget: 'p2bWallet',
       status:    'pending',
       createdAt: Date.now()
     });
 
-    toast('✅ Fund request submitted! It will be credited to your P2B Wallet after approval.');
+    toast('✅ Fund request submitted! Admin will approve shortly.');
     document.getElementById('frAmount').value  = '';
     document.getElementById('frTxHash').value  = '';
     document.getElementById('frNote').value    = '';
+    document.getElementById('frPreview').style.display = 'none';
     loadFundRequestPage();
   } catch(e) { toast('Error: ' + e.message); }
 };

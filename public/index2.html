@@ -1,0 +1,566 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Life Line Meta — MLM + ROI Investment Platform</title>
+<style>
+:root{--bg:#0b0f1a;--surface:#111827;--card:#1a2235;--border:#1e2d45;--accent:#00c6ff;--accent2:#7c3aed;--gold:#f59e0b;--green:#10b981;--red:#ef4444;--text:#e2e8f0;--muted:#64748b}
+*{box-sizing:border-box;margin:0;padding:0;scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:999;background:rgba(11,15,26,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 5%;height:64px;display:flex;align-items:center;justify-content:space-between;transition:.3s}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-logo img{width:38px;height:38px;border-radius:50%;border:2px solid var(--accent)}
+.nav-logo span{font-size:1.1rem;font-weight:900;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{color:var(--muted);font-size:.87rem;text-decoration:none;transition:.2s;cursor:pointer}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{display:flex;gap:9px}
+.btn{padding:8px 20px;border-radius:9px;font-size:.82rem;font-weight:700;border:none;cursor:pointer;transition:.2s;text-decoration:none}
+.btn-p{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+.btn-p:hover{opacity:.85;transform:translateY(-1px)}
+.btn-o{background:none;border:1px solid var(--border);color:var(--text)}
+.btn-o:hover{border-color:var(--accent);color:var(--accent)}
+.hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:80px 5% 40px}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-glow{position:absolute;border-radius:50%;filter:blur(80px);opacity:.15}
+.glow1{width:600px;height:600px;background:var(--accent);top:-100px;right:-100px}
+.glow2{width:500px;height:500px;background:var(--accent2);bottom:-100px;left:-100px}
+.glow3{width:300px;height:300px;background:var(--gold);top:40%;left:40%}
+/* Grid lines */
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:50px 50px;opacity:.25}
+.hero-content{position:relative;z-index:1;text-align:center;max-width:860px}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(0,198,255,.1);border:1px solid rgba(0,198,255,.25);border-radius:30px;padding:6px 16px;font-size:.78rem;color:var(--accent);margin-bottom:22px;animation:fadeIn .7s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.hero-title{font-size:clamp(2.4rem,6vw,4.2rem);font-weight:900;line-height:1.1;margin-bottom:18px;animation:fadeIn .8s ease .1s both}
+.hero-title .grad{background:linear-gradient(90deg,var(--accent),var(--accent2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:clamp(.9rem,2vw,1.15rem);color:var(--muted);max-width:600px;margin:0 auto 30px;line-height:1.7;animation:fadeIn .9s ease .2s both}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:44px;animation:fadeIn 1s ease .3s both}
+.hero-btns .btn{padding:14px 30px;font-size:.95rem}
+
+/* LIVE CHART */
+.chart-container{position:relative;z-index:1;width:100%;max-width:920px;margin:0 auto}
+.chart-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.chart-tabs{display:flex;gap:6px}
+.chart-tab{padding:5px 14px;border-radius:7px;font-size:.76rem;font-weight:700;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:.2s}
+.chart-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tv-wrap{background:rgba(17,24,39,.6);border:1px solid var(--border);border-radius:14px;overflow:hidden;height:380px;backdrop-filter:blur(10px)}
+.ticker-wrap{background:rgba(17,24,39,.5);border:1px solid var(--border);border-radius:10px;padding:9px 14px;display:flex;gap:20px;flex-wrap:wrap;margin-top:10px}
+.tick-item{display:flex;align-items:center;gap:7px;font-size:.78rem}
+.tick-sym{font-weight:700;color:var(--accent)}
+.tick-price{font-weight:700}
+.tick-chg{font-size:.72rem;padding:2px 7px;border-radius:8px}
+.up{background:rgba(16,185,129,.15);color:var(--green)}
+.dn{background:rgba(239,68,68,.15);color:var(--red)}
+
+/* STATS BAR */
+.stats-bar{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:22px 5%;display:flex;justify-content:space-around;align-items:center;flex-wrap:wrap;gap:20px}
+.stat-item{text-align:center}
+.stat-val{font-size:1.8rem;font-weight:900;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{font-size:.76rem;color:var(--muted);margin-top:3px}
+
+/* SECTIONS */
+section{padding:80px 5%}
+.section-head{text-align:center;margin-bottom:50px}
+.section-head h2{font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:900;margin-bottom:10px}
+.section-head p{color:var(--muted);font-size:.95rem;max-width:560px;margin:0 auto}
+.accent-line{width:80px;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;margin:14px auto 0}
+
+/* INCOME GRID */
+.income-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;max-width:1100px;margin:0 auto}
+.income-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;position:relative;overflow:hidden;transition:.3s;cursor:default}
+.income-card:hover{transform:translateY(-4px);border-color:var(--card-accent)}
+.income-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--card-accent),transparent)}
+.income-card::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:var(--card-accent);opacity:.06}
+.ic-icon{font-size:2rem;margin-bottom:10px}
+.ic-title{font-size:.95rem;font-weight:800;margin-bottom:5px}
+.ic-val{font-size:1.6rem;font-weight:900;color:var(--card-accent)}
+.ic-desc{font-size:.78rem;color:var(--muted);margin-top:6px;line-height:1.5}
+
+/* ROI SECTION */
+.roi-section{background:linear-gradient(135deg,rgba(0,198,255,.04),rgba(124,58,237,.04));border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.roi-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;max-width:1000px;margin:0 auto;align-items:center}
+.roi-visual{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px}
+.roi-donut{width:180px;height:180px;margin:0 auto 18px;position:relative}
+.roi-donut svg{width:100%;height:100%}
+.roi-legend{display:flex;flex-direction:column;gap:8px}
+.leg-item{display:flex;align-items:center;gap:10px;font-size:.82rem}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.roi-info{display:flex;flex-direction:column;gap:14px}
+.roi-info-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px}
+.roi-info-card h3{font-size:1rem;font-weight:800;margin-bottom:8px}
+.roi-rate-badge{display:inline-block;font-size:2rem;font-weight:900;background:linear-gradient(90deg,var(--gold),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+/* GEN TREE */
+.gen-levels{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;max-width:900px;margin:0 auto}
+.gen-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-align:center;min-width:95px;flex:1;transition:.3s}
+.gen-card:hover{transform:translateY(-3px)}
+.gen-lv{font-size:.72rem;color:var(--muted);margin-bottom:4px}
+.gen-pct{font-size:1.5rem;font-weight:900}
+
+/* FEATURES */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;max-width:1100px;margin:0 auto}
+.feat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;gap:14px;align-items:flex-start;transition:.3s}
+.feat-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.feat-icon{font-size:1.6rem;flex-shrink:0;width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(0,198,255,.1)}
+.feat-body h4{font-size:.9rem;font-weight:800;margin-bottom:5px}
+.feat-body p{font-size:.78rem;color:var(--muted);line-height:1.5}
+
+/* STEPS */
+.steps{display:flex;flex-wrap:wrap;justify-content:center;gap:0;max-width:900px;margin:0 auto;position:relative}
+.step{flex:1;min-width:160px;text-align:center;padding:20px;position:relative}
+.step:not(:last-child)::after{content:'→';position:absolute;right:-8px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:1.4rem}
+.step-num{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;margin:0 auto 12px;color:#fff}
+.step h3{font-size:.9rem;font-weight:800;margin-bottom:5px}
+.step p{font-size:.76rem;color:var(--muted)}
+
+/* CTA */
+.cta-section{background:linear-gradient(135deg,rgba(0,198,255,.08),rgba(124,58,237,.08));border-top:1px solid var(--border);text-align:center;padding:80px 5%}
+.cta-section h2{font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:900;margin-bottom:14px}
+.cta-section p{color:var(--muted);margin-bottom:28px;max-width:500px;margin-left:auto;margin-right:auto}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.cta-btns .btn{padding:14px 32px;font-size:.95rem}
+
+/* FOOTER */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:40px 5% 20px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px;margin-bottom:30px}
+.footer-brand h3{font-size:1.1rem;font-weight:900;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
+.footer-brand p{font-size:.8rem;color:var(--muted);line-height:1.6}
+.footer-col h4{font-size:.85rem;font-weight:700;margin-bottom:12px;color:var(--text)}
+.footer-col a{display:block;font-size:.8rem;color:var(--muted);text-decoration:none;margin-bottom:8px;transition:.2s}
+.footer-col a:hover{color:var(--accent)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.footer-bottom p{font-size:.78rem;color:var(--muted)}
+.footer-badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge-item{background:rgba(0,198,255,.08);border:1px solid rgba(0,198,255,.15);border-radius:8px;padding:4px 10px;font-size:.7rem;color:var(--accent)}
+
+/* TICKER TAPE */
+.ticker-tape{background:rgba(0,198,255,.05);border-bottom:1px solid rgba(0,198,255,.12);padding:6px 0;overflow:hidden;white-space:nowrap}
+.ticker-inner{display:inline-block;animation:ticker 30s linear infinite}
+.ticker-inner:hover{animation-play-state:paused}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ticker-sep{color:var(--muted);margin:0 12px}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center;padding:14px}
+.modal-bg.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:26px;width:90%;max-width:400px}
+.modal h3{font-size:1rem;font-weight:800;margin-bottom:16px}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:.74rem;color:var(--muted);margin-bottom:4px;font-weight:600}
+.fg input,.fg select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-size:.83rem;outline:none}
+.fg input:focus{border-color:var(--accent)}
+.modal-close{float:right;background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer}
+
+@media(max-width:860px){.roi-grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr 1fr}.nav-links{display:none}.hamburger{display:block}}
+@media(max-width:560px){.hero-btns .btn{width:100%}.cta-btns .btn{width:100%}.stats-bar{gap:14px}.step:not(:last-child)::after{display:none}.footer-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- TICKER TAPE -->
+<div class="ticker-tape">
+  <div class="ticker-inner" id="tickerInner">
+    <span style="font-size:.74rem;color:var(--muted)">Loading live prices…</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <img src="assets/images/logo.jpeg" alt="LLM" onerror="this.onerror=null;this.style.display='none'">
+    <span>Life Line Meta</span>
+  </div>
+  <div class="nav-links">
+    <a href="#home">Home</a>
+    <a href="#income">Income</a>
+    <a href="#roi">ROI</a>
+    <a href="#features">Features</a>
+    <a href="#how">How It Works</a>
+  </div>
+  <div class="nav-cta">
+    <a href="login.html" class="btn btn-o">Login</a>
+    <a href="register.html" class="btn btn-p">Join Now</a>
+  </div>
+  <button class="hamburger" onclick="toggleMenu()">☰</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg">
+    <div class="hero-glow glow1"></div>
+    <div class="hero-glow glow2"></div>
+    <div class="hero-glow glow3"></div>
+    <div class="hero-grid"></div>
+  </div>
+  <div style="position:relative;z-index:1;width:100%;max-width:1100px">
+    <div class="hero-content">
+      <div class="hero-badge">🚀 Live Platform — Trusted by Thousands</div>
+      <h1 class="hero-title">Earn Smart with<br><span class="grad">Life Line Meta</span></h1>
+      <p class="hero-sub">MLM + ROI Investment Platform. Earn sponsor commissions, matching bonuses, cashback, club rewards and monthly ROI — all in one place.</p>
+      <div class="hero-btns">
+        <a href="register.html" class="btn btn-p">🚀 Start Earning Now</a>
+        <a href="#income" class="btn btn-o">View Income Plans ↓</a>
+      </div>
+    </div>
+
+    <!-- LIVE CHART -->
+    <div class="chart-container">
+      <div class="chart-header">
+        <div style="font-size:.85rem;font-weight:700;color:var(--text)">📊 Live Market <span style="color:var(--green);font-size:.75rem">● LIVE</span></div>
+        <div class="chart-tabs">
+          <button class="chart-tab active" onclick="switchChart('BTCUSDT',this)">BTC/USDT</button>
+          <button class="chart-tab" onclick="switchChart('ETHUSDT',this)">ETH/USDT</button>
+          <button class="chart-tab" onclick="switchChart('EURUSD',this)">EUR/USD</button>
+          <button class="chart-tab" onclick="switchChart('XAUUSD',this)">GOLD</button>
+          <button class="chart-tab" onclick="switchChart('GBPUSD',this)">GBP/USD</button>
+        </div>
+      </div>
+      <div class="tv-wrap" id="tvContainer">
+        <!-- TradingView Widget -->
+        <div class="tradingview-widget-container" style="height:100%;width:100%">
+          <div id="tradingview_chart" style="height:100%;width:100%"></div>
+        </div>
+      </div>
+      <!-- Live ticker prices -->
+      <div class="ticker-wrap" id="livePrices">
+        <div class="tick-item"><span class="tick-sym">BTC</span><span class="tick-price" id="p-BTC">Loading…</span><span class="tick-chg up" id="c-BTC">+0.00%</span></div>
+        <div class="tick-item"><span class="tick-sym">ETH</span><span class="tick-price" id="p-ETH">—</span><span class="tick-chg up" id="c-ETH">+0.00%</span></div>
+        <div class="tick-item"><span class="tick-sym">BNB</span><span class="tick-price" id="p-BNB">—</span><span class="tick-chg up" id="c-BNB">+0.00%</span></div>
+        <div class="tick-item"><span class="tick-sym">SOL</span><span class="tick-price" id="p-SOL">—</span><span class="tick-chg up" id="c-SOL">+0.00%</span></div>
+        <div class="tick-item"><span class="tick-sym">USDT</span><span class="tick-price">$1.00</span><span class="tick-chg up">Stable</span></div>
+        <div class="tick-item"><span class="tick-sym" style="color:var(--gold)">GOLD</span><span class="tick-price" id="p-GOLD">—</span><span class="tick-chg up" id="c-GOLD">+0.00%</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item"><div class="stat-val">$30</div><div class="stat-label">One-time Activation</div></div>
+  <div class="stat-item"><div class="stat-val">10–12%</div><div class="stat-label">Monthly ROI</div></div>
+  <div class="stat-item"><div class="stat-val">$4</div><div class="stat-label">Sponsor Commission</div></div>
+  <div class="stat-item"><div class="stat-val">7</div><div class="stat-label">Generation Levels</div></div>
+  <div class="stat-item"><div class="stat-val">$1000</div><div class="stat-label">Income Cap</div></div>
+  <div class="stat-item"><div class="stat-val">5%</div><div class="stat-label">Matching Bonus</div></div>
+</div>
+
+<!-- INCOME SECTION -->
+<section id="income">
+  <div class="section-head">
+    <h2>Multiple <span style="background:linear-gradient(90deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Income Streams</span></h2>
+    <p>6 ways to earn — all from a single platform. Start with $30 and unlock everything.</p>
+    <div class="accent-line"></div>
+  </div>
+  <div class="income-grid">
+    <div class="income-card" style="--card-accent:var(--green)"><div class="ic-icon">💵</div><div class="ic-title">Sponsor Commission</div><div class="ic-val">$4</div><div class="ic-desc">Earn per activated direct referral. Paid instantly when admin approves.</div></div>
+    <div class="income-card" style="--card-accent:var(--gold)"><div class="ic-icon">🤝</div><div class="ic-title">Matching Bonus</div><div class="ic-val">5%</div><div class="ic-desc">5% of your weaker binary leg volume. Lifetime cap $1000. Dynamic admin settings.</div></div>
+    <div class="income-card" style="--card-accent:var(--accent)"><div class="ic-icon">🎁</div><div class="ic-title">Daily Cashback</div><div class="ic-val">3%</div><div class="ic-desc">3% of company joining volume. Max $60 per user (2× your $30 activation fee).</div></div>
+    <div class="income-card" style="--card-accent:var(--accent2)"><div class="ic-icon">🏆</div><div class="ic-title">Club Bonus</div><div class="ic-val">4%</div><div class="ic-desc">4% pool shared equally. Qualify with 10 direct refs OR $50 matching income.</div></div>
+    <div class="income-card" style="--card-accent:var(--gold)"><div class="ic-icon">📈</div><div class="ic-title">Monthly ROI</div><div class="ic-val">10–12%</div><div class="ic-desc">Invest minimum $100. Get 10–12% monthly ROI. Paid on 10th of every month.</div></div>
+    <div class="income-card" style="--card-accent:var(--red)"><div class="ic-icon">🌐</div><div class="ic-title">Generation Bonus</div><div class="ic-val">7 Levels</div><div class="ic-desc">50% of ROI distributed across 7 generations. L1=20%, L2=10%, L3=8%… dynamic.</div></div>
+  </div>
+</section>
+
+<!-- ROI SECTION -->
+<section class="roi-section" id="roi">
+  <div class="section-head">
+    <h2>ROI <span style="background:linear-gradient(90deg,var(--gold),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Investment Plan</span></h2>
+    <p>Invest from $100, earn 10–12% monthly. Paid on the 10th of every month automatically.</p>
+    <div class="accent-line" style="background:linear-gradient(90deg,var(--gold),var(--green))"></div>
+  </div>
+  <div class="roi-grid">
+    <div class="roi-visual">
+      <div class="roi-donut">
+        <svg viewBox="0 0 180 180">
+          <defs>
+            <linearGradient id="gr1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00c6ff"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient>
+            <linearGradient id="gr2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#10b981"/></linearGradient>
+          </defs>
+          <!-- Background circle -->
+          <circle cx="90" cy="90" r="70" fill="none" stroke="#1e2d45" stroke-width="22"/>
+          <!-- 50% direct (half circle) -->
+          <circle cx="90" cy="90" r="70" fill="none" stroke="url(#gr1)" stroke-width="22" stroke-dasharray="220 440" stroke-dashoffset="110" stroke-linecap="round"/>
+          <!-- 50% generation -->
+          <circle cx="90" cy="90" r="70" fill="none" stroke="url(#gr2)" stroke-width="22" stroke-dasharray="220 440" stroke-dashoffset="-110" stroke-linecap="round"/>
+          <text x="90" y="85" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="900">ROI</text>
+          <text x="90" y="102" text-anchor="middle" fill="#64748b" font-size="10">Distribution</text>
+        </svg>
+      </div>
+      <div class="roi-legend">
+        <div class="leg-item"><div class="leg-dot" style="background:var(--accent)"></div><span>50% — Direct to Investor Wallet</span></div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div><span>50% — Generation Bonus (7 Levels)</span></div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--muted)"></div><span>0% — Sponsor ROI Commission</span></div>
+      </div>
+    </div>
+    <div class="roi-info">
+      <div class="roi-info-card">
+        <h3>Monthly Return</h3>
+        <div class="roi-rate-badge">10% – 12%</div>
+        <p style="color:var(--muted);font-size:.8rem;margin-top:6px">Dynamic rate set by admin. Paid every 10th of the month.</p>
+      </div>
+      <div class="roi-info-card">
+        <h3>Example: $1000 Investment</h3>
+        <div style="display:flex;flex-direction:column;gap:7px;font-size:.83rem">
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Monthly ROI (10%)</span><span style="color:var(--gold);font-weight:700">$100</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">You receive (50%)</span><span style="color:var(--green);font-weight:700">$50</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Generation pool (50%)</span><span style="color:var(--accent);font-weight:700">$50</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Annual estimate</span><span style="color:var(--gold);font-weight:700">$600 – $720</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Capital unlock</span><span>After 6 months</span></div>
+        </div>
+      </div>
+      <div class="roi-info-card">
+        <h3>Generation Bonus Levels</h3>
+        <div class="gen-levels" style="gap:6px;margin:0">
+          <div class="gen-card" style="min-width:55px"><div class="gen-lv">L1</div><div class="gen-pct" style="color:var(--accent);font-size:1rem">20%</div></div>
+          <div class="gen-card" style="min-width:55px"><div class="gen-lv">L2</div><div class="gen-pct" style="color:var(--accent2);font-size:1rem">10%</div></div>
+          <div class="gen-card" style="min-width:55px"><div class="gen-lv">L3</div><div class="gen-pct" style="color:var(--gold);font-size:1rem">8%</div></div>
+          <div class="gen-card" style="min-width:55px"><div class="gen-lv">L4</div><div class="gen-pct" style="color:var(--green);font-size:1rem">6%</div></div>
+          <div class="gen-card" style="min-width:55px"><div class="gen-lv">L5</div><div class="gen-pct" style="color:var(--accent);font-size:1rem">4%</div></div>
+          <div class="gen-card" style="min-width:55px"><div class="gen-lv">L6</div><div class="gen-pct" style="color:var(--accent2);font-size:1rem">3%</div></div>
+          <div class="gen-card" style="min-width:55px"><div class="gen-lv">L7</div><div class="gen-pct" style="color:var(--gold);font-size:1rem">2%</div></div>
+        </div>
+        <p style="font-size:.72rem;color:var(--muted);margin-top:8px">All percentages dynamic — admin controlled</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-head">
+    <h2>Platform <span style="background:linear-gradient(90deg,var(--accent2),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Features</span></h2>
+    <p>Everything you need in one powerful platform. Built for performance and security.</p>
+    <div class="accent-line" style="background:linear-gradient(90deg,var(--accent2),var(--accent))"></div>
+  </div>
+  <div class="feat-grid">
+    <div class="feat-card"><div class="feat-icon">🔗</div><div class="feat-body"><h4>Web3 Wallet Integration</h4><p>Connect MetaMask or Trust Wallet. Send USDT directly from your crypto wallet. Auto TxID fill.</p></div></div>
+    <div class="feat-card"><div class="feat-icon">🌳</div><div class="feat-body"><h4>Binary Tree MLM</h4><p>Visual binary tree with left/right legs. Real-time volume tracking for matching bonus calculation.</p></div></div>
+    <div class="feat-card"><div class="feat-icon">📊</div><div class="feat-body"><h4>Live Market Charts</h4><p>TradingView live candlestick charts for BTC, ETH, Forex pairs and Gold. Real-time Binance prices.</p></div></div>
+    <div class="feat-card"><div class="feat-icon">🔐</div><div class="feat-body"><h4>2FA Security</h4><p>Two-factor authentication with phone OTP. Login history tracking. Block unauthorized access.</p></div></div>
+    <div class="feat-card"><div class="feat-icon">🪪</div><div class="feat-body"><h4>KYC Verification</h4><p>Optional 3-step KYC. Required only for withdrawals. Admin verification within 24–48 hrs.</p></div></div>
+    <div class="feat-card"><div class="feat-icon">⚡</div><div class="feat-body"><h4>Real-time Updates</h4><p>Firebase real-time listeners. Income, wallet, and requests update instantly — no refresh needed.</p></div></div>
+    <div class="feat-card"><div class="feat-icon">📱</div><div class="feat-body"><h4>Mobile Friendly</h4><p>Fully responsive design. Works perfectly on all devices — phones, tablets and desktops.</p></div></div>
+    <div class="feat-card"><div class="feat-icon">⚙</div><div class="feat-body"><h4>Dynamic Admin Control</h4><p>All rates, fees, and settings adjustable in real-time. Sub-admin roles with granular permissions.</p></div></div>
+    <div class="feat-card"><div class="feat-icon">💾</div><div class="feat-body"><h4>Backup & Restore</h4><p>Full platform backup in JSON. Restore anytime. CSV export for all transactions and users.</p></div></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" style="background:linear-gradient(135deg,rgba(0,198,255,.03),rgba(124,58,237,.03));border-top:1px solid var(--border)">
+  <div class="section-head">
+    <h2>How It <span style="background:linear-gradient(90deg,var(--green),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Works</span></h2>
+    <p>Get started in 4 simple steps and start earning immediately.</p>
+    <div class="accent-line" style="background:linear-gradient(90deg,var(--green),var(--accent))"></div>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><h3>Register Free</h3><p>Create your account with email or Google. Use a referral code to join under a sponsor.</p></div>
+    <div class="step"><div class="step-num">2</div><h3>Activate ($30)</h3><p>Send $30 USDT via Web3 wallet or manual transfer. Submit TxID for admin approval.</p></div>
+    <div class="step"><div class="step-num">3</div><h3>Build Your Team</h3><p>Share your referral link. Grow left & right binary legs. Earn sponsor + matching bonuses.</p></div>
+    <div class="step"><div class="step-num">4</div><h3>Invest & Earn ROI</h3><p>Invest $100+ to earn 10–12% monthly ROI. Paid on the 10th of every month automatically.</p></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Ready to Start <span style="background:linear-gradient(90deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Earning?</span></h2>
+  <p>Join thousands of members already earning. One-time $30 activation unlocks everything.</p>
+  <div class="cta-btns">
+    <a href="register.html" class="btn btn-p">🚀 Register Now — Free</a>
+    <a href="login.html" class="btn btn-o">Already a Member? Login</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h3>Life Line Meta</h3>
+      <p>MLM + ROI Investment Platform. Earn through referrals, binary matching, cashback, club bonuses, and monthly ROI returns. Admin-controlled dynamic settings.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Platform</h4>
+      <a href="register.html">Register</a><a href="login.html">Login</a><a href="dashboard.html">Dashboard</a>
+    </div>
+    <div class="footer-col">
+      <h4>Income Plans</h4>
+      <a href="#income">Sponsor Bonus</a><a href="#income">Matching Bonus</a><a href="#roi">ROI Plan</a><a href="#income">Club Bonus</a>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="#">Telegram</a><a href="#">WhatsApp</a><a href="#">Email Support</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Life Line Meta. All rights reserved.</p>
+    <div class="footer-badges">
+      <span class="badge-item">🔒 Secure</span>
+      <span class="badge-item">⚡ Firebase</span>
+      <span class="badge-item">🔗 Web3</span>
+      <span class="badge-item">📊 Live Charts</span>
+    </div>
+  </div>
+</footer>
+
+<!-- TRADINGVIEW SCRIPT -->
+<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+<script>
+// ── TRADINGVIEW CHART ─────────────────────────────────
+let tvWidget = null;
+function initChart(symbol) {
+  if (tvWidget) { try { tvWidget.remove(); } catch(e) {} }
+  tvWidget = new TradingView.widget({
+    container_id: 'tradingview_chart',
+    symbol: symbol,
+    interval: '15',
+    timezone: 'Asia/Dhaka',
+    theme: 'dark',
+    style: '1',
+    locale: 'en',
+    toolbar_bg: '#111827',
+    enable_publishing: false,
+    allow_symbol_change: true,
+    hide_side_toolbar: false,
+    withdateranges: true,
+    details: true,
+    hotlist: true,
+    calendar: false,
+    studies: ['RSI@tv-basicstudies', 'MACD@tv-basicstudies'],
+    width: '100%',
+    height: '100%',
+    autosize: true,
+    overrides: {
+      'paneProperties.background': '#0b0f1a',
+      'paneProperties.backgroundType': 'solid',
+      'paneProperties.vertGridProperties.color': '#1e2d45',
+      'paneProperties.horzGridProperties.color': '#1e2d45',
+      'scalesProperties.textColor': '#64748b',
+      'mainSeriesProperties.candleStyle.upColor': '#10b981',
+      'mainSeriesProperties.candleStyle.downColor': '#ef4444',
+      'mainSeriesProperties.candleStyle.wickUpColor': '#10b981',
+      'mainSeriesProperties.candleStyle.wickDownColor': '#ef4444',
+      'mainSeriesProperties.candleStyle.borderUpColor': '#10b981',
+      'mainSeriesProperties.candleStyle.borderDownColor': '#ef4444',
+    }
+  });
+}
+
+window.switchChart = (sym, btn) => {
+  document.querySelectorAll('.chart-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const map = {
+    'BTCUSDT': 'BINANCE:BTCUSDT',
+    'ETHUSDT': 'BINANCE:ETHUSDT',
+    'EURUSD': 'FX:EURUSD',
+    'XAUUSD': 'TVC:GOLD',
+    'GBPUSD': 'FX:GBPUSD'
+  };
+  initChart(map[sym] || sym);
+};
+
+// Init default chart
+window.addEventListener('load', () => {
+  try { initChart('BINANCE:BTCUSDT'); } catch(e) { console.log('TV chart:', e.message); }
+  fetchPrices();
+  setInterval(fetchPrices, 5000);
+  buildTickerTape();
+  setInterval(buildTickerTape, 6000);
+});
+
+// ── LIVE PRICES (Binance API) ─────────────────────────
+const SYMBOLS = [
+  { sym: 'BTCUSDT', id: 'BTC', label: 'Bitcoin' },
+  { sym: 'ETHUSDT', id: 'ETH', label: 'Ethereum' },
+  { sym: 'BNBUSDT', id: 'BNB', label: 'BNB' },
+  { sym: 'SOLUSDT', id: 'SOL', label: 'Solana' },
+];
+
+async function fetchPrices() {
+  try {
+    const syms = SYMBOLS.map(s => '"' + s.sym + '"').join(',');
+    const res = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbols=[${syms}]`);
+    const data = await res.json();
+    data.forEach(t => {
+      const s = SYMBOLS.find(x => x.sym === t.symbol);
+      if (!s) return;
+      const price = parseFloat(t.lastPrice);
+      const chg = parseFloat(t.priceChangePercent);
+      const el = document.getElementById('p-' + s.id);
+      const ce = document.getElementById('c-' + s.id);
+      if (el) el.textContent = '$' + price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: price > 100 ? 2 : 4 });
+      if (ce) { ce.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%'; ce.className = 'tick-chg ' + (chg >= 0 ? 'up' : 'dn'); }
+    });
+    // Gold (approximate from XAU)
+    try {
+      const gr = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=XAUUSDT');
+      const gd = await gr.json();
+      if (gd.price) {
+        const gp = document.getElementById('p-GOLD');
+        if (gp) gp.textContent = '$' + parseFloat(gd.price).toLocaleString('en-US', { minimumFractionDigits: 2 });
+      }
+    } catch(e) {}
+  } catch(e) { console.log('Price fetch:', e.message); }
+}
+
+// ── TICKER TAPE ───────────────────────────────────────
+function buildTickerTape() {
+  const items = [
+    { sym: 'BTC/USDT', id: 'BTC' }, { sym: 'ETH/USDT', id: 'ETH' },
+    { sym: 'BNB/USDT', id: 'BNB' }, { sym: 'SOL/USDT', id: 'SOL' },
+    { sym: 'GOLD', id: 'GOLD' },
+    { sym: '★ Activate Now - $30', val: '→ Join Life Line Meta', up: true },
+    { sym: '💰 Monthly ROI', val: '10–12% per month', up: true },
+    { sym: '🤝 Matching Bonus', val: '5% of weaker leg', up: true },
+  ];
+  const el = document.getElementById('tickerInner');
+  const buildItem = it => {
+    const p = document.getElementById('p-' + it.id);
+    const c = document.getElementById('c-' + it.id);
+    const price = p ? p.textContent : (it.val || '—');
+    const chg = c ? c.textContent : '';
+    const up = c ? c.classList.contains('up') : (it.up !== false);
+    return `<span style="font-size:.74rem;margin-right:30px">
+      <span style="color:var(--${up ? 'green' : 'red'});font-weight:700">${it.sym}</span>
+      <span style="color:var(--text);margin-left:5px">${price}</span>
+      ${chg ? `<span style="color:var(--${up ? 'green' : 'red'});margin-left:4px">${chg}</span>` : ''}
+      <span style="color:var(--border);margin:0 10px">|</span>
+    </span>`;
+  };
+  const content = items.map(buildItem).join('');
+  el.innerHTML = content + content; // Double for seamless loop
+}
+
+// ── NAV ───────────────────────────────────────────────
+window.toggleMenu = () => {
+  const links = document.querySelector('.nav-links');
+  if (links.style.display === 'flex') {
+    links.style.display = 'none';
+  } else {
+    links.style.cssText = 'display:flex;flex-direction:column;position:absolute;top:64px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);padding:16px 5%;gap:14px;z-index:998';
+  }
+};
+
+// Smooth nav highlight on scroll
+const sections = document.querySelectorAll('section[id], div[id]');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 80;
+  sections.forEach(s => {
+    if (y >= s.offsetTop && y < s.offsetTop + s.offsetHeight) {
+      document.querySelectorAll('.nav-links a').forEach(a => {
+        a.style.color = a.getAttribute('href') === '#' + s.id ? 'var(--text)' : '';
+      });
+    }
+  });
+  // Sticky nav opacity
+  document.querySelector('nav').style.background = window.scrollY > 30 ? 'rgba(11,15,26,.97)' : 'rgba(11,15,26,.92)';
+});
+</script>
+</body>
+</html>

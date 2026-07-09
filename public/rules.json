@@ -1,0 +1,60 @@
+{
+  "rules": {
+    "settings": {
+      ".read": "auth != null",
+      ".write": false
+    },
+    "announcements": {
+      ".read": "auth != null",
+      ".write": false
+    },
+    "cashbackHistory": {
+      ".read": "auth != null",
+      ".write": false
+    },
+    "clubBonusHistory": {
+      ".read": "auth != null",
+      ".write": false
+    },
+    "users": {
+      ".read": "auth != null",
+      ".write": false,
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    "transactions": {
+      ".read": "auth != null",
+      ".write": false,
+      "$uid": {
+        ".read": "auth != null",
+        ".write": false
+      }
+    },
+    "investments": {
+      ".read": "auth != null",
+      ".write": false,
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    "withdrawals": {
+      ".read": "auth != null",
+      ".write": false,
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    "activationRequests": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "fundRequests": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+}

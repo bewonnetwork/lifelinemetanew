@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Life Line Meta – Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+:root{
+  --bg:#060912;--surface:#0d1424;--card:#111927;--border:#1a2840;
+  --accent:#00d4ff;--accent2:#7c3aed;--gold:#f59e0b;--green:#10b981;
+  --red:#ef4444;--pink:#ec4899;--orange:#f97316;
+  --text:#e2e8f0;--muted:#64748b;--r:16px;
+  --glow:0 0 30px rgba(0,212,255,.15);
+  --glow2:0 0 30px rgba(124,58,237,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--accent2);border-radius:2px}
+button{cursor:pointer;font-family:inherit}
+
+/* ═══ AUTH ═══ */
+#authWrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem;background:radial-gradient(ellipse at 20% 50%,rgba(0,212,255,.06) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(124,58,237,.06) 0%,transparent 60%)}
+.auth-card{background:rgba(13,20,36,.9);border:1px solid var(--border);border-radius:24px;padding:2.2rem;width:100%;max-width:430px;backdrop-filter:blur(20px);box-shadow:0 24px 80px rgba(0,0,0,.5),var(--glow)}
+.auth-logo{text-align:center;margin-bottom:1.6rem}
+.auth-logo .glow-icon{width:68px;height:68px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:20px;display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:.8rem;box-shadow:0 8px 32px rgba(0,212,255,.3);position:relative}
+.auth-logo .glow-icon::after{content:'';position:absolute;inset:-2px;border-radius:22px;background:linear-gradient(135deg,var(--accent),var(--accent2));z-index:-1;filter:blur(8px);opacity:.5}
+.auth-logo h1{font-size:1.5rem;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.auth-logo p{font-size:.75rem;color:var(--muted);margin-top:.3rem}
+.auth-tabs{display:flex;background:rgba(0,0,0,.3);border-radius:12px;padding:.3rem;margin-bottom:1.4rem;gap:.3rem;border:1px solid var(--border)}
+.auth-tab{flex:1;padding:.58rem;border:none;border-radius:9px;cursor:pointer;font-size:.85rem;font-weight:700;background:transparent;color:var(--muted);transition:.2s;letter-spacing:.02em}
+.auth-tab.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 16px rgba(0,212,255,.3)}
+.fg{margin-bottom:1rem}
+.fg label{display:block;font-size:.72rem;color:var(--muted);margin-bottom:.4rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.fg input,.fg select{width:100%;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:11px;padding:.75rem 1rem;color:var(--text);font-size:.875rem;outline:none;transition:.2s;font-family:inherit}
+.fg input:focus,.fg select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,212,255,.1)}
+.btn-auth{width:100%;padding:.85rem;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-size:.95rem;font-weight:800;cursor:pointer;transition:.2s;letter-spacing:.02em;box-shadow:0 8px 24px rgba(0,212,255,.25)}
+.btn-auth:hover{transform:translateY(-1px);box-shadow:0 12px 32px rgba(0,212,255,.35)}
+.auth-switch{text-align:center;margin-top:.9rem;font-size:.8rem;color:var(--muted)}
+.auth-switch a{color:var(--accent);cursor:pointer;font-weight:600}
+
+/* ═══ APP LAYOUT ═══ */
+#appWrap{display:none;min-height:100vh}
+.sidebar{position:fixed;top:0;left:0;height:100vh;width:250px;background:linear-gradient(180deg,var(--surface) 0%,var(--bg) 100%);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;transition:transform .3s}
+.sb-logo{padding:18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px}
+.sb-logo .logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;box-shadow:0 4px 16px rgba(0,212,255,.3)}
+.sb-logo h2{font-size:.9rem;font-weight:900;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sb-logo p{font-size:.58rem;color:var(--muted)}
+.sb-nav{flex:1;padding:10px 8px;overflow-y:auto}
+.sb-section{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:10px 10px 4px;font-weight:700}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;cursor:pointer;color:var(--muted);font-size:.82rem;font-weight:500;transition:.2s;position:relative;margin:1px 0}
+.sb-item:hover{background:rgba(0,212,255,.06);color:var(--text)}
+.sb-item.active{background:linear-gradient(135deg,rgba(0,212,255,.12),rgba(124,58,237,.08));color:var(--accent);border:1px solid rgba(0,212,255,.15)}
+.sb-item .ic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;background:rgba(255,255,255,.04);flex-shrink:0}
+.sb-item.active .ic{background:linear-gradient(135deg,rgba(0,212,255,.2),rgba(124,58,237,.2))}
+.sb-badge{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:var(--red);color:#fff;border-radius:99px;font-size:.6rem;font-weight:800;padding:1px 6px;min-width:16px;text-align:center}
+.sb-footer{padding:12px;border-top:1px solid var(--border)}
+.user-mini{background:rgba(0,212,255,.05);border:1px solid var(--border);border-radius:12px;padding:10px;display:flex;align-items:center;gap:9px}
+.user-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0;position:relative}
+.user-av .status-dot{position:absolute;bottom:0;right:0;width:10px;height:10px;border-radius:50%;border:2px solid var(--surface)}
+.um-info strong{font-size:.78rem;display:block;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}
+.um-info span{font-size:.64rem;color:var(--muted)}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:250px;right:0;height:58px;background:rgba(13,20,36,.9);border-bottom:1px solid var(--border);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:99;transition:left .3s}
+.menu-btn{display:none;background:none;border:none;color:var(--text);font-size:1.3rem;cursor:pointer}
+.tb-title{font-size:.88rem;font-weight:700;color:var(--muted)}
+.tb-right{display:flex;align-items:center;gap:8px}
+.tb-btn{padding:6px 12px;border-radius:9px;font-size:.76rem;font-weight:700;border:1px solid var(--border);cursor:pointer;background:transparent;color:var(--text);transition:.2s}
+.tb-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* MAIN */
+.main{margin-left:250px;padding-top:58px;min-height:100vh;transition:margin .3s}
+.page{display:none;padding:20px;animation:fadeUp .25s ease}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pg-title{font-size:1.3rem;font-weight:800;margin-bottom:18px;display:flex;align-items:center;gap:.5rem}
+.pg-title span{font-size:.8rem;color:var(--muted);font-weight:400}
+
+/* ─ STATUS BADGE (Yellow=Free, Green=Active, Multi=Investor) ─ */
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.status-free{background:rgba(245,158,11,.15);color:var(--gold);border:1px solid rgba(245,158,11,.3)}
+.status-active{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3)}
+.status-investor{background:linear-gradient(135deg,rgba(0,212,255,.15),rgba(124,58,237,.15),rgba(236,72,153,.1));color:var(--accent);border:1px solid rgba(0,212,255,.3);animation:pulse-border 2s infinite}
+@keyframes pulse-border{0%,100%{border-color:rgba(0,212,255,.3)}50%{border-color:rgba(124,58,237,.5)}}
+.status-dot-y{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px var(--gold)}
+.status-dot-g{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 1.5s infinite}
+.status-dot-m{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ─ STAT CARDS ─ */
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px}
+@media(max-width:1100px){.grid4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.grid4,.grid3{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+@media(max-width:440px){.grid4,.grid3{grid-template-columns:1fr}}
+.scard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;transition:.2s}
+.scard:hover{transform:translateY(-2px);box-shadow:var(--glow)}
+.scard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grd,linear-gradient(90deg,var(--accent),var(--accent2)))}
+.scard .sc-icon{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;background:rgba(255,255,255,.04)}
+.scard .sc-lbl{font-size:.67rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:6px}
+.scard .sc-val{font-size:1.65rem;font-weight:900;margin-bottom:3px}
+.scard .sc-sub{font-size:.7rem;color:var(--muted)}
+.sc-c1{--grd:linear-gradient(90deg,#00d4ff,#7c3aed)}.sc-c1 .sc-val{color:var(--accent)}
+.sc-c2{--grd:linear-gradient(90deg,#10b981,#06b6d4)}.sc-c2 .sc-val{color:var(--green)}
+.sc-c3{--grd:linear-gradient(90deg,#f59e0b,#f97316)}.sc-c3 .sc-val{color:var(--gold)}
+.sc-c4{--grd:linear-gradient(90deg,#ec4899,#ef4444)}.sc-c4 .sc-val{color:var(--pink)}
+.sc-c5{--grd:linear-gradient(90deg,#8b5cf6,#ec4899)}.sc-c5 .sc-val{color:#8b5cf6}
+.sc-c6{--grd:linear-gradient(90deg,#06b6d4,#10b981)}.sc-c6 .sc-val{color:#06b6d4}
+
+/* ─ CARD ─ */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.card-hd{font-size:.88rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.card-hd small{font-size:.7rem;color:var(--muted);font-weight:400}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}}
+
+/* ─ PROGRESS ─ */
+.prog-bar{background:rgba(255,255,255,.06);border-radius:99px;height:6px;overflow:hidden;margin-top:8px}
+.prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .6s cubic-bezier(.4,0,.2,1)}
+
+/* ─ TABLE ─ */
+.tw{overflow-x:auto;border-radius:12px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:.79rem}
+th{color:var(--muted);font-weight:600;padding:10px 12px;text-align:left;background:rgba(0,0,0,.2);font-size:.69rem;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+td{padding:10px 12px;border-top:1px solid rgba(26,40,64,.5);white-space:nowrap;vertical-align:middle}
+tr:hover td{background:rgba(0,212,255,.02)}
+.pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-size:.68rem;font-weight:700;gap:4px}
+.pg{background:rgba(16,185,129,.12);color:var(--green);border:1px solid rgba(16,185,129,.2)}
+.py{background:rgba(245,158,11,.12);color:var(--gold);border:1px solid rgba(245,158,11,.2)}
+.pr{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.pb{background:rgba(0,212,255,.12);color:var(--accent);border:1px solid rgba(0,212,255,.2)}
+.pp{background:rgba(124,58,237,.12);color:var(--accent2);border:1px solid rgba(124,58,237,.2)}
+.pm{background:linear-gradient(135deg,rgba(0,212,255,.1),rgba(124,58,237,.1));color:var(--accent);border:1px solid rgba(0,212,255,.2)}
+
+/* ─ BUTTONS ─ */
+.btn{padding:8px 16px;border-radius:10px;font-size:.79rem;font-weight:700;border:none;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:.4rem;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}
+.btn-p{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 16px rgba(0,212,255,.2)}
+.btn-g{background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;box-shadow:0 4px 16px rgba(245,158,11,.2)}
+.btn-gr{background:var(--green);color:#fff;box-shadow:0 4px 16px rgba(16,185,129,.2)}
+.btn-r{background:var(--red);color:#fff}
+.btn-o{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-o:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm{padding:4px 10px;font-size:.71rem;border-radius:7px}
+.btn-w{width:100%;padding:12px;font-size:.88rem;justify-content:center}
+
+/* ─ REF BOX ─ */
+.ref-box{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:11px;padding:11px 14px;display:flex;align-items:center;gap:10px}
+.ref-box input{flex:1;background:none;border:none;color:var(--text);font-size:.79rem;outline:none;font-family:inherit}
+
+/* ─ INFO BOX ─ */
+.info-box{background:linear-gradient(135deg,rgba(0,212,255,.06),rgba(124,58,237,.04));border:1px solid rgba(0,212,255,.15);border-radius:11px;padding:12px 15px;font-size:.77rem;color:var(--accent);margin-bottom:14px;line-height:1.8}
+
+/* ─ WALLET HERO ─ */
+.wallet-hero{background:linear-gradient(135deg,#0d1f3a,#1a0d3a);border:1px solid rgba(0,212,255,.2);border-radius:20px;padding:24px;position:relative;overflow:hidden;margin-bottom:16px}
+.wallet-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(0,212,255,.1) 0%,transparent 70%)}
+.wallet-hero::after{content:'';position:absolute;bottom:-40px;left:-20px;width:140px;height:140px;background:radial-gradient(circle,rgba(124,58,237,.1) 0%,transparent 70%)}
+.wh-lbl{font-size:.72rem;color:rgba(226,232,240,.5);text-transform:uppercase;letter-spacing:.1em}
+.wh-bal{font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:.4rem 0}
+.wh-id{font-size:.72rem;color:rgba(226,232,240,.4);font-family:monospace}
+.wh-actions{display:flex;gap:10px;margin-top:16px;position:relative;z-index:1}
+.wh-btn{flex:1;padding:9px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;font-weight:700;font-size:.8rem;cursor:pointer;transition:.2s;text-align:center}
+.wh-btn:hover{background:rgba(255,255,255,.15)}
+
+/* ─ 3D RANK CARDS ─ */
+.rank-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:16px}
+.rank-3d{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;text-align:center;cursor:pointer;transition:.3s;transform-style:preserve-3d;position:relative;overflow:hidden}
+.rank-3d:hover{transform:translateY(-4px) rotateX(5deg);border-color:rgba(0,212,255,.3);box-shadow:0 16px 40px rgba(0,0,0,.4),0 0 20px rgba(0,212,255,.1)}
+.rank-3d.achieved{border-color:rgba(245,158,11,.4);background:linear-gradient(135deg,rgba(245,158,11,.05),rgba(251,191,36,.03))}
+.rank-3d.achieved::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(245,158,11,.08),transparent);pointer-events:none}
+.rank-3d.current-rank{border-color:var(--accent);background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(124,58,237,.05));box-shadow:0 0 20px rgba(0,212,255,.15),inset 0 1px 0 rgba(0,212,255,.2)}
+.rank-3d.current-rank::after{content:'CURRENT';position:absolute;top:6px;right:6px;font-size:.54rem;font-weight:800;background:var(--accent);color:#000;padding:2px 6px;border-radius:99px}
+.rank-icon-3d{font-size:2.2rem;margin-bottom:6px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.4))}
+.rank-3d.achieved .rank-icon-3d{animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.rank-name-3d{font-size:.8rem;font-weight:800;margin-bottom:3px}
+.rank-req-3d{font-size:.65rem;color:var(--muted);line-height:1.4}
+.rank-check{position:absolute;top:6px;left:6px;width:18px;height:18px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#000;font-weight:800}
+
+/* ─ BINARY TREE ─ */
+.tree-wrap{overflow:auto;padding:20px;min-height:300px;background:rgba(0,0,0,.2);border-radius:14px;border:1px solid var(--border)}
+.tree-root{display:flex;flex-direction:column;align-items:center}
+.tree-level{display:flex;gap:30px;margin-top:0;position:relative;padding-top:24px}
+.tree-connector-v{width:2px;height:24px;background:linear-gradient(180deg,var(--accent),transparent);margin:0 auto}
+.tree-connector-h{position:absolute;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.t-node{display:flex;flex-direction:column;align-items:center}
+.t-box{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:10px 14px;text-align:center;min-width:100px;cursor:default;transition:.3s;position:relative}
+.t-box:hover{border-color:var(--accent);transform:scale(1.04);box-shadow:0 8px 24px rgba(0,212,255,.15)}
+.t-box.t-you{border-color:var(--accent);background:linear-gradient(135deg,rgba(0,212,255,.1),rgba(124,58,237,.08));box-shadow:0 0 20px rgba(0,212,255,.2)}
+.t-box.t-active{border-color:var(--green)}
+.t-box.t-investor{border-color:var(--pink);animation:glow-pulse 2s infinite}
+@keyframes glow-pulse{0%,100%{box-shadow:0 0 8px rgba(236,72,153,.2)}50%{box-shadow:0 0 20px rgba(236,72,153,.4)}}
+.t-box.t-empty{border-style:dashed;opacity:.4}
+.t-name{font-size:.72rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px}
+.t-status-icon{font-size:.65rem;margin-top:2px}
+.t-children{display:flex;gap:24px;position:relative;padding-top:20px}
+
+/* ─ UNILEVEL TREE ─ */
+.uni-tree{padding-left:0}
+.uni-node{padding:6px 0 6px 20px;border-left:2px solid var(--border);margin-left:16px;position:relative}
+.uni-node::before{content:'';position:absolute;left:-2px;top:18px;width:18px;height:2px;background:var(--border)}
+.uni-node-box{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:6px 12px;font-size:.77rem;cursor:default;transition:.2s}
+.uni-node-box:hover{border-color:var(--accent);color:var(--accent)}
+.uni-children{margin-left:0}
+
+/* ─ INVESTMENT ROI CARD ─ */
+.inv-card{background:linear-gradient(135deg,var(--card),rgba(0,212,255,.03));border:1px solid var(--border);border-radius:16px;padding:18px;position:relative;overflow:hidden;margin-bottom:12px;transition:.2s}
+.inv-card:hover{border-color:rgba(0,212,255,.2);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.inv-card .inv-amt{font-size:1.4rem;font-weight:900;color:var(--accent)}
+.inv-card .inv-badge{position:absolute;top:14px;right:14px}
+.inv-progress{margin-top:10px}
+.inv-progress .labels{display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-bottom:4px}
+
+/* ─ GIFT VOUCHER ─ */
+.voucher-card{background:linear-gradient(135deg,#1a0a2e,#0a1a2e);border:2px solid;border-image:linear-gradient(135deg,var(--gold),var(--accent2),var(--pink)) 1;border-radius:20px;padding:24px;text-align:center;position:relative;overflow:hidden}
+.voucher-card::before{content:'✦ ✦ ✦';position:absolute;top:10px;left:50%;transform:translateX(-50%);font-size:.7rem;color:rgba(245,158,11,.3);letter-spacing:8px}
+.voucher-code{font-size:1.8rem;font-weight:900;letter-spacing:.15em;background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:10px 0}
+.voucher-val{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+
+/* ─ FORM ─ */
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
+
+/* ─ OVERLAY & TOAST ─ */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;backdrop-filter:blur(4px)}
+.overlay.show{display:block}
+#toast{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 16px;font-size:.82rem;box-shadow:0 8px 32px rgba(0,0,0,.4);display:flex;align-items:center;gap:8px;animation:slideIn .3s ease;max-width:280px}
+.toast-item.t-ok{border-left:3px solid var(--green)}
+.toast-item.t-err{border-left:3px solid var(--red)}
+.toast-item.t-info{border-left:3px solid var(--accent)}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:none;opacity:1}}
+
+/* ─ MODAL ─ */
+.modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(6px)}
+.modal-wrap.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;width:100%;max-width:440px;max-height:90vh;overflow-y:auto}
+.modal-hd{font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.modal-close{background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;line-height:1}
+
+/* ─ MOBILE ─ */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .topbar{left:0}
+  .menu-btn{display:block}
+}
+
+/* ─ MISC ─ */
+.divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+.text-acc{color:var(--accent)}.text-gr{color:var(--green)}.text-gld{color:var(--gold)}.text-red{color:var(--red)}.text-pk{color:var(--pink)}
+.fw9{font-weight:900}.fw7{font-weight:700}.fs8{font-size:.82rem}.fs7{font-size:.74rem}.tc{text-align:center}
+.flex{display:flex}.aic{align-items:center}.jb{justify-content:space-between}.gap1{gap:.5rem}.gap2{gap:1rem}
+.mt1{margin-top:8px}.mt2{margin-top:16px}.mb1{margin-bottom:8px}.mb2{margin-bottom:16px}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+</style>
+</head>
+<body>
+
+<!-- ═══════ AUTH ═══════ -->
+<div id="authWrap">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="glow-icon">💎</div>
+      <h1>Life Line Meta</h1>
+      <p>MLM + ROI Investment Platform</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab on" id="tabLogin" onclick="switchTab('login')">Sign In</button>
+      <button class="auth-tab" id="tabReg" onclick="switchTab('reg')">Register</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="loginForm">
+      <div class="fg"><label>Email Address</label><input type="email" id="lEmail" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <div class="fg"><label>Password</label><input type="password" id="lPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <button class="btn-auth" onclick="doLogin()">🔐 Sign In</button>
+      <div class="auth-switch mt1"><a onclick="doForgot()">Forgot password?</a></div>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="regForm" style="display:none">
+      <div class="fg"><label>Full Name *</label><input type="text" id="rName" placeholder="Your full name"/></div>
+      <div class="fg"><label>Username * (no spaces)</label><input type="text" id="rUser" placeholder="e.g. john_meta"/></div>
+      <div class="fg"><label>Email Address *</label><input type="email" id="rEmail" placeholder="your@email.com"/></div>
+      <div class="fg"><label>Phone *</label><input type="tel" id="rPhone" placeholder="+8801XXXXXXXXX"/></div>
+      <div class="fg"><label>Sponsor Code (optional)</label><input type="text" id="rSponsor" placeholder="Sponsor username or code"/></div>
+      <div class="fg"><label>Password * (min 6)</label><input type="password" id="rPass" placeholder="Create password"/></div>
+      <div class="fg"><label>Confirm Password *</label><input type="password" id="rPass2" placeholder="Repeat password"/></div>
+      <button class="btn-auth" onclick="doRegister()">✅ Create Free Account</button>
+      <div class="auth-switch mt1">Already registered? <a onclick="switchTab('login')">Sign in</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ APP ═══════ -->
+<div id="appWrap">
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-logo">
+      <div class="logo-icon">💎</div>
+      <div><h2>Life Line Meta</h2><p>MLM + ROI Platform</p></div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section">Main</div>
+      <div class="sb-item active" onclick="sp('overview',this)"><div class="ic">🏠</div>Overview</div>
+      <div class="sb-item" onclick="sp('profile',this)"><div class="ic">👤</div>Profile</div>
+      <div class="sb-item" onclick="sp('wallet',this)"><div class="ic">💳</div>Wallet</div>
+      <div class="sb-section">Network</div>
+      <div class="sb-item" onclick="sp('referral',this)"><div class="ic">🔗</div>Referral</div>
+      <div class="sb-item" onclick="sp('binary',this)"><div class="ic">🌳</div>Binary Tree</div>
+      <div class="sb-item" onclick="sp('unilevel',this)"><div class="ic">🌿</div>Unilevel Tree</div>
+      <div class="sb-item" onclick="sp('team',this)"><div class="ic">👥</div>My Team</div>
+      <div class="sb-section">Income</div>
+      <div class="sb-item" onclick="sp('income',this)"><div class="ic">💰</div>Income Report</div>
+      <div class="sb-item" onclick="sp('roi',this)"><div class="ic">📈</div>ROI Investment</div>
+      <div class="sb-item" onclick="sp('cashback',this)"><div class="ic">🎁</div>Cashback Pool</div>
+      <div class="sb-item" onclick="sp('club',this)"><div class="ic">🏆</div>Club Bonus</div>
+      <div class="sb-section">More</div>
+      <div class="sb-item" onclick="sp('rank',this)"><div class="ic">⭐</div>Rank Progress</div>
+      <div class="sb-item" onclick="sp('voucher',this)"><div class="ic">🎫</div>Gift Voucher</div>
+      <div class="sb-item" onclick="sp('activation',this)"><div class="ic">⚡</div>Activation</div>
+      <div class="sb-item" style="color:var(--red)" onclick="doLogout()"><div class="ic">🚪</div>Logout</div>
+    </nav>
+    <div class="sb-footer">
+      <div class="user-mini">
+        <div class="user-av" id="sideAvatar" style="background:linear-gradient(135deg,var(--accent),var(--accent2))">
+          <span id="sideInit">U</span>
+          <div class="status-dot" id="sideStatusDot" style="background:var(--gold)"></div>
+        </div>
+        <div class="um-info">
+          <strong id="sideName">Loading…</strong>
+          <span id="sideStatus">—</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="flex aic gap1">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="tb-title" id="pgLabel">Overview</span>
+    </div>
+    <div class="tb-right">
+      <button class="tb-btn" onclick="toggleTheme()" id="themeBtn">☀ Light</button>
+      <button class="tb-btn" style="border-color:rgba(239,68,68,.3);color:var(--red)" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <main class="main">
+
+    <!-- ═══ OVERVIEW ═══ -->
+    <div class="page active" id="page-overview">
+      <div class="pg-title">🏠 Overview <span id="greetMsg"></span></div>
+
+      <!-- Activation Banner -->
+      <div id="actBanner" class="mb2" style="display:none">
+        <div style="background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(239,68,68,.06));border:1px solid rgba(245,158,11,.2);border-radius:14px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+          <div>
+            <div class="fw7" style="color:var(--gold)">⚠ Account Not Activated</div>
+            <div class="fs7" style="color:var(--muted);margin-top:2px">Pay $30 to unlock all earning features</div>
+          </div>
+          <button class="btn btn-g btn-sm" onclick="sp('activation',null)">Activate Now →</button>
+        </div>
+      </div>
+
+      <!-- Status Card -->
+      <div class="card mb2">
+        <div class="flex aic jb flex-wrap gap1">
+          <div>
+            <div class="fs7 text-muted mb1">Account Status</div>
+            <div id="mainStatusBadge"></div>
+          </div>
+          <div style="text-align:right">
+            <div class="fs7" style="color:var(--muted)">Joining Date</div>
+            <div class="fs8 fw7" id="ovJoinDate">—</div>
+            <div class="fs7 mt1" style="color:var(--muted)">Sponsored By</div>
+            <div class="fs8 fw7" id="ovSponsor">—</div>
+          </div>
+          <div style="text-align:right">
+            <div class="fs7" style="color:var(--muted)">Member ID</div>
+            <div class="fs8 fw7 text-acc" id="ovMemberID">—</div>
+            <div class="fs7 mt1" style="color:var(--muted)">Username</div>
+            <div class="fs8 fw7" id="ovUsername">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="grid4">
+        <div class="scard sc-c1"><div class="sc-icon">💰</div><div class="sc-lbl">Total Income</div><div class="sc-val" id="ovTotal">$0.00</div><div class="sc-sub">Lifetime earnings</div></div>
+        <div class="scard sc-c2"><div class="sc-icon">💳</div><div class="sc-lbl">Wallet Balance</div><div class="sc-val" id="ovWallet">$0.00</div><div class="sc-sub">Available now</div></div>
+        <div class="scard sc-c3"><div class="sc-icon">👥</div><div class="sc-lbl">Direct Referrals</div><div class="sc-val" id="ovDirects">0</div><div class="sc-sub" id="ovDirectsSub">0 active</div></div>
+        <div class="scard sc-c4"><div class="sc-icon">📈</div><div class="sc-lbl">Total Invested</div><div class="sc-val" id="ovInvested">$0</div><div class="sc-sub">ROI pool</div></div>
+      </div>
+
+      <!-- Income Breakdown + Recent TX -->
+      <div class="two-col">
+        <div class="card">
+          <div class="card-hd">💰 Income Breakdown</div>
+          <table style="width:100%;font-size:.8rem">
+            <tr><td style="color:var(--muted);padding:6px 0">Sponsor Commission ($4)</td><td style="color:var(--green);font-weight:700" id="ibSp">$0.00</td></tr>
+            <tr><td style="color:var(--muted);padding:6px 0">Matching Bonus (5%)</td><td style="color:var(--accent);font-weight:700" id="ibMt">$0.00</td></tr>
+            <tr><td style="color:var(--muted);padding:6px 0">Daily Cashback</td><td style="color:var(--gold);font-weight:700" id="ibCb">$0.00</td></tr>
+            <tr><td style="color:var(--muted);padding:6px 0">Club Bonus (4%)</td><td style="color:var(--pink);font-weight:700" id="ibCl">$0.00</td></tr>
+            <tr><td style="color:var(--muted);padding:6px 0">ROI Returns</td><td style="color:var(--green);font-weight:700" id="ibRo">$0.00</td></tr>
+            <tr><td style="color:var(--muted);padding:6px 0">Generation Bonus</td><td style="color:var(--accent2);font-weight:700" id="ibGe">$0.00</td></tr>
+          </table>
+          <hr class="divider"/>
+          <div class="flex jb fw7 fs8">
+            <span>Daily Cap Used</span>
+            <span id="ovCapUsed">$0 / $1,000</span>
+          </div>
+          <div class="prog-bar mt1"><div class="prog-fill" id="ovCapProg" style="width:0%"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hd">🕐 Recent Transactions</div>
+          <div class="tw"><table>
+            <thead><tr><th>Date</th><th>Type</th><th>Amount</th></tr></thead>
+            <tbody id="ovRecentTx"><tr><td colspan="3" style="text-align:center;color:var(--muted);padding:14px">No transactions</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PROFILE ═══ -->
+    <div class="page" id="page-profile">
+      <div class="pg-title">👤 My Profile</div>
+      <div style="max-width:560px">
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+            <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.7rem;font-weight:900;color:#fff;flex-shrink:0;box-shadow:0 8px 24px rgba(0,212,255,.3)" id="pfAvatar">U</div>
+            <div>
+              <div style="font-size:1rem;font-weight:800" id="pfNameD">—</div>
+              <div style="color:var(--muted);font-size:.77rem" id="pfEmailD">—</div>
+              <div id="pfStatusBadge" style="margin-top:6px"></div>
+            </div>
+          </div>
+          <div class="fg"><label>Full Name</label><input type="text" id="pfName" placeholder="Full name"/></div>
+          <div class="fg"><label>Phone</label><input type="tel" id="pfPhone" placeholder="+880…"/></div>
+          <div class="fg"><label>USDT TRC20 Wallet</label><input type="text" id="pfWallet" placeholder="T… wallet address"/></div>
+          <button class="btn btn-p" onclick="saveProfile()">💾 Save Profile</button>
+        </div>
+        <div class="card">
+          <div class="card-hd">📋 Account Information</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:.8rem">
+            <div style="background:rgba(0,0,0,.2);border-radius:10px;padding:10px"><div style="color:var(--muted);font-size:.65rem;margin-bottom:3px">MEMBER ID</div><div class="fw7 text-acc" id="piUID" style="word-break:break-all;font-size:.71rem">—</div></div>
+            <div style="background:rgba(0,0,0,.2);border-radius:10px;padding:10px"><div style="color:var(--muted);font-size:.65rem;margin-bottom:3px">USERNAME</div><div class="fw7" id="piUser">—</div></div>
+            <div style="background:rgba(0,0,0,.2);border-radius:10px;padding:10px"><div style="color:var(--muted);font-size:.65rem;margin-bottom:3px">SPONSOR</div><div class="fw7" id="piSponsor">—</div></div>
+            <div style="background:rgba(0,0,0,.2);border-radius:10px;padding:10px"><div style="color:var(--muted);font-size:.65rem;margin-bottom:3px">JOINED</div><div class="fw7" id="piJoined">—</div></div>
+            <div style="background:rgba(0,0,0,.2);border-radius:10px;padding:10px"><div style="color:var(--muted);font-size:.65rem;margin-bottom:3px">STATUS</div><div id="piStatus">—</div></div>
+            <div style="background:rgba(0,0,0,.2);border-radius:10px;padding:10px"><div style="color:var(--muted);font-size:.65rem;margin-bottom:3px">RANK</div><div class="fw7" id="piRank">No Rank</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ WALLET ═══ -->
+    <div class="page" id="page-wallet">
+      <div class="pg-title">💳 Wallet</div>
+      <div style="max-width:600px">
+        <div class="wallet-hero">
+          <div class="wh-lbl">Available Balance</div>
+          <div class="wh-bal" id="wBal">$0.00</div>
+          <div class="wh-id" id="wMemberID">ID: —</div>
+          <div class="wh-actions">
+            <div class="wh-btn" onclick="showWdForm()">💸 Withdraw</div>
+            <div class="wh-btn" onclick="sp('roi',null)">📈 Invest</div>
+            <div class="wh-btn" onclick="sp('voucher',null)">🎫 Voucher</div>
+          </div>
+        </div>
+        <div class="grid3">
+          <div class="scard sc-c2"><div class="sc-lbl">Total Earned</div><div class="sc-val" id="wTotalEarned">$0.00</div></div>
+          <div class="scard sc-c4"><div class="sc-lbl">Withdrawn</div><div class="sc-val" id="wTotalWd">$0.00</div></div>
+          <div class="scard sc-c3"><div class="sc-lbl">Pending WD</div><div class="sc-val" id="wPendingWd">$0.00</div></div>
+        </div>
+        <div class="form-card" id="wdFormCard" style="display:none">
+          <div class="card-hd">💸 Withdrawal Request</div>
+          <div class="fg"><label>Amount (USD)</label><input type="number" id="wdAmt" placeholder="Min $10" min="10"/></div>
+          <div class="fg"><label>USDT TRC20 Address</label><input type="text" id="wdAddr" placeholder="Your TRC20 wallet address"/></div>
+          <div style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.15);border-radius:9px;padding:9px;font-size:.73rem;color:var(--muted);margin-bottom:12px">⚠ Processing: 24–48 hours. Min withdrawal: $10.</div>
+          <div class="flex gap1">
+            <button class="btn btn-p" onclick="submitWithdraw()" style="flex:1">📤 Submit</button>
+            <button class="btn btn-o" onclick="hideWdForm()">Cancel</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd">📋 Wallet History</div>
+          <div class="tw"><table>
+            <thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody id="walHistTb"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:14px">No transactions</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ REFERRAL ═══ -->
+    <div class="page" id="page-referral">
+      <div class="pg-title">🔗 Referral Program</div>
+      <div class="two-col" style="max-width:840px">
+        <div class="card">
+          <div class="card-hd">Your Referral Link</div>
+          <div class="ref-box mb1">
+            <input type="text" id="refLinkInput" readonly/>
+            <button class="btn btn-p btn-sm" onclick="copyRef()">📋 Copy</button>
+          </div>
+          <div class="fs7" style="color:var(--muted)">Earn <strong class="text-gr">$4</strong> for every activated referral</div>
+          <div class="flex gap1 mt2" style="flex-wrap:wrap">
+            <button class="btn btn-o btn-sm" onclick="shareWA()">📲 WhatsApp</button>
+            <button class="btn btn-o btn-sm" onclick="shareTG()">✈ Telegram</button>
+            <button class="btn btn-o btn-sm" onclick="copyRef()">📋 Copy Link</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd">💎 Commission Structure</div>
+          <table style="font-size:.8rem;width:100%">
+            <tr><td style="color:var(--muted);padding:5px 0">Activation Fee</td><td class="text-acc fw7" id="csActFee">$30</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Sponsor Commission</td><td class="text-gr fw7" id="csSpComm">$4 / referral</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Matching Bonus</td><td class="text-gld fw7" id="csMatch">5%</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Daily Cap</td><td class="text-red fw7" id="csCap">$1,000</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">ROI Sponsor Bonus</td><td style="color:var(--pink);font-weight:700" id="csROI">5% of ROI</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card" style="max-width:840px">
+        <div class="card-hd">Direct Referrals <small id="refCountLbl">0 total</small></div>
+        <div class="tw"><table>
+          <thead><tr><th>Name</th><th>Username</th><th>Status</th><th>Joined</th><th>Investment</th><th>Commission</th></tr></thead>
+          <tbody id="refTb"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">No referrals yet</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ═══ BINARY TREE ═══ -->
+    <div class="page" id="page-binary">
+      <div class="pg-title">🌳 Binary Tree <span>(3D Visual)</span></div>
+      <div class="info-box">🌳 Special Binary Tree — Green border = Active | Multi-color glow = Investor | Yellow = Free member | Dashed = Empty slot</div>
+      <div class="grid3 mb2" style="max-width:600px">
+        <div class="scard sc-c1"><div class="sc-lbl">Left Leg</div><div class="sc-val" id="btLeft">0</div></div>
+        <div class="scard sc-c2"><div class="sc-lbl">Right Leg</div><div class="sc-val" id="btRight">0</div></div>
+        <div class="scard sc-c3"><div class="sc-lbl">Weaker Leg</div><div class="sc-val" id="btWeak">—</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hd">Binary Tree View <small>3 levels shown</small></div>
+        <div class="tree-wrap" id="binaryTreeContainer">
+          <div style="text-align:center;color:var(--muted);padding:40px">Loading tree…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ UNILEVEL TREE ═══ -->
+    <div class="page" id="page-unilevel">
+      <div class="pg-title">🌿 Unilevel Tree</div>
+      <div class="card">
+        <div class="card-hd">Your Downline Network</div>
+        <div id="unilevelTreeContainer" style="padding:10px">
+          <div style="color:var(--muted);font-size:.82rem">Loading…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ TEAM ═══ -->
+    <div class="page" id="page-team">
+      <div class="pg-title">👥 My Team</div>
+      <div class="grid4 mb2">
+        <div class="scard sc-c1"><div class="sc-lbl">Total Team</div><div class="sc-val" id="tmTotal">0</div></div>
+        <div class="scard sc-c2"><div class="sc-lbl">Active Members</div><div class="sc-val" id="tmActive">0</div></div>
+        <div class="scard sc-c3"><div class="sc-lbl">Team Volume</div><div class="sc-val" id="tmVol">$0</div></div>
+        <div class="scard sc-c4"><div class="sc-lbl">Investors</div><div class="sc-val" id="tmInvestors">0</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hd">Generation Bonus Levels</div>
+        <div class="tw"><table>
+          <thead><tr><th>Level</th><th>Bonus %</th><th>From</th></tr></thead>
+          <tbody>
+            <tr><td>Level 1</td><td class="text-gld fw7" id="gb1">20%</td><td>Direct ROI</td></tr>
+            <tr><td>Level 2</td><td class="text-acc fw7" id="gb2">10%</td><td>2nd Generation</td></tr>
+            <tr><td>Level 3</td><td class="text-acc fw7" id="gb3">8%</td><td>3rd Generation</td></tr>
+            <tr><td>Level 4</td><td class="text-gr fw7" id="gb4">6%</td><td>4th Generation</td></tr>
+            <tr><td>Level 5</td><td class="text-gr fw7" id="gb5">4%</td><td>5th Generation</td></tr>
+            <tr><td>Level 6</td><td style="color:var(--muted);font-weight:700" id="gb6">3%</td><td>6th Generation</td></tr>
+            <tr><td>Level 7</td><td style="color:var(--muted);font-weight:700" id="gb7">2%</td><td>7th Generation</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ═══ INCOME ═══ -->
+    <div class="page" id="page-income">
+      <div class="pg-title">💰 Income Report</div>
+      <div class="grid4">
+        <div class="scard sc-c1"><div class="sc-lbl">Today</div><div class="sc-val" id="incToday">$0.00</div></div>
+        <div class="scard sc-c2"><div class="sc-lbl">This Month</div><div class="sc-val" id="incMonth">$0.00</div></div>
+        <div class="scard sc-c3"><div class="sc-lbl">All Time</div><div class="sc-val" id="incAll">$0.00</div></div>
+        <div class="scard sc-c4"><div class="sc-lbl">Withdrawn</div><div class="sc-val" id="incWd">$0.00</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-hd">By Income Type</div>
+          <table style="width:100%;font-size:.8rem">
+            <tr><td style="color:var(--muted);padding:5px 0">Sponsor Commission</td><td class="text-gr fw7" id="itSp">$0.00</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Matching Bonus</td><td class="text-acc fw7" id="itMt">$0.00</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Daily Cashback</td><td class="text-gld fw7" id="itCb">$0.00</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Club Bonus</td><td class="text-pk fw7" id="itCl">$0.00</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">ROI Returns</td><td class="text-gr fw7" id="itRo">$0.00</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Generation Bonus</td><td style="color:var(--accent2);font-weight:700" id="itGe">$0.00</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-hd">Quick Stats</div>
+          <table style="width:100%;font-size:.8rem">
+            <tr><td style="color:var(--muted);padding:5px 0">Total Invested</td><td class="text-acc fw7" id="itInv">$0.00</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Daily Cap Used</td><td id="itCapUsed">$0/$1000</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Cap Remaining</td><td class="text-gld fw7" id="itCapLeft">$1000</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Cashback Limit</td><td id="itCBLimit">$0/$60</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd">Transaction History <small id="txCountLbl"></small></div>
+        <div class="tw"><table>
+          <thead><tr><th>Date & Time</th><th>Type</th><th>Note</th><th>Amount</th><th>Balance</th><th>Status</th></tr></thead>
+          <tbody id="incTxTb"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">No transactions yet</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ═══ ROI INVESTMENT ═══ -->
+    <div class="page" id="page-roi">
+      <div class="pg-title">📈 ROI Investment</div>
+      <div class="info-box">
+        💡 Min $100 | Monthly ROI: <strong id="roiRateShow">13%</strong> (admin-set) |
+        ROI distributed every 30 days | 50% direct → investor | 50% → generation bonus (7 levels) |
+        Capital unlock after 6 months (10% fee) | Sponsor gets 5% of your ROI
+      </div>
+
+      <!-- ROI Timer Info -->
+      <div class="card mb2">
+        <div class="card-hd">⏱ ROI Schedule</div>
+        <div class="grid3">
+          <div style="text-align:center;padding:14px;background:rgba(0,0,0,.2);border-radius:10px">
+            <div style="font-size:1.5rem;font-weight:900;color:var(--accent)" id="roiDay1">–</div>
+            <div class="fs7" style="color:var(--muted)">1 investor → ROI in 2 days</div>
+          </div>
+          <div style="text-align:center;padding:14px;background:rgba(0,0,0,.2);border-radius:10px">
+            <div style="font-size:1.5rem;font-weight:900;color:var(--green)" id="roiDay10">–</div>
+            <div class="fs7" style="color:var(--muted)">10 investors → ROI in 10 days</div>
+          </div>
+          <div style="text-align:center;padding:14px;background:rgba(0,0,0,.2);border-radius:10px">
+            <div style="font-size:1.5rem;font-weight:900;color:var(--gold)" id="roiNextDate">–</div>
+            <div class="fs7" style="color:var(--muted)">Your next ROI date</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="two-col" style="max-width:840px">
+        <div class="form-card">
+          <div class="card-hd">💰 New Investment</div>
+          <div class="fg"><label>Amount (USD)</label><input type="number" id="invAmt" placeholder="Min $100" min="100"/></div>
+          <div class="fg"><label>Payment Method</label>
+            <select id="invMethod"><option>USDT TRC20</option><option>USDT ERC20</option><option>BTC</option></select>
+          </div>
+          <div class="fg"><label>Transaction Hash (TxID)</label><input type="text" id="invTxid" placeholder="Paste your TxID"/></div>
+          <div style="background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:12px;font-size:.77rem">
+            <div class="flex jb mb1"><span style="color:var(--muted)">Monthly ROI</span><span class="text-gr fw7" id="roiRateD">13%</span></div>
+            <div class="flex jb mb1"><span style="color:var(--muted)">Payout Cycle</span><span>Every 30 days</span></div>
+            <div class="flex jb mb1"><span style="color:var(--muted)">Your 50%</span><span class="text-acc">Directly credited</span></div>
+            <div class="flex jb mb1"><span style="color:var(--muted)">50% Generation</span><span>7 upline levels</span></div>
+            <div class="flex jb"><span style="color:var(--muted)">Sponsor ROI Bonus</span><span style="color:var(--pink)">5% of ROI</span></div>
+          </div>
+          <button class="btn btn-p btn-w" onclick="submitInvestment()">📤 Submit Investment →</button>
+        </div>
+        <div class="card">
+          <div class="card-hd">📊 ROI Summary</div>
+          <table style="width:100%;font-size:.8rem">
+            <tr><td style="color:var(--muted);padding:5px 0">Total Invested</td><td class="text-acc fw7" id="roiTotalInv">$0.00</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Total ROI Earned</td><td class="text-gr fw7" id="roiTotalEarned">$0.00</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Active Plans</td><td id="roiActivePlans">0</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Next ROI Date</td><td id="roiNextD">—</td></tr>
+            <tr><td style="color:var(--muted);padding:5px 0">Capital Unlock Fee</td><td class="text-red">10%</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card" style="max-width:840px">
+        <div class="card-hd">📋 My Investments</div>
+        <div class="tw"><table>
+          <thead><tr><th>#</th><th>Amount</th><th>Date</th><th>ROI%</th><th>Earned</th><th>Unlock Date</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="roiPlansTb"><tr><td colspan="8" style="text-align:center;color:var(--muted);padding:16px">No investments yet</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ═══ CASHBACK ═══ -->
+    <div class="page" id="page-cashback">
+      <div class="pg-title">🎁 Daily Cashback Pool</div>
+      <div class="info-box">
+        💡 <strong>3% of total company joining volume</strong> is pooled daily.<br>
+        Distributed equally to all active members by admin.<br>
+        Your cashback limit = <strong>2× activation fee = $60</strong>. Stops after reaching $60.
+      </div>
+      <div class="grid3" style="max-width:640px">
+        <div class="scard sc-c1"><div class="sc-lbl">Cashback Earned</div><div class="sc-val" id="cbEarned">$0.00</div></div>
+        <div class="scard sc-c3"><div class="sc-lbl">Your Limit (2×)</div><div class="sc-val">$60.00</div></div>
+        <div class="scard sc-c2">
+          <div class="sc-lbl">Status</div>
+          <div id="cbStatus" style="margin-top:8px;font-size:.85rem;font-weight:700">Checking…</div>
+          <div class="prog-bar mt1"><div class="prog-fill" id="cbProg" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div class="card" style="max-width:500px">
+        <div class="card-hd">Cashback Progress</div>
+        <div class="flex jb fs8 mb1"><span style="color:var(--muted)">Received so far</span><span id="cbProgress">$0.00 / $60.00</span></div>
+        <div class="prog-bar"><div class="prog-fill" id="cbProgFull" style="width:0%"></div></div>
+        <div class="fs7 mt1" style="color:var(--muted)">Joining ID based 2× cashback — set and distributed by admin</div>
+      </div>
+    </div>
+
+    <!-- ═══ CLUB BONUS ═══ -->
+    <div class="page" id="page-club">
+      <div class="pg-title">🏆 Club Bonus</div>
+      <div class="info-box">
+        🏆 <strong>4% of company joining volume</strong> distributed equally among eligible members.<br>
+        Eligibility: min <strong>10 direct referrals</strong> OR <strong>$50 matching income</strong>.
+      </div>
+      <div class="two-col" style="max-width:700px">
+        <div class="card">
+          <div class="card-hd">Your Eligibility</div>
+          <table style="font-size:.8rem;width:100%">
+            <tr><td style="color:var(--muted);padding:6px 0">Direct Referrals</td><td id="clubDir">0 / 10</td></tr>
+            <tr><td style="color:var(--muted);padding:6px 0">Matching Income</td><td id="clubMatch">$0 / $50</td></tr>
+            <tr><td style="color:var(--muted);padding:6px 0">Eligible?</td><td id="clubElig">—</td></tr>
+            <tr><td style="color:var(--muted);padding:6px 0">Club Bonus Earned</td><td class="text-gld fw7" id="clubEarned">$0.00</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-hd">About Club Bonus</div>
+          <div class="fs8" style="color:var(--muted);line-height:1.8">
+            4% of total company joining volume is shared equally among all eligible members monthly.<br><br>
+            Qualify with: <strong class="text-gr">10 direct referrals</strong> or <strong class="text-gr">$50 matching income</strong>.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ RANK ═══ -->
+    <div class="page" id="page-rank">
+      <div class="pg-title">⭐ Rank Progress <span>(3D Style)</span></div>
+
+      <!-- Current Rank Hero -->
+      <div class="card mb2">
+        <div class="flex aic gap2" style="flex-wrap:wrap">
+          <div style="font-size:3.5rem;filter:drop-shadow(0 8px 16px rgba(0,0,0,.5))" id="curRankIcon">☆</div>
+          <div>
+            <div class="fs7" style="color:var(--muted)">Current Rank</div>
+            <div style="font-size:1.4rem;font-weight:900;color:var(--gold)" id="curRankName">No Rank</div>
+            <div class="fs8 mt1" style="color:var(--muted)" id="rankNextHint"></div>
+          </div>
+          <div style="flex:1;min-width:200px">
+            <div class="flex jb fs8 mb1"><span style="color:var(--muted)">Matching Income</span><span id="rankMatchV">$0</span></div>
+            <div class="prog-bar"><div class="prog-fill" id="rankMatchF" style="width:0%"></div></div>
+            <div class="flex jb fs8 mb1 mt2"><span style="color:var(--muted)">Team Sales</span><span id="rankSalesV">$0</span></div>
+            <div class="prog-bar"><div class="prog-fill" id="rankSalesF" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3D Rank Grid -->
+      <div class="rank-container" id="rankGrid"></div>
+    </div>
+
+    <!-- ═══ GIFT VOUCHER ═══ -->
+    <div class="page" id="page-voucher">
+      <div class="pg-title">🎫 Gift Voucher</div>
+      <div style="max-width:500px">
+        <div class="voucher-card mb2">
+          <div style="font-size:.7rem;color:rgba(245,158,11,.6);text-transform:uppercase;letter-spacing:.15em;margin-bottom:6px">Life Line Meta</div>
+          <div class="fs8" style="color:var(--muted)">Gift Voucher Code</div>
+          <div class="voucher-code" id="voucherCode">——————</div>
+          <div class="voucher-val" id="voucherVal">No voucher available</div>
+        </div>
+        <div class="form-card">
+          <div class="card-hd">🎫 Redeem Voucher</div>
+          <div class="fg"><label>Voucher Code</label><input type="text" id="voucherInput" placeholder="Enter voucher code" style="text-transform:uppercase"/></div>
+          <button class="btn btn-g btn-w" onclick="redeemVoucher()">🎁 Redeem Now</button>
+        </div>
+        <div class="card">
+          <div class="card-hd">Voucher History</div>
+          <div class="tw"><table>
+            <thead><tr><th>Date</th><th>Code</th><th>Value</th><th>Status</th></tr></thead>
+            <tbody id="voucherHistTb"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:14px">No vouchers yet</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ACTIVATION ═══ -->
+    <div class="page" id="page-activation">
+      <div class="pg-title">⚡ Account Activation</div>
+      <div style="max-width:500px">
+        <div class="card" id="activeCard" style="display:none;text-align:center;padding:30px">
+          <div style="font-size:4rem;margin-bottom:10px">✅</div>
+          <div style="font-size:1.1rem;font-weight:800;color:var(--green);margin-bottom:6px">Account is Active!</div>
+          <div class="fs8" style="color:var(--muted)">You have full access to all earning features</div>
+        </div>
+        <div id="actFormCard">
+          <div class="info-box">One-time fee of <strong>$30</strong> unlocks all income features.</div>
+          <div class="form-card">
+            <div class="card-hd">💳 Activation Fee Breakdown</div>
+            <div style="background:rgba(0,0,0,.3);border-radius:10px;padding:14px;margin-bottom:14px">
+              <div class="flex jb fs8 mb1"><span style="color:var(--muted)">Sponsor Commission</span><span class="text-gr fw7" id="actSpComm">$4</span></div>
+              <div class="flex jb fs8 mb1"><span style="color:var(--muted)">Company Fund</span><span style="color:var(--accent2);font-weight:700" id="actCompFund">$5</span></div>
+              <div class="flex jb fs8 mb1"><span style="color:var(--muted)">Platform Operations</span><span style="color:var(--muted)">$21</span></div>
+              <hr class="divider"/>
+              <div class="flex jb fw7"><span>Total</span><span class="text-gld" id="actTotal">$30</span></div>
+            </div>
+            <div class="fg"><label>Payment Method</label>
+              <select id="actMethod"><option>USDT TRC20</option><option>USDT ERC20</option><option>BTC</option><option>bKash</option></select>
+            </div>
+            <div class="fg"><label>Transaction Hash (TxID)</label><input type="text" id="actTxid" placeholder="Paste your TxID here"/></div>
+            <button class="btn btn-g btn-w" onclick="submitActivation()">⚡ Pay $30 & Activate Account</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyA3G2bMOJ_HSDYXJPuM70tVjfbkHlMftr4",
+  authDomain:"livelinemeta.firebaseapp.com",
+  databaseURL:"https://livelinemeta-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"livelinemeta",
+  storageBucket:"livelinemeta.firebasestorage.app",
+  messagingSenderId:"206900805598",
+  appId:"1:206900805598:web:10e6b39100af201b4e674f"
+});
+const auth=firebase.auth(), fsdb=firebase.firestore(), rtdb=firebase.database();
+let CU=null,UD=null,ALLU={},ST={};
+
+const DEFS={activationFee:30,companyFund:5,sponsorCommission:4,cashbackLimit:60,
+  matchingBonus:5,dailyCap:1000,cashbackPercent:3,clubBonusPercent:4,
+  clubMinDirects:10,clubMinMatching:50,roiRate:13,roiMin:12,roiMax:15,
+  roiSponsorBonus:5,lockMonths:6,capitalWdCharge:10,
+  genBonus:{l1:20,l2:10,l3:8,l4:6,l5:4,l6:3,l7:2}};
+
+const RANKS=[
+  {name:'No Rank',icon:'☆',mReq:0,sReq:0},
+  {name:'One Star',icon:'⭐',mReq:50,sReq:100},
+  {name:'Two Star',icon:'⭐⭐',mReq:300,sReq:300},
+  {name:'Three Star',icon:'⭐⭐⭐',mReq:1000,sReq:1000},
+  {name:'Four Star',icon:'🌟',mReq:3000,sReq:10000},
+  {name:'Five Star',icon:'💫',mReq:10000,sReq:100000},
+  {name:'Six Star',icon:'🏆',mReq:30000,sReq:300000},
+  {name:'Seven Star',icon:'👑',mReq:100000,sReq:10000000}
+];
+
+// ── AUTH ──
+auth.onAuthStateChanged(async user=>{
+  if(user){CU=user;showApp();await loadSettings();await loadUserData();setupListeners();}
+  else showAuth();
+});
+
+// ── REGISTER ──
+window.doRegister=async()=>{
+  const name=v('rName'),user=v('rUser').toLowerCase().trim().replace(/\s+/g,''),
+        email=v('rEmail'),phone=v('rPhone'),sponsor=v('rSponsor').trim(),
+        pass=v('rPass'),pass2=v('rPass2');
+  if(!name||!user||!email||!phone)return toast('Fill all required fields','err');
+  if(pass.length<6)return toast('Password min 6 characters','err');
+  if(pass!==pass2)return toast('Passwords do not match','err');
+  try{
+    const uc=await fsdb.collection('users').where('username','==',user).get();
+    if(!uc.empty)return toast('Username already taken','err');
+    const cred=await auth.createUserWithEmailAndPassword(email,pass);
+    const uid=cred.user.uid;
+    await fsdb.collection('users').doc(uid).set({
+      uid,fullName:name,username:user,email,mobile:phone,
+      sponsorId:sponsor||null,myRefCode:user,
+      isActive:false,blocked:false,hasInvestment:false,
+      walletBalance:0,totalInvested:0,totalWithdrawn:0,cashbackReceived:0,teamSales:0,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),signupMethod:'email'
+    });
+    await rtdb.ref(`users/${uid}/income`).set({sponsor:0,matching:0,cashback:0,club:0,roi:0,generation:0});
+    await rtdb.ref(`users/${uid}/walletBalance`).set(0);
+    toast('✅ Account created! Welcome!','ok');
+    switchTab('login');
+    document.getElementById('lEmail').value=email;
+  }catch(e){
+    if(e.code==='auth/email-already-in-use')toast('Email already registered','err');
+    else toast(e.message,'err');
+  }
+};
+
+// ── LOGIN ──
+window.doLogin=async()=>{
+  const email=v('lEmail'),pass=v('lPass');
+  if(!email||!pass)return toast('Enter email and password','err');
+  try{await auth.signInWithEmailAndPassword(email,pass);}
+  catch(e){toast('Wrong email or password','err');}
+};
+
+// ── LOGOUT ──
+window.doLogout=async()=>{await auth.signOut();};
+
+// ── FORGOT ──
+window.doForgot=async()=>{
+  const email=v('lEmail');
+  if(!email)return toast('Enter email first','info');
+  try{await auth.sendPasswordResetEmail(email);toast('✅ Reset email sent!','ok');}
+  catch(e){toast('Could not send reset email','err');}
+};
+
+// ── LOAD SETTINGS ──
+async function loadSettings(){
+  const s=await rtdb.ref('settings').get();
+  ST=s.exists()?{...DEFS,...s.val()}:{...DEFS};
+  updateSettingsUI();
+}
+
+function updateSettingsUI(){
+  const gb=ST.genBonus||DEFS.genBonus;
+  set('roiRateD',(ST.roiRate||13)+'%');
+  set('roiRateShow',(ST.roiRate||13)+'%');
+  set('csActFee','$'+(ST.activationFee||30));
+  set('csSpComm','$'+(ST.sponsorCommission||4)+' / referral');
+  set('csMatch',(ST.matchingBonus||5)+'%');
+  set('csCap','$'+(ST.dailyCap||1000).toLocaleString());
+  set('csROI',(ST.roiSponsorBonus||5)+'% of ROI');
+  set('actSpComm','$'+(ST.sponsorCommission||4));
+  set('actCompFund','$'+(ST.companyFund||5));
+  set('actTotal','$'+(ST.activationFee||30));
+  ['l1','l2','l3','l4','l5','l6','l7'].forEach((k,i)=>set('gb'+(i+1),(gb[k]||0)+'%'));
+}
+
+// ── LOAD USER ──
+async function loadUserData(){
+  if(!CU)return;
+  try{
+    const doc=await fsdb.collection('users').doc(CU.uid).get();
+    if(!doc.exists)return toast('User data not found','err');
+    UD={id:CU.uid,...doc.data()};
+    const allS=await fsdb.collection('users').get();
+    ALLU={};allS.forEach(d=>{ALLU[d.id]={id:d.id,...d.data()};});
+    renderAll();
+  }catch(e){toast('Load error: '+e.message,'err');}
+}
+
+function setupListeners(){
+  if(!CU)return;
+  rtdb.ref(`users/${CU.uid}/income`).on('value',s=>{if(s.exists()&&UD){UD.income=s.val();renderIncomeCards();}});
+  rtdb.ref(`users/${CU.uid}/walletBalance`).on('value',s=>{if(s.exists()&&UD){UD.walletBalance=s.val();renderWalletCards();}});
+  rtdb.ref(`transactions/${CU.uid}`).on('value',s=>{renderTransactions(s.exists()?s.val():{});});
+  rtdb.ref(`investments/${CU.uid}`).on('value',s=>{renderROIPlans(s.exists()?s.val():{});});
+  rtdb.ref('settings').on('value',s=>{if(s.exists()){ST={...DEFS,...s.val()};updateSettingsUI();}});
+  // Vouchers
+  rtdb.ref(`vouchers/${CU.uid}`).on('value',s=>{if(s.exists())renderVouchers(s.val());});
+}
+
+// ── RENDER ALL ──
+function renderAll(){
+  if(!UD)return;
+  const name=UD.fullName||UD.username||'User';
+  const init=(name[0]||'U').toUpperCase();
+  const h=new Date().getHours();
+  const greet=h<12?'Good Morning ☀️':h<17?'Good Afternoon 🌤':h<21?'Good Evening 🌆':'Good Night 🌙';
+
+  // Sidebar
+  set('sideInit',init);set('sideName',name);
+  const statusDot=document.getElementById('sideStatusDot');
+  if(UD.hasInvestment){statusDot.style.background='var(--pink)';set('sideStatus','💎 Investor');}
+  else if(UD.isActive){statusDot.style.background='var(--green)';set('sideStatus','✅ Active');}
+  else{statusDot.style.background='var(--gold)';set('sideStatus','⚠ Inactive');}
+
+  // Overview
+  set('greetMsg',greet+', '+name+'!');
+  set('ovJoinDate',UD.createdAt?(UD.createdAt.toDate?UD.createdAt.toDate().toLocaleDateString():new Date(UD.createdAt).toLocaleDateString()):'—');
+  set('ovSponsor',UD.sponsorId||'None (Root)');
+  set('ovMemberID',UD.username||CU.uid.slice(0,8));
+  set('ovUsername','@'+(UD.username||'—'));
+
+  // Status badge
+  let statusHTML='';
+  if(UD.hasInvestment){
+    statusHTML='<span class="status-badge status-investor"><span class="status-dot-m"></span>💎 Active Investor</span>';
+  }else if(UD.isActive){
+    statusHTML='<span class="status-badge status-active"><span class="status-dot-g"></span>✅ Active Member</span>';
+  }else{
+    statusHTML='<span class="status-badge status-free"><span class="status-dot-y"></span>⚠ Free (Not Activated)</span>';
+  }
+  const msb=document.getElementById('mainStatusBadge');if(msb)msb.innerHTML=statusHTML;
+  const psb=document.getElementById('pfStatusBadge');if(psb)psb.innerHTML=statusHTML;
+
+  // Activation banner + page
+  document.getElementById('actBanner').style.display=UD.isActive?'none':'block';
+  document.getElementById('activeCard').style.display=UD.isActive?'block':'none';
+  document.getElementById('actFormCard').style.display=UD.isActive?'none':'block';
+
+  // Profile
+  set('pfAvatar',init);set('pfNameD',name);set('pfEmailD',UD.email||CU.email||'');
+  document.getElementById('pfName').value=UD.fullName||'';
+  document.getElementById('pfPhone').value=UD.mobile||'';
+  document.getElementById('pfWallet').value=UD.paymentWallet||'';
+  set('piUID',CU.uid);set('piUser',UD.username||'—');set('piSponsor',UD.sponsorId||'None');
+  set('piJoined',UD.createdAt?(UD.createdAt.toDate?UD.createdAt.toDate().toLocaleDateString():new Date(UD.createdAt).toLocaleDateString()):'—');
+  set('piStatus',UD.isActive?'✅ Active':'⚠ Inactive');
+
+  // Referral link
+  const base=window.location.href.split('?')[0];
+  document.getElementById('refLinkInput').value=base+'?ref='+encodeURIComponent(UD.username||CU.uid);
+
+  // Wallet ID
+  set('wMemberID','ID: '+(UD.username||CU.uid.slice(0,8)));
+
+  loadReferrals();
+  renderIncomeCards();
+  renderRanks();
+  renderBinaryTree();
+  renderUnilevelTree();
+}
+
+function renderIncomeCards(){
+  const inc=(UD&&UD.income)||{};
+  const sp=+(inc.sponsor||0),mt=+(inc.matching||0),cb=+(inc.cashback||0),
+        cl=+(inc.club||0),ro=+(inc.roi||0),ge=+(inc.generation||0);
+  const total=sp+mt+cb+cl+ro+ge;
+  const wallet=+(UD&&UD.walletBalance||0);
+  const wd=+(UD&&UD.totalWithdrawn||0);
+  const invested=+(UD&&UD.totalInvested||0);
+  const ts=+(UD&&UD.teamSales||0);
+  const cap=ST.dailyCap||1000;
+
+  // Overview
+  set('ovTotal','$'+total.toFixed(2));
+  set('ovWallet','$'+wallet.toFixed(2));
+  set('ovInvested','$'+invested.toFixed(0));
+  set('ibSp','$'+sp.toFixed(2));set('ibMt','$'+mt.toFixed(2));set('ibCb','$'+cb.toFixed(2));
+  set('ibCl','$'+cl.toFixed(2));set('ibRo','$'+ro.toFixed(2));set('ibGe','$'+ge.toFixed(2));
+  set('ovCapUsed','$'+Math.min(total,cap).toFixed(0)+' / $'+cap.toLocaleString());
+  w('ovCapProg',Math.min((total/cap)*100,100)+'%');
+
+  // Income page
+  set('incAll','$'+total.toFixed(2));set('incWd','$'+wd.toFixed(2));
+  set('itSp','$'+sp.toFixed(2));set('itMt','$'+mt.toFixed(2));set('itCb','$'+cb.toFixed(2));
+  set('itCl','$'+cl.toFixed(2));set('itRo','$'+ro.toFixed(2));set('itGe','$'+ge.toFixed(2));
+  set('itInv','$'+invested.toFixed(2));
+  set('itCapUsed','$'+Math.min(total,cap).toFixed(0)+'/$'+cap);
+  set('itCapLeft','$'+Math.max(0,cap-total).toFixed(2));
+  const cbR=+(UD&&UD.cashbackReceived||0),cbLim=ST.cashbackLimit||60;
+  set('itCBLimit','$'+cbR.toFixed(2)+'/$'+cbLim);
+
+  // Cashback page
+  set('cbEarned','$'+cb.toFixed(2));
+  set('cbProgress','$'+cbR.toFixed(2)+' / $'+cbLim.toFixed(2));
+  w('cbProg',Math.min((cb/cbLim)*100,100)+'%');
+  w('cbProgFull',Math.min((cbR/cbLim)*100,100)+'%');
+  const cbEl=document.getElementById('cbStatus');
+  if(cbR>=cbLim)cbEl.innerHTML='<span style="color:var(--red)">🔒 Limit Reached</span>';
+  else if(UD&&UD.isActive)cbEl.innerHTML='<span class="text-gr">✅ Eligible</span>';
+  else cbEl.innerHTML='<span style="color:var(--muted)">Activate first</span>';
+
+  // Club
+  const dirCount=Object.values(ALLU).filter(u=>u.sponsorId===CU.uid).length;
+  set('clubDir',dirCount+' / '+(ST.clubMinDirects||10));
+  set('clubMatch','$'+mt.toFixed(0)+' / $'+(ST.clubMinMatching||50));
+  set('clubEarned','$'+cl.toFixed(2));
+  const clubOk=dirCount>=(ST.clubMinDirects||10)||mt>=(ST.clubMinMatching||50);
+  const ce=document.getElementById('clubElig');
+  if(ce)ce.innerHTML=clubOk?'<span class="pill pg">✅ Eligible</span>':'<span class="pill py">Not yet</span>';
+
+  // Rank
+  renderRankProgress(mt,ts);
+  set('piRank',getCurrentRank(mt,ts).name);
+}
+
+function renderWalletCards(){
+  const wallet=+(UD&&UD.walletBalance||0);
+  const wd=+(UD&&UD.totalWithdrawn||0);
+  const inc=(UD&&UD.income)||{};
+  const total=Object.values(inc).reduce((s,v)=>s+(+v||0),0);
+  set('wBal','$'+wallet.toFixed(2));
+  set('wTotalEarned','$'+total.toFixed(2));
+  set('wTotalWd','$'+wd.toFixed(2));
+}
+
+// ── REFERRALS ──
+function loadReferrals(){
+  const myRefs=Object.values(ALLU).filter(u=>u.sponsorId===CU.uid);
+  const active=myRefs.filter(u=>u.isActive);
+  const investors=myRefs.filter(u=>u.hasInvestment);
+  set('ovDirects',myRefs.length);set('ovDirectsSub',active.length+' active');
+  set('refCountLbl',myRefs.length+' total');
+  set('tmTotal',myRefs.length);set('tmActive',active.length);
+  set('tmVol','$'+(active.length*(ST.activationFee||30)));
+  set('tmInvestors',investors.length);
+  const rb=document.getElementById('refTb');
+  rb.innerHTML=myRefs.length?myRefs.map(u=>{
+    const isInv=u.hasInvestment,isAct=u.isActive;
+    let badge=isInv?'<span class="pill pm">💎 Investor</span>':isAct?'<span class="pill pg">✅ Active</span>':'<span class="pill py">⚠ Free</span>';
+    return`<tr>
+      <td class="fw7">${u.fullName||'User'}</td>
+      <td style="color:var(--muted)">@${u.username||'—'}</td>
+      <td>${badge}</td>
+      <td>${u.createdAt?(u.createdAt.toDate?u.createdAt.toDate().toLocaleDateString():new Date(u.createdAt).toLocaleDateString()):'—'}</td>
+      <td class="text-acc">${u.totalInvested?'$'+(u.totalInvested).toFixed(0):'—'}</td>
+      <td class="text-gr fw7">${u.isActive?'$'+(ST.sponsorCommission||4).toFixed(2):'$0.00'}</td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">No referrals yet. Share your link!</td></tr>';
+}
+
+// ── BINARY TREE ──
+function renderBinaryTree(){
+  const c=document.getElementById('binaryTreeContainer');
+  if(!UD)return;
+  const lc=UD.leftChild,rc=UD.rightChild;
+  let lCount=0,rCount=0;
+  function count(uid,side){
+    if(!uid||!ALLU[uid])return;
+    if(side==='l')lCount++;else rCount++;
+    const u=ALLU[uid];
+    if(u.leftChild)count(u.leftChild,side);
+    if(u.rightChild)count(u.rightChild,side);
+  }
+  if(lc)count(lc,'l');if(rc)count(rc,'r');
+  set('btLeft',lCount);set('btRight',rCount);
+  set('btWeak',lCount<=rCount?'Left':'Right');
+
+  function nodeBox(uid,label,isYou){
+    if(!uid){
+      return`<div class="t-node">
+        <div class="t-box t-empty"><div class="t-name" style="color:var(--muted)">Empty</div><div class="t-status-icon">—</div></div>
+        ${label?`<div class="fs7 mt1" style="color:var(--muted)">${label}</div>`:''}
+      </div>`;
+    }
+    const u=ALLU[uid]||{};
+    const isInv=u.hasInvestment,isAct=u.isActive;
+    const cls=isYou?'t-you':isInv?'t-investor':isAct?'t-active':'';
+    const si=isInv?'💎':isAct?'✅':'⚠';
+    return`<div class="t-node">
+      <div class="t-box ${cls}" title="${u.fullName||'User'}">
+        ${isYou?'<div style="font-size:.55rem;color:var(--accent);margin-bottom:2px">YOU</div>':''}
+        <div class="t-name">${u.fullName||u.username||'User'}</div>
+        <div class="t-status-icon">${si} ${isInv?'Investor':isAct?'Active':'Free'}</div>
+      </div>
+      ${label?`<div class="fs7 mt1" style="color:var(--muted);text-align:center">${label}</div>`:''}
+    </div>`;
+  }
+
+  function lvl2(uid){
+    const u=uid&&ALLU[uid];
+    const lc2=u?u.leftChild:null,rc2=u?u.rightChild:null;
+    return`<div style="display:flex;gap:16px;position:relative">
+      ${nodeBox(lc2,'L')} ${nodeBox(rc2,'R')}
+    </div>`;
+  }
+
+  c.innerHTML=`<div class="tree-root">
+    ${nodeBox(CU.uid,'',true)}
+    <div class="tree-connector-v"></div>
+    <div style="display:flex;gap:48px">
+      <div class="t-node" style="align-items:center">
+        ${nodeBox(lc,'LEFT')}
+        <div class="tree-connector-v"></div>
+        ${lvl2(lc)}
+      </div>
+      <div class="t-node" style="align-items:center">
+        ${nodeBox(rc,'RIGHT')}
+        <div class="tree-connector-v"></div>
+        ${lvl2(rc)}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── UNILEVEL TREE ──
+function renderUnilevelTree(){
+  const c=document.getElementById('unilevelTreeContainer');
+  if(!UD){c.innerHTML='<div style="color:var(--muted)">Login to view</div>';return;}
+
+  function buildLevel(sponsorUID,depth){
+    if(depth>7)return'';
+    const children=Object.values(ALLU).filter(u=>u.sponsorId===sponsorUID);
+    if(!children.length)return'';
+    return children.map(u=>{
+      const isInv=u.hasInvestment,isAct=u.isActive;
+      const color=isInv?'var(--pink)':isAct?'var(--green)':'var(--gold)';
+      const icon=isInv?'💎':isAct?'✅':'⚠';
+      return`<div class="uni-node">
+        <div class="uni-node-box" style="border-color:${color}20">
+          <span style="color:${color}">${icon}</span>
+          <span class="fw7">${u.fullName||'User'}</span>
+          <span style="color:var(--muted)">@${u.username||'—'}</span>
+          <span class="pill fs7" style="background:${color}15;color:${color};border:none;padding:2px 6px">L${depth}</span>
+        </div>
+        <div class="uni-children">${buildLevel(u.id,depth+1)}</div>
+      </div>`;
+    }).join('');
+  }
+  const html=buildLevel(CU.uid,1);
+  c.innerHTML=html||'<div style="color:var(--muted);font-size:.82rem;padding:10px">No downline yet</div>';
+}
+
+// ── RANK ──
+function getCurrentRank(matching,teamSales){
+  let r=RANKS[0];
+  for(let i=1;i<RANKS.length;i++) if(matching>=RANKS[i].mReq&&teamSales>=RANKS[i].sReq)r=RANKS[i];
+  return r;
+}
+
+function renderRankProgress(matching,teamSales){
+  const cur=getCurrentRank(matching,teamSales);
+  const curIdx=RANKS.findIndex(r=>r.name===cur.name);
+  const next=RANKS[curIdx+1]||null;
+  set('curRankIcon',cur.icon);set('curRankName',cur.name);
+  set('piRank',cur.name);
+  if(next){
+    set('rankNextHint','Next: '+next.name+' — need $'+next.mReq+' matching & $'+next.sReq+' team sales');
+    w('rankMatchF',Math.min((matching/next.mReq)*100,100)+'%');
+    w('rankSalesF',Math.min((teamSales/next.sReq)*100,100)+'%');
+    set('rankMatchV','$'+matching.toLocaleString()+' / $'+next.mReq.toLocaleString());
+    set('rankSalesV','$'+teamSales.toLocaleString()+' / $'+next.sReq.toLocaleString());
+  }else{
+    set('rankNextHint','👑 Highest rank achieved!');
+  }
+}
+
+function renderRanks(){
+  const inc=(UD&&UD.income)||{};
+  const mt=+(inc.matching||0),ts=+(UD&&UD.teamSales||0);
+  const cur=getCurrentRank(mt,ts);
+  const grid=document.getElementById('rankGrid');
+  if(!grid)return;
+  grid.innerHTML=RANKS.slice(1).map(r=>{
+    const achieved=mt>=r.mReq&&ts>=r.sReq;
+    const isCur=r.name===cur.name;
+    return`<div class="rank-3d ${achieved?'achieved':''} ${isCur?'current-rank':''}">
+      ${achieved?'<div class="rank-check">✓</div>':''}
+      <div class="rank-icon-3d">${r.icon}</div>
+      <div class="rank-name-3d">${r.name}</div>
+      <div class="rank-req-3d">
+        Match: $${r.mReq.toLocaleString()}<br>
+        Sales: $${r.sReq.toLocaleString()}
+      </div>
+      ${achieved?'<div class="pill pg" style="margin-top:6px;font-size:.62rem">Achieved ✓</div>':''}
+    </div>`;
+  }).join('');
+}
+
+// ── TRANSACTIONS ──
+function renderTransactions(txObj){
+  const txns=Object.entries(txObj).sort(([,a],[,b])=>b.timestamp-a.timestamp);
+  set('txCountLbl',txns.length+' records');
+  const today=new Date();today.setHours(0,0,0,0);
+  const ms=new Date(today.getFullYear(),today.getMonth(),1);
+  let td=0,tm=0;
+  const rows=txns.map(([id,t])=>{
+    const d=new Date(t.timestamp);
+    if(d>=today)td+=t.amount||0;if(d>=ms)tm+=t.amount||0;
+    const dt=d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    return`<tr>
+      <td style="color:var(--muted);font-size:.71rem">${dt}</td>
+      <td>${t.type||'—'}</td>
+      <td style="color:var(--muted);font-size:.73rem;max-width:120px;overflow:hidden;text-overflow:ellipsis">${t.note||'—'}</td>
+      <td style="font-weight:700;color:${t.amount>0?'var(--green)':'var(--red)'}">
+        ${t.amount>0?'+':''}$${Math.abs(t.amount||0).toFixed(2)}</td>
+      <td style="color:var(--muted)">$${(t.balance||0).toFixed(2)}</td>
+      <td><span class="pill ${t.status==='completed'?'pg':t.status==='pending'?'py':'pb'}">${t.status||'done'}</span></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('incTxTb').innerHTML=rows||'<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">No transactions yet</td></tr>';
+  set('incToday','$'+td.toFixed(2));set('incMonth','$'+tm.toFixed(2));
+  document.getElementById('ovRecentTx').innerHTML=txns.slice(0,5).map(([,t])=>`
+    <tr>
+      <td style="font-size:.72rem;color:var(--muted)">${new Date(t.timestamp).toLocaleDateString()}</td>
+      <td>${t.type||'—'}</td>
+      <td style="font-weight:700;color:${t.amount>0?'var(--green)':'var(--red)'}">
+        ${t.amount>0?'+':''}$${Math.abs(t.amount||0).toFixed(2)}</td>
+    </tr>`).join('')||'<tr><td colspan="3" style="text-align:center;color:var(--muted)">None</td></tr>';
+  // Wallet history
+  document.getElementById('walHistTb').innerHTML=txns.slice(0,30).map(([,t])=>`<tr>
+    <td>${new Date(t.timestamp).toLocaleDateString()}</td>
+    <td>${t.type||'—'}</td>
+    <td style="font-weight:700;color:${t.amount>0?'var(--green)':'var(--red)'}">
+      ${t.amount>0?'+':''}$${Math.abs(t.amount||0).toFixed(2)}</td>
+    <td><span class="pill ${t.status==='completed'?'pg':t.status==='pending'?'py':'pb'}">${t.status||'done'}</span></td>
+  </tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:14px">No transactions</td></tr>';
+}
+
+// ── ROI PLANS ──
+function renderROIPlans(plans){
+  const tb=document.getElementById('roiPlansTb');
+  const entries=Object.entries(plans).sort(([,a],[,b])=>b.createdAt-a.createdAt);
+  let actCnt=0,nextD=null,totalInv=0,totalROI=0;
+
+  // ROI schedule
+  const totalInvestors=Object.values(ALLU).filter(u=>u.hasInvestment).length;
+  const daysToROI=totalInvestors<=1?2:Math.min(30,totalInvestors);
+  set('roiDay1','2 days');
+  set('roiDay10','10 days');
+
+  tb.innerHTML=entries.length?entries.map(([id,p],i)=>{
+    if(p.status==='active'){actCnt++;totalInv+=p.amount||0;totalROI+=p.earnedROI||0;}
+    const lockEnd=new Date(p.createdAt+(ST.lockMonths||6)*30*24*60*60*1000);
+    const locked=Date.now()<lockEnd.getTime();
+    if(!nextD&&p.status==='active')nextD=new Date(p.createdAt+daysToROI*24*60*60*1000);
+    return`<tr>
+      <td style="color:var(--muted)">${i+1}</td>
+      <td class="text-acc fw7">$${p.amount}</td>
+      <td>${new Date(p.createdAt).toLocaleDateString()}</td>
+      <td class="text-gr">${p.roiRate||ST.roiRate||13}%</td>
+      <td class="text-gld">$${(p.earnedROI||0).toFixed(2)}</td>
+      <td>${lockEnd.toLocaleDateString()}</td>
+      <td><span class="pill ${p.status==='active'?'pg':p.status==='pending'?'py':'pr'}">${p.status||'pending'}</span></td>
+      <td>${!locked&&p.status==='active'
+        ?`<button class="btn btn-r btn-sm" onclick="withdrawCapital('${id}')">Withdraw</button>`
+        :`<span style="color:var(--muted);font-size:.7rem">${p.status==='pending'?'Awaiting':'Locked'}</span>`}</td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:16px">No investments yet</td></tr>';
+  set('roiActivePlans',actCnt);
+  set('roiTotalInv','$'+totalInv.toFixed(2));
+  set('roiTotalEarned','$'+totalROI.toFixed(2));
+  set('roiNextD',nextD?nextD.toLocaleDateString():'—');
+  set('roiNextDate',nextD?nextD.toLocaleDateString():'—');
+}
+
+// ── VOUCHERS ──
+function renderVouchers(vs){
+  const arr=Object.entries(vs).sort(([,a],[,b])=>b.createdAt-a.createdAt);
+  if(arr.length){
+    const latest=arr[0][1];
+    set('voucherCode',latest.code||'——————');
+    set('voucherVal',latest.redeemed?'Redeemed':'Value: $'+(latest.value||0));
+  }
+  document.getElementById('voucherHistTb').innerHTML=arr.length?arr.map(([,v])=>`<tr>
+    <td>${new Date(v.createdAt).toLocaleDateString()}</td>
+    <td style="font-family:monospace;font-weight:700;color:var(--gold)">${v.code}</td>
+    <td class="text-gr fw7">$${v.value||0}</td>
+    <td><span class="pill ${v.redeemed?'pg':'pb'}">${v.redeemed?'Redeemed':'Active'}</span></td>
+  </tr>`).join(''):'<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:14px">No vouchers yet</td></tr>';
+}
+
+// ── ACTIONS ──
+window.saveProfile=async()=>{
+  try{
+    const up={fullName:document.getElementById('pfName').value.trim(),mobile:document.getElementById('pfPhone').value.trim(),paymentWallet:document.getElementById('pfWallet').value.trim(),updatedAt:new Date()};
+    await fsdb.collection('users').doc(CU.uid).update(up);
+    Object.assign(UD,up);set('sideName',UD.fullName||'User');
+    toast('✅ Profile saved!','ok');
+  }catch(e){toast('Error: '+e.message,'err');}
+};
+
+window.submitActivation=async()=>{
+  if(UD&&UD.isActive)return toast('Already active!','info');
+  const txid=document.getElementById('actTxid').value.trim();
+  const method=document.getElementById('actMethod').value;
+  if(!txid)return toast('Enter transaction hash','err');
+  try{
+    await rtdb.ref('activationRequests').push({
+      uid:CU.uid,email:CU.email,name:UD?.fullName||'',username:UD?.username||'',
+      txid,method,amount:ST.activationFee||30,status:'pending',createdAt:Date.now()
+    });
+    toast('✅ Submitted! Awaiting admin approval.','ok');
+    document.getElementById('actTxid').value='';
+  }catch(e){toast('Error: '+e.message,'err');}
+};
+
+window.submitInvestment=async()=>{
+  if(!UD?.isActive)return toast('Activate account first!','err');
+  const amt=parseFloat(document.getElementById('invAmt').value);
+  const txid=document.getElementById('invTxid').value.trim();
+  if(!amt||amt<100)return toast('Minimum investment is $100','err');
+  if(!txid)return toast('Enter transaction hash','err');
+  try{
+    await rtdb.ref(`investments/${CU.uid}`).push({
+      amount:amt,method:document.getElementById('invMethod').value,txid,
+      roiRate:ST.roiRate||13,status:'pending',earnedROI:0,createdAt:Date.now()
+    });
+    await rtdb.ref(`users/${CU.uid}/totalInvested`).transaction(v=>(v||0)+amt);
+    toast('✅ Investment submitted! Admin will activate shortly.','ok');
+    document.getElementById('invAmt').value='';
+    document.getElementById('invTxid').value='';
+  }catch(e){toast('Error: '+e.message,'err');}
+};
+
+window.withdrawCapital=async pid=>{
+  if(!confirm(`Withdraw capital? ${ST.capitalWdCharge||10}% fee will be deducted.`))return;
+  await rtdb.ref(`investments/${CU.uid}/${pid}`).update({status:'withdrawal_requested',wdRequestAt:Date.now()});
+  toast('Capital withdrawal requested!','ok');
+};
+
+window.submitWithdraw=async()=>{
+  const amt=parseFloat(document.getElementById('wdAmt').value);
+  const addr=document.getElementById('wdAddr').value.trim();
+  if(!amt||amt<10)return toast('Min withdrawal $10','err');
+  if(!addr)return toast('Enter wallet address','err');
+  const bal=+(UD?.walletBalance||0);
+  if(amt>bal)return toast('Insufficient balance','err');
+  try{
+    const newBal=bal-amt;
+    await rtdb.ref(`withdrawals/${CU.uid}`).push({amount:amt,address:addr,status:'pending',createdAt:Date.now()});
+    await rtdb.ref(`users/${CU.uid}/walletBalance`).set(newBal);
+    await fsdb.collection('users').doc(CU.uid).update({walletBalance:newBal});
+    await rtdb.ref(`transactions/${CU.uid}`).push({
+      type:'Withdrawal Request',amount:-amt,note:'To: '+addr.slice(0,12)+'…',
+      status:'pending',timestamp:Date.now(),balance:newBal
+    });
+    toast('✅ Withdrawal request submitted!','ok');
+    hideWdForm();document.getElementById('wdAmt').value='';document.getElementById('wdAddr').value='';
+  }catch(e){toast('Error: '+e.message,'err');}
+};
+
+window.redeemVoucher=async()=>{
+  const code=document.getElementById('voucherInput').value.trim().toUpperCase();
+  if(!code)return toast('Enter voucher code','err');
+  try{
+    const snap=await rtdb.ref('giftVouchers').orderByChild('code').equalTo(code).get();
+    if(!snap.exists())return toast('Invalid voucher code','err');
+    const entries=Object.entries(snap.val());
+    const [key,v]=entries[0];
+    if(v.redeemed)return toast('Voucher already used','err');
+    if(v.assignedTo&&v.assignedTo!==CU.uid)return toast('This voucher is not for you','err');
+    const newBal=(UD?.walletBalance||0)+(v.value||0);
+    await rtdb.ref(`giftVouchers/${key}`).update({redeemed:true,redeemedBy:CU.uid,redeemedAt:Date.now()});
+    await rtdb.ref(`users/${CU.uid}/walletBalance`).set(newBal);
+    await fsdb.collection('users').doc(CU.uid).update({walletBalance:newBal});
+    await rtdb.ref(`transactions/${CU.uid}`).push({
+      type:'Gift Voucher Redeemed',amount:v.value||0,note:'Code: '+code,
+      status:'completed',timestamp:Date.now(),balance:newBal
+    });
+    // Save to user vouchers
+    await rtdb.ref(`vouchers/${CU.uid}/${key}`).set({...v,redeemed:true});
+    toast('🎉 Voucher redeemed! $'+(v.value||0)+' added!','ok');
+    document.getElementById('voucherInput').value='';
+  }catch(e){toast('Error: '+e.message,'err');}
+};
+
+// ── HELPERS ──
+window.copyRef=()=>{
+  const v2=document.getElementById('refLinkInput').value;
+  navigator.clipboard.writeText(v2).then(()=>toast('✅ Link copied!','ok')).catch(()=>{
+    document.getElementById('refLinkInput').select();document.execCommand('copy');toast('✅ Copied!','ok');
+  });
+};
+window.shareWA=()=>window.open('https://wa.me/?text=Join+Life+Line+Meta:+'+encodeURIComponent(document.getElementById('refLinkInput').value),'_blank');
+window.shareTG=()=>window.open('https://t.me/share/url?url='+encodeURIComponent(document.getElementById('refLinkInput').value)+'&text=Join+Life+Line+Meta','_blank');
+window.showWdForm=()=>document.getElementById('wdFormCard').style.display='block';
+window.hideWdForm=()=>document.getElementById('wdFormCard').style.display='none';
+
+function showApp(){document.getElementById('authWrap').style.display='none';document.getElementById('appWrap').style.display='block';}
+function showAuth(){document.getElementById('authWrap').style.display='flex';document.getElementById('appWrap').style.display='none';}
+const v=id=>(document.getElementById(id)?.value||'');
+function set(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
+function w(id,val){const el=document.getElementById(id);if(el)el.style.width=val;}
+
+function toast(msg,type='info'){
+  const wrap=document.getElementById('toast');
+  const t=document.createElement('div');
+  t.className=`toast-item t-${type==='err'?'err':type==='ok'?'ok':'info'}`;
+  t.textContent=msg;wrap.appendChild(t);
+  setTimeout(()=>t.remove(),3200);
+}
+
+window.sp=(page,el)=>{
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(s=>s.classList.remove('active'));
+  const target=document.getElementById('page-'+page);if(target)target.classList.add('active');
+  if(el)el.classList.add('active');
+  const labels={overview:'Overview',profile:'Profile',wallet:'Wallet',referral:'Referral',binary:'Binary Tree',unilevel:'Unilevel Tree',team:'My Team',income:'Income Report',roi:'ROI Investment',cashback:'Cashback Pool',club:'Club Bonus',rank:'Rank Progress',voucher:'Gift Voucher',activation:'Activation'};
+  set('pgLabel',labels[page]||page);closeSidebar();
+  if(page==='binary')renderBinaryTree();
+  if(page==='unilevel')renderUnilevelTree();
+};
+
+window.toggleSidebar=()=>{document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show');};
+window.closeSidebar=()=>{document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show');};
+let _lt=false;
+window.toggleTheme=()=>{_lt=!_lt;document.body.classList.toggle('light-mode',_lt);set('themeBtn',_lt?'🌙 Dark':'☀ Light');};
+
+// URL ref param
+const rp=new URLSearchParams(location.search).get('ref');
+if(rp)document.getElementById('rSponsor').value=rp;
+</script>
+</body>
+</html>

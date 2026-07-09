@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Beanline Rewards — Wallet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Zilla+Slab:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --roast:#241811; --roast-2:#2f2016; --parchment:#f3ead9; --parchment-2:#eadfc9;
+  --copper:#b9743f; --copper-dark:#8f5726;
+  --green:#4f7a5c; --red:#a8434a;
+  --ink:#2a1d16; --ink-soft:#5c4a3a;
+  --line:rgba(42,29,22,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:
+    radial-gradient(ellipse at top left, #382518 0%, transparent 55%),
+    var(--roast);
+  color:var(--parchment);
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  padding:36px 16px 60px;
+  display:flex; flex-direction:column; align-items:center;
+}
+.top{width:100%;max-width:560px;display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-mark{width:34px;height:34px;border-radius:50%;background:var(--copper);display:flex;align-items:center;justify-content:center;font-size:1rem}
+.brand h1{font-family:'Zilla Slab',serif;font-size:1.15rem;font-weight:700;letter-spacing:.2px}
+.brand p{font-size:.68rem;color:#c9b79f;letter-spacing:.4px;text-transform:uppercase}
+.tabs{display:flex;gap:6px;background:rgba(255,255,255,.06);padding:4px;border-radius:10px}
+.tab{padding:6px 13px;font-size:.75rem;font-weight:600;color:#d8c7ae;background:none;border:none;border-radius:7px;cursor:pointer;transition:.15s;font-family:'Inter',sans-serif}
+.tab.active{background:var(--copper);color:#241811}
+
+/* RECEIPT CARD */
+.receipt{
+  width:100%;max-width:560px;background:var(--parchment);color:var(--ink);
+  border-radius:4px 4px 10px 10px;
+  box-shadow:0 20px 50px rgba(0,0,0,.45);
+  position:relative;
+  padding:26px 28px 0;
+}
+.receipt::before{
+  content:'';position:absolute;top:-8px;left:0;right:0;height:16px;
+  background:
+    radial-gradient(circle at 10px 8px, var(--roast) 7px, transparent 7.5px),
+    var(--parchment);
+  background-size:20px 16px;background-repeat:repeat-x;
+  border-radius:4px 4px 0 0;
+}
+.rec-head{text-align:center;padding-bottom:14px;border-bottom:1px dashed var(--line)}
+.rec-head .kicker{font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:2px;color:var(--ink-soft);text-transform:uppercase}
+.rec-head h2{font-family:'Zilla Slab',serif;font-size:1.4rem;margin:5px 0 2px}
+.rec-head .member{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--ink-soft)}
+
+.bal-row{display:flex;justify-content:space-between;align-items:baseline;padding:18px 0 6px}
+.bal-label{font-size:.72rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1px}
+.bal-value{font-family:'IBM Plex Mono',monospace;font-size:1.9rem;font-weight:700;color:var(--copper-dark)}
+.bal-sub{font-size:.68rem;color:var(--ink-soft);padding-bottom:16px;font-family:'IBM Plex Mono',monospace}
+
+/* FORM SECTIONS */
+.section-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink-soft);margin:18px 0 9px;display:flex;align-items:center;gap:7px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--line)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fg{margin-bottom:10px}
+.fg label{display:block;font-size:.68rem;color:var(--ink-soft);margin-bottom:4px;font-weight:600}
+.fg input,.fg select{
+  width:100%;background:#fff;border:1px solid var(--line);border-radius:7px;
+  padding:9px 11px;color:var(--ink);font-size:.85rem;font-family:'IBM Plex Mono',monospace;outline:none;
+}
+.fg input:focus,.fg select:focus{border-color:var(--copper)}
+.fee-note{font-size:.7rem;color:var(--ink-soft);background:rgba(184,116,63,.1);border:1px solid rgba(184,116,63,.25);border-radius:7px;padding:8px 10px;margin-bottom:10px;font-family:'IBM Plex Mono',monospace}
+.btn{width:100%;padding:11px;border-radius:8px;border:none;font-weight:700;font-size:.82rem;cursor:pointer;transition:.15s;font-family:'Inter',sans-serif}
+.btn:hover{opacity:.88}
+.btn-copper{background:var(--copper);color:#241811}
+.btn-outline{background:none;border:1px solid var(--ink);color:var(--ink)}
+.btn-green{background:var(--green);color:#fff}
+.btn-red{background:var(--red);color:#fff}
+.msg{font-size:.72rem;padding:8px 10px;border-radius:7px;margin-bottom:10px;font-family:'IBM Plex Mono',monospace}
+.msg-ok{background:rgba(79,122,92,.12);color:var(--green);border:1px solid rgba(79,122,92,.3)}
+.msg-err{background:rgba(168,67,74,.12);color:var(--red);border:1px solid rgba(168,67,74,.3)}
+
+/* TEAR LINE */
+.tear{position:relative;margin:22px -28px 0;height:0}
+.tear-line{border-top:2px dashed var(--line)}
+.tear-label{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--parchment);padding:0 10px;font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--ink-soft);letter-spacing:1.5px;text-transform:uppercase}
+
+/* LEDGER */
+.ledger-wrap{padding:22px 0 24px}
+.ledger-title{font-family:'Zilla Slab',serif;font-size:1rem;font-weight:700;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;font-size:.74rem}
+th{text-align:left;color:var(--ink-soft);font-weight:600;padding:6px 4px;border-bottom:1px solid var(--line);font-size:.62rem;text-transform:uppercase;letter-spacing:.5px}
+td{padding:8px 4px;border-bottom:1px dotted var(--line);vertical-align:middle}
+.amt-pos{color:var(--green);font-weight:700}
+.amt-neg{color:var(--red);font-weight:700}
+.pill{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.62rem;font-weight:700}
+.p-done{background:rgba(79,122,92,.15);color:var(--green)}
+.p-pending{background:rgba(184,116,63,.18);color:var(--copper-dark)}
+.p-rejected{background:rgba(168,67,74,.15);color:var(--red)}
+.empty{text-align:center;color:var(--ink-soft);padding:20px 0;font-size:.75rem}
+
+/* ADMIN PANEL */
+.admin-card{width:100%;max-width:560px;background:var(--parchment);color:var(--ink);border-radius:10px;padding:22px 24px;box-shadow:0 20px 50px rgba(0,0,0,.45)}
+.admin-card h2{font-family:'Zilla Slab',serif;font-size:1.15rem;margin-bottom:3px}
+.admin-card .sub{font-size:.72rem;color:var(--ink-soft);margin-bottom:16px}
+.req-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px dotted var(--line)}
+.req-row:last-child{border-bottom:none}
+.req-info{font-family:'IBM Plex Mono',monospace;font-size:.76rem}
+.req-info .amt{font-weight:700;color:var(--copper-dark)}
+.req-actions{display:flex;gap:6px}
+.req-actions button{padding:5px 11px;font-size:.68rem;border-radius:6px;border:none;font-weight:700;cursor:pointer}
+
+.foot-note{max-width:560px;text-align:center;font-size:.68rem;color:#a8927a;margin-top:22px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">
+    <div class="brand-mark">☕</div>
+    <div><h1>Beanline Rewards</h1><p>Practice wallet — not real money</p></div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" id="tabMember" onclick="setView('member')">Member</button>
+    <button class="tab" id="tabAdmin" onclick="setView('admin')">Admin</button>
+  </div>
+</div>
+
+<!-- MEMBER VIEW -->
+<div id="viewMember">
+  <div class="receipt">
+    <div class="rec-head">
+      <div class="kicker">Loyalty Wallet</div>
+      <h2>Maya R.</h2>
+      <div class="member">Member #BL-00214</div>
+    </div>
+
+    <div class="bal-row">
+      <div>
+        <div class="bal-label">Available balance</div>
+        <div class="bal-value" id="balDisplay">฿0.00</div>
+      </div>
+      <div style="text-align:right">
+        <div class="bal-label">Lifetime earned</div>
+        <div class="bal-sub" id="lifetimeDisplay">฿0.00</div>
+      </div>
+    </div>
+
+    <div id="memberMsg"></div>
+
+    <div class="section-title">Send points</div>
+    <div class="row2">
+      <div class="fg"><label>To member</label>
+        <select id="sendTo">
+          <option value="Jordan T.">Jordan T. — #BL-00097</option>
+          <option value="Priya K.">Priya K. — #BL-00332</option>
+          <option value="Sam O.">Sam O. — #BL-00415</option>
+        </select>
+      </div>
+      <div class="fg"><label>Amount (฿)</label><input type="number" id="sendAmt" placeholder="e.g. 20"/></div>
+    </div>
+    <div class="fee-note" id="sendFeeNote">Transfer fee: 5% · deducted from sender, recipient receives full amount</div>
+    <button class="btn btn-copper" onclick="doTransfer()" style="margin-bottom:16px">Send points →</button>
+
+    <div class="section-title">Request withdrawal</div>
+    <div class="row2">
+      <div class="fg"><label>Amount (฿)</label><input type="number" id="wdAmt" placeholder="Min ฿10"/></div>
+      <div class="fg"><label>Payout method</label>
+        <select id="wdMethod"><option>Store credit card</option><option>Bank transfer</option><option>Gift card</option></select>
+      </div>
+    </div>
+    <div class="fee-note">Withdrawal fee: 5% · request must be approved by staff before payout</div>
+    <button class="btn btn-outline" onclick="requestWithdraw()" style="margin-bottom:6px">Request withdrawal →</button>
+
+    <div class="tear"><div class="tear-line"></div><div class="tear-label">Ledger</div></div>
+
+    <div class="ledger-wrap">
+      <div class="ledger-title">Transaction history</div>
+      <table>
+        <thead><tr><th>Date</th><th>Type</th><th>Detail</th><th>Amount</th><th>Balance</th><th>Status</th></tr></thead>
+        <tbody id="ledgerBody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="foot-note">All values are demo data held in memory — nothing here is persisted or represents real currency.</div>
+</div>
+
+<!-- ADMIN VIEW -->
+<div id="viewAdmin" style="display:none">
+  <div class="admin-card">
+    <h2>Withdrawal requests</h2>
+    <div class="sub">Approve or reject pending payout requests from members.</div>
+    <div id="adminList"></div>
+  </div>
+  <div class="foot-note">Approving deducts the requested amount (plus fee, already reserved) from the member's wallet and marks the ledger entry complete. Rejecting refunds the reserved amount back to their balance.</div>
+</div>
+
+<script>
+// ---- In-memory demo state ----
+const TRANSFER_FEE_PCT = 5;
+const WITHDRAW_FEE_PCT = 5;
+
+let wallet = {
+  balance: 84.50,
+  lifetime: 212.00
+};
+
+let ledger = []; // {id, date, type, detail, amount, balance, status}
+let withdrawalRequests = []; // {id, amount, fee, method, status, date}
+let idCounter = 1;
+
+function seed(){
+  addLedgerEntry('Earned','Purchase reward — Order #4021', 12.00, 'done');
+  addLedgerEntry('Earned','Purchase reward — Order #4055', 8.50, 'done');
+  addLedgerEntry('Transfer sent','To Jordan T. (incl. 5% fee)', -21.00, 'done');
+  addLedgerEntry('Earned','Referral bonus — Priya K. joined', 15.00, 'done');
+}
+
+function addLedgerEntry(type, detail, amount, status){
+  wallet.balance = +(wallet.balance + amount).toFixed(2);
+  if(amount > 0) wallet.lifetime = +(wallet.lifetime + amount).toFixed(2);
+  ledger.unshift({
+    id: idCounter++,
+    date: new Date().toLocaleDateString('en-US',{month:'short',day:'2-digit'}),
+    type, detail, amount, balance: wallet.balance, status
+  });
+}
+
+function renderWallet(){
+  document.getElementById('balDisplay').textContent = '฿' + wallet.balance.toFixed(2);
+  document.getElementById('lifetimeDisplay').textContent = '฿' + wallet.lifetime.toFixed(2);
+}
+
+function renderLedger(){
+  const tb = document.getElementById('ledgerBody');
+  if(!ledger.length){
+    tb.innerHTML = '<tr><td colspan="6" class="empty">No transactions yet</td></tr>';
+    return;
+  }
+  tb.innerHTML = ledger.map(e => `
+    <tr>
+      <td>${e.date}</td>
+      <td>${e.type}</td>
+      <td style="color:var(--ink-soft)">${e.detail}</td>
+      <td class="${e.amount >= 0 ? 'amt-pos' : 'amt-neg'}">${e.amount >= 0 ? '+' : ''}฿${Math.abs(e.amount).toFixed(2)}</td>
+      <td>฿${e.balance.toFixed(2)}</td>
+      <td><span class="pill ${e.status==='done'?'p-done':e.status==='pending'?'p-pending':'p-rejected'}">${e.status}</span></td>
+    </tr>`).join('');
+}
+
+function showMsg(text, ok){
+  const el = document.getElementById('memberMsg');
+  el.innerHTML = `<div class="msg ${ok?'msg-ok':'msg-err'}">${text}</div>`;
+  setTimeout(()=>{ el.innerHTML=''; }, 3500);
+}
+
+// ---- Transfer with fee (deducted from sender only) ----
+window.doTransfer = () => {
+  const to = document.getElementById('sendTo').value;
+  const amt = parseFloat(document.getElementById('sendAmt').value);
+  if(!amt || amt <= 0){ showMsg('Enter a valid amount to send.', false); return; }
+  const fee = +(amt * TRANSFER_FEE_PCT / 100).toFixed(2);
+  const total = +(amt + fee).toFixed(2);
+  if(total > wallet.balance){ showMsg(`Insufficient balance. Need ฿${total.toFixed(2)} (฿${amt.toFixed(2)} + ฿${fee.toFixed(2)} fee).`, false); return; }
+  addLedgerEntry('Transfer sent', `To ${to} — ฿${amt.toFixed(2)} + ฿${fee.toFixed(2)} fee`, -total, 'done');
+  renderWallet(); renderLedger();
+  showMsg(`Sent ฿${amt.toFixed(2)} to ${to} (฿${fee.toFixed(2)} fee applied).`, true);
+  document.getElementById('sendAmt').value = '';
+};
+
+// ---- Withdrawal request: reserves funds, goes to admin queue ----
+window.requestWithdraw = () => {
+  const amt = parseFloat(document.getElementById('wdAmt').value);
+  const method = document.getElementById('wdMethod').value;
+  if(!amt || amt < 10){ showMsg('Minimum withdrawal is ฿10.', false); return; }
+  const fee = +(amt * WITHDRAW_FEE_PCT / 100).toFixed(2);
+  const total = +(amt + fee).toFixed(2);
+  if(total > wallet.balance){ showMsg(`Insufficient balance. Need ฿${total.toFixed(2)} (฿${amt.toFixed(2)} + ฿${fee.toFixed(2)} fee).`, false); return; }
+
+  // reserve funds immediately (removed from spendable balance while pending)
+  wallet.balance = +(wallet.balance - total).toFixed(2);
+  const entry = {
+    id: idCounter++,
+    date: new Date().toLocaleDateString('en-US',{month:'short',day:'2-digit'}),
+    type: 'Withdrawal', detail: `${method} — reserved incl. ฿${fee.toFixed(2)} fee`,
+    amount: -total, balance: wallet.balance, status: 'pending'
+  };
+  ledger.unshift(entry);
+
+  withdrawalRequests.unshift({
+    id: entry.id, amount: amt, fee, total, method, status: 'pending',
+    date: entry.date, ledgerRef: entry
+  });
+
+  renderWallet(); renderLedger(); renderAdmin();
+  showMsg(`Withdrawal of ฿${amt.toFixed(2)} requested — awaiting staff approval.`, true);
+  document.getElementById('wdAmt').value = '';
+};
+
+// ---- Admin approval workflow ----
+function renderAdmin(){
+  const el = document.getElementById('adminList');
+  const pending = withdrawalRequests.filter(r => r.status === 'pending');
+  if(!pending.length){
+    el.innerHTML = '<div class="empty">No pending requests.</div>';
+    return;
+  }
+  el.innerHTML = pending.map(r => `
+    <div class="req-row">
+      <div class="req-info">
+        <div><span class="amt">฿${r.amount.toFixed(2)}</span> via ${r.method}</div>
+        <div style="color:var(--ink-soft);font-size:.68rem">Fee ฿${r.fee.toFixed(2)} · reserved ฿${r.total.toFixed(2)} · ${r.date}</div>
+      </div>
+      <div class="req-actions">
+        <button class="btn-green" onclick="approveWithdraw(${r.id})">Approve</button>
+        <button class="btn-red" onclick="rejectWithdraw(${r.id})">Reject</button>
+      </div>
+    </div>`).join('');
+}
+
+window.approveWithdraw = (id) => {
+  const r = withdrawalRequests.find(x => x.id === id);
+  if(!r) return;
+  r.status = 'approved';
+  const led = ledger.find(l => l.id === id);
+  if(led) led.status = 'done';
+  renderLedger(); renderAdmin();
+};
+
+window.rejectWithdraw = (id) => {
+  const r = withdrawalRequests.find(x => x.id === id);
+  if(!r) return;
+  r.status = 'rejected';
+  // refund reserved amount back to member balance
+  wallet.balance = +(wallet.balance + r.total).toFixed(2);
+  const led = ledger.find(l => l.id === id);
+  if(led){ led.status = 'rejected'; }
+  addLedgerEntry('Refund', `Withdrawal request #${id} rejected — funds returned`, r.total, 'done');
+  renderWallet(); renderLedger(); renderAdmin();
+};
+
+// ---- View switching ----
+window.setView = (view) => {
+  document.getElementById('viewMember').style.display = view === 'member' ? 'block' : 'none';
+  document.getElementById('viewAdmin').style.display = view === 'admin' ? 'block' : 'none';
+  document.getElementById('tabMember').classList.toggle('active', view === 'member');
+  document.getElementById('tabAdmin').classList.toggle('active', view === 'admin');
+  if(view === 'admin') renderAdmin();
+};
+
+// ---- Init ----
+seed();
+renderWallet();
+renderLedger();
+renderAdmin();
+</script>
+</body>
+</html>
