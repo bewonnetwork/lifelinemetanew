@@ -1,1 +1,1978 @@
-https://claude.ai/public/artifacts/ed671cdf-7fdc-4787-83e6-f3c7db7b2541
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Life Line Meta – Dashboard</title>
+<style>
+:root{
+  --bg:#0b0f1a;--surface:#111827;--card:#1a2235;--border:#1e2d45;
+  --accent:#00c6ff;--accent2:#7c3aed;--gold:#f59e0b;--green:#10b981;
+  --red:#ef4444;--text:#e2e8f0;--muted:#64748b;--radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+button{cursor:pointer;font-family:inherit}
+.sidebar{position:fixed;top:0;left:0;height:100vh;width:245px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;transition:transform .3s}
+.logo-area{padding:18px 18px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px}
+.logo-img{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);flex-shrink:0}
+.logo-text h2{font-size:1rem;font-weight:900;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-text p{font-size:.62rem;color:var(--muted);margin-top:1px}
+nav{flex:1;padding:8px 0;overflow-y:auto}
+nav a{display:flex;align-items:center;gap:10px;padding:10px 18px;font-size:.82rem;color:var(--muted);border-left:3px solid transparent;transition:.2s;cursor:pointer;user-select:none}
+nav a:hover{color:var(--text);background:rgba(0,198,255,.05)}
+nav a.active{color:var(--text);background:rgba(0,198,255,.07);border-left-color:var(--accent)}
+nav a .ic{width:17px;text-align:center;font-size:.9rem}
+.sb-footer{padding:13px 18px;border-top:1px solid var(--border)}
+.user-mini{display:flex;align-items:center;gap:9px}
+.av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.82rem;color:#fff;flex-shrink:0}
+.um-info strong{font-size:.79rem;display:block;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.um-info span{font-size:.66rem;color:var(--muted)}
+.topbar{position:fixed;top:0;left:245px;right:0;height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:99;transition:left .3s}
+.menu-btn{display:none;background:none;border:none;color:var(--text);font-size:1.3rem;padding:4px 8px}
+.pg-label{font-size:.87rem;font-weight:700;color:var(--muted)}
+.tb-right{display:flex;align-items:center;gap:10px}
+.theme-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 11px;font-size:.76rem;cursor:pointer}
+.main{margin-left:245px;padding-top:56px;min-height:100vh;transition:margin-left .3s}
+.page{display:none;padding:20px}
+.page.active{display:block}
+.pg-title{font-size:1.25rem;font-weight:800;margin-bottom:16px}
+.pg-title span{font-size:.8rem;color:var(--muted);font-weight:400;margin-left:6px}
+.banner{border-radius:12px;padding:13px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.banner-warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25)}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:13px;margin-bottom:18px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;top:-20px;right:-20px;width:75px;height:75px;border-radius:50%;opacity:.07}
+.sc.cb::before{background:var(--accent)}.sc.cp::before{background:var(--accent2)}.sc.cg::before{background:var(--gold)}.sc.cgr::before{background:var(--green)}
+.sc-lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.sc-val{font-size:1.6rem;font-weight:800;margin-bottom:2px}
+.cb .sc-val{color:var(--accent)}.cp .sc-val{color:var(--accent2)}.cg .sc-val{color:var(--gold)}.cgr .sc-val{color:var(--green)}
+.sc-sub{font-size:.7rem;color:var(--muted)}
+.sc-ic{position:absolute;bottom:12px;right:12px;font-size:1.4rem;opacity:.2}
+.prog{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:7px}
+.prog-f{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .5s}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+.card-title{font-size:.87rem;font-weight:700;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.card-title small{font-size:.7rem;color:var(--muted);font-weight:400}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:14px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.78rem}
+th{color:var(--muted);font-weight:600;padding:7px 10px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;font-size:.7rem;text-transform:uppercase;letter-spacing:.3px}
+td{padding:9px 10px;border-bottom:1px solid rgba(30,45,69,.4);white-space:nowrap;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.68rem;font-weight:700}
+.pg{background:rgba(16,185,129,.15);color:var(--green)}
+.py{background:rgba(245,158,11,.15);color:var(--gold)}
+.pr{background:rgba(239,68,68,.15);color:var(--red)}
+.pb{background:rgba(0,198,255,.15);color:var(--accent)}
+.pp{background:rgba(124,58,237,.15);color:var(--accent2)}
+.fg{margin-bottom:13px}
+.fg label{display:block;font-size:.73rem;color:var(--muted);margin-bottom:4px;font-weight:600}
+.fg input,.fg select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:9px 12px;color:var(--text);font-size:.85rem;outline:none;transition:.2s}
+.fg input:focus,.fg select:focus{border-color:var(--accent)}
+.btn{padding:8px 16px;border-radius:9px;font-size:.79rem;font-weight:700;border:none;cursor:pointer;transition:.15s}
+.btn:hover{opacity:.85}
+.btn-p{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+.btn-g{background:linear-gradient(90deg,var(--gold),#d97706);color:#000}
+.btn-gr{background:var(--green);color:#fff}
+.btn-o{background:none;border:1px solid var(--border);color:var(--text)}
+.btn-r{background:var(--red);color:#fff}
+.btn-sm{padding:3px 9px;font-size:.7rem}
+.ref-box{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:9px}
+.ref-box input{flex:1;background:none;border:none;color:var(--text);font-size:.78rem;outline:none}
+.info-box{background:rgba(0,198,255,.05);border:1px solid rgba(0,198,255,.15);border-radius:9px;padding:11px 14px;font-size:.77rem;color:var(--accent);margin-bottom:13px;line-height:1.7}
+.tree-container{overflow-x:auto;padding:10px 0;min-height:200px}
+.tree-node{display:flex;flex-direction:column;align-items:center;position:relative}
+.tree-box{background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:8px 12px;text-align:center;min-width:90px;font-size:.73rem;cursor:default;transition:.2s;position:relative}
+.tree-box:hover{border-color:var(--accent);background:rgba(0,198,255,.05)}
+.tree-box.active-node{border-color:var(--green)}
+.tree-box.you-node{border-color:var(--accent);background:rgba(0,198,255,.08)}
+.tree-box.empty-node{border-style:dashed;border-color:var(--muted);opacity:.4}
+.tree-name{font-weight:700;font-size:.75rem;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tree-status{font-size:.62rem;margin-top:1px}
+.rank-stars{font-size:1.5rem;letter-spacing:3px;margin:6px 0 3px}
+.rank-name-d{font-size:.93rem;font-weight:800;color:var(--gold)}
+.rank-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:.74rem}
+.rank-bar-row .rl{width:85px;color:var(--muted)}
+.rank-bar-row .rv{width:85px;text-align:right;color:var(--muted);font-size:.7rem}
+.wal-bal{font-size:2rem;font-weight:800;color:var(--green)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+.overlay.show{display:block}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:.81rem;z-index:9999;opacity:0;transform:translateY(14px);transition:.3s;pointer-events:none;max-width:270px}
+.toast.show{opacity:1;transform:translateY(0)}
+body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1e293b;--muted:#64748b}
+/* WALLET TABS (new) */
+.wal-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.wtab{padding:7px 14px;border-radius:9px;font-size:.78rem;font-weight:700;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:.2s}
+.wtab.active{background:var(--accent);border-color:var(--accent);color:#000}
+.wallet-card{border-radius:14px;padding:18px;position:relative;overflow:hidden;color:#fff;margin-bottom:14px}
+.wallet-card.wc-main{background:linear-gradient(135deg,#00c6ff,#7c3aed)}
+.wallet-card.wc-income{background:linear-gradient(135deg,#10b981,#059669)}
+.wallet-card.wc-p2b{background:linear-gradient(135deg,#f59e0b,#d97706)}
+.wallet-card .wc-lbl{font-size:.72rem;opacity:.85;text-transform:uppercase;letter-spacing:.5px}
+.wallet-card .wc-val{font-size:1.9rem;font-weight:800;margin:4px 0}
+.wallet-card .wc-sub{font-size:.7rem;opacity:.8}
+.copy-id-box{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:.75rem;margin-bottom:8px}
+.copy-id-box .cid-label{color:var(--muted);width:75px;flex-shrink:0}
+.copy-id-box .cid-val{flex:1;font-family:monospace;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .topbar{left:0}
+  .menu-btn{display:block}
+  .two-col{grid-template-columns:1fr}
+  .cards-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:440px){.cards-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="logo-area">
+    <img src="assets/images/logo.jpeg" alt="LLM"
+         class="logo-img"
+         onerror="this.onerror=null;this.src='assets/logo/livelinemeta.png';this.onerror=function(){this.style.display='none'}">
+    <div class="logo-text">
+      <h2>Life Line Meta</h2>
+      <p>MLM + ROI Platform</p>
+    </div>
+  </div>
+  <nav>
+    <a class="active" onclick="showPage('overview',this)"><span class="ic">🏠</span> Overview</a>
+    <a onclick="showPage('profile',this)"><span class="ic">👤</span> Profile</a>
+    <a onclick="showPage('referral',this)"><span class="ic">🔗</span> Referral</a>
+    <a onclick="showPage('tree',this)"><span class="ic">🌳</span> Binary Tree</a>
+    <a onclick="showPage('team',this)"><span class="ic">👥</span> My Team</a>
+    <a onclick="showPage('income',this)"><span class="ic">💰</span> Income Report</a>
+    <a onclick="showPage('roi',this)"><span class="ic">📈</span> ROI Investment</a>
+    <a onclick="showPage('investhist',this)"><span class="ic">📊</span> Investment History</a>
+    <a onclick="showPage('joining',this)"><span class="ic">🧾</span> Joining History</a>
+    <a onclick="showPage('wallet',this)"><span class="ic">💳</span> Wallet</a>
+    <a onclick="showPage('rank',this)"><span class="ic">⭐</span> Rank Progress</a>
+    <a onclick="showPage('cashback',this)"><span class="ic">🎁</span> Cashback Pool</a>
+    <a onclick="showPage('club',this)"><span class="ic">🏆</span> Club Bonus</a>
+    <a onclick="showPage('activation',this)"><span class="ic">✅</span> Activation</a>
+    <a onclick="showPage('fundrequest',this)"><span class="ic">💳</span> Fund Request <span id="frPendingBadge" style="display:none;background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:.62rem;margin-left:auto"></span></a>
+    <a onclick="doLogout()" style="color:var(--red);margin-top:6px"><span class="ic">🚪</span> Logout</a>
+  </nav>
+  <div class="sb-footer">
+    <div class="user-mini">
+      <div class="av" id="avInit">U</div>
+      <div class="um-info">
+        <strong id="sbName">Loading…</strong>
+        <span id="sbStatus">—</span>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:9px">
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+    <span class="pg-label" id="pgLabel">Overview</span>
+  </div>
+  <div class="tb-right">
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️ Light</button>
+    <button class="btn btn-o btn-sm" onclick="doLogout()">Logout</button>
+  </div>
+</div>
+
+<main class="main">
+
+<!-- ===== OVERVIEW ===== -->
+<div class="page active" id="page-overview">
+  <div class="pg-title">Overview <span id="greetMsg"></span></div>
+
+  <div id="actBanner" class="banner banner-warn" style="display:none">
+    <div>
+      <strong style="color:var(--gold)">⚠️ Account Not Activated</strong><br>
+      <small style="color:var(--muted)">Pay $30 to unlock all income features</small>
+    </div>
+    <button class="btn btn-g btn-sm" onclick="showPage('activation',null)">Activate Now →</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Your IDs <small>Copy your ID or your upline's ID</small></div>
+    <div class="copy-id-box">
+      <span class="cid-label">My User ID</span>
+      <span class="cid-val" id="myIdVal">—</span>
+      <button class="btn btn-o btn-sm" onclick="copyText('myIdVal')">📋 Copy</button>
+    </div>
+    <div class="copy-id-box">
+      <span class="cid-label">Upline ID</span>
+      <span class="cid-val" id="uplineIdVal">—</span>
+      <button class="btn btn-o btn-sm" onclick="copyText('uplineIdVal')">📋 Copy</button>
+    </div>
+  </div>
+
+  <div class="cards-grid">
+    <div class="sc cb">
+      <div class="sc-lbl">Total Income</div>
+      <div class="sc-val" id="ovTotal">$0.00</div>
+      <div class="sc-sub">Lifetime earnings</div>
+      <div class="sc-ic">💵</div>
+    </div>
+    <div class="sc cp">
+      <div class="sc-lbl">Main Wallet</div>
+      <div class="sc-val" id="ovWallet">$0.00</div>
+      <div class="sc-sub">Available</div>
+      <div class="sc-ic">💳</div>
+    </div>
+    <div class="sc cg">
+      <div class="sc-lbl">Direct Referrals</div>
+      <div class="sc-val" id="ovDirRef">0</div>
+      <div class="sc-sub" id="ovDirRefSub">0 active</div>
+      <div class="sc-ic">👥</div>
+    </div>
+    <div class="sc cgr">
+      <div class="sc-lbl">Income Wallet</div>
+      <div class="sc-val" id="ovIncomeWallet">$0.00</div>
+      <div class="sc-sub">All commissions</div>
+      <div class="sc-ic">🎯</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Income Breakdown</div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Sponsor Commission</td><td id="ibSponsor">$0.00</td><td><span class="pill pg">Active</span></td></tr>
+            <tr><td>Matching Bonus</td><td id="ibMatch">$0.00</td><td><span class="pill pg">Active</span></td></tr>
+            <tr><td>Daily Cashback</td><td id="ibCashback">$0.00</td><td><span class="pill pb">Pool</span></td></tr>
+            <tr><td>Club Bonus</td><td id="ibClub">$0.00</td><td><span class="pill py">Check</span></td></tr>
+            <tr><td>ROI Returns</td><td id="ibRoi">$0.00</td><td><span class="pill pg">Active</span></td></tr>
+            <tr><td>Generation Bonus</td><td id="ibGen">$0.00</td><td><span class="pill pb">Team</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Recent Transactions</div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Date</th><th>Type</th><th>Amount</th></tr></thead>
+          <tbody id="ovRecentTx">
+            <tr><td colspan="3" style="text-align:center;color:var(--muted);padding:16px">No transactions yet</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PROFILE ===== -->
+<div class="page" id="page-profile">
+  <div class="pg-title">My Profile</div>
+  <div style="max-width:540px">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.7rem;color:#fff;font-weight:800;flex-shrink:0" id="pfAv">U</div>
+        <div>
+          <div style="font-size:1.05rem;font-weight:800" id="pfNameD">—</div>
+          <div style="color:var(--muted);font-size:.78rem" id="pfEmailD">—</div>
+          <div id="pfBadge" style="margin-top:5px"></div>
+        </div>
+      </div>
+      <div class="fg"><label>Full Name</label><input type="text" id="pfName" placeholder="Full name"/></div>
+      <div class="fg"><label>Username</label><input type="text" id="pfUsername" readonly style="opacity:.6"/></div>
+      <div class="fg"><label>Phone</label><input type="text" id="pfPhone" placeholder="+880 …"/></div>
+      <div class="fg"><label>Country</label><input type="text" id="pfCountry" placeholder="Country" readonly style="opacity:.6"/></div>
+      <div class="fg"><label>USDT TRC20 Wallet</label><input type="text" id="pfWallet" placeholder="T… wallet address"/></div>
+      <button class="btn btn-p" onclick="saveProfile()">💾 Save Profile</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Account Info</div>
+      <table style="width:100%;font-size:.8rem">
+        <tr><td style="color:var(--muted);padding:6px 0;width:120px">Member ID</td><td id="infoUID" style="font-family:monospace;font-size:.72rem;word-break:break-all">—</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Username</td><td id="infoUsername">—</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Sponsor</td><td id="infoSponsor">—</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Joined</td><td id="infoJoined">—</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Rank</td><td id="infoRank">No Rank</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Status</td><td id="infoStatus">—</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Signup Method</td><td id="infoMethod">—</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== REFERRAL ===== -->
+<div class="page" id="page-referral">
+  <div class="pg-title">Referral Program</div>
+  <div class="two-col" style="max-width:840px">
+    <div class="card">
+      <div class="card-title">Your Referral Link</div>
+      <div class="ref-box">
+        <input type="text" id="refLinkInput" readonly/>
+        <button class="btn btn-p btn-sm" onclick="copyRef()">Copy</button>
+      </div>
+      <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn btn-o btn-sm" onclick="shareWA()">📲 WhatsApp</button>
+        <button class="btn btn-o btn-sm" onclick="shareTG()">✈️ Telegram</button>
+        <button class="btn btn-o btn-sm" onclick="copyRef()">📋 Copy</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Your IDs</div>
+      <div class="copy-id-box">
+        <span class="cid-label">My ID</span>
+        <span class="cid-val" id="refMyIdVal">—</span>
+        <button class="btn btn-o btn-sm" onclick="copyText('refMyIdVal')">📋</button>
+      </div>
+      <div class="copy-id-box">
+        <span class="cid-label">Upline ID</span>
+        <span class="cid-val" id="refUplineIdVal">—</span>
+        <button class="btn btn-o btn-sm" onclick="copyText('refUplineIdVal')">📋</button>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="max-width:840px">
+    <div class="card-title">Direct Referrals <small id="refCountLbl">0 total</small></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Joined</th><th>Status</th></tr></thead>
+        <tbody id="refTbody">
+          <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">No referrals yet</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BINARY TREE ===== -->
+<div class="page" id="page-tree">
+  <div class="pg-title">Binary Tree</div>
+  <div class="info-box">🌳 Left ও Right leg — green border = active member, dashboard= blank slot</div>
+  <div class="card">
+    <div class="card-title">Tree Summary</div>
+    <div id="treeSummaryCircle" style="display:flex;justify-content:center;padding:14px 0"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Tree View <small>3 levels shown</small></div>
+    <div class="tree-container" id="treeContainer">
+      <div style="text-align:center;color:var(--muted);padding:30px">Loading tree…</div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:0">
+    <div class="card-title">All Downline Members</div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Name</th><th>Username</th><th>Level</th><th>Side</th><th>Status</th><th>Joined</th></tr></thead>
+        <tbody id="downlineTbody">
+          <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TEAM ===== -->
+<div class="page" id="page-team">
+  <div class="pg-title">My Team</div>
+  <div class="cards-grid" style="max-width:840px">
+    <div class="sc cb"><div class="sc-lbl">Total Team</div><div class="sc-val" id="tmTotal">0</div><div class="sc-ic">👥</div></div>
+    <div class="sc cgr"><div class="sc-lbl">Active</div><div class="sc-val" id="tmActive">0</div><div class="sc-ic">✅</div></div>
+    <div class="sc cg"><div class="sc-lbl">Team Volume</div><div class="sc-val" id="tmVol">$0</div><div class="sc-ic">💰</div></div>
+    <div class="sc cp"><div class="sc-lbl">Direct Refs</div><div class="sc-val" id="tmDirRef">0</div><div class="sc-ic">🔗</div></div>
+  </div>
+</div>
+
+<!-- ===== INCOME ===== -->
+<div class="page" id="page-income">
+  <div class="pg-title">Income Report</div>
+  <div class="cards-grid">
+    <div class="sc cb"><div class="sc-lbl">Today</div><div class="sc-val" id="incToday">$0.00</div><div class="sc-ic">📅</div></div>
+    <div class="sc cgr"><div class="sc-lbl">This Month</div><div class="sc-val" id="incMonth">$0.00</div><div class="sc-ic">📆</div></div>
+    <div class="sc cg"><div class="sc-lbl">All Time</div><div class="sc-val" id="incAll">$0.00</div><div class="sc-ic">🏆</div></div>
+    <div class="sc cp"><div class="sc-lbl">Withdrawn</div><div class="sc-val" id="incWd">$0.00</div><div class="sc-ic">💸</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Income by Type</div>
+      <table style="font-size:.8rem;width:100%">
+        <tr><td style="color:var(--muted);padding:6px 0">Sponsor Commission</td><td style="color:var(--green);font-weight:700" id="incTypeSponsor">$0.00</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Matching Bonus</td><td style="color:var(--accent);font-weight:700" id="incTypeMatch">$0.00</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Daily Cashback</td><td style="color:var(--gold);font-weight:700" id="incTypeCB">$0.00</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Club Bonus</td><td style="color:var(--accent2);font-weight:700" id="incTypeClub">$0.00</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">ROI Returns</td><td style="color:var(--green);font-weight:700" id="incTypeROI">$0.00</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Generation Bonus</td><td style="color:var(--accent);font-weight:700" id="incTypeGen">$0.00</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Quick Stats</div>
+      <table style="font-size:.8rem;width:100%">
+        <tr><td style="color:var(--muted);padding:6px 0">Total Invested</td><td style="color:var(--accent);font-weight:700" id="incTotalInv">$0.00</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Transaction History <small id="txCountLbl"></small></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Date & Time</th><th>Type</th><th>Note</th><th>Amount</th><th>Status</th></tr></thead>
+        <tbody id="incTxTable">
+          <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No transactions yet</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ROI ===== -->
+<div class="page" id="page-roi">
+  <div class="pg-title">ROI Investment</div>
+  <div class="info-box">💡 Min $100 | Payout every 30 days | Capital withdrawal after lock period (fee applies) | Payment from P2B Wallet</div>
+  <div class="two-col" style="max-width:840px">
+    <div class="card">
+      <div class="card-title">New Investment <small>Pay from P2B Wallet</small></div>
+      <div class="fg"><label>Amount (USD)</label><input type="number" id="invAmt" placeholder="Min $100" min="100"/></div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:11px;margin-bottom:11px;font-size:.77rem">
+        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">P2B Wallet Balance</span><span style="color:var(--gold);font-weight:700" id="invP2BBal">$0.00</span></div>
+        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Payout Cycle</span><span>Every 30 days</span></div>
+      </div>
+      <button class="btn btn-p" onclick="submitInvestment()" style="width:100%">Invest from P2B Wallet →</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Investment Summary</div>
+      <table style="width:100%;font-size:.8rem">
+        <tr><td style="color:var(--muted);padding:6px 0">Total Invested</td><td style="color:var(--accent);font-weight:700" id="roiTotalInv">$0.00</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Total ROI Earned</td><td style="color:var(--green);font-weight:700" id="roiTotalEarned">$0.00</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Active Plans</td><td id="roiActivePlans">0</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Next Payout</td><td id="roiNextDate">—</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="card" style="max-width:840px">
+    <div class="card-title">My Investment Plans</div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>#</th><th>Amount</th><th>Date</th><th>Earned</th><th>Unlock Date</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody id="roiPlansTb">
+          <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:18px">No investments yet</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== INVESTMENT HISTORY ===== -->
+<div class="page" id="page-investhist">
+  <div class="pg-title">Investment History</div>
+  <div class="info-box">📊 all commission — any new ID / new sales to all explane।</div>
+  <div class="cards-grid" style="max-width:700px">
+    <div class="sc cb"><div class="sc-lbl">Total Investments</div><div class="sc-val" id="ihTotalCount">0</div><div class="sc-ic">📊</div></div>
+    <div class="sc cgr"><div class="sc-lbl">Total Amount</div><div class="sc-val" id="ihTotalAmt">$0</div><div class="sc-ic">💰</div></div>
+    <div class="sc cg"><div class="sc-lbl">Commission Earned</div><div class="sc-val" id="ihTotalComm">$0</div><div class="sc-ic">🎯</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">My Activation & Investment Payments <small id="ownPayCountLbl"></small></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Paid From</th><th>Status</th></tr></thead>
+        <tbody id="ownPayHistTb"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No history yet</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Investment / Commission History</div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Date</th><th>From (New ID)</th><th>Sales Amount</th><th>Commission</th><th>Type</th></tr></thead>
+        <tbody id="investHistTb"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No history yet</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== JOINING HISTORY ===== -->
+<div class="page" id="page-joining">
+  <div class="pg-title">Joining History</div>
+  <div class="card">
+    <div class="card-title">My Downline Joining History <small id="joinCountLbl"></small></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Date</th><th>Name</th><th>Username</th><th>Sponsor ID</th><th>Side</th><th>Status</th></tr></thead>
+        <tbody id="joiningHistTb"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:18px">No joining history yet</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WALLET ===== -->
+<div class="page" id="page-wallet">
+  <div class="pg-title">Wallet</div>
+
+  <div class="two-col" style="max-width:900px">
+    <div class="wallet-card wc-main">
+      <div class="wc-lbl">💳 Main Wallet</div>
+      <div class="wc-val" id="walMainD">$0.00</div>
+      <div class="wc-sub">Withdrawable</div>
+    </div>
+    <div class="wallet-card wc-income">
+      <div class="wc-lbl">🎯 Income Wallet</div>
+      <div class="wc-val" id="walIncomeD">$0.00</div>
+      <div class="wc-sub">All commissions land here</div>
+    </div>
+  </div>
+  <div class="two-col" style="max-width:900px">
+    <div class="wallet-card wc-p2b">
+      <div class="wc-lbl">📦 P2B Wallet</div>
+      <div class="wc-val" id="walP2BD">$0.00</div>
+      <div class="wc-sub">For Activation & Investment</div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title">Quick Stats</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px;text-align:center">
+          <div style="font-size:.65rem;color:var(--muted)">Total Earned</div>
+          <div style="font-size:.95rem;font-weight:800;color:var(--green)" id="wTotalEarned">$0.00</div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px;text-align:center">
+          <div style="font-size:.65rem;color:var(--muted)">Withdrawn</div>
+          <div style="font-size:.95rem;font-weight:800;color:var(--red)" id="wTotalWd">$0.00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="max-width:900px">
+    <div class="card-title">Wallet Transfer</div>
+    <div class="wal-tabs">
+      <button class="wtab active" id="wtab_i2p" onclick="switchWTab('i2p')">Income → P2B (Won)</button>
+      <button class="wtab" id="wtab_m2p" onclick="switchWTab('m2p')">Main → P2B (any User)</button>
+      <button class="wtab" id="wtab_p2m" onclick="switchWTab('p2m')">P2B → Main (won)</button>
+      <button class="wtab" id="wtab_m2m" onclick="switchWTab('m2m')">Main → Main (P2P)</button>
+      <button class="wtab" id="wtab_i2m" onclick="switchWTab('i2m')">Income → Main</button>
+    </div>
+
+    <div id="wform_i2p">
+      <div class="info-box">Income Wallet to won P2B Wallet  — no condiction, any amount, free transfer</div>
+      <div class="fg"><label>Amount (USD)</label><input type="number" id="i2pAmt" placeholder="Any amount" min="0.01"/></div>
+      <button class="btn btn-p" onclick="transferIncomeToP2B()" style="width:100%">Transfer Income → P2B</button>
+    </div>
+
+    <div id="wform_m2p" style="display:none">
+      <div class="info-box">Main Wallet  to any user P2B Wallet  — free, no fee but won to P2B  User ID will blank</div>
+      <div class="fg"><label>Receiver User ID / Username (blank won)</label><input type="text" id="m2pTarget" placeholder="Receiver's User ID / Username — if won keep blank"/></div>
+      <div class="fg"><label>Amount (USD)</label><input type="number" id="m2pAmt" placeholder="Amount" min="0.01"/></div>
+      <button class="btn btn-p" onclick="transferMainToP2B()" style="width:100%">Transfer Main → P2B</button>
+    </div>
+
+    <div id="wform_p2m" style="display:none">
+      <div class="info-box">⚠️P2B Wallet funds cannot be transferred directly to another user's P2B Wallet. First, transfer the balance from your P2B Wallet to your Main Wallet. Then, use the **Main → P2B (Any User)** option to send it to another user's P2B Wallet. This transfer is free of charge.
+      </div>
+      <div class="fg"><label>Amount (USD)</label><input type="number" id="p2mAmt" placeholder="Amount" min="0.01"/></div>
+      <button class="btn btn-p" onclick="transferP2BToMain()" style="width:100%">Transfer P2B → Main (won)</button>
+    </div>
+
+    <div id="wform_m2m" style="display:none">
+      <div class="info-box">Main Wallet to any user এর Main Wallet এ — free transfer</div>
+      <div class="fg"><label>Receiver User ID / Username</label><input type="text" id="m2mTarget" placeholder="User ID or Username"/></div>
+      <div class="fg"><label>Amount (USD)</label><input type="number" id="m2mAmt" placeholder="Amount" min="0.01"/></div>
+      <button class="btn btn-p" onclick="transferMainToMain()" style="width:100%">Send to User (Main → Main)</button>
+    </div>
+
+    <div id="wform_i2m" style="display:none">
+      <div class="info-box" id="i2mChargeInfo">Income Wallet to Main Wallet do service charge</div>
+      <div class="fg"><label>Amount (USD)</label><input type="number" id="i2mAmt" placeholder="Amount" min="0.01" oninput="calcI2MPreview()"/></div>
+      <div id="i2mPreview" style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:11px;margin-bottom:11px;font-size:.78rem;display:none">
+        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Amount</span><span id="i2mPrevAmt"></span></div>
+        <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Service Charge</span><span id="i2mPrevCharge" style="color:var(--red)"></span></div>
+        <div style="display:flex;justify-content:space-between;padding:3px 0;border-top:1px solid var(--border);margin-top:4px"><span style="font-weight:700">You Get</span><span id="i2mPrevNet" style="color:var(--green);font-weight:800"></span></div>
+      </div>
+      <button class="btn btn-p" onclick="transferIncomeToMain()" style="width:100%">Transfer Income → Main</button>
+    </div>
+  </div>
+
+  <div class="card" style="max-width:900px" id="wdFormCard2">
+    <div class="card-title">Withdraw <small id="wdChargeInfo"></small></div>
+    <div class="fg"><label>Amount (USD)</label><input type="number" id="wdAmt" placeholder="Min $10"/></div>
+    <div class="fg"><label>USDT TRC20 Address</label><input type="text" id="wdAddr" placeholder="Your TRC20 wallet address"/></div>
+    <div id="wdPreview" style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:11px;margin-bottom:11px;font-size:.78rem;display:none">
+      <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Amount</span><span id="wdPrevAmt"></span></div>
+      <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--muted)">Withdraw Charge</span><span id="wdPrevCharge" style="color:var(--red)"></span></div>
+      <div style="display:flex;justify-content:space-between;padding:3px 0;border-top:1px solid var(--border);margin-top:4px"><span style="font-weight:700">You Receive</span><span id="wdPrevNet" style="color:var(--green);font-weight:800"></span></div>
+    </div>
+    <button class="btn btn-p" onclick="submitWithdraw()" style="width:100%">Submit Withdraw Request (Main Wallet)</button>
+  </div>
+
+  <div class="card" style="max-width:900px">
+    <div class="card-title">Wallet History</div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+        <tbody id="walHistTb">
+          <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:16px">No transactions</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RANK ===== -->
+<div class="page" id="page-rank">
+  <div class="pg-title">Rank Progress</div>
+  <div class="two-col" style="max-width:840px">
+    <div class="card" style="text-align:center">
+      <div class="card-title" style="justify-content:center">Current Rank</div>
+      <div class="rank-stars" id="rankStarsD">☆</div>
+      <div class="rank-name-d" id="rankNameD">No Rank</div>
+      <div style="font-size:.71rem;color:var(--muted);margin:5px 0 14px" id="rankNextHint"></div>
+      <div class="rank-bar-row">
+        <span class="rl">Matching</span>
+        <div style="flex:1"><div class="prog"><div class="prog-f" id="rankMatchF" style="width:0%"></div></div></div>
+        <span class="rv" id="rankMatchV">0/50</span>
+      </div>
+      <div class="rank-bar-row">
+        <span class="rl">Team Sales</span>
+        <div style="flex:1"><div class="prog"><div class="prog-f" id="rankSalesF" style="width:0%"></div></div></div>
+        <span class="rv" id="rankSalesV">$0/$100</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">All Ranks</div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Rank</th><th>Matching</th><th>Sales</th></tr></thead>
+          <tbody>
+            <tr><td>⭐ One Star</td><td>50</td><td>$100</td></tr>
+            <tr><td>⭐⭐ Two Star</td><td>300</td><td>$300</td></tr>
+            <tr><td>⭐⭐⭐ Three Star</td><td>1,000</td><td>$1K</td></tr>
+            <tr><td>⭐⭐⭐⭐ Four Star</td><td>3,000</td><td>$10K</td></tr>
+            <tr><td>⭐⭐⭐⭐⭐ Five Star</td><td>10,000</td><td>$100K</td></tr>
+            <tr><td>6⭐ Six Star</td><td>30,000</td><td>$300K</td></tr>
+            <tr><td>7⭐ Seven Star</td><td>100,000</td><td>$10M</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CASHBACK ===== -->
+<div class="page" id="page-cashback">
+  <div class="pg-title">Daily Cashback Pool</div>
+  <div class="info-box" id="cbInfoBox">💡 💡Distributed equally from the company joining volume. Once the limit is reached, you can upgrade your package.
+</div>
+  <div class="cards-grid" style="max-width:640px">
+    <div class="sc cb"><div class="sc-lbl">Cashback Earned</div><div class="sc-val" id="cbEarned">$0.00</div><div class="sc-ic">🎁</div></div>
+    <div class="sc cg"><div class="sc-lbl">Current Limit</div><div class="sc-val" id="cbLimitD">$60.00</div><div class="sc-ic">🔒</div></div>
+    <div class="sc cgr">
+      <div class="sc-lbl">Status</div>
+      <div id="cbStatus" style="margin-top:8px;font-size:.83rem;font-weight:700">Checking…</div>
+      <div class="prog" style="margin-top:8px"><div class="prog-f" id="cbProg" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div class="card" id="cbUpgradeCard" style="max-width:640px;display:none">
+    <div class="card-title">🔄 Upgrade Cashback Limit</div>
+    <div style="font-size:.78rem;color:var(--muted);margin-bottom:11px">your cashback limit have finished new limit please upgrade </div>
+    <button class="btn btn-g" onclick="requestCashbackUpgrade()" style="width:100%">🔄 Request Limit Upgrade</button>
+  </div>
+</div>
+
+<!-- ===== CLUB ===== -->
+<div class="page" id="page-club">
+  <div class="pg-title">Club Bonus</div>
+  <div class="info-box">🏆 Company joining volume form all distribute  equally, eligible members </div>
+  <div class="two-col" style="max-width:700px">
+    <div class="card">
+      <div class="card-title">Your Eligibility</div>
+      <table style="font-size:.8rem;width:100%">
+        <tr><td style="color:var(--muted);padding:6px 0">Direct Referrals</td><td id="clubDir">0 / 10</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Matching Income</td><td id="clubMatch">$0 / $50</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Eligible?</td><td id="clubEligBadge">—</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Club Earned</td><td style="color:var(--gold);font-weight:700" id="clubEarned">$0.00</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">About Club Bonus</div>
+      <div style="font-size:.78rem;color:var(--muted);line-height:1.75">The company joining volume is distributed equally among all eligible members on a monthly basis.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ACTIVATION ===== -->
+<div class="page" id="page-activation">
+  <div class="pg-title">Account Activation</div>
+  <div style="max-width:500px">
+    <div class="card" id="activeCard" style="display:none;text-align:center;padding:26px">
+      <div style="font-size:3.2rem;margin-bottom:9px">✅</div>
+      <div style="font-size:1.1rem;font-weight:800;color:var(--green);margin-bottom:5px">Account is Active!</div>
+      <div style="color:var(--muted);font-size:.8rem">You have full access to all features</div>
+    </div>
+    <div class="card" id="actFormCard">
+      <div class="card-title">Activate Account <small>Pay from P2B Wallet</small></div>
+      <div class="info-box">One-time activation fee — pay directly from your P2B Wallet.</div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:13px;margin-bottom:13px">
+        <div style="display:flex;justify-content:space-between;font-size:.78rem;padding:4px 0"><span>Activation Fee</span><span style="color:var(--gold);font-weight:800" id="actFeeD">$30</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:.78rem;padding:4px 0"><span>P2B Wallet Balance</span><span style="color:var(--accent);font-weight:700" id="actP2BBal">$0.00</span></div>
+      </div>
+      <button class="btn btn-g" onclick="submitActivation()" style="width:100%;padding:12px;font-size:.88rem">⚡ Pay from P2B Wallet & Activate</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FUND REQUEST ===== -->
+<div class="page" id="page-fundrequest">
+  <div class="pg-title">Fund Request</div>
+  <div style="max-width:560px">
+
+    <div class="card" id="frPendingBanner" style="display:none;background:rgba(245,158,11,.07);border-color:rgba(245,158,11,.3)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:1.4rem">⏳</span>
+        <div>
+          <div style="font-weight:800;color:var(--gold)">Pending Fund Request</div>
+          <div id="frPendingInfo" style="font-size:.76rem;color:var(--muted);margin-top:2px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔗 Connect Wallet <small>Trust Wallet / MetaMask / TronLink</small></div>
+      <div class="info-box">Wallet connect and send — TxHash This will reduce the hassle of manually copying and pasting. However, the balance will be credited to the P2B Wallet only after it has been approved by the admin.
+(blockchain payment manualy will verify/div>
+      <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:11px">
+        <button class="btn btn-o" id="btnConnectMM" onclick="connectMetaMask()">🦊 Connect MetaMask/Trust (BEP-20)</button>
+        <button class="btn btn-o" id="btnConnectTron" onclick="connectTronLink()">🔴 Connect TronLink (TRC-20)</button>
+      </div>
+      <div id="walConnStatus" style="font-size:.75rem;color:var(--muted);margin-bottom:8px"></div>
+      <div id="walSendBox" style="display:none">
+        <div class="fg"><label>Send Amount (USDT)</label><input type="number" id="walSendAmt" placeholder="Min $30" min="30"/></div>
+        <button class="btn btn-p" onclick="sendUSDTFromWallet()" style="width:100%">💸 Send USDT via Connected Wallet</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💳 Submit Deposit Request (Manual)</div>
+      <div class="info-box">Send USDT to admin wallet below → paste TxHash here → Admin approve then P2B Wallet will credit </div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:13px;margin-bottom:13px">
+        <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px">Admin USDT Wallet — TRC-20 (TRON)</div>
+        <div style="font-size:.82rem;color:var(--accent);word-break:break-all;font-family:monospace;margin-bottom:8px" id="adminWalletAddrTRC">Loading…</div>
+        <button class="btn btn-o btn-sm" onclick="copyAdminWallet('trc')">📋 Copy TRC-20 Address</button>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:13px;margin-bottom:13px">
+        <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px">Admin USDT Wallet — BEP-20 (BSC)</div>
+        <div style="font-size:.82rem;color:var(--accent);word-break:break-all;font-family:monospace;margin-bottom:8px" id="adminWalletAddrBEP">Loading…</div>
+        <button class="btn btn-o btn-sm" onclick="copyAdminWallet('bep')">📋 Copy BEP-20 Address</button>
+      </div>
+      <div class="fg">
+        <label>Deposit Amount (USDT)</label>
+        <input type="number" id="frAmount" placeholder="Min. $30" min="30"/>
+      </div>
+      <div class="fg">
+        <label>Network</label>
+        <select id="frNetwork">
+          <option>TRC-20 (TRON)</option>
+          <option>BEP-20 (BSC)</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Transaction Hash (TxID)</label>
+        <input type="text" id="frTxHash" placeholder="Paste TxID from your wallet…"/>
+      </div>
+      <div class="fg">
+        <label>Note (optional)</label>
+        <input type="text" id="frNote" placeholder="Any note for admin…"/>
+      </div>
+      <button class="btn btn-p" onclick="submitFundRequest()" style="width:100%;padding:12px;font-size:.88rem">📤 Submit Fund Request (credits P2B Wallet)</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Request History</div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Amount</th><th>Network</th><th>Credited</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody id="frHistTb">
+            <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
+<script>
+// ── FIREBASE CONFIG ──────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyA3G2bMOJ_HSDYXJPuM70tVjfbkHlMftr4",
+  authDomain: "livelinemeta.firebaseapp.com",
+  databaseURL: "https://livelinemeta-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "livelinemeta",
+  storageBucket: "livelinemeta.firebasestorage.app",
+  messagingSenderId: "206900805598",
+  appId: "1:206900805598:web:10e6b39100af201b4e674f"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth   = firebase.auth();
+const fsdb   = firebase.firestore();
+const rtdb   = firebase.database();
+
+let CU   = null;
+let UD   = null;
+let ALLU = {};
+let SETTINGS = {};
+
+// ── AUTH GUARD ───────────────────────────────────────
+auth.onAuthStateChanged(async user => {
+  if (!user) { window.location.href = 'login.html'; return; }
+  CU = user;
+  await loadAll();
+});
+
+async function loadAll() {
+  try {
+    const docSnap = await fsdb.collection('users').doc(CU.uid).get();
+    if (!docSnap.exists) { toast('User data not found. Please re-login.'); return; }
+    UD = { id: CU.uid, ...docSnap.data() };
+
+    const allSnap = await fsdb.collection('users').get();
+    allSnap.forEach(d => { ALLU[d.id] = { id: d.id, ...d.data() }; });
+
+    await loadSettings();
+    renderAll();
+    loadRTDBData();
+
+    rtdb.ref('users/' + CU.uid + '/income').on('value', snap => {
+      if (snap.exists() && UD) { UD.income = snap.val(); renderIncomeCards(); }
+    });
+    rtdb.ref('users/' + CU.uid + '/walletBalance').on('value', snap => {
+      if (UD) { UD.walletBalance = snap.exists()?snap.val():0; renderWalletCards(); }
+    });
+    rtdb.ref('users/' + CU.uid + '/incomeWallet').on('value', snap => {
+      if (UD) { UD.incomeWallet = snap.exists()?snap.val():0; renderWalletCards(); }
+    });
+    rtdb.ref('users/' + CU.uid + '/p2bWallet').on('value', snap => {
+      if (UD) { UD.p2bWallet = snap.exists()?snap.val():0; renderWalletCards(); }
+    });
+    rtdb.ref('transactions/' + CU.uid).on('value', snap => {
+      if (snap.exists()) renderTransactions(snap.val());
+      else renderTransactions({});
+    });
+
+  } catch(e) { toast('Error: ' + e.message); }
+}
+
+async function loadSettings() {
+  const snap = await rtdb.ref('settings').get();
+  SETTINGS = snap.exists() ? snap.val() : {};
+}
+
+async function loadRTDBData() {
+  const incSnap = await rtdb.ref('users/' + CU.uid + '/income').get();
+  if (incSnap.exists()) { UD.income = incSnap.val(); renderIncomeCards(); }
+
+  const walSnap = await rtdb.ref('users/' + CU.uid + '/walletBalance').get();
+  UD.walletBalance = walSnap.exists() ? walSnap.val() : 0;
+
+  const incWSnap = await rtdb.ref('users/' + CU.uid + '/incomeWallet').get();
+  UD.incomeWallet = incWSnap.exists() ? incWSnap.val() : 0;
+
+  const p2bSnap = await rtdb.ref('users/' + CU.uid + '/p2bWallet').get();
+  UD.p2bWallet = p2bSnap.exists() ? p2bSnap.val() : 0;
+
+  renderWalletCards();
+
+  const invSnap = await rtdb.ref('investments/' + CU.uid).get();
+  if (invSnap.exists()) { renderROIPlans(invSnap.val()); renderInvestHistory(invSnap.val()); }
+
+  const wdSnap = await rtdb.ref('withdrawals/' + CU.uid).get();
+  if (wdSnap.exists()) renderWalletHistory(wdSnap.val());
+}
+
+// ── RENDER ALL ────────────────────────────────────────
+function renderAll() {
+  const u    = UD;
+  const name = u.fullName || u.username || (CU.email ? CU.email.split('@')[0] : 'User');
+  const init = name[0].toUpperCase();
+
+  document.getElementById('avInit').textContent   = init;
+  document.getElementById('sbName').textContent   = name;
+  document.getElementById('sbStatus').textContent = u.isActive ? '✅ Active' : '⚠️ Inactive';
+
+  const h = new Date().getHours();
+  const g = h<12?'Good Morning':h<17?'Good Afternoon':'Good Evening';
+  document.getElementById('greetMsg').textContent = g + ', ' + name + '!';
+
+  document.getElementById('actBanner').style.display = u.isActive ? 'none' : 'flex';
+
+  document.getElementById('pfAv').textContent         = init;
+  document.getElementById('pfNameD').textContent       = name;
+  document.getElementById('pfEmailD').textContent      = u.email || CU.email || '';
+  document.getElementById('pfName').value              = u.fullName || '';
+  document.getElementById('pfUsername').value          = u.username || '';
+  document.getElementById('pfPhone').value             = u.mobile || '';
+  document.getElementById('pfCountry').value           = u.country || '';
+  document.getElementById('pfWallet').value            = u.paymentWallet || '';
+  document.getElementById('pfBadge').innerHTML         = u.isActive
+    ? '<span class="pill pg">✅ Active</span>'
+    : '<span class="pill py">⚠️ Inactive</span>';
+
+  document.getElementById('infoUID').textContent      = CU.uid;
+  document.getElementById('infoUsername').textContent = u.username || '—';
+  document.getElementById('infoSponsor').textContent  = u.sponsorId || 'None (Root)';
+  document.getElementById('infoJoined').textContent   = u.createdAt
+    ? (u.createdAt.toDate ? u.createdAt.toDate().toLocaleDateString('en-BD') : new Date(u.createdAt).toLocaleDateString())
+    : '—';
+  document.getElementById('infoStatus').textContent   = u.isActive ? '✅ Active' : '⚠️ Inactive';
+  document.getElementById('infoMethod').textContent   = u.signupMethod || 'email';
+
+  const refCode = u.myRefCode || u.username || CU.uid;
+  const refLink = window.location.origin + '/register.html?ref=' + encodeURIComponent(refCode);
+  document.getElementById('refLinkInput').value = refLink;
+
+  // ID copy boxes
+  const myId = u.memberId || CU.uid;
+  const uplineId = u.sponsorId || 'Root (No Upline)';
+  set('myIdVal', myId);
+  set('uplineIdVal', uplineId);
+  set('refMyIdVal', myId);
+  set('refUplineIdVal', uplineId);
+
+  if (u.isActive) {
+    document.getElementById('activeCard').style.display   = 'block';
+    document.getElementById('actFormCard').style.display  = 'none';
+  } else {
+    document.getElementById('activeCard').style.display   = 'none';
+    document.getElementById('actFormCard').style.display  = 'block';
+  }
+  set('actFeeD', '$'+(SETTINGS.activationFee||30));
+
+  renderIncomeCards();
+  loadReferrals();
+  renderBinaryTree();
+  renderWalletCards();
+  applyDynamicChargeLabels();
+}
+
+// ── DYNAMIC CHARGE LABELS (admin controlled) ──────────
+function applyDynamicChargeLabels() {
+  const i2mCharge = parseFloat(SETTINGS.incomeToMainCharge != null ? SETTINGS.incomeToMainCharge : 5);
+  const wdCharge   = parseFloat(SETTINGS.withdrawalFee != null ? SETTINGS.withdrawalFee : 5);
+  const cbLimit    = parseFloat(SETTINGS.cashbackLimit || 60);
+  set('i2mChargeInfo', 'Income Wallet থেকে Main Wallet এ — '+i2mCharge+'% সার্ভিস চার্জ কাটা হবে।');
+  set('wdChargeInfo', '('+wdCharge+'% withdraw charge)');
+  set('cbLimitD', '$'+cbLimit.toFixed(2));
+}
+
+// ── INCOME CARDS ──────────────────────────────────────
+function renderIncomeCards() {
+  const inc     = (UD && UD.income) || {};
+  const sponsor = parseFloat(inc.sponsor    || 0);
+  const match   = parseFloat(inc.matching   || 0);
+  const cb      = parseFloat(inc.cashback   || 0);
+  const club    = parseFloat(inc.club       || 0);
+  const roi     = parseFloat(inc.roi        || 0);
+  const gen     = parseFloat(inc.generation || 0);
+  const total   = sponsor + match + cb + club + roi + gen;
+  const wallet  = parseFloat((UD && UD.walletBalance) || 0);
+  const wd      = parseFloat((UD && UD.totalWithdrawn) || 0);
+  const invested= parseFloat((UD && UD.totalInvested)  || 0);
+  const teamSales = parseFloat((UD && UD.teamSales) || 0);
+
+  set('ovTotal',   '$'+total.toFixed(2));
+  set('ovWallet',  '$'+wallet.toFixed(2));
+  set('ovIncomeWallet', '$'+parseFloat((UD&&UD.incomeWallet)||0).toFixed(2));
+
+  set('ibSponsor',  '$'+sponsor.toFixed(2));
+  set('ibMatch',    '$'+match.toFixed(2));
+  set('ibCashback', '$'+cb.toFixed(2));
+  set('ibClub',     '$'+club.toFixed(2));
+  set('ibRoi',      '$'+roi.toFixed(2));
+  set('ibGen',      '$'+gen.toFixed(2));
+
+  set('incAll',           '$'+total.toFixed(2));
+  set('incWd',            '$'+wd.toFixed(2));
+  set('incTotalInv',      '$'+invested.toFixed(2));
+  set('incTypeSponsor',   '$'+sponsor.toFixed(2));
+  set('incTypeMatch',     '$'+match.toFixed(2));
+  set('incTypeCB',        '$'+cb.toFixed(2));
+  set('incTypeClub',      '$'+club.toFixed(2));
+  set('incTypeROI',       '$'+roi.toFixed(2));
+  set('incTypeGen',       '$'+gen.toFixed(2));
+
+  set('roiTotalInv',    '$'+invested.toFixed(2));
+  set('roiTotalEarned', '$'+roi.toFixed(2));
+
+  const cbLimit = parseFloat(SETTINGS.cashbackLimit || 60);
+  set('cbEarned', '$'+cb.toFixed(2));
+  const cbPct = Math.min((cb/cbLimit)*100,100);
+  setW('cbProg', cbPct+'%');
+  const cbEl = document.getElementById('cbStatus');
+  const cbUpgradeCard = document.getElementById('cbUpgradeCard');
+  if(cb >= cbLimit) {
+    cbEl.innerHTML = '<span style="color:var(--red)">Limit Reached ($'+cbLimit.toFixed(2)+')</span>';
+    if (cbUpgradeCard) cbUpgradeCard.style.display = 'block';
+  } else if(UD && UD.isActive) {
+    cbEl.innerHTML = '<span style="color:var(--green)">✅ Eligible</span>';
+    if (cbUpgradeCard) cbUpgradeCard.style.display = 'none';
+  } else {
+    cbEl.innerHTML = '<span style="color:var(--muted)">Not Activated</span>';
+    if (cbUpgradeCard) cbUpgradeCard.style.display = 'none';
+  }
+
+  const dirCount = Object.values(ALLU).filter(u=>u.sponsorId===CU.uid).length;
+  set('clubDir',   dirCount+' / 10');
+  set('clubMatch', '$'+match.toFixed(0)+' / $50');
+  set('clubEarned','$'+club.toFixed(2));
+  const clubOk = dirCount>=10 || match>=50;
+  document.getElementById('clubEligBadge').innerHTML = clubOk
+    ? '<span class="pill pg">✅ Eligible</span>'
+    : '<span class="pill py">Not yet</span>';
+
+  renderRank(match, teamSales);
+}
+
+// ── WALLET CARDS (Main / Income / P2B) ───────────────
+function renderWalletCards() {
+  const main   = parseFloat((UD&&UD.walletBalance)||0);
+  const income = parseFloat((UD&&UD.incomeWallet)||0);
+  const p2b    = parseFloat((UD&&UD.p2bWallet)||0);
+  set('walMainD',   '$'+main.toFixed(2));
+  set('walIncomeD', '$'+income.toFixed(2));
+  set('walP2BD',    '$'+p2b.toFixed(2));
+  set('ovWallet',   '$'+main.toFixed(2));
+  set('ovIncomeWallet', '$'+income.toFixed(2));
+  set('invP2BBal',  '$'+p2b.toFixed(2));
+  set('actP2BBal',  '$'+p2b.toFixed(2));
+
+  const inc = (UD && UD.income) || {};
+  const total = ['sponsor','matching','cashback','club','roi','generation'].reduce((s,k)=>s+parseFloat(inc[k]||0),0);
+  set('wTotalEarned', '$'+total.toFixed(2));
+  set('wTotalWd', '$'+parseFloat((UD&&UD.totalWithdrawn)||0).toFixed(2));
+}
+
+// ── REFERRALS ────────────────────────────────────────
+function loadReferrals() {
+  const myRefs    = Object.values(ALLU).filter(u => u.sponsorId === CU.uid);
+  const activeRef = myRefs.filter(u => u.isActive);
+
+  set('ovDirRef',    myRefs.length);
+  set('ovDirRefSub', activeRef.length+' active');
+  set('refCountLbl', myRefs.length+' total');
+  set('tmDirRef',    myRefs.length);
+  set('tmTotal',     myRefs.length);
+  set('tmActive',    activeRef.length);
+  set('tmVol',       '$'+(activeRef.length*30));
+
+  const rb = document.getElementById('refTbody');
+  rb.innerHTML = myRefs.length === 0
+    ? '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">No referrals yet. Share your link!</td></tr>'
+    : myRefs.map(u => `<tr>
+        <td style="font-weight:700">${u.fullName||'User'}</td>
+        <td style="color:var(--muted)">@${u.username||'—'}</td>
+        <td style="color:var(--muted)">${u.email||'—'}</td>
+        <td>${u.createdAt ? (u.createdAt.toDate?u.createdAt.toDate().toLocaleDateString():new Date(u.createdAt).toLocaleDateString()) : '—'}</td>
+        <td><span class="pill ${u.isActive?'pg':'py'}">${u.isActive?'Active':'Inactive'}</span></td>
+      </tr>`).join('');
+
+  renderJoiningHistory(myRefs);
+}
+
+// ── JOINING HISTORY ──────────────────────────────────
+function renderJoiningHistory(myRefs) {
+  const tb = document.getElementById('joiningHistTb');
+  if (!tb) return;
+  set('joinCountLbl', myRefs.length+' entries');
+  if (!myRefs.length) { tb.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:18px">No joining history yet</td></tr>'; return; }
+  const sorted = [...myRefs].sort((a,b)=>{
+    const ta = a.createdAt ? (a.createdAt.toDate?a.createdAt.toDate().getTime():new Date(a.createdAt).getTime()) : 0;
+    const tb2 = b.createdAt ? (b.createdAt.toDate?b.createdAt.toDate().getTime():new Date(b.createdAt).getTime()) : 0;
+    return tb2-ta;
+  });
+  tb.innerHTML = sorted.map(u=>{
+    const side = u.id===UD.leftChild?'LEFT':u.id===UD.rightChild?'RIGHT':'Direct';
+    const joined = u.createdAt ? (u.createdAt.toDate?u.createdAt.toDate().toLocaleDateString():new Date(u.createdAt).toLocaleDateString()) : '—';
+    return `<tr>
+      <td style="font-size:.72rem">${joined}</td>
+      <td style="font-weight:700">${u.fullName||'User'}</td>
+      <td style="color:var(--muted)">@${u.username||'—'}</td>
+      <td style="font-family:monospace;font-size:.68rem">${u.sponsorId||'—'}</td>
+      <td><span class="pill ${side==='LEFT'?'pb':side==='RIGHT'?'pp':'py'}">${side}</span></td>
+      <td><span class="pill ${u.isActive?'pg':'py'}">${u.isActive?'Active':'Inactive'}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── INVESTMENT HISTORY (commission from new IDs/sales) ─
+function renderInvestHistory(plans) {
+  const tb = document.getElementById('investHistTb');
+  if (!tb) return;
+  // Gather generation/sponsor commissions that came from downline investment/activation
+  const myRefs = Object.values(ALLU).filter(u => u.sponsorId === CU.uid);
+  rtdb.ref('transactions/'+CU.uid).get().then(snap=>{
+    if (!snap.exists()) {
+      tb.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No history yet</td></tr>';
+      renderOwnPayHistory([]);
+      return;
+    }
+    const allTx = Object.values(snap.val());
+    const txs = allTx.filter(t=>
+      (t.type||'').toLowerCase().includes('generation') ||
+      (t.type||'').toLowerCase().includes('sponsor') ||
+      (t.type||'').toLowerCase().includes('roi referral')
+    ).sort((a,b)=>b.timestamp-a.timestamp);
+    let totalComm=0;
+    tb.innerHTML = txs.length ? txs.map(t=>{
+      totalComm += (t.amount||0);
+      return `<tr>
+        <td style="font-size:.72rem">${new Date(t.timestamp).toLocaleDateString()}</td>
+        <td style="color:var(--muted);font-size:.75rem">${t.note||'—'}</td>
+        <td>—</td>
+        <td style="color:var(--green);font-weight:700">$${(t.amount||0).toFixed(2)}</td>
+        <td><span class="pill pb">${t.type||'—'}</span></td>
+      </tr>`;
+    }).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No history yet</td></tr>';
+    set('ihTotalCount', txs.length);
+    set('ihTotalComm', '$'+totalComm.toFixed(2));
+
+    // Own activation & investment payment history
+    const ownPay = allTx.filter(t=>
+      (t.type||'').toLowerCase().includes('activation payment') ||
+      (t.type||'').toLowerCase().includes('investment payment')
+    ).sort((a,b)=>b.timestamp-a.timestamp);
+    renderOwnPayHistory(ownPay);
+  });
+  const invEntries = Object.values(plans||{});
+  const totalAmt = invEntries.reduce((s,p)=>s+(p.amount||0),0);
+  set('ihTotalAmt', '$'+totalAmt.toFixed(0));
+}
+
+function renderOwnPayHistory(list) {
+  const tb = document.getElementById('ownPayHistTb');
+  if (!tb) return;
+  set('ownPayCountLbl', list.length+' entries');
+  tb.innerHTML = list.length ? list.map(t=>{
+    const isAct = (t.type||'').toLowerCase().includes('activation');
+    return `<tr>
+      <td style="font-size:.72rem">${new Date(t.timestamp).toLocaleDateString()+' '+new Date(t.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td>
+      <td><span class="pill ${isAct?'pg':'pb'}">${isAct?'Activation':'Investment'}</span></td>
+      <td style="font-weight:700;color:var(--red)">$${Math.abs(t.amount||0).toFixed(2)}</td>
+      <td style="color:var(--muted);font-size:.72rem">P2B Wallet</td>
+      <td><span class="pill ${t.status==='completed'?'pg':'py'}">${t.status||'completed'}</span></td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No history yet</td></tr>';
+}
+
+// ── BINARY TREE ──────────────────────────────────────
+function renderBinaryTree() {
+  const container = document.getElementById('treeContainer');
+  const downlineTb = document.getElementById('downlineTbody');
+  if (!UD) return;
+
+  const leftChild  = UD.leftChild;
+  const rightChild = UD.rightChild;
+  let leftCount = 0, rightCount = 0, leftActive=0, rightActive=0;
+
+  const allDownline = [];
+  function bfsCount(uid, side, level) {
+    if (!uid || !ALLU[uid]) return;
+    const u = ALLU[uid];
+    if (side === 'left') { leftCount++; if(u.isActive) leftActive++; }
+    else if (side === 'right') { rightCount++; if(u.isActive) rightActive++; }
+    allDownline.push({ u, side, level });
+    if (u.leftChild)  bfsCount(u.leftChild,  side||'left',  level+1);
+    if (u.rightChild) bfsCount(u.rightChild, side||'right', level+1);
+  }
+  if (leftChild)  bfsCount(leftChild,  'left',  1);
+  if (rightChild) bfsCount(rightChild, 'right', 1);
+
+  const leftCarry  = Math.max(0, leftCount - rightCount);
+  const rightCarry = Math.max(0, rightCount - leftCount);
+  const totalInvested = allDownline.reduce((s,{u})=>s+parseFloat(u.totalInvested||0),0);
+
+  // Circle Summary
+  const circle = document.getElementById('treeSummaryCircle');
+  if (circle) {
+    circle.innerHTML = `
+      <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;justify-content:center">
+        <div style="text-align:center">
+          <div style="font-size:.7rem;color:var(--muted);margin-bottom:4px">LEFT</div>
+          <div style="font-weight:800;color:var(--accent)">${leftCount}</div>
+          <div style="font-size:.65rem;color:var(--green)">${leftActive} active</div>
+        </div>
+        <div style="width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 30% 30%, rgba(0,198,255,.25), rgba(124,58,237,.25));border:3px solid var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(0,198,255,.25)">
+          <div style="font-size:.65rem;color:var(--muted)">TOTAL TEAM</div>
+          <div style="font-size:1.5rem;font-weight:900">${leftCount+rightCount}</div>
+          <div style="font-size:.65rem;color:var(--green)">${leftActive+rightActive} active</div>
+          <div style="font-size:.63rem;color:var(--gold);margin-top:2px">$${totalInvested.toFixed(0)} invested</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:.7rem;color:var(--muted);margin-bottom:4px">RIGHT</div>
+          <div style="font-weight:800;color:var(--accent2)">${rightCount}</div>
+          <div style="font-size:.65rem;color:var(--green)">${rightActive} active</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:20px;justify-content:center;margin-top:14px;font-size:.72rem;color:var(--muted)">
+        <span>Left Carry: <strong style="color:var(--accent)">${leftCarry}</strong></span>
+        <span>Right Carry: <strong style="color:var(--accent2)">${rightCarry}</strong></span>
+      </div>`;
+  }
+
+  function makeNode(uid, label, isYou) {
+    const u = uid && ALLU[uid];
+    if (!uid) {
+      return `<div class="tree-node">
+        <div class="tree-box empty-node">
+          <div class="tree-name" style="color:var(--muted)">Empty</div>
+          <div class="tree-status" style="color:var(--muted)">— slot —</div>
+        </div>
+        ${label ? `<div style="font-size:.64rem;color:var(--muted);margin-top:4px">${label}</div>` : ''}
+      </div>`;
+    }
+    const name   = u ? (u.fullName||u.username||'User') : '?';
+    const active = u ? u.isActive : false;
+    const cls    = isYou ? 'you-node' : (active ? 'active-node' : '');
+    return `<div class="tree-node">
+      <div class="tree-box ${cls}" title="${name}">
+        <div class="tree-name">${isYou ? '👤 '+name : name}</div>
+        <div class="tree-status"><span class="pill ${active?'pg':'py'}" style="font-size:.6rem">${active?'Active':'Inactive'}</span></div>
+      </div>
+      ${label ? `<div style="font-size:.64rem;color:var(--muted);margin-top:4px">${label}</div>` : ''}
+    </div>`;
+  }
+  function lvl2(uid) {
+    const u = uid && ALLU[uid];
+    const lc = u ? u.leftChild  : null;
+    const rc = u ? u.rightChild : null;
+    return `<div style="display:flex;gap:16px;position:relative">
+      <div style="position:absolute;top:0;left:25%;right:25%;height:1px;background:var(--border)"></div>
+      ${makeNode(lc,'L')}${makeNode(rc,'R')}
+    </div>`;
+  }
+
+  container.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;gap:0">
+      ${makeNode(CU.uid,'You',true)}
+      <div style="width:1px;height:20px;background:var(--border)"></div>
+      <div style="position:relative;width:200px;height:1px;background:${(leftChild||rightChild)?'var(--border)':'transparent'}"></div>
+      <div style="display:flex;gap:40px;position:relative">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0">
+          <div style="width:1px;height:0px"></div>
+          ${makeNode(leftChild,'LEFT')}
+          <div style="width:1px;height:16px;background:${leftChild?'var(--border)':'transparent'}"></div>
+          ${lvl2(leftChild)}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0">
+          <div style="width:1px;height:0px"></div>
+          ${makeNode(rightChild,'RIGHT')}
+          <div style="width:1px;height:16px;background:${rightChild?'var(--border)':'transparent'}"></div>
+          ${lvl2(rightChild)}
+        </div>
+      </div>
+    </div>`;
+
+  downlineTb.innerHTML = allDownline.length === 0
+    ? '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">No downline yet</td></tr>'
+    : allDownline.map(({u,side,level}) => `<tr>
+        <td style="font-weight:700">${u.fullName||'User'}</td>
+        <td style="color:var(--muted)">@${u.username||'—'}</td>
+        <td><span class="pill pb">Level ${level}</span></td>
+        <td><span class="pill ${side==='left'?'pb':'pp'}">${side.toUpperCase()}</span></td>
+        <td><span class="pill ${u.isActive?'pg':'py'}">${u.isActive?'Active':'Inactive'}</span></td>
+        <td>${u.createdAt?(u.createdAt.toDate?u.createdAt.toDate().toLocaleDateString():new Date(u.createdAt).toLocaleDateString()):'—'}</td>
+      </tr>`).join('');
+}
+
+// ── RANK ─────────────────────────────────────────────
+function renderRank(matching, teamSales) {
+  const ranks = [
+    {name:'No Rank',    stars:'☆',         mReq:0,      sReq:0},
+    {name:'One Star',   stars:'⭐',         mReq:50,     sReq:100},
+    {name:'Two Star',   stars:'⭐⭐',       mReq:300,    sReq:300},
+    {name:'Three Star', stars:'⭐⭐⭐',     mReq:1000,   sReq:1000},
+    {name:'Four Star',  stars:'⭐⭐⭐⭐',   mReq:3000,   sReq:10000},
+    {name:'Five Star',  stars:'⭐⭐⭐⭐⭐', mReq:10000,  sReq:100000},
+    {name:'Six Star',   stars:'6⭐',        mReq:30000,  sReq:300000},
+    {name:'Seven Star', stars:'7⭐',        mReq:100000, sReq:10000000}
+  ];
+  let idx = 0;
+  for(let i=1;i<ranks.length;i++) {
+    if(matching>=ranks[i].mReq && teamSales>=ranks[i].sReq) idx=i;
+  }
+  const cur  = ranks[idx];
+  const next = ranks[idx+1]||null;
+  set('rankStarsD', cur.stars);
+  set('rankNameD',  cur.name);
+  set('infoRank',   cur.name);
+  if(next){
+    set('rankNextHint', 'Next: '+next.name);
+    setW('rankMatchF', Math.min((matching/next.mReq)*100,100)+'%');
+    setW('rankSalesF', Math.min((teamSales/next.sReq)*100,100)+'%');
+    set('rankMatchV', matching+'/'+next.mReq);
+    set('rankSalesV', '$'+teamSales+'/$'+next.sReq);
+  } else {
+    set('rankNextHint','🏆 Highest rank achieved!');
+  }
+}
+
+// ── TRANSACTIONS ─────────────────────────────────────
+function renderTransactions(txObj) {
+  const txns = Object.entries(txObj).sort(([,a],[,b])=>b.timestamp-a.timestamp);
+  set('txCountLbl', txns.length+' records');
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const monthStart = new Date(today.getFullYear(),today.getMonth(),1);
+  let todayTotal=0, monthTotal=0;
+
+  const rows = txns.map(([id,t]) => {
+    const d = new Date(t.timestamp);
+    if(d >= today) todayTotal += t.amount||0;
+    if(d >= monthStart) monthTotal += t.amount||0;
+    const dt = d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    return `<tr>
+      <td style="color:var(--muted);font-size:.72rem">${dt}</td>
+      <td>${t.type||'—'}</td>
+      <td style="color:var(--muted);font-size:.75rem">${t.note||'—'}</td>
+      <td style="font-weight:700;color:${t.amount>0?'var(--green)':'var(--red)'}">
+        ${t.amount>0?'+':''}$${Math.abs(t.amount||0).toFixed(2)}
+      </td>
+      <td><span class="pill ${t.status==='completed'?'pg':t.status==='pending'?'py':'pb'}">${t.status||'done'}</span></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('incTxTable').innerHTML = rows ||
+    '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No transactions yet</td></tr>';
+  set('incToday', '$'+todayTotal.toFixed(2));
+  set('incMonth', '$'+monthTotal.toFixed(2));
+
+  document.getElementById('ovRecentTx').innerHTML = txns.slice(0,5).map(([id,t])=>`
+    <tr>
+      <td>${new Date(t.timestamp).toLocaleDateString()}</td>
+      <td>${t.type||'—'}</td>
+      <td style="color:${t.amount>0?'var(--green)':'var(--red)'};font-weight:700">
+        ${t.amount>0?'+':''}$${Math.abs(t.amount||0).toFixed(2)}
+      </td>
+    </tr>`).join('') ||
+    '<tr><td colspan="3" style="text-align:center;color:var(--muted)">None</td></tr>';
+
+  renderWalletHistory(txObj);
+  renderInvestHistory({});
+}
+
+function renderWalletHistory(txObj) {
+  const txns = Object.entries(txObj).sort(([,a],[,b])=>b.timestamp-a.timestamp);
+  document.getElementById('walHistTb').innerHTML = txns.length
+    ? txns.slice(0,30).map(([id,t])=>`<tr>
+        <td>${new Date(t.timestamp).toLocaleDateString()}</td>
+        <td>${t.type||'—'}</td>
+        <td style="font-weight:700;color:${t.amount>0?'var(--green)':'var(--red)'}">
+          ${t.amount>0?'+':''}$${Math.abs(t.amount||0).toFixed(2)}
+        </td>
+        <td><span class="pill ${t.status==='completed'?'pg':t.status==='pending'?'py':'pb'}">${t.status||'done'}</span></td>
+      </tr>`).join('')
+    : '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:14px">No transactions</td></tr>';
+}
+
+function renderROIPlans(plans) {
+  const tb = document.getElementById('roiPlansTb');
+  const entries = Object.entries(plans).sort(([,a],[,b])=>b.createdAt-a.createdAt);
+  let activeCnt=0, nextD=null;
+  const lockMonths = parseFloat(SETTINGS.invLockMonths||6);
+  tb.innerHTML = entries.length
+    ? entries.map(([id,p],i)=>{
+        if(p.status==='active') activeCnt++;
+        const lockEnd  = new Date(p.createdAt + lockMonths*30*24*60*60*1000);
+        const locked   = Date.now() < lockEnd.getTime();
+        if(!nextD && p.status==='active') nextD = new Date(p.createdAt+30*24*60*60*1000);
+        return `<tr>
+          <td style="color:var(--muted)">${i+1}</td>
+          <td style="color:var(--accent);font-weight:700">$${p.amount}</td>
+          <td>${new Date(p.createdAt).toLocaleDateString()}</td>
+          <td style="color:var(--gold)">$${(p.earnedROI||0).toFixed(2)}</td>
+          <td>${lockEnd.toLocaleDateString()}</td>
+          <td><span class="pill ${p.status==='active'?'pg':p.status==='pending'?'py':'pb'}">${p.status||'pending'}</span></td>
+          <td>${!locked&&p.status==='active'
+            ?'<button class="btn btn-r btn-sm" onclick="withdrawCapital(\''+id+'\')">Withdraw</button>'
+            :'<span style="color:var(--muted);font-size:.7rem">'+(p.status==='pending'?'Awaiting':'Locked')+'</span>'}</td>
+        </tr>`;
+      }).join('')
+    : '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:18px">No investments yet</td></tr>';
+  set('roiActivePlans', activeCnt);
+  set('roiNextDate', nextD ? nextD.toLocaleDateString() : '—');
+}
+
+// ── ACTIONS ──────────────────────────────────────────
+window.saveProfile = async () => {
+  try {
+    const updates = {
+      fullName:      document.getElementById('pfName').value.trim(),
+      mobile:        document.getElementById('pfPhone').value.trim(),
+      paymentWallet: document.getElementById('pfWallet').value.trim(),
+      updatedAt:     new Date()
+    };
+    await fsdb.collection('users').doc(CU.uid).update(updates);
+    Object.assign(UD, updates);
+    document.getElementById('sbName').textContent = UD.fullName||'User';
+    toast('✅ Profile saved!');
+  } catch(e) { toast('Error: '+e.message); }
+};
+
+window.submitActivation = async () => {
+  if (UD && UD.isActive) { toast('Already active!'); return; }
+  const fee = parseFloat(SETTINGS.activationFee||30);
+  const p2b = parseFloat(UD.p2bWallet||0);
+  if (p2b < fee) { toast('❌ P2B Wallet এ পর্যাপ্ত ব্যালেন্স নেই। প্রয়োজন $'+fee.toFixed(2)); return; }
+  try {
+    const p2bRef = rtdb.ref('users/'+CU.uid+'/p2bWallet');
+    const newP2B = p2b - fee;
+    await p2bRef.set(newP2B);
+    UD.p2bWallet = newP2B;
+    await rtdb.ref('transactions/'+CU.uid).push({
+      type:'Activation Payment', amount:-fee,
+      note:'Paid from P2B Wallet', timestamp:Date.now(), status:'completed'
+    });
+    await rtdb.ref('activationRequests').push({
+      uid:       CU.uid,
+      email:     CU.email,
+      name:      UD?.fullName || UD?.username || '',
+      username:  UD?.username || '',
+      txid:      'P2B-WALLET-PAYMENT', method:'P2B Wallet', amount: fee,
+      status:    'pending',
+      createdAt: Date.now()
+    });
+    toast('✅ Payment done from P2B Wallet. Admin will approve soon.');
+    renderWalletCards();
+  } catch(e) { toast('Error: '+e.message); }
+};
+
+window.submitInvestment = async () => {
+  if (!UD?.isActive) { toast('Activate your account first!'); return; }
+  const amt  = parseFloat(document.getElementById('invAmt').value);
+  const minInv = parseFloat(SETTINGS.minInvestment||100);
+  if (!amt || amt < minInv) { toast('Minimum investment is $'+minInv); return; }
+  const p2b = parseFloat(UD.p2bWallet||0);
+  if (p2b < amt) { toast('❌ P2B Wallet এ পর্যাপ্ত ব্যালেন্স নেই।'); return; }
+  try {
+    const p2bRef = rtdb.ref('users/'+CU.uid+'/p2bWallet');
+    const newP2B = p2b - amt;
+    await p2bRef.set(newP2B);
+    UD.p2bWallet = newP2B;
+    await rtdb.ref('investments/'+CU.uid).push({
+      amount:    amt,
+      method:    'P2B Wallet',
+      txid:      'P2B-WALLET-PAYMENT',
+      roiRate:   SETTINGS.roiRate||12,
+      status:    'pending',
+      earnedROI: 0,
+      createdAt: Date.now()
+    });
+    const newInv = (UD.totalInvested||0) + amt;
+    await rtdb.ref('users/'+CU.uid+'/totalInvested').set(newInv);
+    UD.totalInvested = newInv;
+    await rtdb.ref('transactions/'+CU.uid).push({
+      type:'Investment Payment', amount:-amt,
+      note:'Paid from P2B Wallet', timestamp:Date.now(), status:'completed'
+    });
+    toast('✅ Investment submitted from P2B Wallet! Admin will activate shortly.');
+    document.getElementById('invAmt').value  = '';
+    renderWalletCards();
+    const invSnap = await rtdb.ref('investments/'+CU.uid).get();
+    if(invSnap.exists()) { renderROIPlans(invSnap.val()); renderInvestHistory(invSnap.val()); }
+  } catch(e) { toast('Error: '+e.message); }
+};
+
+window.withdrawCapital = async pid => {
+  if (!confirm('Withdraw capital? Fee will be deducted as per admin settings.')) return;
+  await rtdb.ref('investments/'+CU.uid+'/'+pid).update({
+    status:'withdrawal_requested', wdRequestAt: Date.now()
+  });
+  toast('Capital withdrawal requested!');
+  const invSnap = await rtdb.ref('investments/'+CU.uid).get();
+  if(invSnap.exists()) renderROIPlans(invSnap.val());
+};
+
+window.requestCashbackUpgrade = async () => {
+  try {
+    await rtdb.ref('cashbackUpgradeRequests').push({
+      uid: CU.uid, email: CU.email, name: UD?.fullName||UD?.username||'',
+      currentEarned: (UD.income&&UD.income.cashback)||0,
+      status:'pending', createdAt: Date.now()
+    });
+    toast('✅ Upgrade request পাঠানো হয়েছে। Admin অনুমোদন দিলে নতুন limit পাবে।');
+  } catch(e){ toast('Error: '+e.message); }
+};
+
+// ── WALLET TRANSFER ACTIONS ──────────────────────────
+window.switchWTab = (tab) => {
+  ['i2p','m2p','p2m','m2m','i2m'].forEach(t=>{
+    document.getElementById('wtab_'+t).classList.toggle('active', t===tab);
+    document.getElementById('wform_'+t).style.display = t===tab ? 'block':'none';
+  });
+};
+
+window.transferIncomeToP2B = async () => {
+  const amt = parseFloat(document.getElementById('i2pAmt').value);
+  if (!amt || amt<=0) { toast('সঠিক amount দাও'); return; }
+  const income = parseFloat(UD.incomeWallet||0);
+  if (amt > income) { toast('❌ Income Wallet এ পর্যাপ্ত ব্যালেন্স নেই'); return; }
+  try {
+    const newIncome = income - amt;
+    const newP2B    = parseFloat(UD.p2bWallet||0) + amt;
+    await rtdb.ref('users/'+CU.uid+'/incomeWallet').set(newIncome);
+    await rtdb.ref('users/'+CU.uid+'/p2bWallet').set(newP2B);
+    UD.incomeWallet = newIncome; UD.p2bWallet = newP2B;
+    await rtdb.ref('transactions/'+CU.uid).push({ type:'Transfer Income→P2B', amount:amt, note:'Free transfer', timestamp:Date.now(), status:'completed' });
+    toast('✅ Transfer সম্পন্ন!');
+    document.getElementById('i2pAmt').value='';
+    renderWalletCards();
+  } catch(e){ toast('Error: '+e.message); }
+};
+
+window.transferMainToP2B = async () => {
+  const targetRaw = document.getElementById('m2pTarget').value.trim();
+  const amt = parseFloat(document.getElementById('m2pAmt').value);
+  if (!amt || amt<=0) { toast('সঠিক amount দাও'); return; }
+  const main = parseFloat(UD.walletBalance||0);
+  if (amt > main) { toast('❌ Main Wallet এ পর্যাপ্ত ব্যালেন্স নেই'); return; }
+
+  // Determine target: empty = self, otherwise look up by id/memberId/username
+  let targetId = CU.uid;
+  let targetLabel = 'নিজের P2B Wallet';
+  if (targetRaw) {
+    const target = Object.values(ALLU).find(u => u.id===targetRaw || u.memberId===targetRaw || u.username===targetRaw);
+    if (!target) { toast('❌ User খুঁজে পাওয়া যায়নি'); return; }
+    targetId = target.id;
+    targetLabel = target.fullName || target.username || target.id;
+  }
+
+  try {
+    const newMain = main - amt;
+    await rtdb.ref('users/'+CU.uid+'/walletBalance').set(newMain);
+    UD.walletBalance = newMain;
+
+    const tRef  = rtdb.ref('users/'+targetId+'/p2bWallet');
+    const tSnap = await tRef.get();
+    const tNewP2B = parseFloat(tSnap.exists()?tSnap.val():0)+amt;
+    await tRef.set(tNewP2B);
+    if (targetId === CU.uid) UD.p2bWallet = tNewP2B;
+
+    await rtdb.ref('transactions/'+CU.uid).push({ type:'Transfer Main→P2B', amount:-amt, note:(targetId===CU.uid?'নিজের P2B Wallet এ':'To '+targetLabel+' P2B Wallet')+' (Free)', timestamp:Date.now(), status:'completed' });
+    if (targetId !== CU.uid) {
+      await rtdb.ref('transactions/'+targetId).push({ type:'Received Main→P2B', amount:amt, note:'From '+(UD.fullName||UD.username||CU.uid), timestamp:Date.now(), status:'completed' });
+    }
+
+    toast('✅ $'+amt.toFixed(2)+' পাঠানো হয়েছে '+targetLabel+' এর P2B Wallet এ!');
+    document.getElementById('m2pTarget').value='';
+    document.getElementById('m2pAmt').value='';
+    renderWalletCards();
+  } catch(e){ toast('Error: '+e.message); }
+};
+
+window.transferP2BToMain = async () => {
+  const amt = parseFloat(document.getElementById('p2mAmt').value);
+  if (!amt || amt<=0) { toast('সঠিক amount দাও'); return; }
+  const p2b = parseFloat(UD.p2bWallet||0);
+  if (amt > p2b) { toast('❌ P2B Wallet এ পর্যাপ্ত ব্যালেন্স নেই'); return; }
+  try {
+    const newP2B  = p2b - amt;
+    const newMain = parseFloat(UD.walletBalance||0) + amt;
+    await rtdb.ref('users/'+CU.uid+'/p2bWallet').set(newP2B);
+    await rtdb.ref('users/'+CU.uid+'/walletBalance').set(newMain);
+    UD.p2bWallet = newP2B; UD.walletBalance = newMain;
+    await rtdb.ref('transactions/'+CU.uid).push({ type:'Transfer P2B→Main', amount:amt, note:'Free transfer', timestamp:Date.now(), status:'completed' });
+    toast('✅ Transfer সম্পন্ন! এখন Main → P2B (যেকোনো User) ট্যাব দিয়ে অন্যকে পাঠাতে পারো।');
+    document.getElementById('p2mAmt').value='';
+    renderWalletCards();
+  } catch(e){ toast('Error: '+e.message); }
+};
+
+window.transferMainToMain = async () => {
+  const targetRaw = document.getElementById('m2mTarget').value.trim();
+  const amt = parseFloat(document.getElementById('m2mAmt').value);
+  if (!targetRaw) { toast('Receiver ID/Username দাও'); return; }
+  if (!amt || amt<=0) { toast('সঠিক amount দাও'); return; }
+  const main = parseFloat(UD.walletBalance||0);
+  if (amt > main) { toast('❌ Main Wallet এ পর্যাপ্ত ব্যালেন্স নেই'); return; }
+
+  const target = Object.values(ALLU).find(u => u.id===targetRaw || u.memberId===targetRaw || u.username===targetRaw);
+  if (!target) { toast('❌ User খুঁজে পাওয়া যায়নি'); return; }
+  if (target.id === CU.uid) { toast('নিজেকে transfer করা যাবে না'); return; }
+
+  try {
+    const newMain = main - amt;
+    await rtdb.ref('users/'+CU.uid+'/walletBalance').set(newMain);
+    UD.walletBalance = newMain;
+    const tRef  = rtdb.ref('users/'+target.id+'/walletBalance');
+    const tSnap = await tRef.get();
+    const tNewBal = parseFloat(tSnap.exists()?tSnap.val():0)+amt;
+    await tRef.set(tNewBal);
+
+    await rtdb.ref('transactions/'+CU.uid).push({ type:'P2P Transfer Sent', amount:-amt, note:'To '+(target.fullName||target.username||target.id), timestamp:Date.now(), status:'completed' });
+    await rtdb.ref('transactions/'+target.id).push({ type:'P2P Transfer Received', amount:amt, note:'From '+(UD.fullName||UD.username||CU.uid), timestamp:Date.now(), status:'completed' });
+
+    toast('✅ '+(target.fullName||target.username)+' কে $'+amt.toFixed(2)+' পাঠানো হয়েছে!');
+    document.getElementById('m2mTarget').value=''; document.getElementById('m2mAmt').value='';
+    renderWalletCards();
+  } catch(e){ toast('Error: '+e.message); }
+};
+
+window.calcI2MPreview = () => {
+  const amt = parseFloat(document.getElementById('i2mAmt').value);
+  const prev = document.getElementById('i2mPreview');
+  if (!amt || amt<=0) { prev.style.display='none'; return; }
+  const chargePct = parseFloat(SETTINGS.incomeToMainCharge != null ? SETTINGS.incomeToMainCharge : 5)/100;
+  const charge = amt*chargePct;
+  const net = amt-charge;
+  set('i2mPrevAmt', '$'+amt.toFixed(2));
+  set('i2mPrevCharge', '-$'+charge.toFixed(2));
+  set('i2mPrevNet', '$'+net.toFixed(2));
+  prev.style.display='block';
+};
+
+window.transferIncomeToMain = async () => {
+  const amt = parseFloat(document.getElementById('i2mAmt').value);
+  if (!amt || amt<=0) { toast('সঠিক amount দাও'); return; }
+  const income = parseFloat(UD.incomeWallet||0);
+  if (amt > income) { toast('❌ Income Wallet এ পর্যাপ্ত ব্যালেন্স নেই'); return; }
+  const chargePct = parseFloat(SETTINGS.incomeToMainCharge != null ? SETTINGS.incomeToMainCharge : 5)/100;
+  const charge = amt*chargePct;
+  const net = amt-charge;
+  try {
+    const newIncome = income - amt;
+    const newMain   = parseFloat(UD.walletBalance||0) + net;
+    await rtdb.ref('users/'+CU.uid+'/incomeWallet').set(newIncome);
+    await rtdb.ref('users/'+CU.uid+'/walletBalance').set(newMain);
+    UD.incomeWallet = newIncome; UD.walletBalance = newMain;
+    await rtdb.ref('transactions/'+CU.uid).push({ type:'Transfer Income→Main', amount:net, note:'Charge: $'+charge.toFixed(2)+' ('+(chargePct*100)+'%)', timestamp:Date.now(), status:'completed' });
+    toast('✅ Transfer সম্পন্ন! $'+net.toFixed(2)+' Main Wallet এ যোগ হয়েছে।');
+    document.getElementById('i2mAmt').value='';
+    document.getElementById('i2mPreview').style.display='none';
+    renderWalletCards();
+  } catch(e){ toast('Error: '+e.message); }
+};
+
+window.submitWithdraw = async () => {
+  const amt  = parseFloat(document.getElementById('wdAmt').value);
+  const addr = document.getElementById('wdAddr').value.trim();
+  const minWd = parseFloat(SETTINGS.minWithdrawal||10);
+  if (!amt || amt<minWd)  { toast('Min withdrawal $'+minWd); return; }
+  if (!addr)           { toast('Enter wallet address'); return; }
+  const bal = parseFloat(UD?.walletBalance||0);
+  if (amt > bal)       { toast('Insufficient Main Wallet balance'); return; }
+  try {
+    await rtdb.ref('withdrawals/'+CU.uid).push({
+      amount:    amt,
+      address:   addr,
+      status:    'pending',
+      createdAt: Date.now()
+    });
+    toast('✅ Withdrawal request submitted!');
+    document.getElementById('wdAmt').value  = '';
+    document.getElementById('wdAddr').value = '';
+    document.getElementById('wdPreview').style.display='none';
+  } catch(e) { toast('Error: '+e.message); }
+};
+
+document.addEventListener('input', (e)=>{
+  if (e.target && e.target.id==='wdAmt') {
+    const amt = parseFloat(e.target.value);
+    const prev = document.getElementById('wdPreview');
+    if (!amt || amt<=0) { prev.style.display='none'; return; }
+    const chargePct = parseFloat(SETTINGS.withdrawalFee != null ? SETTINGS.withdrawalFee : 5)/100;
+    const charge = amt*chargePct;
+    const net = amt-charge;
+    set('wdPrevAmt', '$'+amt.toFixed(2));
+    set('wdPrevCharge', '-$'+charge.toFixed(2));
+    set('wdPrevNet', '$'+net.toFixed(2));
+    prev.style.display='block';
+  }
+});
+
+window.copyText = (elId) => {
+  const el = document.getElementById(elId);
+  const val = el.textContent;
+  navigator.clipboard.writeText(val)
+    .then(()=>toast('✅ Copied: '+val))
+    .catch(()=>toast('Copy failed'));
+};
+
+window.copyRef = () => {
+  const v = document.getElementById('refLinkInput').value;
+  navigator.clipboard.writeText(v)
+    .then(()=>toast('✅ Referral link copied!'))
+    .catch(()=>{ document.getElementById('refLinkInput').select(); document.execCommand('copy'); toast('✅ Copied!'); });
+};
+window.shareWA = () => {
+  const l=document.getElementById('refLinkInput').value;
+  window.open('https://wa.me/?text=Join+Life+Line+Meta+with+my+link:+'+encodeURIComponent(l),'_blank');
+};
+window.shareTG = () => {
+  const l=document.getElementById('refLinkInput').value;
+  window.open('https://t.me/share/url?url='+encodeURIComponent(l)+'&text=Join+Life+Line+Meta','_blank');
+};
+
+window.doLogout = async ()=>{ await auth.signOut(); window.location.href='login.html'; };
+
+// ── HELPERS ──────────────────────────────────────────
+function set(id,val){ const el=document.getElementById(id); if(el) el.textContent=val; }
+function setW(id,val){ const el=document.getElementById(id); if(el) el.style.width=val; }
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// ── NAV ──────────────────────────────────────────────
+window.showPage = (page, el) => {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const target = document.getElementById('page-'+page);
+  if(target) target.classList.add('active');
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const labels={
+    overview:'Overview', profile:'Profile', referral:'Referral', tree:'Binary Tree',
+    team:'My Team', income:'Income Report', roi:'ROI Investment', investhist:'Investment History',
+    joining:'Joining History', wallet:'Wallet',
+    rank:'Rank Progress', cashback:'Cashback Pool', club:'Club Bonus', activation:'Activation',
+    fundrequest:'Fund Request'
+  };
+  document.getElementById('pgLabel').textContent = labels[page]||page;
+  closeSidebar();
+  if(page==='tree' && UD) renderBinaryTree();
+  if(page==='fundrequest') loadFundRequestPage();
+  if(page==='joining' && UD) loadReferrals();
+};
+
+window.toggleSidebar = ()=>{
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+};
+window.closeSidebar = ()=>{
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+};
+
+let isLight=false;
+window.toggleTheme = ()=>{
+  isLight=!isLight;
+  document.body.classList.toggle('light',isLight);
+  document.getElementById('themeBtn').textContent=isLight?'🌙 Dark':'☀️ Light';
+};
+
+// ── FUND REQUEST PAGE ─────────────────────────────────
+async function loadFundRequestPage() {
+  if (!CU) return;
+
+  try {
+    const trcSnap = await rtdb.ref('settings/adminWalletTRC').get();
+    const bepSnap = await rtdb.ref('settings/adminWalletBEP').get();
+    document.getElementById('adminWalletAddrTRC').textContent = trcSnap.exists() ? trcSnap.val() : 'Contact admin for wallet address';
+    document.getElementById('adminWalletAddrBEP').textContent = bepSnap.exists() ? bepSnap.val() : 'Contact admin for wallet address';
+  } catch(e) {
+    document.getElementById('adminWalletAddrTRC').textContent = 'Contact admin for wallet address';
+    document.getElementById('adminWalletAddrBEP').textContent = 'Contact admin for wallet address';
+  }
+
+  try {
+    const snap = await rtdb.ref('fundRequests').get();
+    const allReqs = snap.exists() ? snap.val() : {};
+    const list = Object.entries(allReqs)
+      .filter(([,f]) => f.uid === CU.uid)
+      .sort(([,a],[,b]) => b.createdAt - a.createdAt);
+
+    const pending = list.find(([,f]) => f.status === 'pending');
+    const banner  = document.getElementById('frPendingBanner');
+    if (pending) {
+      banner.style.display = 'block';
+      document.getElementById('frPendingInfo').textContent =
+        `$${pending[1].amount} request pending approval — TxHash: ${(pending[1].txHash||'—').slice(0,20)}…`;
+      const badge = document.getElementById('frPendingBadge');
+      if (badge) { badge.style.display='inline'; badge.textContent='1'; }
+    } else {
+      banner.style.display = 'none';
+      const badge = document.getElementById('frPendingBadge');
+      if (badge) badge.style.display = 'none';
+    }
+
+    const tb = document.getElementById('frHistTb');
+    tb.innerHTML = list.length ? list.map(([id,f]) => {
+      const sc = f.status==='approved'?'pg':f.status==='rejected'?'pr':'py';
+      return `<tr>
+        <td style="font-weight:700;color:var(--accent)">$${Number(f.amount||0).toFixed(2)}</td>
+        <td style="font-size:.73rem">${f.network||'TRC-20'}</td>
+        <td style="color:var(--green);font-weight:700">${f.status==='approved'?'$'+Number(f.netCredited!=null?f.netCredited:f.amount||0).toFixed(2):'—'}</td>
+        <td><span class="pill ${sc}">${f.status||'pending'}</span></td>
+        <td style="font-size:.72rem;color:var(--muted)">${f.createdAt?new Date(f.createdAt).toLocaleDateString():'—'}</td>
+      </tr>`;
+    }).join('')
+    : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No requests yet</td></tr>';
+  } catch(e) {
+    document.getElementById('frHistTb').innerHTML =
+      '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">Error: ' + e.message + '</td></tr>';
+  }
+}
+
+window.copyAdminWallet = (net) => {
+  const elId = net==='bep' ? 'adminWalletAddrBEP' : 'adminWalletAddrTRC';
+  const addr = document.getElementById(elId).textContent;
+  if (!addr || addr === 'Loading…' || addr.includes('Contact')) return toast('Wallet address not set by admin yet');
+  navigator.clipboard.writeText(addr)
+    .then(()=>toast('✅ Wallet address copied!'))
+    .catch(()=>toast('Copy failed'));
+};
+
+// ── WALLET CONNECT (BEP-20 via MetaMask/Trust, TRC-20 via TronLink) ──
+// NOTE: Free Firebase plan এ blockchain payment auto-verify করা যায় না (Cloud
+// Functions থেকে বাইরের API কল ব্লক থাকে)। তাই এখানে wallet connect শুধু
+// send করা সহজ করে দেয় — TxHash তারপরও Submit Deposit Request ফর্মে বসিয়ে
+// admin কে manual approve করতে হবে, ঠিক আগের মতোই।
+let WALLET_MODE = null; // 'evm' | 'tron'
+let WALLET_ADDR = null;
+
+// Minimal ERC20/BEP20 USDT transfer ABI (transfer function only)
+const USDT_TRANSFER_ABI = [{
+  "constant": false,
+  "inputs": [{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],
+  "name": "transfer",
+  "outputs": [{"name":"","type":"bool"}],
+  "type": "function"
+}];
+const USDT_BEP20_CONTRACT = "0x55d398326f99059fF775485246999027B3197955"; // USDT on BSC
+
+window.connectMetaMask = async () => {
+  if (typeof window.ethereum === 'undefined') {
+    toast('❌ MetaMask/Trust Wallet পাওয়া যায়নি। মোবাইলে Trust Wallet browser থেকে এই পেজ খোলো।');
+    return;
+  }
+  try {
+    const accounts = await window.ethereum.request({ method:'eth_requestAccounts' });
+    WALLET_ADDR = accounts[0];
+    WALLET_MODE = 'evm';
+    // Ensure BSC network
+    try {
+      await window.ethereum.request({
+        method:'wallet_switchEthereumChain',
+        params:[{ chainId:'0x38' }] // BSC mainnet
+      });
+    } catch(switchErr) {
+      if (switchErr.code === 4902) {
+        await window.ethereum.request({
+          method:'wallet_addEthereumChain',
+          params:[{
+            chainId:'0x38', chainName:'BNB Smart Chain',
+            nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18},
+            rpcUrls:['https://bsc-dataseed.binance.org/'],
+            blockExplorerUrls:['https://bscscan.com']
+          }]
+        });
+      }
+    }
+    document.getElementById('walConnStatus').innerHTML = '✅ Connected: <span style="color:var(--green);font-family:monospace">'+WALLET_ADDR.slice(0,8)+'…'+WALLET_ADDR.slice(-6)+'</span> (BEP-20)';
+    document.getElementById('walSendBox').style.display = 'block';
+    document.getElementById('frNetwork').value = 'BEP-20 (BSC)';
+    toast('✅ Wallet connected!');
+  } catch(e) { toast('Connect failed: '+e.message); }
+};
+
+window.connectTronLink = async () => {
+  if (typeof window.tronWeb === 'undefined' || !window.tronWeb.ready) {
+    toast('❌ TronLink পাওয়া যায়নি। TronLink extension/app দিয়ে এই পেজ খোলো।');
+    return;
+  }
+  try {
+    WALLET_ADDR = window.tronWeb.defaultAddress.base58;
+    WALLET_MODE = 'tron';
+    document.getElementById('walConnStatus').innerHTML = '✅ Connected: <span style="color:var(--green);font-family:monospace">'+WALLET_ADDR.slice(0,8)+'…'+WALLET_ADDR.slice(-6)+'</span> (TRC-20)';
+    document.getElementById('walSendBox').style.display = 'block';
+    document.getElementById('frNetwork').value = 'TRC-20 (TRON)';
+    toast('✅ TronLink connected!');
+  } catch(e) { toast('Connect failed: '+e.message); }
+};
+
+window.sendUSDTFromWallet = async () => {
+  const amt = parseFloat(document.getElementById('walSendAmt').value);
+  if (!amt || amt < 30) { toast('Minimum $30'); return; }
+  if (!WALLET_MODE) { toast('আগে wallet connect করো'); return; }
+
+  try {
+    if (WALLET_MODE === 'evm') {
+      const bepAddr = document.getElementById('adminWalletAddrBEP').textContent;
+      if (!bepAddr || bepAddr.includes('Contact')) { toast('Admin BEP-20 address সেট করা নেই'); return; }
+      const value = BigInt(Math.round(amt * 1e18)).toString(16); // USDT-BEP20 uses 18 decimals
+      const data = '0xa9059cbb' // transfer(address,uint256) selector
+        + bepAddr.replace('0x','').padStart(64,'0')
+        + value.padStart(64,'0');
+      const txHash = await window.ethereum.request({
+        method:'eth_sendTransaction',
+        params:[{ from:WALLET_ADDR, to:USDT_BEP20_CONTRACT, data }]
+      });
+      document.getElementById('frTxHash').value = txHash;
+      document.getElementById('frAmount').value = amt;
+      toast('✅ Transaction পাঠানো হয়েছে! এখন নিচের ফর্মে "Submit Fund Request" চাপো।');
+    } else if (WALLET_MODE === 'tron') {
+      const trcAddr = document.getElementById('adminWalletAddrTRC').textContent;
+      if (!trcAddr || trcAddr.includes('Contact')) { toast('Admin TRC-20 address সেট করা নেই'); return; }
+      const USDT_TRC20_CONTRACT = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'; // USDT on TRON mainnet
+      const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
+      const amountSun = Math.round(amt * 1e6); // USDT-TRC20 uses 6 decimals
+      const tx = await contract.transfer(trcAddr, amountSun).send();
+      document.getElementById('frTxHash').value = typeof tx === 'string' ? tx : (tx.txid||'');
+      document.getElementById('frAmount').value = amt;
+      toast('✅ Transaction পাঠানো হয়েছে! এখন নিচের ফর্মে "Submit Fund Request" চাপো।');
+    }
+  } catch(e) { toast('❌ Transaction failed: '+(e.message||e)); }
+};
+
+window.submitFundRequest = async () => {
+  if (!CU) return;
+  const amount  = parseFloat(document.getElementById('frAmount').value);
+  const txHash  = document.getElementById('frTxHash').value.trim();
+  const network = document.getElementById('frNetwork').value;
+  const note    = document.getElementById('frNote').value.trim();
+
+  if (!amount || amount < 30) return toast('Minimum deposit is $30');
+  if (!txHash) return toast('Please enter your Transaction Hash (TxID)');
+
+  try {
+    const snap = await rtdb.ref('fundRequests').get();
+    if (snap.exists()) {
+      const myReqs = Object.values(snap.val()).filter(f => f.uid === CU.uid);
+      const hasPending = myReqs.some(f => f.status === 'pending');
+      if (hasPending) return toast('You already have a pending request. Wait for admin approval.');
+    }
+
+    await rtdb.ref('fundRequests').push({
+      uid:       CU.uid,
+      email:     CU.email || '',
+      name:      UD?.fullName || UD?.username || '',
+      amount,
+      txHash,
+      network,
+      note,
+      creditTarget: 'p2bWallet',
+      status:    'pending',
+      createdAt: Date.now()
+    });
+
+    toast('✅ Fund request submitted! অনুমোদনের পর P2B Wallet এ credit হবে।');
+    document.getElementById('frAmount').value  = '';
+    document.getElementById('frTxHash').value  = '';
+    document.getElementById('frNote').value    = '';
+    loadFundRequestPage();
+  } catch(e) { toast('Error: ' + e.message); }
+};
+</script>
+</body>
+</html>
