@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Life Line Meta – Admin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;color:#1e293b;min-height:100vh}
+button{cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:inherit}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px}
+
+/* SIDEBAR */
+.sb{position:fixed;top:0;left:0;height:100vh;width:220px;background:#1e293b;display:flex;flex-direction:column;z-index:200;overflow-y:auto;transition:transform .3s}
+.sb-logo{padding:16px;border-bottom:1px solid #334155;flex-shrink:0}
+.sb-logo h2{font-size:.95rem;font-weight:800;color:#38bdf8;margin-bottom:2px}
+.sb-logo p{font-size:.62rem;color:#ef4444;font-weight:700;text-transform:uppercase}
+.ns{padding:10px 12px 3px;font-size:.6rem;color:#64748b;text-transform:uppercase;letter-spacing:.8px;font-weight:700}
+nav a{display:flex;align-items:center;gap:8px;padding:9px 12px;font-size:.78rem;color:#94a3b8;border-left:3px solid transparent;transition:.15s;cursor:pointer;user-select:none}
+nav a:hover{color:#fff;background:rgba(255,255,255,.05)}
+nav a.active{color:#fff;background:rgba(56,189,248,.1);border-left-color:#38bdf8}
+.nb{background:#ef4444;color:#fff;border-radius:9px;padding:1px 5px;font-size:.6rem;margin-left:auto}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:220px;right:0;height:50px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:199}
+.menu-btn{display:none;background:none;border:none;color:#1e293b;font-size:1.2rem;padding:4px;cursor:pointer}
+.tb-r{display:flex;align-items:center;gap:8px}
+
+/* MAIN */
+.main{margin-left:220px;padding-top:50px;min-height:100vh}
+.pg{display:none;padding:16px}
+.pg.active{display:block}
+.pg-title{font-size:1.1rem;font-weight:800;margin-bottom:14px;color:#1e293b}
+
+/* STAT CARDS */
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.sc{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:14px;position:relative}
+.sl{font-size:.65rem;color:#64748b;text-transform:uppercase;margin-bottom:4px}
+.sv{font-size:1.4rem;font-weight:800;color:#1e293b}
+.ss{font-size:.65rem;color:#64748b;margin-top:2px}
+.si{position:absolute;bottom:10px;right:12px;font-size:1.3rem;opacity:.15}
+
+/* CARD */
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:14px;margin-bottom:12px}
+.ct{font-size:.84rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:5px;color:#1e293b}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+
+/* TABLE */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.74rem}
+th{color:#64748b;font-weight:600;padding:7px 9px;text-align:left;border-bottom:2px solid #e2e8f0;font-size:.67rem;text-transform:uppercase;white-space:nowrap;background:#f8fafc}
+td{padding:8px 9px;border-bottom:1px solid #f1f5f9;vertical-align:middle;white-space:nowrap}
+tr:hover td{background:#f8fafc}
+tr:last-child td{border-bottom:none}
+
+/* PILLS */
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.65rem;font-weight:700}
+.pg-p{background:#dcfce7;color:#166534}
+.py-p{background:#fef9c3;color:#854d0e}
+.pr-p{background:#fee2e2;color:#991b1b}
+.pb-p{background:#dbeafe;color:#1d4ed8}
+.pp-p{background:#ede9fe;color:#6d28d9}
+
+/* BUTTONS */
+.btn{padding:6px 13px;border-radius:7px;font-size:.74rem;font-weight:700;border:none;cursor:pointer;transition:.15s}
+.btn:hover{opacity:.85}
+.btn-blue{background:#3b82f6;color:#fff}
+.btn-green{background:#22c55e;color:#fff}
+.btn-red{background:#ef4444;color:#fff}
+.btn-yellow{background:#f59e0b;color:#fff}
+.btn-gray{background:#e2e8f0;color:#475569;border:1px solid #cbd5e1}
+.btn-orange{background:#f97316;color:#fff}
+.btn-sm{padding:3px 8px;font-size:.67rem}
+
+/* FORM */
+.fg{margin-bottom:11px}
+.fg label{display:block;font-size:.71rem;color:#64748b;margin-bottom:3px;font-weight:600}
+.fg input,.fg select,.fg textarea{width:100%;background:#fff;border:1px solid #e2e8f0;border-radius:7px;padding:8px 10px;color:#1e293b;font-size:.82rem;outline:none;transition:.2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.fg textarea{resize:vertical;min-height:65px}
+
+/* SEARCH BAR */
+.sb2{display:flex;gap:8px;margin-bottom:11px;flex-wrap:wrap}
+.sb2 input{flex:1;min-width:160px;background:#fff;border:1px solid #e2e8f0;border-radius:7px;padding:7px 11px;color:#1e293b;font-size:.78rem;outline:none}
+.sb2 input:focus{border-color:#3b82f6}
+.sb2 select{background:#fff;border:1px solid #e2e8f0;border-radius:7px;padding:7px 9px;color:#1e293b;font-size:.78rem;outline:none}
+
+/* INFO BOXES */
+.ib{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:9px 12px;font-size:.74rem;color:#1d4ed8;margin-bottom:11px;line-height:1.6}
+.wb{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:9px 12px;font-size:.74rem;color:#92400e;margin-bottom:11px;line-height:1.6}
+.rb{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:9px 12px;font-size:.74rem;color:#991b1b;margin-bottom:11px;line-height:1.6}
+
+/* TOGGLE */
+.tog{position:relative;display:inline-block;width:36px;height:19px;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0}
+.sldr{position:absolute;cursor:pointer;inset:0;background:#cbd5e1;border-radius:20px;transition:.3s}
+.sldr:before{content:'';position:absolute;height:13px;width:13px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+input:checked+.sldr{background:#22c55e}
+input:checked+.sldr:before{transform:translateX(17px)}
+.tw-row{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.tw-lbl{font-size:.78rem;font-weight:600;color:#1e293b}
+
+/* MODAL */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;padding:10px}
+.mbg.show{display:flex}
+.modal{background:#fff;border-radius:12px;padding:20px;width:90%;max-width:500px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.mt{font-size:.95rem;font-weight:800;margin-bottom:13px;display:flex;align-items:center;justify-content:space-between;color:#1e293b}
+.mc{background:none;border:none;color:#64748b;font-size:1.1rem;cursor:pointer}
+
+/* NOTICE items */
+.ni{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:11px 13px;margin-bottom:8px;position:relative}
+.ni h4{font-size:.8rem;font-weight:700;margin-bottom:3px}
+.ni p{font-size:.73rem;color:#64748b}
+.ni .dx{position:absolute;top:8px;right:8px;background:none;border:none;color:#94a3b8;cursor:pointer;font-size:.9rem}
+
+/* OVERLAY & TOAST */
+.mob-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:198}
+.mob-ov.show{display:block}
+.toast{position:fixed;bottom:16px;right:16px;background:#1e293b;color:#fff;border-radius:9px;padding:10px 16px;font-size:.78rem;z-index:9999;opacity:0;transform:translateY(12px);transition:.3s;pointer-events:none;max-width:280px}
+.toast.show{opacity:1;transform:translateY(0)}
+
+@media(max-width:768px){
+  .sb{transform:translateX(-100%)}.sb.open{transform:translateX(0)}
+  .main{margin-left:0}.topbar{left:0}.menu-btn{display:block}
+  .two-col{grid-template-columns:1fr}.cg{grid-template-columns:1fr 1fr}
+}
+@media(max-width:400px){.cg{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="mob-ov" id="mobOv" onclick="closeSB()"></div>
+
+<aside class="sb" id="sbEl">
+  <div class="sb-logo">
+    <h2>Life Line Meta</h2>
+    <p>⚡ Super Admin</p>
+  </div>
+  <nav>
+    <div class="ns">Dashboard</div>
+    <a class="active" onclick="sp('overview',this)">🏠 Overview</a>
+    <div class="ns">Users</div>
+    <a onclick="sp('users',this)">👥 All Users <span class="nb" id="nb-u"></span></a>
+    <a onclick="sp('activations',this)">✅ Activations <span class="nb" id="nb-a"></span></a>
+    <a onclick="sp('edituser',this)">✏ Edit User</a>
+    <a onclick="sp('subadmin',this)">🛡 Sub-Admins</a>
+    <a onclick="sp('tree',this)">🌳 Binary Tree</a>
+    <div class="ns">Finance</div>
+    <a onclick="sp('withdrawals',this)">💸 Withdrawals <span class="nb" id="nb-w"></span></a>
+    <a onclick="sp('investments',this)">📈 Investments</a>
+    <a onclick="sp('fundac',this)">🏦 Fund Account</a>
+    <a onclick="sp('transactions',this)">📋 Transactions</a>
+    <div class="ns">Income Engine</div>
+    <a onclick="sp('cashback',this)">🎁 Cashback Pool</a>
+    <a onclick="sp('clubbonus',this)">🏆 Club Bonus</a>
+    <a onclick="sp('roi',this)">💰 ROI Payout</a>
+    <a onclick="sp('matching',this)">🤝 Matching</a>
+    <a onclick="sp('voucher',this)">🎟 Gift Voucher</a>
+    <div class="ns">System</div>
+    <a onclick="sp('settings',this)">⚙ Global Settings</a>
+    <a onclick="sp('ranks',this)">⭐ Ranks</a>
+    <a onclick="sp('buttons',this)">🔘 Dashboard Buttons</a>
+    <a onclick="sp('notices',this)">📢 Notices</a>
+    <a onclick="sp('incomemgr',this)">💡 Income Manager</a>
+    <a onclick="sp('reports',this)">📊 Reports</a>
+    <a onclick="sp('backup',this)">💾 Backup & Restore</a>
+    <div style="height:10px"></div>
+    <a onclick="doLogout()" style="color:#ef4444">🚪 Logout</a>
+  </nav>
+</aside>
+
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:8px">
+    <button class="menu-btn" onclick="toggleSB()">☰</button>
+    <span style="font-size:.85rem;font-weight:700;color:#64748b" id="pgLbl">Overview</span>
+  </div>
+  <div class="tb-r">
+    <span style="font-size:.72rem;color:#64748b" id="aEmail">—</span>
+    <span style="background:#fee2e2;color:#991b1b;border-radius:6px;padding:2px 9px;font-size:.68rem;font-weight:700">SUPER ADMIN</span>
+    <button class="btn btn-gray btn-sm" onclick="doLogout()">Logout</button>
+  </div>
+</div>
+
+<main class="main">
+
+<!-- OVERVIEW -->
+<div class="pg active" id="pg-overview">
+  <div class="pg-title">Dashboard Overview</div>
+  <div class="cg">
+    <div class="sc"><div class="sl">Total Users</div><div class="sv" id="ov-u">0</div><div class="ss" id="ov-ua">0 active</div><div class="si">👥</div></div>
+    <div class="sc"><div class="sl">Revenue</div><div class="sv" id="ov-r">$0</div><div class="ss">Activation fees</div><div class="si">💵</div></div>
+    <div class="sc"><div class="sl">Company Fund</div><div class="sv" id="ov-f">$0</div><div class="ss">$5 per activation</div><div class="si">🏦</div></div>
+    <div class="sc"><div class="sl">Total Invested</div><div class="sv" id="ov-i">$0</div><div class="ss">ROI plans</div><div class="si">📈</div></div>
+    <div class="sc"><div class="sl" style="color:#ef4444">Pending Act.</div><div class="sv" id="ov-pa" style="color:#ef4444">0</div><div class="ss">Awaiting approval</div><div class="si">⏳</div></div>
+    <div class="sc"><div class="sl" style="color:#ef4444">Pending WD</div><div class="sv" id="ov-pw" style="color:#ef4444">0</div><div class="ss">Awaiting payment</div><div class="si">💸</div></div>
+    <div class="sc"><div class="sl">Blocked</div><div class="sv" id="ov-bl">0</div><div class="ss">Users</div><div class="si">🚫</div></div>
+    <div class="sc"><div class="sl">Vouchers</div><div class="sv" id="ov-vo">0</div><div class="ss">Active</div><div class="si">🎟</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Quick Actions</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <button class="btn btn-blue" onclick="runCashback()">💰 Cashback</button>
+        <button class="btn btn-yellow" onclick="runClub()">🏆 Club Bonus</button>
+        <button class="btn btn-green" onclick="runROI()">📈 ROI Payout</button>
+        <button class="btn btn-orange" onclick="runMatching()">🤝 Matching</button>
+        <button class="btn btn-gray" onclick="sp('voucher',null)">🎟 Voucher</button>
+        <button class="btn btn-gray" onclick="sp('backup',null)">💾 Backup</button>
+      </div>
+      <div style="font-size:.76rem">
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f1f5f9"><span style="color:#64748b">ROI Rate</span><span style="font-weight:700;color:#1e293b" id="ov-rr">10%</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f1f5f9"><span style="color:#64748b">Matching %</span><span style="font-weight:700;color:#1e293b" id="ov-mp">5%</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f1f5f9"><span style="color:#64748b">Cashback Pool</span><span style="font-weight:700;color:#3b82f6" id="ov-cb">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:#64748b">Club Pool</span><span style="font-weight:700;color:#f59e0b" id="ov-cl">$0</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">Latest Activations <button class="btn btn-gray btn-sm" onclick="sp('activations',null)">All →</button></div>
+      <div class="tw"><table><thead><tr><th>User</th><th>Date</th><th>Status</th><th>Act</th></tr></thead><tbody id="ov-at"><tr><td colspan="4" style="text-align:center;color:#64748b;padding:12px">Loading…</td></tr></tbody></table></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Active Notices <button class="btn btn-blue btn-sm" onclick="sp('notices',null)">Manage →</button></div>
+    <div id="ov-no" style="font-size:.77rem;color:#64748b">Loading…</div>
+  </div>
+</div>
+
+<!-- ALL USERS -->
+<div class="pg" id="pg-users">
+  <div class="pg-title">All Users</div>
+  <div class="sb2">
+    <input type="text" id="u-s" placeholder="Search name, username, email, ID…" oninput="filterU()"/>
+    <select id="u-f" onchange="filterU()">
+      <option value="all">All Users</option><option value="active">Active</option>
+      <option value="inactive">Inactive</option><option value="blocked">Blocked</option>
+    </select>
+    <button class="btn btn-gray btn-sm" onclick="loadUsers()">↻ Refresh</button>
+    <button class="btn btn-blue btn-sm" onclick="xCSV('users')">⬇ CSV</button>
+    <button class="btn btn-red btn-sm" onclick="delAllUsers()">🗑 Delete All</button>
+  </div>
+  <div class="card">
+    <div class="ct">Users <small id="u-c" style="color:#64748b;font-weight:400"></small></div>
+    <div class="tw"><table>
+      <thead><tr><th>#</th><th>UID</th><th>Name</th><th>Username</th><th>Email</th><th>Joined</th><th>Sponsor By</th><th>Status</th><th>Income</th><th>WD</th><th>Blocked</th><th>Actions</th></tr></thead>
+      <tbody id="u-tb"><tr><td colspan="12" style="text-align:center;color:#64748b;padding:20px">Loading users…</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ACTIVATIONS -->
+<div class="pg" id="pg-activations">
+  <div class="pg-title">Activation Requests</div>
+  <div class="ib">💡 On approval: $4 → Sponsor | $5 → Company Fund. Verify TxID before approving.</div>
+  <div class="sb2">
+    <select id="ac-f" onchange="filterAct()">
+      <option value="all">All</option><option value="pending">Pending</option>
+      <option value="approved">Approved</option><option value="rejected">Rejected</option>
+    </select>
+    <button class="btn btn-gray btn-sm" onclick="loadAct()">↻ Refresh</button>
+    <button class="btn btn-green btn-sm" onclick="approveAllAct()">✅ Approve All Pending</button>
+  </div>
+  <div class="card">
+    <div class="ct">Requests <small id="ac-c" style="color:#64748b;font-weight:400"></small></div>
+    <div class="tw"><table>
+      <thead><tr><th>#</th><th>UID</th><th>Name</th><th>Username</th><th>Email</th><th>Method</th><th>TxID</th><th>Amount</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="ac-tb"><tr><td colspan="11" style="text-align:center;color:#64748b;padding:20px">Loading…</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- EDIT USER -->
+<div class="pg" id="pg-edituser">
+  <div class="pg-title">Edit User</div>
+  <div class="card" style="max-width:480px">
+    <div class="fg">
+      <label>Search (UID / Username / Email)</label>
+      <div style="display:flex;gap:8px"><input type="text" id="eu-q" placeholder="Enter UID, username or email"/><button class="btn btn-blue btn-sm" onclick="searchEU()">Find</button></div>
+    </div>
+  </div>
+  <div class="card" id="eu-card" style="max-width:620px;display:none">
+    <div class="ct" id="eu-title">Edit User</div>
+    <div class="two-col">
+      <div class="fg"><label>Full Name</label><input type="text" id="eu-name"/></div>
+      <div class="fg"><label>Username</label><input type="text" id="eu-uname"/></div>
+      <div class="fg"><label>Email</label><input type="email" id="eu-email"/></div>
+      <div class="fg"><label>Mobile</label><input type="text" id="eu-mob"/></div>
+      <div class="fg"><label>Country</label><input type="text" id="eu-ctry"/></div>
+      <div class="fg"><label>USDT Wallet</label><input type="text" id="eu-wal"/></div>
+      <div class="fg"><label>Sponsor ID</label><input type="text" id="eu-sp"/></div>
+      <div class="fg"><label>Wallet Balance ($)</label><input type="number" id="eu-bal"/></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      <button class="btn btn-green" onclick="saveEU()">💾 Save</button>
+      <button class="btn btn-orange" onclick="cutTree()">✂ Cut Tree</button>
+      <button class="btn btn-blue" onclick="loginAs()">🔑 Login As User</button>
+      <button class="btn btn-red" onclick="deleteU()">🗑 Delete</button>
+    </div>
+    <hr style="border:none;border-top:1px solid #e2e8f0;margin-bottom:12px"/>
+    <div class="ct">Flags & Controls</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:11px">
+      <div class="tw-row"><label class="tog"><input type="checkbox" id="eu-inc" checked/><span class="sldr"></span></label><span class="tw-lbl">Income Active</span></div>
+      <div class="tw-row"><label class="tog"><input type="checkbox" id="eu-wd" checked/><span class="sldr"></span></label><span class="tw-lbl">Withdrawal Active</span></div>
+      <div class="tw-row"><label class="tog"><input type="checkbox" id="eu-act" checked/><span class="sldr"></span></label><span class="tw-lbl">Account Active</span></div>
+      <div class="tw-row"><label class="tog"><input type="checkbox" id="eu-blk"/><span class="sldr"></span></label><span class="tw-lbl" style="color:#ef4444">Blocked</span></div>
+    </div>
+    <button class="btn btn-orange" onclick="saveFlags()">💾 Save Flags</button>
+    <input type="hidden" id="eu-uid"/>
+  </div>
+</div>
+
+<!-- SUB-ADMIN -->
+<div class="pg" id="pg-subadmin">
+  <div class="pg-title">Sub-Admin Management</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Create Sub-Admin</div>
+      <div class="fg"><label>User UID or Email</label><input type="text" id="sa-q" placeholder="UID or email"/></div>
+      <div class="fg"><label>Role Name</label><input type="text" id="sa-role" placeholder="e.g. Finance Manager"/></div>
+      <div class="fg"><label>Permissions</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:5px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:.75rem;cursor:pointer"><input type="checkbox" id="p-u" checked/> Users</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.75rem;cursor:pointer"><input type="checkbox" id="p-a"/> Activations</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.75rem;cursor:pointer"><input type="checkbox" id="p-w"/> Withdrawals</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.75rem;cursor:pointer"><input type="checkbox" id="p-i"/> Investments</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.75rem;cursor:pointer"><input type="checkbox" id="p-d"/> Distributions</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.75rem;cursor:pointer"><input type="checkbox" id="p-s"/> Settings</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.75rem;cursor:pointer"><input type="checkbox" id="p-r"/> Reports</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.75nm;cursor:pointer"><input type="checkbox" id="p-n"/> Notices</label>
+        </div>
+      </div>
+      <button class="btn btn-blue" onclick="createSA()" style="width:100%">🛡 Create Sub-Admin</button>
+    </div>
+    <div class="card">
+      <div class="ct">Current Sub-Admins <button class="btn btn-gray btn-sm" onclick="loadSA()">↻</button></div>
+      <div class="tw"><table><thead><tr><th>User</th><th>Role</th><th>Permissions</th><th>Action</th></tr></thead><tbody id="sa-tb"><tr><td colspan="4" style="text-align:center;color:#64748b;padding:14px">None</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- BINARY TREE -->
+<div class="pg" id="pg-tree">
+  <div class="pg-title">Binary Tree</div>
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+    <input type="text" id="tr-q" placeholder="Username or email…" style="flex:1;min-width:160px;background:#fff;border:1px solid #e2e8f0;border-radius:7px;padding:7px 10px;color:#1e293b;font-size:.78rem;outline:none"/>
+    <button class="btn btn-blue btn-sm" onclick="searchTree()">Search</button>
+    <button class="btn btn-gray btn-sm" onclick="loadRootTree()">Root</button>
+  </div>
+  <div class="card"><div class="ct" id="tr-lbl">Tree View</div><div style="overflow-x:auto;padding:10px 0;min-height:180px" id="tr-view"><div style="text-align:center;color:#64748b;padding:28px">Loading…</div></div></div>
+</div>
+
+<!-- WITHDRAWALS -->
+<div class="pg" id="pg-withdrawals">
+  <div class="pg-title">Withdrawal Management</div>
+  <div class="cg" style="max-width:600px">
+    <div class="sc"><div class="sl" style="color:#ef4444">Pending</div><div class="sv" id="wd-p" style="color:#ef4444">0</div><div class="si">⏳</div></div>
+    <div class="sc"><div class="sl">Approved Today</div><div class="sv" id="wd-a">0</div><div class="si">✅</div></div>
+    <div class="sc"><div class="sl">Total Paid</div><div class="sv" id="wd-t">$0</div><div class="si">💸</div></div>
+  </div>
+  <div class="sb2">
+    <select id="wd-f" onchange="filterWD()">
+      <option value="all">All</option><option value="pending">Pending</option>
+      <option value="approved">Approved</option><option value="rejected">Rejected</option>
+    </select>
+    <button class="btn btn-gray btn-sm" onclick="loadWD()">↻ Refresh</button>
+    <button class="btn btn-green btn-sm" onclick="approveAllWD()">✅ Approve All Pending</button>
+    <button class="btn btn-blue btn-sm" onclick="xCSV('withdrawals')">⬇ CSV</button>
+  </div>
+  <div class="card"><div class="tw"><table>
+    <thead><tr><th>#</th><th>User</th><th>Amount</th><th>Wallet Address</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody id="wd-tb"><tr><td colspan="7" style="text-align:center;color:#64748b;padding:20px">Loading…</td></tr></tbody>
+  </table></div></div>
+</div>
+
+<!-- INVESTMENTS -->
+<div class="pg" id="pg-investments">
+  <div class="pg-title">Investment Management</div>
+  <div class="cg" style="max-width:580px">
+    <div class="sc"><div class="sl">Total Invested</div><div class="sv" id="iv-t">$0</div><div class="si">📈</div></div>
+    <div class="sc"><div class="sl">Active Plans</div><div class="sv" id="iv-a">0</div><div class="si">✅</div></div>
+    <div class="sc"><div class="sl">ROI Paid</div><div class="sv" id="iv-r">$0</div><div class="si">💰</div></div>
+  </div>
+  <div class="card">
+    <div class="ct">All Plans <button class="btn btn-gray btn-sm" onclick="loadInv()">↻ Refresh</button> <button class="btn btn-green btn-sm" onclick="filterInvStatus('pending')">⏳ Pending Only</button> <button class="btn btn-blue btn-sm" onclick="filterInvStatus('all')">All</button></div>
+    <div class="tw"><table>
+      <thead><tr><th>User</th><th>Amount</th><th>ROI%</th><th>Date</th><th>Earned</th><th>Unlock Date</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="iv-tb"><tr><td colspan="8" style="text-align:center;color:#64748b;padding:20px">Loading…</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- FUND ACCOUNT -->
+<div class="pg" id="pg-fundac">
+  <div class="pg-title">Company Fund Account</div>
+  <div class="cg" style="max-width:580px">
+    <div class="sc"><div class="sl">Fund Balance</div><div class="sv" id="fd-b">$0</div><div class="ss">$5/activation</div><div class="si">🏦</div></div>
+    <div class="sc"><div class="sl">Total In</div><div class="sv" id="fd-i">$0</div><div class="si">⬇</div></div>
+    <div class="sc"><div class="sl">Total Out</div><div class="sv" id="fd-o">$0</div><div class="si">⬆</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Fund Operations</div>
+      <div class="fg"><label>Operation</label>
+        <select id="fd-op"><option value="add">Add to Fund</option><option value="withdraw">Withdraw from Fund</option><option value="distribute">Distribute to All Active Users</option></select>
+      </div>
+      <div class="fg"><label>Amount ($)</label><input type="number" id="fd-amt" placeholder="Amount" min="1"/></div>
+      <div class="fg"><label>Note</label><input type="text" id="fd-note" placeholder="Reason"/></div>
+      <button class="btn btn-blue" onclick="fundOp()" style="width:100%">⚡ Execute</button>
+    </div>
+    <div class="card">
+      <div class="ct">Fund History <button class="btn btn-gray btn-sm" onclick="loadFundH()">↻</button></div>
+      <div class="tw"><table><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Note</th></tr></thead><tbody id="fd-tb"><tr><td colspan="4" style="text-align:center;color:#64748b;padding:12px">No records</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- TRANSACTIONS -->
+<div class="pg" id="pg-transactions">
+  <div class="pg-title">All Transactions</div>
+  <div class="sb2">
+    <input type="text" id="tx-s" placeholder="Search user or type…" oninput="filterTX()"/>
+    <select id="tx-t" onchange="filterTX()">
+      <option value="all">All Types</option>
+      <option value="Sponsor Commission">Sponsor</option><option value="Matching Bonus">Matching</option>
+      <option value="Daily Cashback">Cashback</option><option value="ROI Payout">ROI</option>
+      <option value="Club Bonus">Club</option><option value="Withdrawal">Withdrawal</option>
+      <option value="Generation Bonus">Generation</option>
+    </select>
+    <input type="date" id="tx-df"/><input type="date" id="tx-dt"/>
+    <button class="btn btn-blue btn-sm" onclick="filterTX()">Filter</button>
+    <button class="btn btn-gray btn-sm" onclick="xCSV('transactions')">⬇ CSV</button>
+  </div>
+  <div class="card">
+    <div class="ct">Transactions <small id="tx-c" style="color:#64748b;font-weight:400"></small></div>
+    <div class="tw"><table>
+      <thead><tr><th>Date & Time</th><th>User</th><th>Type</th><th>Amount</th><th>Note</th><th>Status</th></tr></thead>
+      <tbody id="tx-tb"><tr><td colspan="6" style="text-align:center;color:#64748b;padding:20px">Loading…</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- CASHBACK -->
+<div class="pg" id="pg-cashback">
+  <div class="pg-title">Cashback Pool</div>
+  <div class="ib">3% of joining volume. Max = Join Fee × Multiplier (default $30×2=$60). Activated users only.</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Settings & Distribution</div>
+      <div class="fg"><label>Pool % of Volume</label><input type="number" id="cb-p" value="3" step="0.5" min="0.5"/></div>
+      <div class="fg"><label>Joining Fee ($)</label><input type="number" id="cb-jf" value="30" min="1"/></div>
+      <div class="fg"><label>Cashback Multiplier (×)</label><input type="number" id="cb-m" value="2" step="0.5" min="1"/></div>
+      <button class="btn btn-gray" onclick="saveCBSet()" style="width:100%;margin-bottom:9px">💾 Save Settings</button>
+      <hr style="border:none;border-top:1px solid #e2e8f0;margin-bottom:9px"/>
+      <div style="font-size:.77rem">
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f1f5f9"><span style="color:#64748b">Active Users</span><span id="cb-el" style="font-weight:700">0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f1f5f9"><span style="color:#64748b">Total Volume</span><span id="cb-v" style="font-weight:700">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f1f5f9"><span style="color:#64748b">Pool Size</span><span id="cb-ps" style="font-weight:700;color:#3b82f6">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f1f5f9"><span style="color:#64748b">Per Member</span><span id="cb-pm" style="font-weight:700;color:#f59e0b">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:#64748b">Max Per User</span><span id="cb-mx" style="font-weight:700;color:#ef4444">$60</span></div>
+      </div>
+      <button class="btn btn-blue" onclick="runCashback()" style="width:100%;margin-top:10px">💰 Distribute Cashback Now</button>
+    </div>
+    <div class="card">
+      <div class="ct">History <button class="btn btn-gray btn-sm" onclick="loadCBH()">↻</button></div>
+      <div class="tw"><table><thead><tr><th>Date</th><th>Pool</th><th>Members</th><th>Per User</th></tr></thead><tbody id="cb-h"><tr><td colspan="4" style="text-align:center;color:#64748b;padding:12px">No history</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- CLUB BONUS -->
+<div class="pg" id="pg-clubbonus">
+  <div class="pg-title">Club Bonus</div>
+  <div class="ib">4% of joining volume. Eligibility: min direct refs OR min matching income.</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Settings & Distribution</div>
+      <div class="fg"><label>Club Pool %</label><input type="number" id="cl-p" value="4" step="0.5" min="0.5"/></div>
+      <div class="fg"><label>Min Direct Refs</label><input type="number" id="cl-r" value="10" min="1"/></div>
+      <div class="fg"><label>OR Min Matching ($)</label><input type="number" id="cl-m" value="50" min="1"/></div>
+      <button class="btn btn-gray" onclick="saveClubSet()" style="width:100%;margin-bottom:9px">💾 Save</button>
+      <hr style="border:none;border-top:1px solid #e2e8f0;margin-bottom:9px"/>
+      <div style="font-size:.77rem">
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f1f5f9"><span style="color:#64748b">Pool Size</span><span id="cl-pl" style="font-weight:700;color:#f59e0b">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f1f5f9"><span style="color:#64748b">Eligible Members</span><span id="cl-el" style="font-weight:700">0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:#64748b">Per Member</span><span id="cl-pm" style="font-weight:700;color:#22c55e">$0</span></div>
+      </div>
+      <button class="btn btn-yellow" onclick="runClub()" style="width:100%;margin-top:10px">🏆 Distribute Club Bonus Now</button>
+    </div>
+    <div class="card">
+      <div class="ct">Eligible Members</div>
+      <div class="tw"><table><thead><tr><th>User</th><th>Dir Refs</th><th>Matching</th><th>Reason</th></tr></thead><tbody id="cl-tb"><tr><td colspan="4" style="text-align:center;color:#64748b;padding:12px">Loading…</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ROI -->
+<div class="pg" id="pg-roi">
+  <div class="pg-title">ROI Management</div>
+  <div class="ib">ROI paid on 10th of every month. 50% direct to investor. 50% Generation (7 levels). No sponsor bonus.</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">ROI Settings</div>
+      <div class="fg"><label>Monthly ROI Rate (%)</label><input type="number" id="ro-r" value="10" min="10" max="15" step="0.5"/></div>
+      <div class="fg"><label>Direct Payout to Investor (%)</label><input type="number" id="ro-d" value="50" min="1" max="100"/></div>
+      <div class="fg"><label>Min Investment ($)</label><input type="number" id="ro-mi" value="100" min="1"/></div>
+      <div class="fg"><label>Capital Lock (months)</label><input type="number" id="ro-lk" value="6" min="1"/></div>
+      <div class="fg"><label>Capital WD Fee (%)</label><input type="number" id="ro-wf" value="10" min="0"/></div>
+      <button class="btn btn-green" onclick="saveROISet()" style="width:100%;margin-bottom:9px">💾 Save ROI Settings</button>
+      <button class="btn btn-blue" onclick="runROI()" style="width:100%">📈 Run ROI Payout Now</button>
+    </div>
+    <div class="card">
+      <div class="ct">Generation Levels (Dynamic)</div>
+      <div class="tw"><table><thead><tr><th>Level</th><th>Default</th><th>Set %</th></tr></thead><tbody id="gl-tb"></tbody></table></div>
+      <button class="btn btn-gray" onclick="saveGL()" style="width:100%;margin-top:10px">💾 Save Levels</button>
+    </div>
+  </div>
+</div>
+
+<!-- MATCHING -->
+<div class="pg" id="pg-matching">
+  <div class="pg-title">Matching Bonus</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Matching Settings</div>
+      <div class="fg"><label>Matching Bonus (%)</label><input type="number" id="ma-p" value="5" step="0.5" min="0.5"/></div>
+      <div class="fg"><label>Lifetime Cap per User ($)</label><input type="number" id="ma-c" value="1000" min="1"/></div>
+      <div class="wb">⚠ Calculated on weaker leg volume × %. Lifetime cap applies.</div>
+      <button class="btn btn-gray" onclick="saveMatchSet()" style="width:100%;margin-bottom:9px">💾 Save</button>
+      <button class="btn btn-orange" onclick="runMatching()" style="width:100%">🤝 Run Matching Now</button>
+    </div>
+    <div class="card">
+      <div class="ct">Stats</div>
+      <div style="font-size:.8rem">
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9"><span style="color:#64748b">Rate</span><span id="ma-r" style="font-weight:700">5%</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9"><span style="color:#64748b">Cap</span><span id="ma-cp" style="font-weight:700;color:#ef4444">$1000</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9"><span style="color:#64748b">Total Paid</span><span id="ma-tp" style="font-weight:700;color:#22c55e">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:#64748b">Users at Cap</span><span id="ma-ac" style="font-weight:700">0</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GIFT VOUCHER -->
+<div class="pg" id="pg-voucher">
+  <div class="pg-title">Gift Vouchers</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Create Voucher</div>
+      <div class="fg"><label>Value ($)</label><input type="number" id="vo-a" placeholder="e.g. 30" min="1"/></div>
+      <div class="fg"><label>Quantity</label><input type="number" id="vo-q" value="1" min="1"/></div>
+      <div class="fg"><label>Expiry Date (optional)</label><input type="date" id="vo-e"/></div>
+      <div class="fg"><label>Assign to User (username or UID)</label><input type="text" id="vo-u" placeholder="Leave blank for general"/></div>
+      <div class="fg"><label>Note</label><input type="text" id="vo-n" placeholder="Reason"/></div>
+      <button class="btn btn-blue" onclick="createVoucher()" style="width:100%">🎟 Generate Voucher(s)</button>
+    </div>
+    <div class="card">
+      <div class="ct">All Vouchers <button class="btn btn-gray btn-sm" onclick="loadVouchers()">↻</button></div>
+      <div class="tw"><table><thead><tr><th>Code</th><th>Value</th><th>Assigned</th><th>Used</th><th>Expiry</th><th>Del</th></tr></thead><tbody id="vo-tb"><tr><td colspan="6" style="text-align:center;color:#64748b;padding:12px">Loading…</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- GLOBAL SETTINGS -->
+<div class="pg" id="pg-settings">
+  <div class="pg-title">Global Settings</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Activation & Commission</div>
+      <div class="fg"><label>Activation Fee ($)</label><input type="number" id="gs-af" value="30" min="1"/></div>
+      <div class="fg"><label>Sponsor Commission ($)</label><input type="number" id="gs-sc" value="4" min="0"/></div>
+      <div class="fg"><label>Company Fund per Activation ($)</label><input type="number" id="gs-cf" value="5" min="0"/></div>
+      <div class="fg"><label>User Capping Limit ($)</label><input type="number" id="gs-cp" value="1000" min="1"/></div>
+      <button class="btn btn-blue" onclick="saveGS('act')">💾 Save</button>
+    </div>
+    <div class="card">
+      <div class="ct">System Controls</div>
+      <div class="tw-row"><label class="tog"><input type="checkbox" id="gs-ro" checked/><span class="sldr"></span></label><span class="tw-lbl">Registration Open</span></div>
+      <div class="tw-row"><label class="tog"><input type="checkbox" id="gs-wo" checked/><span class="sldr"></span></label><span class="tw-lbl">Withdrawals Open</span></div>
+      <div class="tw-row"><label class="tog"><input type="checkbox" id="gs-io" checked/><span class="sldr"></span></label><span class="tw-lbl">Investment Open</span></div>
+      <div class="tw-row"><label class="tog"><input type="checkbox" id="gs-mt"/><span class="sldr"></span></label><span class="tw-lbl" style="color:#ef4444">Maintenance Mode</span></div>
+      <button class="btn btn-orange" onclick="saveGS('sys')" style="width:100%;margin-top:4px">💾 Save Controls</button>
+    </div>
+    <div class="card">
+      <div class="ct">Cashback Settings</div>
+      <div class="fg"><label>Joining Fee ($)</label><input type="number" id="gs-jf" value="30" min="1"/></div>
+      <div class="fg"><label>Cashback Multiplier (×)</label><input type="number" id="gs-cm" value="2" step="0.5" min="1"/></div>
+      <div class="ib" style="font-size:.72rem">Max Cashback = Joining Fee × Multiplier (e.g. $30×2=$60)</div>
+      <button class="btn btn-blue" onclick="saveGS('cb')">💾 Save</button>
+    </div>
+    <div class="card">
+      <div class="ct">Company USDT Address</div>
+      <div class="fg"><label>TRC20 Address (for user payments)</label><input type="text" id="gs-usdt" placeholder="T… TRC20 address"/></div>
+      <button class="btn btn-blue" onclick="saveGS('usdt')">💾 Save Address</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Activity Log <button class="btn btn-gray btn-sm" onclick="loadAL()">↻</button></div>
+    <div class="tw" style="max-height:200px;overflow-y:auto"><table><thead><tr><th>Time</th><th>Action</th><th>By</th></tr></thead><tbody id="al-tb"><tr><td colspan="3" style="text-align:center;color:#64748b;padding:12px">Loading…</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- RANKS -->
+<div class="pg" id="pg-ranks">
+  <div class="pg-title">Rank Configuration</div>
+  <div class="ib">All rank conditions are dynamic — change and save anytime.</div>
+  <div class="card"><div class="tw"><table>
+    <thead><tr><th>Rank</th><th>Stars</th><th>Min Matching ($)</th><th>Min Team Sales ($)</th><th>Members</th><th>Save</th></tr></thead>
+    <tbody id="rk-tb"></tbody>
+  </table></div></div>
+</div>
+
+<!-- DASHBOARD BUTTONS -->
+<div class="pg" id="pg-buttons">
+  <div class="pg-title">Dashboard Button Manager</div>
+  <div class="ib">Add custom buttons to the user dashboard. Admin can add/remove anytime — live update.</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Add Button</div>
+      <div class="fg"><label>Label</label><input type="text" id="bt-l" placeholder="e.g. Buy Package"/></div>
+      <div class="fg"><label>Icon (emoji)</label><input type="text" id="bt-i" placeholder="🎁"/></div>
+      <div class="fg"><label>Link / Page</label><input type="text" id="bt-lk" placeholder="activation or https://…"/></div>
+      <div class="fg"><label>Color</label>
+        <select id="bt-c"><option value="btn-blue">Blue</option><option value="btn-green">Green</option><option value="btn-yellow">Gold</option><option value="btn-orange">Orange</option><option value="btn-red">Red</option></select>
+      </div>
+      <div class="fg"><label>Show To</label>
+        <select id="bt-s"><option value="all">All Users</option><option value="active">Active Only</option><option value="inactive">Inactive Only</option></select>
+      </div>
+      <button class="btn btn-blue" onclick="addBtn()" style="width:100%">➕ Add Button</button>
+    </div>
+    <div class="card">
+      <div class="ct">Current Buttons <button class="btn btn-gray btn-sm" onclick="loadBtns()">↻</button></div>
+      <div id="bt-list"><div style="text-align:center;color:#64748b;padding:14px">Loading…</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTICES -->
+<div class="pg" id="pg-notices">
+  <div class="pg-title">Notice Board</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Create Notice</div>
+      <div class="fg"><label>Title</label><input type="text" id="no-t" placeholder="Notice title"/></div>
+      <div class="fg"><label>Message</label><textarea id="no-m" placeholder="Notice content…"></textarea></div>
+      <div class="fg"><label>Type</label>
+        <select id="no-tp"><option value="info">ℹ Info</option><option value="success">✅ Success</option><option value="warning">⚠ Warning</option><option value="urgent">🔴 Urgent</option></select>
+      </div>
+      <div class="fg"><label>Show To</label>
+        <select id="no-tg"><option value="all">All Users</option><option value="active">Active Only</option><option value="inactive">Inactive Only</option></select>
+      </div>
+      <div class="fg"><label>Expiry Date (optional)</label><input type="date" id="no-ex"/></div>
+      <button class="btn btn-blue" onclick="sendNotice()" style="width:100%">📢 Publish Notice</button>
+    </div>
+    <div class="card">
+      <div class="ct">Active Notices <button class="btn btn-gray btn-sm" onclick="loadNotices()">↻</button></div>
+      <div id="no-list"><div style="text-align:center;color:#64748b;padding:14px">Loading…</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- REPORTS -->
+<div class="pg" id="pg-reports">
+  <div class="pg-title">Reports</div>
+  <div class="cg">
+    <div class="sc"><div class="sl">Total Users</div><div class="sv" id="rp-r">0</div><div class="si">👤</div></div>
+    <div class="sc"><div class="sl">Revenue</div><div class="sv" id="rp-rv">$0</div><div class="si">💵</div></div>
+    <div class="sc"><div class="sl">Commissions</div><div class="sv" id="rp-c">$0</div><div class="si">💸</div></div>
+    <div class="sc"><div class="sl">Company Fund</div><div class="sv" id="rp-f">$0</div><div class="si">🏦</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Income Breakdown</div>
+      <div style="font-size:.8rem">
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f1f5f9"><span style="color:#64748b">Sponsor Commissions</span><span id="rp-sp" style="font-weight:700;color:#22c55e">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f1f5f9"><span style="color:#64748b">Matching Bonus</span><span id="rp-mt" style="font-weight:700;color:#3b82f6">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f1f5f9"><span style="color:#64748b">Cashback Paid</span><span id="rp-cb" style="font-weight:700;color:#f59e0b">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f1f5f9"><span style="color:#64748b">Club Bonus</span><span id="rp-cl" style="font-weight:700;color:#8b5cf6">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0"><span style="color:#64748b">ROI Paid</span><span id="rp-ro" style="font-weight:700;color:#22c55e">$0</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">Export Data</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-gray" onclick="xCSV('users')">⬇ Export Users CSV</button>
+        <button class="btn btn-gray" onclick="xCSV('transactions')">⬇ Export Transactions CSV</button>
+        <button class="btn btn-gray" onclick="xCSV('withdrawals')">⬇ Export Withdrawals CSV</button>
+        <button class="btn btn-gray" onclick="xCSV('investments')">⬇ Export Investments CSV</button>
+        <button class="btn btn-blue" onclick="fullBackup()">⬇ Full JSON Backup</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INCOME MANAGER -->
+<div class="pg" id="pg-incomemgr">
+  <div class="pg-title">Income Manager</div>
+  <div class="ib">📌 Edit any income type rate. Add custom income types — auto shows in user dashboard income table. Changes apply immediately.</div>
+
+  <!-- DEFAULT INCOME TYPES -->
+  <div class="card">
+    <div class="ct">Default Income Types (Edit Rates)</div>
+    <div class="tw"><table>
+      <thead><tr><th>Income Type</th><th>Current Rate/Amount</th><th>Description</th><th>Status</th><th>New Value</th><th>Save</th></tr></thead>
+      <tbody id="inc-default-tb">
+        <tr><td colspan="6" style="text-align:center;color:#64748b;padding:14px">Loading…</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- ADD CUSTOM INCOME -->
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">➕ Add Custom Income Type</div>
+      <div class="ib" style="font-size:.72rem">New income type auto-appears in user dashboard income table. User earns it when admin distributes.</div>
+      <div class="fg"><label>Income Type Name</label><input type="text" id="ci-name" placeholder="e.g. Weekly Bonus, Leadership Bonus"/></div>
+      <div class="fg"><label>Amount / Rate</label><input type="text" id="ci-rate" placeholder="e.g. $10 flat or 2% of volume"/></div>
+      <div class="fg"><label>Description</label><input type="text" id="ci-desc" placeholder="Short description for users"/></div>
+      <div class="fg"><label>Distribution Type</label>
+        <select id="ci-dist">
+          <option value="flat">Flat Amount (all active users)</option>
+          <option value="per_active">Per Active User</option>
+          <option value="manual">Manual (admin assigns)</option>
+        </select>
+      </div>
+      <div class="fg"><label>Amount per User ($)</label><input type="number" id="ci-amt" placeholder="0.00" min="0" step="0.01"/></div>
+      <button class="btn btn-blue" onclick="addCustomIncome()" style="width:100%">✅ Add Income Type</button>
+    </div>
+
+    <div class="card">
+      <div class="ct">Custom Income Types <button class="btn btn-gray btn-sm" onclick="loadCustomIncomes()">↻</button></div>
+      <div id="ci-list"><div style="text-align:center;color:#64748b;padding:14px">Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- DISTRIBUTE CUSTOM INCOME -->
+  <div class="card">
+    <div class="ct">💸 Distribute Custom Income</div>
+    <div class="ib" style="font-size:.72rem">Select income type → set amount → distribute to all active users instantly. Shows in user dashboard.</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+      <div class="fg" style="flex:1;min-width:200px;margin-bottom:0">
+        <label>Select Income Type</label>
+        <select id="dist-type" style="background:#fff;border:1px solid #e2e8f0;border-radius:7px;padding:8px 10px;color:#1e293b;font-size:.82rem;outline:none;width:100%"></select>
+      </div>
+      <div class="fg" style="flex:1;min-width:150px;margin-bottom:0">
+        <label>Amount per User ($)</label>
+        <input type="number" id="dist-amt" placeholder="0.00" min="0.01" step="0.01" style="background:#fff;border:1px solid #e2e8f0;border-radius:7px;padding:8px 10px;color:#1e293b;font-size:.82rem;outline:none;width:100%"/>
+      </div>
+      <div class="fg" style="flex:1;min-width:150px;margin-bottom:0">
+        <label>Target Users</label>
+        <select id="dist-target" style="background:#fff;border:1px solid #e2e8f0;border-radius:7px;padding:8px 10px;color:#1e293b;font-size:.82rem;outline:none;width:100%">
+          <option value="active">Active Users Only</option>
+          <option value="all">All Users</option>
+          <option value="specific">Specific User (by UID)</option>
+        </select>
+      </div>
+      <div class="fg" id="specific-uid-fg" style="flex:1;min-width:150px;margin-bottom:0;display:none">
+        <label>User UID</label>
+        <input type="text" id="dist-uid" placeholder="User UID" style="background:#fff;border:1px solid #e2e8f0;border-radius:7px;padding:8px 10px;color:#1e293b;font-size:.82rem;outline:none;width:100%"/>
+      </div>
+      <div style="margin-bottom:0">
+        <button class="btn btn-green" onclick="distributeCustomIncome()">💸 Distribute Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER INCOME OVERVIEW TABLE -->
+  <div class="card">
+    <div class="ct">All Users Income Overview <button class="btn btn-gray btn-sm" onclick="loadUserIncomeTable()">↻</button> <button class="btn btn-blue btn-sm" onclick="xCSV('income')">⬇ CSV</button></div>
+    <div class="tw"><table id="user-income-table">
+      <thead id="inc-table-head"><tr><th>User</th><th>Sponsor</th><th>Matching</th><th>Cashback</th><th>Club</th><th>ROI</th><th>Generation</th><th>Total</th></tr></thead>
+      <tbody id="inc-table-body"><tr><td colspan="8" style="text-align:center;color:#64748b;padding:14px">Loading…</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- BACKUP & RESTORE -->
+<div class="pg" id="pg-backup">
+  <div class="pg-title">Backup & Restore</div>
+  <div class="rb">⚠ Restore OVERWRITES all current data. Always download a backup first!</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="ct">Create Backup</div>
+      <div class="fg"><label>Backup Type</label>
+        <select id="bk-t"><option value="full">Full Backup</option><option value="users">Users Only</option><option value="transactions">Transactions Only</option><option value="investments">Investments Only</option><option value="settings">Settings Only</option></select>
+      </div>
+      <button class="btn btn-blue" onclick="doBackup()" style="width:100%;margin-bottom:9px">💾 Download Backup (JSON)</button>
+      <hr style="border:none;border-top:1px solid #e2e8f0;margin-bottom:9px"/>
+      <div class="ct" style="font-size:.8rem">Backup Records</div>
+      <div class="tw"><table><thead><tr><th>Date & Time</th><th>Type</th><th>Size</th><th>Del</th></tr></thead><tbody id="bk-tb"><tr><td colspan="4" style="text-align:center;color:#64748b;padding:10px">No records</td></tr></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="ct">Restore from Backup</div>
+      <div class="fg"><label>Upload Backup (.json)</label><input type="file" id="bk-f" accept=".json"/></div>
+      <div class="fg"><label>Restore Type</label>
+        <select id="bk-rt"><option value="full">Full Restore</option><option value="users">Users Only</option><option value="settings">Settings Only</option></select>
+      </div>
+      <div class="rb" style="font-size:.72rem">This OVERWRITES existing data.</div>
+      <button class="btn btn-red" onclick="doRestore()" style="width:100%">🔄 Restore Now</button>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- USER MODAL -->
+<div class="mbg" id="uModal"><div class="modal"><div class="mt">User Details <button class="mc" onclick="closeM('uModal')">✕</button></div><div id="uMBody">Loading…</div></div></div>
+<div class="toast" id="toast"></div>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+<script>
+firebase.initializeApp({apiKey:"AIzaSyA3G2bMOJ_HSDYXJPuM70tVjfbkHlMftr4",authDomain:"livelinemeta.firebaseapp.com",databaseURL:"https://livelinemeta-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"livelinemeta",storageBucket:"livelinemeta.firebasestorage.app",messagingSenderId:"206900805598",appId:"1:206900805598:web:10e6b39100af201b4e674f"});
+const auth=firebase.auth(),fs=firebase.firestore(),db=firebase.database();
+let AU={},ACT={},WD={},INV={},TX=[],S={},CU='';
+const GLD=[20,10,8,6,4,3,2];
+const RD=[{n:'One Star',st:'⭐',m:50,s:100},{n:'Two Star',st:'⭐⭐',m:300,s:300},{n:'Three Star',st:'⭐⭐⭐',m:1000,s:1000},{n:'Four Star',st:'⭐⭐⭐⭐',m:3000,s:10000},{n:'Five Star',st:'⭐⭐⭐⭐⭐',m:10000,s:100000},{n:'Six Star',st:'6⭐',m:30000,s:300000},{n:'Seven Star',st:'7⭐',m:100000,s:10000000}];
+
+// ── AUTH ─────────────────────────────────────────────
+auth.onAuthStateChanged(async u=>{
+  if(!u){window.location.href='login.html';return;}
+  CU=u.uid;
+  sv('aEmail',u.email||'');
+  await loadS();
+  await loadUsers();
+  await loadAct();
+  await loadWD();
+  await loadInv();
+  await loadTX();
+  buildGL();buildRanks();computeOV();
+  loadVouchers();loadNotices();loadSA();loadFundH();loadBtns();loadAL();loadRootTree();loadCBH();loadBkList();
+  logA('Admin login',u.email);
+});
+
+// ── SETTINGS ─────────────────────────────────────────
+async function loadS(){
+  try{const sn=await db.ref('settings').get();S=sn.exists()?sn.val():{};applyS();}catch(e){console.log(e);}
+}
+function applyS(){
+  const g=(id,v)=>{const e=document.getElementById(id);if(e&&v!==undefined)e.value=v;};
+  g('ro-r',S.roiRate||10);g('ro-d',S.roiDirect||50);g('ro-mi',S.minInv||100);g('ro-lk',S.invLock||6);g('ro-wf',S.invFee||10);
+  g('gs-af',S.activationFee||30);g('gs-sc',S.sponsorComm||4);g('gs-cf',S.companyFund||5);g('gs-cp',S.userCap||1000);
+  g('gs-jf',S.joinFee||30);g('gs-cm',S.cbMultiplier||2);g('gs-usdt',S.companyUSDTAddress||'');
+  g('cb-p',S.cashbackPct||3);g('cb-jf',S.joinFee||30);g('cb-m',S.cbMultiplier||2);
+  g('cl-p',S.clubPct||4);g('cl-r',S.clubMinRefs||10);g('cl-m',S.clubMinMatch||50);
+  g('ma-p',S.matchingPct||5);g('ma-c',S.matchingCap||1000);
+  sv('ov-rr',(S.roiRate||10)+'%');sv('ov-mp',(S.matchingPct||5)+'%');
+  sv('ma-r',(S.matchingPct||5)+'%');sv('ma-cp','$'+(S.matchingCap||1000));
+  ['gs-ro','gs-wo','gs-io','gs-mt'].forEach((id,i)=>{const e=document.getElementById(id);const keys=['regOpen','wdOpen','invOpen','maintenance'];if(e&&S[keys[i]]!==undefined)e.checked=S[keys[i]];});
+  if(S.generationLevels)S.generationLevels.forEach((v,i)=>{const e=document.getElementById('gl-'+(i+1));if(e)e.value=v;});
+}
+
+// ── LOAD USERS ────────────────────────────────────────
+window.loadUsers=async()=>{
+  try{
+    sv('u-c','Loading…');
+    document.getElementById('u-tb').innerHTML='<tr><td colspan="12" style="text-align:center;color:#64748b;padding:20px">Loading users…</td></tr>';
+    const sn=await fs.collection('users').get();
+    AU={};
+    sn.forEach(d=>{AU[d.id]={id:d.id,...d.data()};});
+    sv('nb-u',Object.keys(AU).length||'');
+    renderU(Object.values(AU));
+  }catch(e){
+    document.getElementById('u-tb').innerHTML=`<tr><td colspan="12" style="text-align:center;color:#ef4444;padding:20px">Error: ${e.message}</td></tr>`;
+    toast('Load error: '+e.message);
+  }
+};
+
+function renderU(list){
+  sv('u-c',list.length+' users');
+  sv('ov-u',Object.keys(AU).length);
+  sv('ov-bl',Object.values(AU).filter(u=>u.blocked).length);
+  const tb=document.getElementById('u-tb');
+  if(!list.length){tb.innerHTML='<tr><td colspan="12" style="text-align:center;color:#64748b;padding:20px">No users found</td></tr>';return;}
+  tb.innerHTML=list.map((u,i)=>{
+    const j=u.createdAt?(u.createdAt.toDate?u.createdAt.toDate().toLocaleDateString():new Date(u.createdAt).toLocaleDateString()):'—';
+    const sp=u.sponsorId?(AU[u.sponsorId]?.username||u.sponsorId.slice(0,8)+'…'):'Root';
+    return`<tr>
+      <td style="color:#64748b">${i+1}</td>
+      <td style="font-family:monospace;font-size:.65rem;cursor:pointer;color:#3b82f6" title="${u.id}" onclick="navigator.clipboard.writeText('${u.id}').then(()=>toast('UID copied!'))">${u.id.slice(0,10)}…</td>
+      <td style="font-weight:700">${u.fullName||'—'}</td>
+      <td style="color:#64748b">@${u.username||'—'}</td>
+      <td style="font-size:.7rem">${u.email||'—'}</td>
+      <td style="font-size:.7rem">${j}</td>
+      <td style="font-size:.72rem;color:#8b5cf6">${sp}</td>
+      <td><span class="pill ${u.isActive?'pg-p':'py-p'}">${u.isActive?'Active':'Inactive'}</span></td>
+      <td><span class="pill ${u.incomeOff?'pr-p':'pg-p'}">${u.incomeOff?'OFF':'ON'}</span></td>
+      <td><span class="pill ${u.withdrawOff?'pr-p':'pg-p'}">${u.withdrawOff?'OFF':'ON'}</span></td>
+      <td><span class="pill ${u.blocked?'pr-p':'pb-p'}">${u.blocked?'YES':'NO'}</span></td>
+      <td><div style="display:flex;gap:3px;flex-wrap:wrap">
+        <button class="btn btn-gray btn-sm" onclick="viewU('${u.id}')">View</button>
+        <button class="btn btn-blue btn-sm" onclick="qEdit('${u.id}')">Edit</button>
+        <button class="btn ${u.incomeOff?'btn-green':'btn-red'} btn-sm" onclick="togInc('${u.id}',${!!u.incomeOff})">${u.incomeOff?'Inc ON':'Inc OFF'}</button>
+        <button class="btn ${u.withdrawOff?'btn-green':'btn-orange'} btn-sm" onclick="togWD('${u.id}',${!!u.withdrawOff})">${u.withdrawOff?'WD ON':'WD OFF'}</button>
+        <button class="btn ${u.blocked?'btn-green':'btn-red'} btn-sm" onclick="togBlk('${u.id}',${!!u.blocked})">${u.blocked?'Unblock':'Block'}</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+window.filterU=()=>{
+  const q=(document.getElementById('u-s').value||'').toLowerCase();
+  const f=document.getElementById('u-f').value;
+  let list=Object.values(AU);
+  if(q)list=list.filter(u=>(u.fullName||'').toLowerCase().includes(q)||(u.username||'').toLowerCase().includes(q)||(u.email||'').toLowerCase().includes(q)||(u.id||'').toLowerCase().includes(q));
+  if(f==='active')list=list.filter(u=>u.isActive);
+  else if(f==='inactive')list=list.filter(u=>!u.isActive);
+  else if(f==='blocked')list=list.filter(u=>u.blocked);
+  renderU(list);
+};
+
+window.togInc=async(uid,isOff)=>{
+  const v=!isOff;await fs.collection('users').doc(uid).update({incomeOff:v});AU[uid].incomeOff=v;
+  renderU(Object.values(AU));toast(v?'⛔ Income OFF':'✅ Income ON');logA(v?'Income disabled':'Income enabled','UID:'+uid.slice(0,8));
+};
+window.togWD=async(uid,isOff)=>{
+  const v=!isOff;await fs.collection('users').doc(uid).update({withdrawOff:v});AU[uid].withdrawOff=v;
+  renderU(Object.values(AU));toast(v?'⛔ WD OFF':'✅ WD ON');
+};
+window.togBlk=async(uid,isBlocked)=>{
+  const v=!isBlocked;await fs.collection('users').doc(uid).update({blocked:v});AU[uid].blocked=v;
+  renderU(Object.values(AU));toast(v?'🚫 Blocked':'✅ Unblocked');logA(v?'Blocked':'Unblocked','UID:'+uid.slice(0,8));
+};
+window.delAllUsers=async()=>{
+  if(!confirm('DELETE ALL USERS?'))return;
+  if(prompt('Type DELETE_ALL:')!=='DELETE_ALL'){toast('Cancelled');return;}
+  const b=fs.batch();Object.keys(AU).forEach(uid=>b.delete(fs.collection('users').doc(uid)));
+  await b.commit();AU={};renderU([]);logA('All users deleted','Admin');toast('All deleted');
+};
+window.viewU=uid=>{
+  const u=AU[uid];if(!u)return;
+  const j=u.createdAt?(u.createdAt.toDate?u.createdAt.toDate().toLocaleDateString():new Date(u.createdAt).toLocaleDateString()):'—';
+  document.getElementById('uMBody').innerHTML=`
+    <div style="background:#f8fafc;border-radius:8px;padding:12px;margin-bottom:11px">
+      <div style="font-size:.95rem;font-weight:800;color:#1e293b">${u.fullName||'User'}</div>
+      <div style="color:#64748b;font-size:.75rem">${u.email||'—'}</div>
+      <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
+        <span class="pill ${u.isActive?'pg-p':'py-p'}">${u.isActive?'Active':'Inactive'}</span>
+        ${u.blocked?'<span class="pill pr-p">Blocked</span>':''}${u.incomeOff?'<span class="pill pr-p">Income OFF</span>':''}${u.withdrawOff?'<span class="pill pr-p">WD OFF</span>':''}
+      </div>
+    </div>
+    <table style="width:100%;font-size:.77rem">
+      <tr><td style="color:#64748b;padding:4px 0;width:110px">UID</td><td style="font-family:monospace;font-size:.68rem;word-break:break-all">${uid}</td></tr>
+      <tr><td style="color:#64748b;padding:4px 0">Username</td><td>@${u.username||'—'}</td></tr>
+      <tr><td style="color:#64748b;padding:4px 0">Mobile</td><td>${u.mobile||'—'}</td></tr>
+      <tr><td style="color:#64748b;padding:4px 0">Country</td><td>${u.country||'—'}</td></tr>
+      <tr><td style="color:#64748b;padding:4px 0">Wallet</td><td style="font-size:.7rem;word-break:break-all">${u.paymentWallet||'—'}</td></tr>
+      <tr><td style="color:#64748b;padding:4px 0">Sponsor</td><td style="font-size:.7rem">${u.sponsorId||'None (Root)'}</td></tr>
+      <tr><td style="color:#64748b;padding:4px 0">Joined</td><td>${j}</td></tr>
+      <tr><td style="color:#64748b;padding:4px 0">Left Child</td><td style="font-size:.7rem">${u.leftChild||'Empty'}</td></tr>
+      <tr><td style="color:#64748b;padding:4px 0">Right Child</td><td style="font-size:.7rem">${u.rightChild||'Empty'}</td></tr>
+    </table>
+    <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn btn-blue btn-sm" onclick="qEdit('${uid}');closeM('uModal')">✏ Edit</button>
+      <button class="btn btn-orange btn-sm" onclick="adjBal('${uid}','${u.fullName||u.username||'User'}');closeM('uModal')">💰 Adjust Balance</button>
+      <button class="btn ${u.blocked?'btn-green':'btn-red'} btn-sm" onclick="togBlk('${uid}',${!!u.blocked});closeM('uModal')">${u.blocked?'Unblock':'Block'}</button>
+    </div>`;
+  document.getElementById('uModal').classList.add('show');
+};
+window.adjBal=(uid,name)=>{
+  const amt=parseFloat(prompt('Adjust balance for '+name+'\n(+ add, - deduct):'));
+  if(isNaN(amt))return;
+  db.ref('users/'+uid+'/walletBalance').get().then(sn=>{
+    const nw=parseFloat(sn.exists()?sn.val():0)+amt;
+    db.ref('users/'+uid+'/walletBalance').set(nw);
+    db.ref('transactions/'+uid).push({type:'Admin Adjustment',amount:amt,note:'Manual by admin',timestamp:Date.now(),status:'completed',balance:nw});
+    logA('Balance adjusted $'+amt,'User:'+name);toast('Balance adjusted $'+amt.toFixed(2));
+  });
+};
+window.qEdit=uid=>{document.getElementById('eu-q').value=uid;searchEU();sp('edituser',document.querySelector('nav a[onclick*="edituser"]'));};
+
+// ── EDIT USER ─────────────────────────────────────────
+window.searchEU=async()=>{
+  const q=(document.getElementById('eu-q').value||'').trim().toLowerCase();
+  if(!q){toast('Enter UID, username or email');return;}
+  const f=Object.values(AU).find(u=>u.id.toLowerCase()===q||(u.username||'').toLowerCase()===q||(u.email||'').toLowerCase()===q);
+  if(!f){toast('User not found');return;}
+  document.getElementById('eu-uid').value=f.id;
+  document.getElementById('eu-title').textContent='Editing: '+(f.fullName||f.username||f.id.slice(0,12));
+  ['name','uname','email','mob','ctry','wal','sp'].forEach((k,i)=>{
+    const keys=['fullName','username','email','mobile','country','paymentWallet','sponsorId'];
+    const e=document.getElementById('eu-'+k);if(e)e.value=f[keys[i]]||'';
+  });
+  document.getElementById('eu-inc').checked=!f.incomeOff;
+  document.getElementById('eu-wd').checked=!f.withdrawOff;
+  document.getElementById('eu-act').checked=!!f.isActive;
+  document.getElementById('eu-blk').checked=!!f.blocked;
+  const ws=await db.ref('users/'+f.id+'/walletBalance').get();
+  document.getElementById('eu-bal').value=ws.exists()?ws.val():0;
+  document.getElementById('eu-card').style.display='block';
+  toast('User loaded: '+(f.fullName||f.username));
+};
+window.saveEU=async()=>{
+  const uid=document.getElementById('eu-uid').value;if(!uid)return;
+  const upd={fullName:document.getElementById('eu-name').value.trim(),username:document.getElementById('eu-uname').value.trim(),email:document.getElementById('eu-email').value.trim(),mobile:document.getElementById('eu-mob').value.trim(),country:document.getElementById('eu-ctry').value.trim(),paymentWallet:document.getElementById('eu-wal').value.trim(),sponsorId:document.getElementById('eu-sp').value.trim()||null,updatedAt:new Date()};
+  await fs.collection('users').doc(uid).update(upd);
+  await db.ref('users/'+uid+'/walletBalance').set(parseFloat(document.getElementById('eu-bal').value)||0);
+  Object.assign(AU[uid],upd);logA('User edited','UID:'+uid.slice(0,8));toast('✅ User updated!');renderU(Object.values(AU));
+};
+window.saveFlags=async()=>{
+  const uid=document.getElementById('eu-uid').value;if(!uid)return;
+  const fl={incomeOff:!document.getElementById('eu-inc').checked,withdrawOff:!document.getElementById('eu-wd').checked,isActive:document.getElementById('eu-act').checked,blocked:document.getElementById('eu-blk').checked};
+  await fs.collection('users').doc(uid).update(fl);Object.assign(AU[uid],fl);logA('Flags updated','UID:'+uid.slice(0,8));toast('✅ Flags saved!');renderU(Object.values(AU));
+};
+window.cutTree=async()=>{
+  const uid=document.getElementById('eu-uid').value;if(!uid||!confirm('Cut from binary tree?'))return;
+  const u=AU[uid];
+  if(u.parentId&&AU[u.parentId]){const f=u.side==='left'?'leftChild':'rightChild';await fs.collection('users').doc(u.parentId).update({[f]:null});if(AU[u.parentId])AU[u.parentId][f]=null;}
+  await fs.collection('users').doc(uid).update({parentId:null,side:null});
+  AU[uid].parentId=null;AU[uid].side=null;logA('Cut from tree','UID:'+uid.slice(0,8));toast('✅ Cut from tree');
+};
+window.loginAs=()=>{const uid=document.getElementById('eu-uid').value;if(!uid)return;window.open('dashboard.html?viewAs='+uid,'_blank');toast('Opening dashboard…');};
+window.deleteU=async()=>{
+  const uid=document.getElementById('eu-uid').value;if(!uid||!confirm('Delete this user permanently?'))return;
+  await fs.collection('users').doc(uid).delete();
+  await db.ref('users/'+uid).remove();await db.ref('transactions/'+uid).remove();await db.ref('investments/'+uid).remove();await db.ref('withdrawals/'+uid).remove();
+  delete AU[uid];document.getElementById('eu-card').style.display='none';logA('User deleted','UID:'+uid.slice(0,8));renderU(Object.values(AU));toast('User deleted');
+};
+
+// ── ACTIVATIONS ───────────────────────────────────────
+window.loadAct=async()=>{
+  try{const sn=await db.ref('activationRequests').get();ACT=sn.exists()?sn.val():{};renderAct(Object.entries(ACT));}catch(e){console.log(e);}
+};
+function renderAct(entries){
+  entries.sort(([,a],[,b])=>(b.createdAt||0)-(a.createdAt||0));
+  const pend=entries.filter(([,a])=>a.status==='pending');
+  sv('ov-pa',pend.length);sv('ac-c',entries.length+' ('+pend.length+' pending)');
+  const nb=document.getElementById('nb-a');if(nb)nb.textContent=pend.length>0?pend.length:'';
+  const tb=document.getElementById('ac-tb');
+  if(!entries.length){tb.innerHTML='<tr><td colspan="11" style="text-align:center;color:#64748b;padding:20px">No requests</td></tr>';
+  document.getElementById('ov-at').innerHTML='<tr><td colspan="4" style="text-align:center;color:#64748b">None</td></tr>';return;}
+  tb.innerHTML=entries.map(([id,a],i)=>`<tr>
+    <td style="color:#64748b">${i+1}</td>
+    <td style="font-family:monospace;font-size:.65rem;cursor:pointer;color:#3b82f6" title="${a.uid||''}" onclick="navigator.clipboard.writeText('${a.uid||''}').then(()=>toast('Copied!'))">${(a.uid||'').slice(0,10)}…</td>
+    <td style="font-weight:700">${a.name||'—'}</td>
+    <td>@${a.username||'—'}</td>
+    <td style="font-size:.7rem">${a.email||'—'}</td>
+    <td>${a.method||'USDT'}</td>
+    <td style="font-family:monospace;font-size:.66rem;max-width:80px;overflow:hidden;text-overflow:ellipsis" title="${a.txid||''}">${(a.txid||'—').slice(0,14)}…</td>
+    <td style="font-weight:700;color:#f59e0b">$${a.amount||30}</td>
+    <td style="font-size:.7rem">${a.createdAt?new Date(a.createdAt).toLocaleDateString():'—'}</td>
+    <td><span class="pill ${a.status==='approved'?'pg-p':a.status==='rejected'?'pr-p':'py-p'}">${a.status||'pending'}</span></td>
+    <td><div style="display:flex;gap:3px">${a.status==='pending'?`<button class="btn btn-green btn-sm" onclick="approveAct('${id}','${a.uid||''}')">✅ Approve</button><button class="btn btn-red btn-sm" onclick="rejectAct('${id}')">✕</button>`:'<span style="color:#64748b">Done</span>'}</div></td>
+  </tr>`).join('');
+  document.getElementById('ov-at').innerHTML=entries.slice(0,5).map(([id,a])=>`<tr>
+    <td style="font-weight:600">${a.name||'User'}</td>
+    <td style="font-size:.7rem">${a.createdAt?new Date(a.createdAt).toLocaleDateString():'—'}</td>
+    <td><span class="pill ${a.status==='approved'?'pg-p':a.status==='rejected'?'pr-p':'py-p'}">${a.status||'pending'}</span></td>
+    <td>${a.status==='pending'?`<button class="btn btn-green btn-sm" onclick="approveAct('${id}','${a.uid||''}')">✅</button>`:'—'}</td>
+  </tr>`).join('');
+}
+window.filterAct=()=>{const f=document.getElementById('ac-f').value;renderAct(f==='all'?Object.entries(ACT):Object.entries(ACT).filter(([,a])=>a.status===f));};
+window.approveAct=async(id,uid)=>{
+  if(!uid){toast('No UID for this request');return;}
+  if(!confirm('Approve activation?'))return;
+  try{
+    await db.ref('activationRequests/'+id).update({status:'approved',approvedAt:Date.now()});ACT[id].status='approved';
+    await fs.collection('users').doc(uid).update({isActive:true,activatedAt:new Date()});if(AU[uid])AU[uid].isActive=true;
+    const u=AU[uid]||{},spC=parseFloat(S.sponsorComm||4),cF=parseFloat(S.companyFund||5);
+    if(u.sponsorId){
+      const wr=db.ref('users/'+u.sponsorId+'/walletBalance'),ws=await wr.get(),nw=parseFloat(ws.exists()?ws.val():0)+spC;
+      await wr.set(nw);
+      const ir=db.ref('users/'+u.sponsorId+'/income/sponsor'),is=await ir.get();await ir.set(parseFloat(is.exists()?is.val():0)+spC);
+      await db.ref('transactions/'+u.sponsorId).push({type:'Sponsor Commission',amount:spC,note:'From '+(u.fullName||'User')+' activation',timestamp:Date.now(),status:'completed',balance:nw});
+    }
+    const cr=db.ref('settings/companyFundBalance'),cs=await cr.get();await cr.set(parseFloat(cs.exists()?cs.val():0)+cF);
+    await db.ref('fundHistory').push({type:'Activation Fee',amount:cF,note:'User: '+(u.fullName||uid.slice(0,8)),timestamp:Date.now()});
+    logA('Activation approved','UID:'+uid.slice(0,8));renderAct(Object.entries(ACT));computeOV();
+    toast('✅ Activated! $'+spC+' → Sponsor | $'+cF+' → Fund');
+  }catch(e){toast('Error: '+e.message);}
+};
+window.rejectAct=async id=>{
+  if(!confirm('Reject?'))return;
+  await db.ref('activationRequests/'+id).update({status:'rejected',rejectedAt:Date.now()});ACT[id].status='rejected';renderAct(Object.entries(ACT));toast('Rejected');
+};
+window.approveAllAct=async()=>{
+  const p=Object.entries(ACT).filter(([,a])=>a.status==='pending');
+  if(!p.length){toast('No pending requests');return;}
+  if(!confirm('Approve ALL '+p.length+' pending?'))return;
+  for(const[id,a]of p)if(a.uid)await approveAct(id,a.uid);
+  toast('✅ All approved!');
+};
+
+// ── BINARY TREE ───────────────────────────────────────
+window.loadRootTree=async()=>{const r=Object.values(AU).find(u=>u.isRoot||!u.parentId);if(r)renderTree(r.id);else sv('tr-view','<p style="color:#64748b;padding:20px;text-align:center">No root user found</p>');};
+window.searchTree=()=>{const q=(document.getElementById('tr-q').value||'').trim().toLowerCase();const f=Object.values(AU).find(u=>(u.username||'').toLowerCase()===q||(u.email||'').toLowerCase()===q||(u.id||'').toLowerCase()===q);if(f)renderTree(f.id);else toast('Not found');};
+function renderTree(uid){
+  const u=AU[uid];if(!u)return;
+  sv('tr-lbl','Root: '+(u.fullName||u.username||uid.slice(0,12)));
+  function nH(nid,lbl,isRoot){
+    if(!nid)return`<div style="display:flex;flex-direction:column;align-items:center"><div style="border:2px dashed #cbd5e1;border-radius:9px;padding:7px 11px;min-width:80px;text-align:center;opacity:.4;font-size:.7rem;color:#64748b">Empty<br><small>${lbl}</small></div></div>`;
+    const n=AU[nid],nm=n?(n.fullName||n.username||nid.slice(0,8)):nid.slice(0,8),act=n?n.isActive:false;
+    return`<div style="display:flex;flex-direction:column;align-items:center"><div style="border:2px solid ${isRoot?'#3b82f6':act?'#22c55e':'#e2e8f0'};background:${isRoot?'#eff6ff':act?'#f0fdf4':'#f8fafc'};border-radius:9px;padding:7px 11px;min-width:80px;text-align:center;cursor:pointer;font-size:.7rem" onclick="renderTree('${nid}')">
+      <div style="font-weight:800;font-size:.75rem;max-width:75px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${isRoot?'👤 ':''} ${nm}</div>
+      <div style="font-size:.6rem;color:#64748b">@${n?n.username:'?'}</div>
+      <span class="pill ${act?'pg-p':'py-p'}" style="margin-top:2px;font-size:.6rem">${act?'Act':'Inact'}</span>
+      <div style="font-size:.58rem;color:#94a3b8;margin-top:1px">${lbl}</div>
+    </div></div>`;
+  }
+  function lvl2(pid){const n=pid?AU[pid]:null,lc=n?n.leftChild:null,rc=n?n.rightChild:null;return`<div style="display:flex;gap:12px">${nH(lc,'L')}${nH(rc,'R')}</div>`;}
+  const lc=u.leftChild,rc=u.rightChild;
+  document.getElementById('tr-view').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:0;padding:8px">
+    ${nH(uid,'YOU',true)}
+    <div style="width:1px;height:16px;background:${(lc||rc)?'#e2e8f0':'transparent'}"></div>
+    <div style="display:flex;gap:30px">
+      <div style="display:flex;flex-direction:column;align-items:center">${nH(lc,'LEFT')}${lc?`<div style="width:1px;height:12px;background:#e2e8f0"></div>${lvl2(lc)}`:''}</div>
+      <div style="display:flex;flex-direction:column;align-items:center">${nH(rc,'RIGHT')}${rc?`<div style="width:1px;height:12px;background:#e2e8f0"></div>${lvl2(rc)}`:''}</div>
+    </div>
+  </div>`;
+}
+
+// ── WITHDRAWALS ───────────────────────────────────────
+window.loadWD=async()=>{
+  try{const sn=await db.ref('withdrawals').get();WD={};if(sn.exists())Object.entries(sn.val()).forEach(([uid,ws])=>Object.entries(ws).forEach(([wid,w])=>{WD[uid+'__'+wid]={...w,uid};}));renderWD(Object.entries(WD));}catch(e){console.log(e);}
+};
+function renderWD(entries){
+  entries.sort(([,a],[,b])=>(b.createdAt||0)-(a.createdAt||0));
+  const p=entries.filter(([,w])=>w.status==='pending'),ap=entries.filter(([,w])=>w.status==='approved'),tot=ap.reduce((s,[,w])=>s+(w.amount||0),0);
+  sv('ov-pw',p.length);sv('wd-p',p.length);sv('wd-a',ap.length);sv('wd-t','$'+tot.toFixed(0));
+  const nb=document.getElementById('nb-w');if(nb)nb.textContent=p.length>0?p.length:'';
+  const tb=document.getElementById('wd-tb');
+  if(!entries.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:#64748b;padding:20px">No withdrawals</td></tr>';return;}
+  tb.innerHTML=entries.map(([key,w],i)=>`<tr>
+    <td style="color:#64748b">${i+1}</td>
+    <td style="font-weight:600">${AU[w.uid]?.fullName||AU[w.uid]?.username||w.uid?.slice(0,10)||'—'}</td>
+    <td style="font-weight:700;color:#22c55e">$${(w.amount||0).toFixed(2)}</td>
+    <td style="font-family:monospace;font-size:.67rem;max-width:110px;overflow:hidden;text-overflow:ellipsis" title="${w.address||''}">${(w.address||'—').slice(0,20)}…</td>
+    <td style="font-size:.7rem">${w.createdAt?new Date(w.createdAt).toLocaleDateString():'—'}</td>
+    <td><span class="pill ${w.status==='approved'?'pg-p':w.status==='rejected'?'pr-p':'py-p'}">${w.status||'pending'}</span></td>
+    <td><div style="display:flex;gap:3px">${w.status==='pending'?`<button class="btn btn-green btn-sm" onclick="apWD('${key}',${w.amount||0},'${w.uid}')">✅ Pay</button><button class="btn btn-red btn-sm" onclick="rejWD('${key}',${w.amount||0},'${w.uid}')">✕ Reject</button>`:'<span style="color:#64748b">Done</span>'}</div></td>
+  </tr>`).join('');
+}
+window.filterWD=()=>{const f=document.getElementById('wd-f').value;renderWD(f==='all'?Object.entries(WD):Object.entries(WD).filter(([,w])=>w.status===f));};
+window.apWD=async(key,amount,uid)=>{
+  if(AU[uid]?.withdrawOff){toast('⛔ WD disabled for this user');return;}
+  if(!confirm('Pay $'+amount+'?'))return;
+  const[,wid]=key.split('__');
+  await db.ref('withdrawals/'+uid+'/'+wid).update({status:'approved',paidAt:Date.now()});WD[key].status='approved';
+  const wr=db.ref('users/'+uid+'/walletBalance'),ws=await wr.get(),nw=Math.max(0,parseFloat(ws.exists()?ws.val():0)-amount);await wr.set(nw);
+  const tw=db.ref('users/'+uid+'/totalWithdrawn'),ts=await tw.get();await tw.set(parseFloat(ts.exists()?ts.val():0)+amount);
+  await db.ref('transactions/'+uid).push({type:'Withdrawal',amount:-amount,note:'Approved & paid',timestamp:Date.now(),status:'completed',balance:nw});
+  logA('WD approved $'+amount,'UID:'+uid.slice(0,8));renderWD(Object.entries(WD));toast('✅ Paid $'+amount);
+};
+window.rejWD=async(key,amount,uid)=>{
+  if(!confirm('Reject & refund $'+amount+'?'))return;
+  const[,wid]=key.split('__');
+  await db.ref('withdrawals/'+uid+'/'+wid).update({status:'rejected'});
+  const wr=db.ref('users/'+uid+'/walletBalance'),ws=await wr.get(),nw=parseFloat(ws.exists()?ws.val():0)+amount;await wr.set(nw);
+  await db.ref('transactions/'+uid).push({type:'Withdrawal Refund',amount:amount,note:'Rejected — refunded',timestamp:Date.now(),status:'completed',balance:nw});
+  WD[key].status='rejected';renderWD(Object.entries(WD));toast('Rejected. $'+amount+' refunded');
+};
+window.approveAllWD=async()=>{
+  const p=Object.entries(WD).filter(([,w])=>w.status==='pending');
+  if(!p.length){toast('No pending');return;}
+  if(!confirm('Approve ALL '+p.length+'?'))return;
+  for(const[k,w]of p)await apWD(k,w.amount||0,w.uid);toast('✅ All paid!');
+};
+
+// ── INVESTMENTS ───────────────────────────────────────
+window.loadInv=async()=>{
+  try{const sn=await db.ref('investments').get();INV={};if(sn.exists())Object.entries(sn.val()).forEach(([uid,pl])=>Object.entries(pl).forEach(([pid,p])=>{INV[uid+'__'+pid]={...p,uid};}));renderInv();}catch(e){console.log(e);}
+};
+let INV_ALL = {};
+function renderInv(filterStatus='all'){
+  const e=Object.entries(INV).sort(([,a],[,b])=>(b.createdAt||0)-(a.createdAt||0));
+  const filtered = filterStatus==='all' ? e : e.filter(([,p])=>p.status===filterStatus);
+  const tot=e.reduce((s,[,p])=>s+(p.amount||0),0),act=e.filter(([,p])=>p.status==='active').length,pend=e.filter(([,p])=>p.status==='pending').length,rp=e.reduce((s,[,p])=>s+(p.earnedROI||0),0);
+  sv('iv-t','$'+tot.toFixed(0));sv('iv-a',act);sv('iv-r','$'+rp.toFixed(0));sv('ov-i','$'+tot.toFixed(0));
+  // Show pending badge
+  const pendBadge = pend>0 ? ` <span style="background:#ef4444;color:#fff;border-radius:9px;padding:1px 7px;font-size:.68rem;font-weight:700">${pend} pending</span>` : '';
+  const ctEl = document.querySelector('#pg-investments .ct');
+  if(ctEl) ctEl.innerHTML = 'All Plans '+pendBadge+' <button class="btn btn-gray btn-sm" onclick="loadInv()">↻ Refresh</button> <button class="btn btn-green btn-sm" onclick="filterInvStatus(\'pending\')">⏳ Pending Only</button> <button class="btn btn-blue btn-sm" onclick="filterInvStatus(\'all\')">All</button>';
+  const tb=document.getElementById('iv-tb');
+  if(!filtered.length){tb.innerHTML='<tr><td colspan="8" style="text-align:center;color:#64748b;padding:20px">No '+(filterStatus==='pending'?'pending ':'')+'investments</td></tr>';return;}
+  tb.innerHTML=filtered.map(([key,p])=>{
+    const unlk=new Date((p.createdAt||Date.now())+parseFloat(S.invLock||6)*30*24*60*60*1000);
+    const uName=AU[p.uid]?.fullName||AU[p.uid]?.username||p.uid?.slice(0,10)||'—';
+    const isPending = p.status==='pending';
+    return`<tr style="${isPending?'background:#fffbeb;':''}">
+      <td style="font-weight:700">${uName}<br><span style="font-size:.65rem;color:#64748b">${p.uid?.slice(0,12)||''}…</span></td>
+      <td style="font-weight:800;color:#3b82f6;font-size:.95rem">$${p.amount||0}</td>
+      <td style="color:#22c55e;font-weight:700">${p.roiRate||10}%</td>
+      <td style="font-size:.7rem;color:#64748b">${p.createdAt?new Date(p.createdAt).toLocaleDateString():'—'}</td>
+      <td style="color:#f59e0b;font-weight:700">$${(p.earnedROI||0).toFixed(2)}</td>
+      <td style="font-size:.7rem;color:#64748b">${unlk.toLocaleDateString()}</td>
+      <td><span class="pill ${isPending?'py-p':p.status==='active'?'pg-p':'pb-p'}">${isPending?'⏳ Pending':p.status==='active'?'✅ Active':'—'}</span></td>
+      <td>
+        <div style="display:flex;gap:5px;align-items:center">
+          ${isPending?`<button class="btn btn-green" style="padding:6px 14px;font-size:.78rem;font-weight:800" onclick="apInv('${key}')">✅ Approve & Activate</button>`:'<span style="color:#22c55e;font-weight:700;font-size:.75rem">✅ Active</span>'}
+          <button class="btn btn-gray btn-sm" onclick="setROIRate('${key}')">ROI%</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+window.filterInvStatus=status=>renderInv(status);
+window.apInv=async key=>{
+  const[uid,pid]=key.split('__'),p=INV[key];
+  if(!p){toast('Investment not found');return;}
+  if(!confirm('Approve & Activate investment of $'+p.amount+' for '+(AU[uid]?.fullName||uid.slice(0,10))+'?'))return;
+  try{
+    await db.ref('investments/'+uid+'/'+pid).update({status:'active',activatedAt:Date.now()});
+    INV[key].status='active';
+    // Update total invested
+    const ti=db.ref('users/'+uid+'/totalInvested'),ts=await ti.get();
+    await ti.set(parseFloat(ts.exists()?ts.val():0)+(p.amount||0));
+    renderInv();
+    computeOV();
+    logA('Investment activated $'+p.amount,'UID:'+uid.slice(0,8));
+    toast('✅ Investment APPROVED & ACTIVE! ROI: '+(p.roiRate||10)+'%/month | Payout: 10th of month');
+  }catch(e){toast('Error: '+e.message);}
+};
+window.setROIRate=async key=>{
+  const r=parseFloat(prompt('ROI rate (10–15):'));if(isNaN(r)||r<10||r>15){toast('Invalid');return;}
+  const[uid,pid]=key.split('__');await db.ref('investments/'+uid+'/'+pid).update({roiRate:r});INV[key].roiRate=r;renderInv();toast('ROI set to '+r+'%');
+};
+
+// ── FUND ACCOUNT ──────────────────────────────────────
+window.fundOp=async()=>{
+  const op=document.getElementById('fd-op').value,amt=parseFloat(document.getElementById('fd-amt').value),note=(document.getElementById('fd-note').value||'').trim();
+  if(!amt||amt<=0){toast('Enter valid amount');return;}
+  if(!confirm(op.toUpperCase()+' $'+amt+'?'))return;
+  try{
+    const fr=db.ref('settings/companyFundBalance'),fs2=await fr.get(),cur=parseFloat(fs2.exists()?fs2.val():0);
+    if(op==='add'){await fr.set(cur+amt);await db.ref('fundHistory').push({type:'Add',amount:amt,note:note||'Manual add',timestamp:Date.now()});toast('✅ $'+amt+' added');}
+    else if(op==='withdraw'){if(amt>cur){toast('Insufficient fund ($'+cur.toFixed(2)+')');return;}await fr.set(cur-amt);await db.ref('fundHistory').push({type:'Withdraw',amount:-amt,note:note||'Manual withdraw',timestamp:Date.now()});toast('✅ $'+amt+' withdrawn');}
+    else if(op==='distribute'){
+      const users=Object.values(AU).filter(u=>u.isActive&&!u.blocked);if(!users.length){toast('No active users');return;}if(amt>cur){toast('Insufficient fund');return;}
+      const per=amt/users.length;
+      for(const u of users){const wr=db.ref('users/'+u.id+'/walletBalance'),ws=await wr.get(),nw=parseFloat(ws.exists()?ws.val():0)+per;await wr.set(nw);await db.ref('transactions/'+u.id).push({type:'Fund Distribution',amount:per,note:note||'Fund distribution',timestamp:Date.now(),status:'completed',balance:nw});}
+      await fr.set(cur-amt);toast('✅ $'+per.toFixed(4)+' to '+users.length+' users');
+    }
+    logA('Fund '+op+' $'+amt,'Admin');loadFundH();document.getElementById('fd-amt').value='';document.getElementById('fd-note').value='';
+  }catch(e){toast('Error: '+e.message);}
+};
+async function loadFundH(){
+  try{
+    const sn=await db.ref('settings/companyFundBalance').get();
+    const bal=parseFloat(sn.exists()?sn.val():0);
+    sv('fd-b','$'+bal.toFixed(2));sv('ov-f','$'+bal.toFixed(0));
+    const hs=await db.ref('fundHistory').get(),tb=document.getElementById('fd-tb');
+    if(!hs.exists()){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#64748b">No records</td></tr>';return;}
+    const list=Object.values(hs.val()).sort((a,b)=>b.timestamp-a.timestamp);
+    let ti=0,to2=0;list.forEach(h=>{if((h.amount||0)>0)ti+=(h.amount||0);else to2+=Math.abs(h.amount||0);});
+    sv('fd-i','$'+ti.toFixed(0));sv('fd-o','$'+to2.toFixed(0));
+    tb.innerHTML=list.slice(0,20).map(h=>`<tr>
+      <td style="font-size:.7rem">${new Date(h.timestamp).toLocaleDateString()}</td>
+      <td>${h.type||'—'}</td>
+      <td style="font-weight:700;color:${(h.amount||0)>0?'#22c55e':'#ef4444'}">${(h.amount||0)>0?'+':''}$${Math.abs(h.amount||0).toFixed(2)}</td>
+      <td style="font-size:.7rem;color:#64748b">${h.note||'—'}</td>
+    </tr>`).join('');
+  }catch(e){console.log(e);}
+}
+
+// ── TRANSACTIONS ──────────────────────────────────────
+window.loadTX=async()=>{
+  try{const sn=await db.ref('transactions').get();TX=[];if(sn.exists())Object.entries(sn.val()).forEach(([uid,txs])=>Object.entries(txs).forEach(([,t])=>TX.push({...t,uid})));TX.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));renderTX(TX);}catch(e){console.log(e);}
+};
+function renderTX(list){
+  sv('tx-c',list.length+' records');
+  const tb=document.getElementById('tx-tb');
+  if(!list.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:#64748b;padding:20px">No transactions</td></tr>';return;}
+  tb.innerHTML=list.slice(0,300).map(t=>`<tr>
+    <td style="font-size:.68rem;color:#64748b">${new Date(t.timestamp||Date.now()).toLocaleDateString()+' '+new Date(t.timestamp||Date.now()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td>
+    <td style="font-size:.72rem">${AU[t.uid]?.fullName||AU[t.uid]?.username||t.uid?.slice(0,10)||'—'}</td>
+    <td>${t.type||'—'}</td>
+    <td style="font-weight:700;color:${(t.amount||0)>0?'#22c55e':'#ef4444'}">${(t.amount||0)>0?'+':''}$${Math.abs(t.amount||0).toFixed(2)}</td>
+    <td style="color:#64748b;font-size:.7rem">${t.note||'—'}</td>
+    <td><span class="pill ${t.status==='completed'?'pg-p':'py-p'}">${t.status||'done'}</span></td>
+  </tr>`).join('');
+}
+window.filterTX=()=>{
+  const q=(document.getElementById('tx-s').value||'').toLowerCase(),tp=document.getElementById('tx-t').value;
+  const df=document.getElementById('tx-df').value,dt=document.getElementById('tx-dt').value;
+  let list=TX;
+  if(q)list=list.filter(t=>(AU[t.uid]?.fullName||'').toLowerCase().includes(q)||(AU[t.uid]?.username||'').toLowerCase().includes(q)||(t.type||'').toLowerCase().includes(q));
+  if(tp!=='all')list=list.filter(t=>(t.type||'').includes(tp));
+  if(df)list=list.filter(t=>(t.timestamp||0)>=new Date(df).getTime());
+  if(dt)list=list.filter(t=>(t.timestamp||0)<=new Date(dt).getTime()+86399999);
+  renderTX(list);
+};
+
+// ── CASHBACK ──────────────────────────────────────────
+window.saveCBSet=async()=>{
+  const pct=parseFloat(document.getElementById('cb-p').value)||3,jf=parseFloat(document.getElementById('cb-jf').value)||30,mul=parseFloat(document.getElementById('cb-m').value)||2;
+  await db.ref('settings').update({cashbackPct:pct,joinFee:jf,cbMultiplier:mul,cashbackLimit:jf*mul});Object.assign(S,{cashbackPct:pct,joinFee:jf,cbMultiplier:mul,cashbackLimit:jf*mul});
+  sv('cb-mx','$'+(jf*mul).toFixed(0));computeOV();toast('✅ Cashback settings saved');
+};
+window.runCashback=async()=>{
+  if(!confirm('Distribute cashback now?'))return;
+  const active=Object.values(AU).filter(u=>u.isActive&&!u.blocked&&!u.incomeOff);
+  const jf=parseFloat(S.joinFee||30),mul=parseFloat(S.cbMultiplier||2),cbLim=jf*mul,vol=active.length*jf,pool=vol*(parseFloat(S.cashbackPct||3)/100);
+  const elig=[];
+  for(const u of active){const sn=await db.ref('users/'+u.id+'/income/cashback').get();const earned=parseFloat(sn.exists()?sn.val():0);if(earned<cbLim)elig.push({...u,earned});}
+  if(!elig.length){toast('No eligible members');return;}
+  const per=pool/elig.length;
+  for(const u of elig){const give=Math.min(per,cbLim-u.earned);if(give<=0)continue;await db.ref('users/'+u.id+'/income/cashback').set(u.earned+give);const wr=db.ref('users/'+u.id+'/walletBalance'),ws=await wr.get(),nw=parseFloat(ws.exists()?ws.val():0)+give;await wr.set(nw);await db.ref('transactions/'+u.id).push({type:'Daily Cashback',amount:give,note:'Pool $'+pool.toFixed(2)+'/'+elig.length+' members',timestamp:Date.now(),status:'completed',balance:nw});}
+  await db.ref('cashbackHistory').push({pool:pool.toFixed(2),members:elig.length,perUser:per.toFixed(4),cbLimit:cbLim,timestamp:Date.now()});
+  logA('Cashback $'+pool.toFixed(2),'Admin');loadCBH();toast('✅ Cashback: $'+per.toFixed(4)+' to '+elig.length);
+};
+async function loadCBH(){
+  try{const sn=await db.ref('cashbackHistory').get(),tb=document.getElementById('cb-h');if(!sn.exists()){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#64748b">None</td></tr>';return;}
+  const list=Object.values(sn.val()).sort((a,b)=>b.timestamp-a.timestamp);
+  tb.innerHTML=list.slice(0,10).map(h=>`<tr><td style="font-size:.7rem">${new Date(h.timestamp).toLocaleDateString()}</td><td style="color:#3b82f6">$${h.pool}</td><td>${h.members}</td><td style="color:#f59e0b">$${parseFloat(h.perUser||0).toFixed(4)}</td></tr>`).join('');}catch(e){console.log(e);}
+}
+
+// ── CLUB BONUS ────────────────────────────────────────
+window.saveClubSet=async()=>{
+  const pct=parseFloat(document.getElementById('cl-p').value)||4,mr=parseFloat(document.getElementById('cl-r').value)||10,mm=parseFloat(document.getElementById('cl-m').value)||50;
+  await db.ref('settings').update({clubPct:pct,clubMinRefs:mr,clubMinMatch:mm});Object.assign(S,{clubPct:pct,clubMinRefs:mr,clubMinMatch:mm});computeOV();toast('✅ Club settings saved');
+};
+window.runClub=async()=>{
+  if(!confirm('Distribute club bonus?'))return;
+  const users=Object.values(AU),active=users.filter(u=>u.isActive&&!u.blocked&&!u.incomeOff);
+  const vol=active.length*(parseFloat(S.joinFee||30)),pool=vol*(parseFloat(S.clubPct||4)/100);
+  const mr=parseInt(S.clubMinRefs||10),mm=parseFloat(S.clubMinMatch||50),elig=[];
+  for(const u of active){const dir=users.filter(u2=>u2.sponsorId===u.id).length;const msn=await db.ref('users/'+u.id+'/income/matching').get();const match=parseFloat(msn.exists()?msn.val():0);if(dir>=mr||match>=mm)elig.push(u);}
+  if(!elig.length){toast('No eligible members');return;}
+  const per=pool/elig.length;
+  for(const u of elig){const cr=db.ref('users/'+u.id+'/income/club'),cs=await cr.get();await cr.set(parseFloat(cs.exists()?cs.val():0)+per);const wr=db.ref('users/'+u.id+'/walletBalance'),ws=await wr.get(),nw=parseFloat(ws.exists()?ws.val():0)+per;await wr.set(nw);await db.ref('transactions/'+u.id).push({type:'Club Bonus',amount:per,note:'Monthly club bonus',timestamp:Date.now(),status:'completed',balance:nw});}
+  await db.ref('clubHistory').push({pool:pool.toFixed(2),members:elig.length,perUser:per.toFixed(4),timestamp:Date.now()});
+  logA('Club $'+pool.toFixed(2),'Admin');toast('✅ Club: $'+per.toFixed(4)+' to '+elig.length);
+};
+
+// ── ROI ───────────────────────────────────────────────
+window.saveROISet=async()=>{
+  const upd={roiRate:parseFloat(document.getElementById('ro-r').value)||10,roiDirect:parseFloat(document.getElementById('ro-d').value)||50,minInv:parseFloat(document.getElementById('ro-mi').value)||100,invLock:parseFloat(document.getElementById('ro-lk').value)||6,invFee:parseFloat(document.getElementById('ro-wf').value)||10};
+  await db.ref('settings').update(upd);Object.assign(S,upd);sv('ov-rr',upd.roiRate+'%');
+  for(const[k,p]of Object.entries(INV))if(p.status==='active'){const[uid,pid]=k.split('__');await db.ref('investments/'+uid+'/'+pid).update({roiRate:upd.roiRate});}
+  toast('✅ ROI saved. Active plans updated to '+upd.roiRate+'%');logA('ROI rate '+upd.roiRate+'%','Admin');
+};
+window.runROI=async()=>{
+  if(!confirm('Run ROI payout for all active plans?'))return;
+  const dp=parseFloat(S.roiDirect||50)/100,gp=1-dp,gls=(S.generationLevels||GLD).map(v=>v/100);let cnt=0;
+  for(const[key,p]of Object.entries(INV)){
+    if(p.status!=='active')continue;
+    const[uid,pid]=key.split('__'),u=AU[uid];if(u?.incomeOff||u?.blocked)continue;
+    const rate=p.roiRate||parseFloat(S.roiRate||10),mROI=(p.amount||0)*rate/100,dAmt=mROI*dp,gAmt=mROI*gp;
+    const ir=db.ref('users/'+uid+'/income/roi'),is=await ir.get();await ir.set(parseFloat(is.exists()?is.val():0)+dAmt);
+    const wr=db.ref('users/'+uid+'/walletBalance'),ws=await wr.get(),nw=parseFloat(ws.exists()?ws.val():0)+dAmt;await wr.set(nw);
+    await db.ref('investments/'+uid+'/'+pid).update({earnedROI:(p.earnedROI||0)+mROI,lastROI:Date.now()});
+    await db.ref('transactions/'+uid).push({type:'ROI Payout',amount:dAmt,note:'ROI on $'+p.amount+' @ '+rate+'%',timestamp:Date.now(),status:'completed',balance:nw});
+    let cur=uid;
+    for(let l=0;l<7;l++){const par=AU[cur]?.sponsorId;if(!par||!AU[par])break;const pU=AU[par];if(pU.incomeOff||pU.blocked){cur=par;continue;}const la=gAmt*gls[l];if(la<=0){cur=par;continue;}
+      const gr=db.ref('users/'+par+'/income/generation'),gs=await gr.get();await gr.set(parseFloat(gs.exists()?gs.val():0)+la);
+      const gwr=db.ref('users/'+par+'/walletBalance'),gws=await gwr.get(),gnw=parseFloat(gws.exists()?gws.val():0)+la;await gwr.set(gnw);
+      await db.ref('transactions/'+par).push({type:'Generation Bonus L'+(l+1),amount:la,note:'From '+(u?.fullName||uid.slice(0,8)),timestamp:Date.now(),status:'completed',balance:gnw});cur=par;}
+    cnt++;
+  }
+  logA('ROI paid for '+cnt+' plans','Admin');toast('✅ ROI paid for '+cnt+' plan(s)');
+};
+function buildGL(){
+  const defs=S.generationLevels||GLD;
+  document.getElementById('gl-tb').innerHTML=GLD.map((d,i)=>`<tr>
+    <td>Level ${i+1}</td><td style="color:#f59e0b;font-weight:700">${d}%</td>
+    <td><input type="number" id="gl-${i+1}" value="${defs[i]!==undefined?defs[i]:d}" style="width:60px;background:#fff;border:1px solid #e2e8f0;border-radius:6px;padding:3px 7px;font-size:.75rem;outline:none"/></td>
+  </tr>`).join('');
+}
+window.saveGL=async()=>{
+  const lvls=[1,2,3,4,5,6,7].map(i=>parseFloat(document.getElementById('gl-'+i)?.value)||0);
+  await db.ref('settings/generationLevels').set(lvls);S.generationLevels=lvls;toast('✅ Generation levels saved');
+};
+
+// ── MATCHING ──────────────────────────────────────────
+window.saveMatchSet=async()=>{
+  const pct=parseFloat(document.getElementById('ma-p').value)||5,cap=parseFloat(document.getElementById('ma-c').value)||1000;
+  await db.ref('settings').update({matchingPct:pct,matchingCap:cap});Object.assign(S,{matchingPct:pct,matchingCap:cap});
+  sv('ov-mp',pct+'%');sv('ma-r',pct+'%');sv('ma-cp','$'+cap);toast('✅ Matching settings saved');
+};
+window.runMatching=async()=>{
+  if(!confirm('Run matching bonus?'))return;
+  const users=Object.values(AU).filter(u=>u.isActive&&!u.blocked&&!u.incomeOff);
+  const pct=parseFloat(S.matchingPct||5)/100,cap=parseFloat(S.matchingCap||1000);
+  let atCap=0,totalPaid=0;
+  for(const u of users){
+    function legCnt(sUID){let cnt=0;const q=[sUID],vis=new Set();while(q.length){const c=q.shift();if(!c||vis.has(c))continue;vis.add(c);const n=AU[c];if(!n)continue;if(n.isActive)cnt++;if(n.leftChild)q.push(n.leftChild);if(n.rightChild)q.push(n.rightChild);}return cnt;}
+    const lv=u.leftChild?legCnt(u.leftChild)*(parseFloat(S.activationFee||30)):0;
+    const rv=u.rightChild?legCnt(u.rightChild)*(parseFloat(S.activationFee||30)):0;
+    const weaker=Math.min(lv,rv);if(weaker<=0)continue;
+    const mr=db.ref('users/'+u.id+'/income/matching'),ms=await mr.get(),earned=parseFloat(ms.exists()?ms.val():0);
+    if(earned>=cap){atCap++;continue;}
+    const bonus=Math.min(weaker*pct,cap-earned);if(bonus<=0)continue;
+    await mr.set(earned+bonus);
+    const wr=db.ref('users/'+u.id+'/walletBalance'),ws=await wr.get(),nw=parseFloat(ws.exists()?ws.val():0)+bonus;await wr.set(nw);
+    await db.ref('transactions/'+u.id).push({type:'Matching Bonus',amount:bonus,note:'L:$'+lv.toFixed(0)+' R:$'+rv.toFixed(0),timestamp:Date.now(),status:'completed',balance:nw});
+    totalPaid+=bonus;
+  }
+  sv('ma-tp','$'+totalPaid.toFixed(2));sv('ma-ac',atCap);logA('Matching $'+totalPaid.toFixed(2),'Admin');toast('✅ Matching: $'+totalPaid.toFixed(2));
+};
+
+// ── RANKS ─────────────────────────────────────────────
+function buildRanks(){
+  const saved=S.ranks||{};
+  document.getElementById('rk-tb').innerHTML=RD.map((r,i)=>{const n=i+1,sr=saved['rank'+n]||{};
+    return`<tr><td>${r.n}</td><td>${r.st}</td>
+      <td><input type="number" id="rk-${n}m" value="${sr.minMatching||r.m}" style="width:80px;background:#fff;border:1px solid #e2e8f0;border-radius:6px;padding:3px 7px;font-size:.75rem;outline:none"/></td>
+      <td><input type="number" id="rk-${n}s" value="${sr.minSales||r.s}" style="width:90px;background:#fff;border:1px solid #e2e8f0;border-radius:6px;padding:3px 7px;font-size:.75rem;outline:none"/></td>
+      <td id="rk-${n}c" style="color:#64748b">0</td>
+      <td><button class="btn btn-green btn-sm" onclick="saveRank(${n})">💾 Save</button></td>
+    </tr>`;
+  }).join('');
+}
+window.saveRank=async n=>{
+  const m=parseFloat(document.getElementById('rk-'+n+'m').value)||0,s2=parseFloat(document.getElementById('rk-'+n+'s').value)||0;
+  await db.ref('settings/ranks/rank'+n).update({minMatching:m,minSales:s2});
+  if(!S.ranks)S.ranks={};S.ranks['rank'+n]={minMatching:m,minSales:s2};toast('⭐ Rank '+n+' saved!');
+};
+
+// ── VOUCHERS ──────────────────────────────────────────
+window.createVoucher=async()=>{
+  const amt=parseFloat(document.getElementById('vo-a').value),qty=parseInt(document.getElementById('vo-q').value)||1;
+  const expiry=document.getElementById('vo-e').value,uQ=(document.getElementById('vo-u').value||'').trim(),note=(document.getElementById('vo-n').value||'').trim();
+  if(!amt||amt<=0){toast('Enter valid amount');return;}
+  const aUID=uQ?Object.values(AU).find(u=>u.username===uQ||u.id===uQ)?.id||null:null;
+  for(let i=0;i<qty;i++){const code='LLM-'+Math.random().toString(36).slice(2,9).toUpperCase();await db.ref('vouchers/'+code).set({amount:amt,code,assignedTo:aUID||null,used:false,note,expiry:expiry||null,createdAt:Date.now()});}
+  document.getElementById('vo-a').value='';document.getElementById('vo-u').value='';document.getElementById('vo-n').value='';
+  logA('Voucher '+qty+'× $'+amt,'Admin');toast('✅ '+qty+' voucher(s) created');loadVouchers();
+};
+window.loadVouchers=async()=>{
+  try{const sn=await db.ref('vouchers').get(),tb=document.getElementById('vo-tb');
+  if(!sn.exists()){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:#64748b">None</td></tr>';sv('ov-vo',0);return;}
+  const list=Object.entries(sn.val());sv('ov-vo',list.filter(([,v])=>!v.used).length);
+  tb.innerHTML=list.sort(([,a],[,b])=>(b.createdAt||0)-(a.createdAt||0)).map(([code,v])=>`<tr>
+    <td style="font-family:monospace;font-weight:700;color:#8b5cf6">${code}</td>
+    <td style="font-weight:700;color:#f59e0b">$${v.amount||0}</td>
+    <td style="font-size:.7rem">${v.assignedTo?(AU[v.assignedTo]?.username||v.assignedTo.slice(0,8)):'General'}</td>
+    <td><span class="pill ${v.used?'pr-p':'pg-p'}">${v.used?'Used':'Active'}</span></td>
+    <td style="font-size:.7rem">${v.expiry||'No expiry'}</td>
+    <td><button class="btn btn-red btn-sm" onclick="delVoucher('${code}')">🗑</button></td>
+  </tr>`).join('');}catch(e){console.log(e);}
+};
+window.delVoucher=async code=>{await db.ref('vouchers/'+code).remove();toast('Deleted');loadVouchers();};
+
+// ── GLOBAL SETTINGS ───────────────────────────────────
+window.saveGS=async type=>{
+  let upd={};
+  if(type==='act')upd={activationFee:parseFloat(document.getElementById('gs-af').value)||30,sponsorComm:parseFloat(document.getElementById('gs-sc').value)||4,companyFund:parseFloat(document.getElementById('gs-cf').value)||5,userCap:parseFloat(document.getElementById('gs-cp').value)||1000};
+  else if(type==='sys')upd={regOpen:document.getElementById('gs-ro').checked,wdOpen:document.getElementById('gs-wo').checked,invOpen:document.getElementById('gs-io').checked,maintenance:document.getElementById('gs-mt').checked};
+  else if(type==='cb'){const jf=parseFloat(document.getElementById('gs-jf').value)||30,mul=parseFloat(document.getElementById('gs-cm').value)||2;upd={joinFee:jf,cbMultiplier:mul,cashbackLimit:jf*mul};}
+  else if(type==='usdt')upd={companyUSDTAddress:(document.getElementById('gs-usdt').value||'').trim()};
+  await db.ref('settings').update(upd);Object.assign(S,upd);computeOV();toast('✅ Settings saved');logA('Settings updated: '+type,'Admin');
+};
+
+// ── SUB-ADMINS ────────────────────────────────────────
+window.createSA=async()=>{
+  const q=(document.getElementById('sa-q').value||'').trim(),role=(document.getElementById('sa-role').value||'').trim()||'Sub-Admin';
+  const f=Object.values(AU).find(u=>u.id===q||(u.email||'').toLowerCase()===q.toLowerCase()||(u.username||'').toLowerCase()===q.toLowerCase());
+  if(!f){toast('User not found');return;}
+  const perms={users:document.getElementById('p-u').checked,activations:document.getElementById('p-a').checked,withdrawals:document.getElementById('p-w').checked,investments:document.getElementById('p-i').checked,distributions:document.getElementById('p-d').checked,settings:document.getElementById('p-s').checked,reports:document.getElementById('p-r').checked,notices:document.getElementById('p-n').checked};
+  await db.ref('subadmins/'+f.id).set({uid:f.id,email:f.email,name:f.fullName||f.username,role,perms,createdAt:Date.now()});
+  logA('Sub-admin: '+f.email,'Admin');toast('✅ Sub-admin created');loadSA();
+};
+window.loadSA=async()=>{
+  try{const sn=await db.ref('subadmins').get(),tb=document.getElementById('sa-tb');
+  if(!sn.exists()){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#64748b">None</td></tr>';return;}
+  tb.innerHTML=Object.entries(sn.val()).map(([uid,sa])=>`<tr>
+    <td style="font-weight:700">${sa.name||'User'}<br><span style="font-size:.67rem;color:#64748b">${sa.email||''}</span></td>
+    <td><span class="pill pp-p">${sa.role||'Sub-Admin'}</span></td>
+    <td style="font-size:.68rem;color:#64748b">${Object.entries(sa.perms||{}).filter(([,v])=>v).map(([k])=>k).join(', ')||'None'}</td>
+    <td><button class="btn btn-red btn-sm" onclick="removeSA('${uid}')">Remove</button></td>
+  </tr>`).join('');}catch(e){console.log(e);}
+};
+window.removeSA=async uid=>{if(!confirm('Remove sub-admin?'))return;await db.ref('subadmins/'+uid).remove();toast('Removed');loadSA();};
+
+// ── NOTICES ───────────────────────────────────────────
+window.sendNotice=async()=>{
+  const t=(document.getElementById('no-t').value||'').trim(),m=(document.getElementById('no-m').value||'').trim();
+  if(!t||!m){toast('Fill title and message');return;}
+  await db.ref('notices').push({title:t,message:m,type:document.getElementById('no-tp').value,target:document.getElementById('no-tg').value,expiry:document.getElementById('no-ex').value||null,active:true,createdAt:Date.now()});
+  document.getElementById('no-t').value='';document.getElementById('no-m').value='';
+  logA('Notice: '+t,'Admin');toast('✅ Notice published!');loadNotices();
+};
+window.loadNotices=async()=>{
+  try{
+    const sn=await db.ref('notices').get();
+    const el=document.getElementById('no-list'),ov=document.getElementById('ov-no');
+    if(!sn.exists()){el.innerHTML='<div style="text-align:center;color:#64748b;padding:14px">No notices</div>';ov.textContent='No notices';return;}
+    const list=Object.entries(sn.val()).filter(([,n])=>n.active).sort(([,a],[,b])=>b.createdAt-a.createdAt);
+    const tc={info:'#3b82f6',success:'#22c55e',warning:'#f59e0b',urgent:'#ef4444'};
+    el.innerHTML=list.slice(0,10).map(([id,n])=>`<div class="ni">
+      <h4 style="color:${tc[n.type]||'#64748b'}">${n.title}</h4>
+      <p>${n.message}</p>
+      <div style="font-size:.67rem;color:#94a3b8;margin-top:4px;display:flex;gap:8px">
+        <span>${new Date(n.createdAt).toLocaleDateString()}</span>
+        <span class="pill pb-p">${n.target||'all'}</span>
+        ${n.expiry?`<span>Exp: ${n.expiry}</span>`:''}
+      </div>
+      <button class="dx" onclick="delNotice('${id}')">✕</button>
+    </div>`).join('')||'<div style="text-align:center;color:#64748b;padding:14px">No active notices</div>';
+    ov.innerHTML=list.slice(0,3).map(([,n])=>`<div style="padding:5px 0;border-bottom:1px solid #f1f5f9;font-size:.76rem"><strong>${n.title}</strong> — ${n.message.slice(0,60)}${n.message.length>60?'…':''}</div>`).join('')||'<div style="color:#64748b">No notices</div>';
+  }catch(e){console.log(e);}
+};
+window.delNotice=async id=>{await db.ref('notices/'+id).update({active:false});toast('Removed');loadNotices();};
+
+// ── DASHBOARD BUTTONS ─────────────────────────────────
+window.addBtn=async()=>{
+  const lbl=(document.getElementById('bt-l').value||'').trim(),lk=(document.getElementById('bt-lk').value||'').trim();
+  if(!lbl||!lk){toast('Fill label and link');return;}
+  await db.ref('dashboardButtons').push({label:lbl,icon:(document.getElementById('bt-i').value||'').trim(),link:lk,color:document.getElementById('bt-c').value,show:document.getElementById('bt-s').value,active:true,createdAt:Date.now()});
+  document.getElementById('bt-l').value='';document.getElementById('bt-i').value='';document.getElementById('bt-lk').value='';
+  toast('✅ Button added!');loadBtns();logA('Button added: '+lbl,'Admin');
+};
+window.loadBtns=async()=>{
+  try{const sn=await db.ref('dashboardButtons').get(),el=document.getElementById('bt-list');
+  if(!sn.exists()){el.innerHTML='<div style="text-align:center;color:#64748b;padding:14px">No buttons</div>';return;}
+  const list=Object.entries(sn.val()).filter(([,b])=>b.active);
+  el.innerHTML=list.length?list.map(([id,b])=>`<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <div><span style="font-size:.82rem;font-weight:700">${b.icon||''} ${b.label}</span><div style="font-size:.68rem;color:#64748b;margin-top:2px">→ ${b.link} | ${b.show} | ${b.color}</div></div>
+    <button class="btn btn-red btn-sm" onclick="rmBtn('${id}')">Remove</button>
+  </div>`).join(''):'<div style="text-align:center;color:#64748b">No buttons yet</div>';}catch(e){console.log(e);}
+};
+window.rmBtn=async id=>{await db.ref('dashboardButtons/'+id).update({active:false});toast('Removed');loadBtns();};
+
+// ── BACKUP & RESTORE ──────────────────────────────────
+window.doBackup=async()=>{
+  const type=document.getElementById('bk-t').value;let data={};
+  try{
+    if(type==='full'||type==='users'){const sn=await fs.collection('users').get();data.users={};sn.forEach(d=>{data.users[d.id]={...d.data(),_id:d.id};});}
+    if(type==='full'||type==='transactions'){const sn=await db.ref('transactions').get();if(sn.exists())data.transactions=sn.val();}
+    if(type==='full'||type==='investments'){const sn=await db.ref('investments').get();if(sn.exists())data.investments=sn.val();}
+    if(type==='full'||type==='settings'){const sn=await db.ref('settings').get();if(sn.exists())data.settings=sn.val();}
+    data._meta={type,createdAt:new Date().toISOString(),by:auth.currentUser?.email};
+    const json=JSON.stringify(data,null,2),fn='llm-backup-'+type+'-'+new Date().toISOString().slice(0,10)+'.json';
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.download=fn;a.click();
+    await db.ref('backups').push({type,filename:fn,size:Math.round(json.length/1024)+'KB',createdAt:Date.now()});
+    logA('Backup: '+type,'Admin');toast('✅ Downloaded: '+fn);loadBkList();
+  }catch(e){toast('Backup error: '+e.message);}
+};
+window.fullBackup=()=>{document.getElementById('bk-t').value='full';doBackup();};
+async function loadBkList(){
+  try{const sn=await db.ref('backups').get(),tb=document.getElementById('bk-tb');
+  if(!sn.exists()){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#64748b;padding:10px">No records</td></tr>';return;}
+  const list=Object.entries(sn.val()).sort(([,a],[,b])=>(b.createdAt||0)-(a.createdAt||0));
+  tb.innerHTML=list.slice(0,15).map(([id,b])=>`<tr>
+    <td style="font-size:.7rem;color:#64748b">${new Date(b.createdAt||Date.now()).toLocaleDateString()+' '+new Date(b.createdAt||Date.now()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td>
+    <td><span class="pill pb-p">${b.type||'full'}</span></td>
+    <td style="font-size:.72rem">${b.size||'—'}</td>
+    <td><button class="btn btn-red btn-sm" onclick="delBk('${id}')">🗑</button></td>
+  </tr>`).join('');}catch(e){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#64748b;padding:10px">No records</td></tr>';}
+}
+window.delBk=async id=>{if(!confirm('Delete?'))return;await db.ref('backups/'+id).remove();toast('Deleted');loadBkList();};
+window.doRestore=async()=>{
+  const file=document.getElementById('bk-f').files[0];if(!file){toast('Select backup file');return;}
+  if(!confirm('⚠ RESTORE will OVERWRITE current data. Sure?'))return;
+  const type=document.getElementById('bk-rt').value;
+  const reader=new FileReader();
+  reader.onload=async e=>{
+    try{const data=JSON.parse(e.target.result);
+    if((type==='full'||type==='users')&&data.users){for(const[uid,u]of Object.entries(data.users)){const{_id,...rest}=u;await fs.collection('users').doc(uid).set(rest,{merge:true});}}
+    if(type==='full'&&data.transactions)await db.ref('transactions').set(data.transactions);
+    if(type==='full'&&data.investments)await db.ref('investments').set(data.investments);
+    if((type==='full'||type==='settings')&&data.settings)await db.ref('settings').set(data.settings);
+    logA('Restored: '+type,'Admin');toast('✅ Restore complete! Reloading…');setTimeout(()=>loadAll(),1500);}
+    catch(err){toast('Restore error: '+err.message);}
+  };reader.readAsText(file);
+};
+
+// ── ACTIVITY LOG ─────────────────────────────────────
+async function logA(action,by){try{await db.ref('activityLog').push({action,by:by||auth.currentUser?.email||'Admin',timestamp:Date.now()});}catch(e){}}
+window.loadAL=async()=>{
+  try{const sn=await db.ref('activityLog').get(),tb=document.getElementById('al-tb');
+  if(!sn.exists()){tb.innerHTML='<tr><td colspan="3" style="text-align:center;color:#64748b">No activity</td></tr>';return;}
+  const list=Object.values(sn.val()).sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));
+  tb.innerHTML=list.slice(0,30).map(l=>`<tr>
+    <td style="font-size:.67rem;color:#64748b">${new Date(l.timestamp||Date.now()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td>
+    <td style="font-size:.72rem">${l.action||'—'}</td>
+    <td style="font-size:.7rem;color:#64748b">${l.by||'—'}</td>
+  </tr>`).join('');}catch(e){}
+};
+
+// ── COMPUTE OVERVIEW ─────────────────────────────────
+function computeOV(){
+  const users=Object.values(AU),active=users.filter(u=>u.isActive);
+  const rev=active.length*(parseFloat(S.activationFee)||30),fund=active.length*(parseFloat(S.companyFund)||5),comm=active.length*(parseFloat(S.sponsorComm)||4);
+  const cbPool=(rev*(parseFloat(S.cashbackPct||3)/100)).toFixed(2),clubPool=(rev*(parseFloat(S.clubPct||4)/100)).toFixed(2);
+  sv('ov-u',users.length);sv('ov-ua',active.length+' active');sv('ov-r','$'+rev);
+  sv('ov-cb','$'+cbPool);sv('ov-cl','$'+clubPool);
+  const ivTot=Object.values(INV).reduce((st,p)=>st+(p.amount||0),0);sv('ov-i','$'+ivTot.toFixed(0));
+  sv('rp-r',users.length);sv('rp-rv','$'+rev);sv('rp-f','$'+fund);sv('rp-c','$'+comm);
+  sv('cb-v','$'+rev);sv('cb-ps','$'+cbPool);sv('cb-el',active.length);
+  const jf=parseFloat(S.joinFee||30),mul=parseFloat(S.cbMultiplier||2),cbLim=jf*mul;
+  sv('cb-mx','$'+cbLim.toFixed(0));sv('cb-pm',active.length>0?'$'+(parseFloat(cbPool)/active.length).toFixed(4):'$0');
+  sv('cl-pl','$'+clubPool);
+  const mr=parseInt(S.clubMinRefs||10),celig=users.filter(u=>users.filter(u2=>u2.sponsorId===u.id).length>=mr);
+  sv('cl-el',celig.length);sv('cl-pm',celig.length>0?'$'+(parseFloat(clubPool)/celig.length).toFixed(2):'$0');
+  document.getElementById('cl-tb').innerHTML=celig.length?celig.map(u=>{const dr=users.filter(u2=>u2.sponsorId===u.id).length;return`<tr><td style="font-weight:600">${u.fullName||u.username||'User'}</td><td>${dr}</td><td>—</td><td><span class="pill pg-p">✅ Refs</span></td></tr>`;}).join(''):'<tr><td colspan="4" style="text-align:center;color:#64748b">None yet</td></tr>';
+  for(let n=1;n<=7;n++){const el=document.getElementById('rk-'+n+'c');if(el)el.textContent=active.filter(u=>(u.matching||0)>=[50,300,1000,3000,10000,30000,100000][n-1]).length;}
+}
+
+// ── CSV EXPORT ────────────────────────────────────────
+window.xCSV=async type=>{
+  let rows=[],fn=type+'_'+new Date().toISOString().slice(0,10)+'.csv';
+  if(type==='users'){rows=[['ID','Name','Username','Email','Country','Mobile','Sponsor','Joined','Status','Blocked','Income','WD']];Object.values(AU).forEach(u=>{const j=u.createdAt?(u.createdAt.toDate?u.createdAt.toDate().toLocaleDateString():new Date(u.createdAt).toLocaleDateString()):'';rows.push([u.id,u.fullName||'',u.username||'',u.email||'',u.country||'',u.mobile||'',u.sponsorId||'',j,u.isActive?'Active':'Inactive',u.blocked?'Yes':'No',u.incomeOff?'OFF':'ON',u.withdrawOff?'OFF':'ON']);});}
+  else if(type==='transactions'){rows=[['Date','User','Type','Amount','Note','Status']];TX.forEach(t=>rows.push([new Date(t.timestamp||Date.now()).toLocaleDateString(),AU[t.uid]?.fullName||t.uid,t.type||'',t.amount||0,t.note||'',t.status||'']));}
+  else if(type==='withdrawals'){rows=[['User','Amount','Address','Date','Status']];Object.entries(WD).forEach(([,w])=>rows.push([AU[w.uid]?.fullName||w.uid,w.amount||0,w.address||'',w.createdAt?new Date(w.createdAt).toLocaleDateString():'',w.status||''  ]));}
+  else if(type==='investments'){rows=[['User','Amount','ROI%','Date','Earned','Status']];Object.entries(INV).forEach(([,p])=>rows.push([AU[p.uid]?.fullName||p.uid,p.amount||0,p.roiRate||10,p.createdAt?new Date(p.createdAt).toLocaleDateString():'',p.earnedROI||0,p.status||''  ]));}
+  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=fn;a.click();
+  toast('⬇ Exported: '+fn);
+};
+
+// ── LOAD ALL ──────────────────────────────────────────
+// ── INCOME MANAGER ────────────────────────────────────
+
+// Default income types with their RTDB paths and settings keys
+const DEFAULT_INCOMES = [
+  {key:'sponsor',    name:'Sponsor Commission',   settingKey:'sponsorComm',  unit:'$',  desc:'Per activated referral'},
+  {key:'matching',   name:'Matching Bonus',        settingKey:'matchingPct',  unit:'%',  desc:'% of weaker leg volume'},
+  {key:'cashback',   name:'Daily Cashback',        settingKey:'cashbackPct',  unit:'%',  desc:'% of joining volume pool'},
+  {key:'club',       name:'Club Bonus',            settingKey:'clubPct',      unit:'%',  desc:'% of volume, eligible only'},
+  {key:'roi',        name:'ROI Returns',           settingKey:'roiRate',      unit:'%',  desc:'Monthly % on investment'},
+  {key:'generation', name:'Generation Bonus',      settingKey:null,           unit:'%',  desc:'7 levels on ROI pool'},
+  {key:'matching_cap',name:'Matching Cap',         settingKey:'matchingCap',  unit:'$',  desc:'Lifetime cap per user'},
+  {key:'userCap',    name:'User Income Capping',   settingKey:'userCap',      unit:'$',  desc:'Lifetime total income cap'},
+];
+
+function loadIncomeManager(){
+  // Load default income types table
+  const tb = document.getElementById('inc-default-tb');
+  tb.innerHTML = DEFAULT_INCOMES.map(inc => {
+    const cur = inc.settingKey ? (S[inc.settingKey] || 0) : (inc.key === 'generation' ? '7 levels' : '—');
+    const enabled = inc.settingKey && S[inc.settingKey] !== undefined;
+    return `<tr>
+      <td style="font-weight:700">${inc.name}</td>
+      <td style="color:#3b82f6;font-weight:700">${inc.unit==='$'?'$'+cur:cur+inc.unit}</td>
+      <td style="font-size:.72rem;color:#64748b">${inc.desc}</td>
+      <td><span class="pill pg-p">Active</span></td>
+      <td>${inc.settingKey?`<input type="number" id="inc-edit-${inc.key}" value="${cur}" step="${inc.unit==='$'?'1':'0.5'}" style="width:80px;background:#fff;border:1px solid #e2e8f0;border-radius:6px;padding:3px 7px;font-size:.78rem;outline:none"/>`:
+        `<span style="color:#94a3b8;font-size:.72rem">See Generation tab</span>`}</td>
+      <td>${inc.settingKey?`<button class="btn btn-green btn-sm" onclick="saveIncomeEdit('${inc.key}','${inc.settingKey}','${inc.unit}')">💾</button>`:''}</td>
+    </tr>`;
+  }).join('');
+
+  // Load custom incomes dropdown
+  loadCustomIncomes();
+  loadDistributeDropdown();
+  loadUserIncomeTable();
+}
+
+window.saveIncomeEdit = async(key, settingKey, unit) => {
+  const val = parseFloat(document.getElementById('inc-edit-'+key)?.value);
+  if(isNaN(val)){toast('Enter valid value');return;}
+  await db.ref('settings/'+settingKey).set(val);
+  S[settingKey] = val;
+  toast('✅ '+key+' updated to '+(unit==='$'?'$':'')+val+(unit==='%'?'%':''));
+  logA('Income updated: '+key+' = '+val,'Admin');
+  applyS();
+  loadIncomeManager();
+};
+
+window.addCustomIncome = async() => {
+  const name = (document.getElementById('ci-name').value||'').trim();
+  const rate = (document.getElementById('ci-rate').value||'').trim();
+  const desc = (document.getElementById('ci-desc').value||'').trim();
+  const dist = document.getElementById('ci-dist').value;
+  const amt  = parseFloat(document.getElementById('ci-amt').value)||0;
+  if(!name){toast('Enter income type name');return;}
+  const id = 'custom_'+name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  await db.ref('customIncomes/'+id).set({
+    id, name, rate: rate||'0', desc: desc||name, distType: dist,
+    defaultAmt: amt, active: true, createdAt: Date.now()
+  });
+  // Also save to settings so dashboard can read it
+  await db.ref('settings/customIncomeTypes/'+id).set({name, rate, desc, active:true});
+  document.getElementById('ci-name').value='';
+  document.getElementById('ci-rate').value='';
+  document.getElementById('ci-desc').value='';
+  document.getElementById('ci-amt').value='';
+  logA('Custom income added: '+name,'Admin');
+  toast('✅ Income type "'+name+'" added! Showing in user dashboard now.');
+  loadCustomIncomes();
+  loadDistributeDropdown();
+};
+
+window.loadCustomIncomes = async() => {
+  try{
+    const sn = await db.ref('customIncomes').get();
+    const el = document.getElementById('ci-list');
+    if(!sn.exists()){el.innerHTML='<div style="text-align:center;color:#64748b;padding:14px">No custom incomes yet</div>';return;}
+    const list = Object.entries(sn.val()).filter(([,c])=>c.active);
+    el.innerHTML = list.length ? list.map(([id,c])=>`
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="font-weight:700;font-size:.82rem">${c.name}</div>
+          <div style="font-size:.68rem;color:#64748b">${c.rate||'—'} | ${c.desc||'—'}</div>
+          <span class="pill pg-p" style="font-size:.6rem">Active</span>
+        </div>
+        <div style="display:flex;gap:5px">
+          <button class="btn btn-orange btn-sm" onclick="distributeById('${id}','${c.name}')">💸 Distribute</button>
+          <button class="btn btn-red btn-sm" onclick="delCustomIncome('${id}','${c.name}')">🗑</button>
+        </div>
+      </div>`).join('')
+    : '<div style="text-align:center;color:#64748b;padding:14px">None yet</div>';
+  }catch(e){console.log(e);}
+};
+
+window.delCustomIncome = async(id, name) => {
+  if(!confirm('Delete "'+name+'" income type? Users will no longer see it.'))return;
+  await db.ref('customIncomes/'+id).update({active:false});
+  await db.ref('settings/customIncomeTypes/'+id).update({active:false});
+  logA('Custom income deleted: '+name,'Admin');
+  toast('"'+name+'" removed from dashboard');
+  loadCustomIncomes();loadDistributeDropdown();
+};
+
+async function loadDistributeDropdown(){
+  const sel = document.getElementById('dist-type');
+  if(!sel)return;
+  // Default types
+  const defaults = DEFAULT_INCOMES.slice(0,6).map(i=>`<option value="${i.key}">${i.name}</option>`).join('');
+  // Custom types
+  let customs = '';
+  try{
+    const sn = await db.ref('customIncomes').get();
+    if(sn.exists()){
+      Object.entries(sn.val()).filter(([,c])=>c.active).forEach(([id,c])=>{
+        customs += `<option value="${id}">${c.name} (custom)</option>`;
+      });
+    }
+  }catch(e){}
+  sel.innerHTML = defaults + (customs?'<option disabled>── Custom ──</option>'+customs:'');
+}
+
+// Show/hide specific UID input
+document.addEventListener('change', e=>{
+  if(e.target.id==='dist-target'){
+    document.getElementById('specific-uid-fg').style.display = e.target.value==='specific'?'block':'none';
+  }
+});
+
+window.distributeById = (id, name) => {
+  document.getElementById('dist-type').value = id;
+  sp('incomemgr', document.querySelector('nav a[onclick*="incomemgr"]'));
+  document.getElementById('dist-amt').focus();
+  toast('Selected: '+name+'. Enter amount and distribute.');
+};
+
+window.distributeCustomIncome = async() => {
+  const type   = document.getElementById('dist-type').value;
+  const amt    = parseFloat(document.getElementById('dist-amt').value);
+  const target = document.getElementById('dist-target').value;
+  const uid    = (document.getElementById('dist-uid').value||'').trim();
+  if(!type){toast('Select income type');return;}
+  if(!amt||amt<=0){toast('Enter valid amount');return;}
+
+  // Get income name
+  const defInc = DEFAULT_INCOMES.find(i=>i.key===type);
+  const incomeName = defInc ? defInc.name : type;
+
+  let users = [];
+  if(target==='specific'){
+    if(!uid){toast('Enter user UID');return;}
+    if(!AU[uid]){toast('User not found');return;}
+    users = [AU[uid]];
+  } else if(target==='active'){
+    users = Object.values(AU).filter(u=>u.isActive&&!u.blocked&&!u.incomeOff);
+  } else {
+    users = Object.values(AU).filter(u=>!u.blocked);
+  }
+
+  if(!users.length){toast('No eligible users');return;}
+  if(!confirm('Distribute $'+amt+' ('+incomeName+') to '+users.length+' user(s)?'))return;
+
+  let cnt=0;
+  for(const u of users){
+    try{
+      // Add to RTDB income bucket
+      const ir = db.ref('users/'+u.id+'/income/'+type);
+      const is = await ir.get();
+      await ir.set(parseFloat(is.exists()?is.val():0)+amt);
+      // Add to wallet
+      const wr = db.ref('users/'+u.id+'/walletBalance');
+      const ws = await wr.get();
+      const nw = parseFloat(ws.exists()?ws.val():0)+amt;
+      await wr.set(nw);
+      // Transaction log
+      await db.ref('transactions/'+u.id).push({
+        type: incomeName, amount: amt,
+        note: 'Admin distributed '+incomeName,
+        timestamp: Date.now(), status:'completed', balance:nw
+      });
+      cnt++;
+    }catch(e){console.log('dist error:',u.id,e.message);}
+  }
+  logA('Distributed '+incomeName+' $'+amt+' to '+cnt+' users','Admin');
+  toast('✅ $'+amt+' '+incomeName+' paid to '+cnt+' user(s)!');
+  document.getElementById('dist-amt').value='';
+  loadUserIncomeTable();
+};
+
+window.loadUserIncomeTable = async() => {
+  try{
+    const tb = document.getElementById('inc-table-body');
+    const head = document.getElementById('inc-table-head');
+    tb.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#64748b;padding:14px">Loading…</td></tr>';
+
+    // Get custom income types for dynamic columns
+    const cSn = await db.ref('customIncomes').get();
+    const customCols = cSn.exists() ? Object.entries(cSn.val()).filter(([,c])=>c.active) : [];
+
+    // Build header
+    const extraTh = customCols.map(([,c])=>`<th>${c.name}</th>`).join('');
+    head.innerHTML = `<tr><th>User</th><th>Sponsor</th><th>Matching</th><th>Cashback</th><th>Club</th><th>ROI</th><th>Generation</th>${extraTh}<th style="color:#22c55e">Total</th><th>WB</th></tr>`;
+
+    const users = Object.values(AU).slice(0,100); // limit for performance
+    if(!users.length){tb.innerHTML='<tr><td colspan="10" style="text-align:center;color:#64748b;padding:14px">No users</td></tr>';return;}
+
+    const rows = await Promise.all(users.map(async u => {
+      try{
+        const sn = await db.ref('users/'+u.id+'/income').get();
+        const inc = sn.exists()?sn.val():{};
+        const wb = await db.ref('users/'+u.id+'/walletBalance').get();
+        const bal = parseFloat(wb.exists()?wb.val():0);
+
+        const sp2  = parseFloat(inc.sponsor||0);
+        const mt   = parseFloat(inc.matching||0);
+        const cb   = parseFloat(inc.cashback||0);
+        const cl   = parseFloat(inc.club||0);
+        const roi  = parseFloat(inc.roi||0);
+        const gen  = parseFloat(inc.generation||0);
+
+        // Custom income columns
+        let customVals = [], customTotal = 0;
+        customCols.forEach(([id])=>{
+          const v = parseFloat(inc[id]||0);
+          customVals.push(v);
+          customTotal += v;
+        });
+
+        const total = sp2+mt+cb+cl+roi+gen+customTotal;
+        const customTd = customVals.map(v=>`<td style="font-size:.74rem">$${v.toFixed(2)}</td>`).join('');
+
+        return `<tr>
+          <td style="font-weight:600">${u.fullName||u.username||u.id.slice(0,8)}</td>
+          <td style="font-size:.74rem">$${sp2.toFixed(2)}</td>
+          <td style="font-size:.74rem">$${mt.toFixed(2)}</td>
+          <td style="font-size:.74rem">$${cb.toFixed(2)}</td>
+          <td style="font-size:.74rem">$${cl.toFixed(2)}</td>
+          <td style="font-size:.74rem">$${roi.toFixed(2)}</td>
+          <td style="font-size:.74rem">$${gen.toFixed(2)}</td>
+          ${customTd}
+          <td style="font-weight:700;color:#22c55e">$${total.toFixed(2)}</td>
+          <td style="font-size:.74rem;color:#3b82f6">$${bal.toFixed(2)}</td>
+        </tr>`;
+      }catch(e){return `<tr><td>${u.fullName||'User'}</td><td colspan="9" style="color:#64748b">Error loading</td></tr>`;}
+    }));
+
+    tb.innerHTML = rows.join('');
+  }catch(e){console.log('loadUserIncomeTable:',e.message);}
+};
+
+// ── END INCOME MANAGER ─────────────────────────────────
+
+async function loadAll(){
+  await loadS();await loadUsers();await loadAct();await loadWD();await loadInv();await loadTX();
+  buildGL();buildRanks();computeOV();loadVouchers();loadNotices();loadSA();loadFundH();loadBtns();loadAL();loadRootTree();loadCBH();loadBkList();
+}
+
+// ── INCOME CSV EXPORT (extends xCSV) ─────────────────
+const _xCSV = window.xCSV;
+window.xCSV = async type => {
+  if(type === 'income'){
+    // Get custom income types
+    const cSn = await db.ref('customIncomes').get();
+    const customCols = cSn.exists() ? Object.entries(cSn.val()).filter(([,c])=>c.active) : [];
+    const customHeaders = customCols.map(([,c])=>c.name);
+    const rows = [['User','Email','Sponsor','Matching','Cashback','Club','ROI','Generation',...customHeaders,'Total','Wallet Balance']];
+    for(const u of Object.values(AU)){
+      try{
+        const sn = await db.ref('users/'+u.id+'/income').get();
+        const inc = sn.exists()?sn.val():{};
+        const wb = await db.ref('users/'+u.id+'/walletBalance').get();
+        const sp2=parseFloat(inc.sponsor||0),mt=parseFloat(inc.matching||0),cb2=parseFloat(inc.cashback||0),cl=parseFloat(inc.club||0),roi=parseFloat(inc.roi||0),gen=parseFloat(inc.generation||0);
+        const customs = customCols.map(([id])=>parseFloat(inc[id]||0));
+        const tot = sp2+mt+cb2+cl+roi+gen+customs.reduce((a,b)=>a+b,0);
+        rows.push([u.fullName||'',u.email||'',sp2,mt,cb2,cl,roi,gen,...customs,tot,parseFloat(wb.exists()?wb.val():0)]);
+      }catch(e){}
+    }
+    const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='income_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+    toast('⬇ Income CSV exported');
+    return;
+  }
+  _xCSV(type);
+};
+
+// ── HELPERS ──────────────────────────────────────────
+function sv(id,val){const e=document.getElementById(id);if(e)e.textContent=val;}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3500);}
+window.closeM=id=>document.getElementById(id).classList.remove('show');
+window.doLogout=async()=>{await auth.signOut();window.location.href='login.html';};
+
+// ── NAV ──────────────────────────────────────────────
+const PL={overview:'Overview',users:'All Users',activations:'Activations',edituser:'Edit User',subadmin:'Sub-Admins',tree:'Binary Tree',withdrawals:'Withdrawals',investments:'Investments',fundac:'Fund Account',transactions:'Transactions',cashback:'Cashback Pool',clubbonus:'Club Bonus',roi:'ROI Management',matching:'Matching Bonus',voucher:'Gift Vouchers',settings:'Global Settings',ranks:'Ranks',buttons:'Dashboard Buttons',notices:'Notices',incomemgr:'Income Manager',reports:'Reports',backup:'Backup & Restore'};
+window.sp=(page,el)=>{
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));
+  const t=document.getElementById('pg-'+page);if(t)t.classList.add('active');
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+  if(el)el.classList.add('active');else{const found=document.querySelector(`nav a[onclick*="'${page}'"]`);if(found)found.classList.add('active');}
+  sv('pgLbl',PL[page]||page);closeSB();
+  if(page==='tree')loadRootTree();if(page==='notices')loadNotices();
+  if(page==='backup'){loadBkList();loadFundH();}if(page==='cashback')loadCBH();
+  if(page==='fundac')loadFundH();if(page==='settings')loadAL();if(page==='users')loadUsers();
+  if(page==='incomemgr')loadIncomeManager();if(page==='investments')loadInv();
+  if(page==='withdrawals')loadWD();if(page==='transactions')loadTX();if(page==='activations')loadAct();
+};
+window.toggleSB=()=>{document.getElementById('sbEl').classList.toggle('open');document.getElementById('mobOv').classList.toggle('show');};
+window.closeSB=()=>{document.getElementById('sbEl').classList.remove('open');document.getElementById('mobOv').classList.remove('show');};
+</script>
+</body>
+</html>

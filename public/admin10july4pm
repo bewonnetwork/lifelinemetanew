@@ -1,0 +1,2748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Life Line Meta – Admin Panel v2</title>
+<style>
+:root{
+  --bg:#070b14;--surface:#0d1424;--card:#111c30;--border:#1a2844;
+  --accent:#00d4ff;--accent2:#8b5cf6;--gold:#f59e0b;--green:#10b981;
+  --red:#ef4444;--orange:#f97316;--text:#e2e8f0;--muted:#64748b;--radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+button{cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:inherit}
+.sidebar{position:fixed;top:0;left:0;height:100vh;width:245px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;overflow-y:auto;transition:transform .3s}
+.logo-area{padding:14px 16px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.logo-img{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);flex-shrink:0}
+.logo-txt h2{font-size:.9rem;font-weight:900;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-txt p{font-size:.58rem;color:var(--red);font-weight:800;text-transform:uppercase;letter-spacing:.8px}
+.nav-sec{padding:8px 14px 2px;font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700;flex-shrink:0}
+nav{flex:1;padding-bottom:12px}
+nav a{display:flex;align-items:center;gap:8px;padding:8px 14px;font-size:.77rem;color:var(--muted);border-left:3px solid transparent;transition:.2s;cursor:pointer;user-select:none}
+nav a:hover{color:var(--text);background:rgba(0,212,255,.05)}
+nav a.active{color:var(--text);background:rgba(0,212,255,.07);border-left-color:var(--accent)}
+nav a .ic{width:15px;text-align:center;font-size:.82rem}
+.badge-n{background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:.62rem;margin-left:auto;min-width:16px;text-align:center}
+.topbar{position:fixed;top:0;left:245px;right:0;height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:99;transition:left .3s}
+.menu-btn{display:none;background:none;border:none;color:var(--text);font-size:1.3rem;padding:4px}
+.pg-lbl{font-size:.83rem;font-weight:700;color:var(--muted)}
+.tb-right{display:flex;align-items:center;gap:9px}
+.admin-badge{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.25);border-radius:6px;padding:3px 8px;font-size:.68rem;font-weight:800}
+.subadmin-badge{background:rgba(139,92,246,.15);color:var(--accent2);border:1px solid rgba(139,92,246,.25);border-radius:6px;padding:3px 8px;font-size:.68rem;font-weight:800}
+.main{margin-left:245px;padding-top:52px;min-height:100vh;transition:margin-left .3s}
+.page{display:none;padding:16px}
+.page.active{display:block}
+.pg-title{font-size:1.15rem;font-weight:800;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:11px;margin-bottom:15px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;position:relative;overflow:hidden}
+.sc::after{content:'';position:absolute;top:-16px;right:-16px;width:65px;height:65px;border-radius:50%;opacity:.06}
+.sc.cb::after{background:var(--accent)}.sc.cp::after{background:var(--accent2)}.sc.cg::after{background:var(--gold)}.sc.cgr::after{background:var(--green)}.sc.cr::after{background:var(--red)}.sc.co::after{background:var(--orange)}
+.sc-lbl{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.sc-val{font-size:1.5rem;font-weight:800}
+.cb .sc-val{color:var(--accent)}.cp .sc-val{color:var(--accent2)}.cg .sc-val{color:var(--gold)}.cgr .sc-val{color:var(--green)}.cr .sc-val{color:var(--red)}.co .sc-val{color:var(--orange)}
+.sc-sub{font-size:.67rem;color:var(--muted);margin-top:2px}
+.sc-ic{position:absolute;bottom:10px;right:10px;font-size:1.2rem;opacity:.18}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.card-title{font-size:.83rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:5px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.75rem}
+th{color:var(--muted);font-weight:600;padding:7px 9px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;font-size:.66rem;text-transform:uppercase;letter-spacing:.3px}
+td{padding:8px 9px;border-bottom:1px solid rgba(26,40,68,.4);white-space:nowrap;vertical-align:middle}
+tr:hover td{background:rgba(0,212,255,.02)}
+tr:last-child td{border-bottom:none}
+.pill{display:inline-block;padding:2px 7px;border-radius:20px;font-size:.65rem;font-weight:700}
+.pg{background:rgba(16,185,129,.15);color:var(--green)}
+.py{background:rgba(245,158,11,.15);color:var(--gold)}
+.pr{background:rgba(239,68,68,.15);color:var(--red)}
+.pb{background:rgba(0,212,255,.15);color:var(--accent)}
+.pp{background:rgba(139,92,246,.15);color:var(--accent2)}
+.po{background:rgba(249,115,22,.15);color:var(--orange)}
+.btn{padding:6px 13px;border-radius:8px;font-size:.74rem;font-weight:700;border:none;cursor:pointer;transition:.15s}
+.btn:hover{opacity:.85}
+.btn-p{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+.btn-gr{background:var(--green);color:#fff}
+.btn-r{background:var(--red);color:#fff}
+.btn-g{background:var(--gold);color:#000}
+.btn-o{background:none;border:1px solid var(--border);color:var(--text)}
+.btn-or{background:var(--orange);color:#fff}
+.btn-pp{background:var(--accent2);color:#fff}
+.btn-sm{padding:3px 8px;font-size:.68rem}
+.fg{margin-bottom:11px}
+.fg label{display:block;font-size:.7rem;color:var(--muted);margin-bottom:3px;font-weight:600}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:.81rem;outline:none;transition:.2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent)}
+.fg textarea{resize:vertical;min-height:70px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.search-bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.search-bar input{flex:1;min-width:160px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 11px;color:var(--text);font-size:.79rem;outline:none}
+.search-bar input:focus{border-color:var(--accent)}
+.search-bar select{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:.79rem;outline:none}
+.info-box{background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.14);border-radius:8px;padding:9px 13px;font-size:.73rem;color:var(--accent);margin-bottom:12px;line-height:1.7}
+.warn-box{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.18);border-radius:8px;padding:9px 13px;font-size:.73rem;color:var(--gold);margin-bottom:12px;line-height:1.7}
+.err-box{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.18);border-radius:8px;padding:9px 13px;font-size:.73rem;color:var(--red);margin-bottom:12px;line-height:1.7}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;align-items:center;justify-content:center;padding:12px}
+.modal-bg.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:.92rem;font-weight:800;margin-bottom:13px;display:flex;align-items:center;justify-content:space-between}
+.modal-close{background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;padding:2px 6px}
+.modal-close:hover{color:var(--text)}
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+.mob-overlay.show{display:block}
+.toast{position:fixed;bottom:16px;right:16px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 14px;font-size:.78rem;z-index:9999;opacity:0;transform:translateY(14px);transition:.3s;pointer-events:none;max-width:280px}
+.toast.show{opacity:1;transform:translateY(0)}
+.prog{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:5px}
+.prog-f{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(26,40,68,.4);font-size:.79rem}
+.toggle-row:last-child{border-bottom:none}
+.toggle{width:38px;height:20px;background:var(--border);border-radius:10px;position:relative;cursor:pointer;transition:.25s;border:none;flex-shrink:0}
+.toggle.on{background:var(--green)}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.25s}
+.toggle.on::after{left:20px}
+.section-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.stab{padding:5px 13px;border-radius:8px;font-size:.75rem;font-weight:700;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:.2s}
+.stab.active{background:var(--accent);border-color:var(--accent);color:#000}
+.pagination{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:13px;padding-top:12px;border-top:1px solid var(--border)}
+.page-btn{min-width:32px;height:32px;padding:0 8px;border-radius:8px;font-size:.76rem;font-weight:700;border:1px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;transition:.15s}
+.page-btn:hover{border-color:var(--accent);color:var(--text)}
+.page-btn.active{background:var(--accent);border-color:var(--accent);color:#000}
+.page-btn:disabled{opacity:.35;cursor:not-allowed}
+.page-btn.dots{border:none;background:none;cursor:default}
+.utab{padding:6px 14px;border-radius:8px;font-size:.76rem;font-weight:700;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px}
+.utab.active{background:var(--accent);border-color:var(--accent);color:#000}
+.utab .cnt{background:rgba(0,0,0,.15);border-radius:10px;padding:0 6px;font-size:.68rem}
+.utab.active .cnt{background:rgba(0,0,0,.25)}
+@media(max-width:860px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .topbar{left:0}
+  .menu-btn{display:block}
+  .two-col,.three-col{grid-template-columns:1fr}
+  .cards-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:440px){.cards-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="mob-overlay" id="mobOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="logo-area">
+    <img src="assets/images/logo.jpeg" alt="LLM" class="logo-img"
+         onerror="this.onerror=null;this.src='';this.style.display='none'">
+    <div class="logo-txt">
+      <h2>Life Line Meta</h2>
+      <p id="roleLabel">Admin Panel</p>
+    </div>
+  </div>
+  <nav>
+    <div class="nav-sec">Dashboard</div>
+    <a class="active" onclick="showPage('overview',this)"><span class="ic">🏠</span> Overview</a>
+
+    <div class="nav-sec">Users</div>
+    <a onclick="showPage('users',this)"><span class="ic">👥</span> All Users</a>
+    <a onclick="showPage('activations',this)"><span class="ic">✅</span> Activations <span class="badge-n" id="actBadge"></span></a>
+    <a onclick="showPage('blocklist',this)"><span class="ic">🚫</span> Block List</a>
+    <a onclick="showPage('fundreqs',this)"><span class="ic">💳</span> Fund Requests <span class="badge-n" id="frBadge"></span></a>
+
+    <div class="nav-sec">Finance</div>
+    <a onclick="showPage('withdrawals',this)"><span class="ic">💸</span> Withdrawals <span class="badge-n" id="wdBadge"></span></a>
+    <a onclick="showPage('investments',this)"><span class="ic">📈</span> Investments</a>
+    <a onclick="showPage('transactions',this)"><span class="ic">📋</span> Transactions</a>
+
+    <div class="nav-sec">Income</div>
+    <a onclick="showPage('cashback',this)"><span class="ic">🎁</span> Cashback Pool</a>
+    <a onclick="showPage('clubbonus',this)"><span class="ic">🏆</span> Club Bonus</a>
+    <a onclick="showPage('roi',this)"><span class="ic">💰</span> ROI Management</a>
+    <a onclick="showPage('voucher',this)"><span class="ic">🎟</span> Gift Voucher</a>
+    <a onclick="showPage('matching',this)"><span class="ic">🤝</span> Matching Bonus</a>
+
+    <div class="nav-sec">Binary Tree</div>
+    <a onclick="showPage('tree',this)"><span class="ic">🌳</span> Tree View</a>
+
+    <div class="nav-sec">Controls</div>
+    <a onclick="showPage('dashctrl',this)"><span class="ic">🎛</span> Dashboard Control</a>
+    <a onclick="showPage('subadmin',this)"><span class="ic">🛡</span> Sub-Admins</a>
+    <a onclick="showPage('notices',this)"><span class="ic">📢</span> Notices</a>
+    <a onclick="showPage('actlog',this)"><span class="ic">📜</span> Activity Log</a>
+
+    <div class="nav-sec">System</div>
+    <a onclick="showPage('settings',this)"><span class="ic">⚙</span> Settings</a>
+    <a onclick="showPage('ranks',this)"><span class="ic">⭐</span> Ranks</a>
+    <a onclick="showPage('backup',this)"><span class="ic">💾</span> Backup & Restore</a>
+    <a onclick="showPage('reports',this)"><span class="ic">📊</span> Reports</a>
+
+    <div style="height:8px"></div>
+    <a onclick="doLogout()" style="color:var(--red)"><span class="ic">🚪</span> Logout</a>
+  </nav>
+</aside>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:9px">
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+    <span class="pg-lbl" id="pgLbl">Overview</span>
+  </div>
+  <div class="tb-right">
+    <span id="adminBadgeEl" class="admin-badge">🛡 ADMIN</span>
+    <span style="font-size:.72rem;color:var(--muted)" id="adminEmailD">—</span>
+    <button class="btn btn-o btn-sm" onclick="doLogout()">Logout</button>
+  </div>
+</div>
+
+<main class="main">
+
+<!-- ===== OVERVIEW ===== -->
+<div class="page active" id="page-overview">
+  <div class="pg-title">Admin Dashboard <small style="font-size:.75rem;color:var(--muted);font-weight:400" id="ovDateTime"></small></div>
+  <div class="cards-grid">
+    <div class="sc cb"><div class="sc-lbl">Total Users</div><div class="sc-val" id="ovUsers">0</div><div class="sc-sub" id="ovActiveUsers">0 active</div><div class="sc-ic">👥</div></div>
+    <div class="sc cgr"><div class="sc-lbl">Total Revenue</div><div class="sc-val" id="ovRevenue">$0</div><div class="sc-sub">Activation fees</div><div class="sc-ic">💵</div></div>
+    <div class="sc cg"><div class="sc-lbl">Company Fund</div><div class="sc-val" id="ovFund">$0</div><div class="sc-sub" id="ovFundSub">$5/activation</div><div class="sc-ic">🏦</div></div>
+    <div class="sc cp"><div class="sc-lbl">Total Invested</div><div class="sc-val" id="ovInvested">$0</div><div class="sc-sub">ROI investments</div><div class="sc-ic">📈</div></div>
+    <div class="sc cr"><div class="sc-lbl">Pending Activations</div><div class="sc-val" id="ovPendAct">0</div><div class="sc-sub">Awaiting approval</div><div class="sc-ic">⏳</div></div>
+    <div class="sc cr"><div class="sc-lbl">Pending Withdrawals</div><div class="sc-val" id="ovPendWd">0</div><div class="sc-sub">Awaiting payment</div><div class="sc-ic">💸</div></div>
+    <div class="sc co"><div class="sc-lbl">Fund Requests</div><div class="sc-val" id="ovPendFR">0</div><div class="sc-sub">Pending</div><div class="sc-ic">💳</div></div>
+    <div class="sc cp"><div class="sc-lbl">Active Vouchers</div><div class="sc-val" id="ovVouchers">0</div><div class="sc-sub">Unused</div><div class="sc-ic">🎟</div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Quick Actions</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button class="btn btn-p" onclick="showPage('cashback',null)">💰 Cashback</button>
+        <button class="btn btn-g" onclick="runClubBonus()">🏆 Club Bonus</button>
+        <button class="btn btn-gr" onclick="runROIDistrib()">📈 ROI Payout</button>
+        <button class="btn btn-or" onclick="showPage('matching',null)">🤝 Matching</button>
+        <button class="btn btn-pp" onclick="showPage('fundreqs',null)">💳 Fund Reqs</button>
+        <button class="btn btn-o" onclick="showPage('withdrawals',null)">💸 Withdrawals</button>
+      </div>
+      <hr style="border-color:var(--border);margin:11px 0"/>
+      <div style="font-size:.77rem">
+        <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:var(--muted)">Cashback Pool (new sales)</span><span id="qsCashPool" style="color:var(--accent);font-weight:700">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:var(--muted)">Club Pool (4%)</span><span id="qsClubPool" style="color:var(--gold);font-weight:700">$0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:var(--muted)">Current ROI Rate</span><span id="qsROIRate" style="color:var(--green);font-weight:700">12%</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:var(--muted)">Total Commissions</span><span id="qsComm" style="color:var(--accent2);font-weight:700">$0</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Recent Activations <button class="btn btn-sm btn-o" onclick="showPage('activations',null)">View All</button></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>User</th><th>Method</th><th>Date</th><th>Status</th><th>Act</th></tr></thead>
+          <tbody id="ovActTb"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:12px">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Live System Notices <button class="btn btn-sm btn-p" onclick="showPage('notices',null)">Manage</button></div>
+    <div id="ovNoticesList" style="font-size:.78rem;color:var(--muted)">No notices</div>
+  </div>
+</div>
+
+<!-- ===== ALL USERS ===== -->
+<div class="page" id="page-users">
+  <div class="pg-title">All Users</div>
+
+  <div class="section-tabs" id="userStatusTabs">
+    <button class="utab active" id="utab_all" onclick="switchUserTab('all')">All <span class="cnt" id="ucnt_all">0</span></button>
+    <button class="utab" id="utab_active" onclick="switchUserTab('active')">🟢 Active <span class="cnt" id="ucnt_active">0</span></button>
+    <button class="utab" id="utab_inactive" onclick="switchUserTab('inactive')">🟡 Inactive <span class="cnt" id="ucnt_inactive">0</span></button>
+    <button class="utab" id="utab_investment" onclick="switchUserTab('investment')">📈 Investment <span class="cnt" id="ucnt_investment">0</span></button>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" id="userSearchInput" placeholder="Search name, username, email, ID…" oninput="filterUsers()"/>
+    <button class="btn btn-o btn-sm" onclick="loadUsers()">↻ Refresh</button>
+    <button class="btn btn-p btn-sm" onclick="exportCSV('users')">⬇ CSV</button>
+    <button class="btn btn-r btn-sm" onclick="confirmDeleteAllUsers()">🗑 Delete All</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Users <small id="userCountLbl" style="color:var(--muted);font-weight:400"></small></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>#</th><th>Name</th><th>Username</th><th>Email</th><th>Member ID</th><th>Sponsor</th><th>Joined</th><th>Status</th><th>Rank</th><th>Balance</th><th>Income</th><th>WD</th><th>Actions</th></tr></thead>
+        <tbody id="usersTb"><tr><td colspan="13" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr></tbody>
+      </table>
+    </div>
+    <div class="pagination" id="usersPagination"></div>
+  </div>
+</div>
+
+<!-- ===== ACTIVATIONS ===== -->
+<div class="page" id="page-activations">
+  <div class="pg-title">Activation Requests</div>
+  <div class="info-box">💡 Activation Fee: <strong id="actFeeDisplay">$30</strong> — Sponsor gets <strong id="sponsCommDisplay">$4</strong>, Company Fund gets <strong id="compFundDisplay">$5</strong>. Verify TxID before approving.</div>
+  <div class="search-bar">
+    <select id="actFilterSel" onchange="filterActivations()">
+      <option value="all">All</option>
+      <option value="pending">Pending</option>
+      <option value="approved">Approved</option>
+      <option value="rejected">Rejected</option>
+    </select>
+    <button class="btn btn-gr btn-sm" onclick="approveAllPendingAct()">✅ Approve All Pending</button>
+    <button class="btn btn-o btn-sm" onclick="loadActivations()">↻ Refresh</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Requests <small id="actCountLbl" style="color:var(--muted);font-weight:400"></small></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>#</th><th>Name</th><th>Username</th><th>Email</th><th>Amount</th><th>Method</th><th>TxID</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="actTb"><tr><td colspan="10" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BLOCK LIST ===== -->
+<div class="page" id="page-blocklist">
+  <div class="pg-title">Block List</div>
+  <div class="warn-box">⚠ Blocked users cannot login or access dashboard. Income & withdrawal are frozen.</div>
+  <div class="card">
+    <div class="tw">
+      <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Username</th><th>Blocked At</th><th>Reason</th><th>Action</th></tr></thead>
+        <tbody id="blockListTb"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">No blocked users</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FUND REQUESTS ===== -->
+<div class="page" id="page-fundreqs">
+  <div class="pg-title">Fund Deposit Requests</div>
+  <div class="info-box">💡 User sends USDT to admin wallet → submits TxHash → Admin approve করলে <strong id="frCommDisplay">5%</strong> deduct করে balance credit হয়। এখানে শুধু Deposit request থাকবে — Withdraw request আলাদা "Withdrawals" ট্যাবে আছে।</div>
+  <div class="cards-grid" style="max-width:600px">
+    <div class="sc cr"><div class="sc-lbl">Pending</div><div class="sc-val" id="frPendCount">0</div><div class="sc-ic">⏳</div></div>
+    <div class="sc cgr"><div class="sc-lbl">Approved Today</div><div class="sc-val" id="frApprCount">0</div><div class="sc-ic">✅</div></div>
+    <div class="sc cg"><div class="sc-lbl">Total Credited</div><div class="sc-val" id="frTotalCredited">$0</div><div class="sc-ic">💰</div></div>
+  </div>
+  <div class="search-bar">
+    <select id="frFilterSel" onchange="filterFundReqs()">
+      <option value="all">All</option>
+      <option value="pending">Pending</option>
+      <option value="approved">Approved</option>
+      <option value="rejected">Rejected</option>
+    </select>
+    <button class="btn btn-gr btn-sm" onclick="approveAllPendingFR()">✅ Approve All</button>
+    <button class="btn btn-o btn-sm" onclick="loadFundRequests()">↻ Refresh</button>
+  </div>
+  <div class="card">
+    <div class="tw">
+      <table>
+        <thead><tr><th>#</th><th>User</th><th>Amount</th><th>Network</th><th>TxHash</th><th>Net Credit</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="frTb"><tr><td colspan="9" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WITHDRAWALS ===== -->
+<div class="page" id="page-withdrawals">
+  <div class="pg-title">Withdrawal Requests</div>
+  <div class="info-box">💸 এখানে শুধু ব্যবহারকারীদের Withdraw request থাকবে — Deposit/Fund request আলাদা "Fund Requests" ট্যাবে আছে।</div>
+  <div class="cards-grid" style="max-width:700px">
+    <div class="sc cr"><div class="sc-lbl">Pending</div><div class="sc-val" id="wdPendCount">0</div><div class="sc-ic">⏳</div></div>
+    <div class="sc cgr"><div class="sc-lbl">Approved</div><div class="sc-val" id="wdApprCount">0</div><div class="sc-ic">✅</div></div>
+    <div class="sc cg"><div class="sc-lbl">Total Paid</div><div class="sc-val" id="wdTotalPaid">$0</div><div class="sc-ic">💸</div></div>
+  </div>
+  <div class="search-bar">
+    <select id="wdFilterSel" onchange="filterWithdrawals()">
+      <option value="all">All</option>
+      <option value="pending">Pending</option>
+      <option value="approved">Approved</option>
+      <option value="rejected">Rejected</option>
+    </select>
+    <button class="btn btn-gr btn-sm" onclick="approveAllPendingWD()">✅ Approve All</button>
+    <button class="btn btn-o btn-sm" onclick="loadWithdrawals()">↻ Refresh</button>
+    <button class="btn btn-p btn-sm" onclick="exportCSV('withdrawals')">⬇ CSV</button>
+  </div>
+  <div class="card">
+    <div class="tw">
+      <table>
+        <thead><tr><th>#</th><th>User</th><th>Amount</th><th>Wallet Address</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="wdTb"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== INVESTMENTS ===== -->
+<div class="page" id="page-investments">
+  <div class="pg-title">Investment Management</div>
+  <div class="cards-grid" style="max-width:700px">
+    <div class="sc cp"><div class="sc-lbl">Total Invested</div><div class="sc-val" id="invTotal">$0</div><div class="sc-ic">📈</div></div>
+    <div class="sc cgr"><div class="sc-lbl">Active Plans</div><div class="sc-val" id="invActiveCount">0</div><div class="sc-ic">✅</div></div>
+    <div class="sc cg"><div class="sc-lbl">ROI Paid Out</div><div class="sc-val" id="invROIPaid">$0</div><div class="sc-ic">💰</div></div>
+    <div class="sc cr"><div class="sc-lbl">Pending Plans</div><div class="sc-val" id="invPendCount">0</div><div class="sc-ic">⏳</div></div>
+  </div>
+  <div class="search-bar">
+    <select id="invFilterSel" onchange="filterInvestments()">
+      <option value="all">All</option>
+      <option value="pending">Pending</option>
+      <option value="active">Active</option>
+      <option value="completed">Completed</option>
+    </select>
+    <button class="btn btn-gr btn-sm" onclick="approveAllPendingInv()">✅ Approve All Pending</button>
+    <button class="btn btn-o btn-sm" onclick="loadInvestments()">↻ Refresh</button>
+    <button class="btn btn-p btn-sm" onclick="exportCSV('investments')">⬇ CSV</button>
+  </div>
+  <div class="card">
+    <div class="tw">
+      <table>
+        <thead><tr><th>User</th><th>Amount</th><th>ROI %</th><th>Invested</th><th>Earned</th><th>Method</th><th>TxID</th><th>Unlock</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="invTb"><tr><td colspan="10" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TRANSACTIONS ===== -->
+<div class="page" id="page-transactions">
+  <div class="pg-title">All Transactions</div>
+  <div class="search-bar">
+    <input type="text" id="txSearchInput" placeholder="Search user or type…" oninput="filterTx()"/>
+    <select id="txTypeSel" onchange="filterTx()">
+      <option value="all">All Types</option>
+      <option value="Sponsor Commission">Sponsor</option>
+      <option value="Matching Bonus">Matching</option>
+      <option value="Daily Cashback">Cashback</option>
+      <option value="ROI Payout">ROI</option>
+      <option value="Club Bonus">Club</option>
+      <option value="Withdrawal">Withdrawal</option>
+      <option value="Fund Deposit">Fund Deposit</option>
+      <option value="Gift Voucher">Voucher</option>
+      <option value="Admin Adjustment">Admin Adj</option>
+    </select>
+    <input type="date" id="txDateFrom" onchange="filterTx()"/>
+    <input type="date" id="txDateTo" onchange="filterTx()"/>
+    <button class="btn btn-o btn-sm" onclick="loadAllTx()">↻ Refresh</button>
+    <button class="btn btn-p btn-sm" onclick="exportCSV('transactions')">⬇ CSV</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Transactions <small id="txCountLbl" style="color:var(--muted);font-weight:400"></small></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Date & Time</th><th>User</th><th>Type</th><th>Amount</th><th>Note</th><th>Status</th></tr></thead>
+        <tbody id="txTb"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CASHBACK ===== -->
+<div class="page" id="page-cashback">
+  <div class="pg-title">Cashback Pool</div>
+  <div class="info-box">💡 Cashback শুধু <strong>নতুন (unused) activation sales</strong> থেকে হিসাব হয় — পুরনো sales থেকে কখনো cashback যাবে না। প্রতিটা sale একবারই ব্যবহার হয়, distribute করলে সেই sale reset (used) হয়ে যায়। Admin চাইলে নিজের ইচ্ছামত (custom) amount pool-এ যোগ করে সবার মাঝে distribute করতে পারবে (random না, admin নির্ধারিত)।</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">New Sales Pool Status</div>
+      <table style="font-size:.79rem;width:100%">
+        <tr><td style="color:var(--muted);padding:6px 0">New (Unused) Sales Volume</td><td style="color:var(--accent);font-weight:700" id="cbNewVolume">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">New Sales Count</td><td id="cbNewCount">0</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Pool Size (from new sales)</td><td style="color:var(--green);font-weight:700" id="cbPool">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Eligible Members</td><td id="cbEligCount">0</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Per Member (auto)</td><td style="color:var(--gold);font-weight:700" id="cbPerMember">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Last Distribution</td><td id="cbLastDist" style="color:var(--muted)">Never</td></tr>
+      </table>
+      <button class="btn btn-p" style="width:100%;margin-top:11px" onclick="runCashback()">💰 Distribute From New Sales</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Custom Amount Distribution</div>
+      <div class="info-box" style="margin-bottom:9px">Admin নিজের ইচ্ছামত একটা fix amount দিয়ে সব eligible active member-দের মাঝে সমান ভাগে distribute করতে পারবে। এটা new-sales pool থেকে সম্পূর্ণ আলাদা এবং কোনো পুরনো sale ব্যবহার হয় না।</div>
+      <div class="fg"><label>Custom Pool Amount (USD)</label><input type="number" id="cbCustomAmt" placeholder="e.g. 500" min="1"/></div>
+      <button class="btn btn-g" style="width:100%" onclick="runCustomCashback()">🎯 Distribute Custom Amount</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Distribution History</div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Date</th><th>Source</th><th>Pool</th><th>Members</th><th>Per User</th></tr></thead>
+        <tbody id="cbHistTb"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:12px">No history</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CLUB BONUS ===== -->
+<div class="page" id="page-clubbonus">
+  <div class="pg-title">Club Bonus</div>
+  <div class="info-box">Joining volume এর <strong id="clubPctDisplay">4%</strong> eligible members এ equally distribute। Eligible: min <strong id="clubMinRefsDisplay">10</strong> direct refs অথবা <strong id="clubMinMatchDisplay">$50</strong> matching income।</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Club Pool</div>
+      <table style="font-size:.79rem;width:100%">
+        <tr><td style="color:var(--muted);padding:6px 0">Pool Size (4%)</td><td style="color:var(--gold);font-weight:700" id="clubPool">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Eligible Members</td><td id="clubEligCount">0</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Per Member</td><td style="color:var(--green);font-weight:700" id="clubPerMember">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Last Distribution</td><td id="clubLastDist" style="color:var(--muted)">Never</td></tr>
+      </table>
+      <button class="btn btn-g" style="width:100%;margin-top:11px" onclick="runClubBonus()">🏆 Distribute Club Bonus</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Eligible Members</div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>User</th><th>Dir Refs</th><th>Matching</th><th>Reason</th></tr></thead>
+          <tbody id="clubEligTb"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:12px">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ROI MANAGEMENT ===== -->
+<div class="page" id="page-roi">
+  <div class="pg-title">ROI Management</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">ROI Rate & Distribution</div>
+      <div class="fg"><label>Monthly ROI Rate (%)</label><input type="number" id="roiRateInput" min="1" max="50" step="0.5" value="12"/></div>
+      <div class="fg"><label>Direct Payout % to Investor</label><input type="number" id="roiDirectPct" value="50" min="0" max="100"/></div>
+      <div class="warn-box">⚠ Remaining % → Generation Bonus (7 levels). Current: 50% direct + 50% gen.</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-gr" onclick="saveROIRate()" style="flex:1">💾 Save Rate</button>
+        <button class="btn btn-p" onclick="runROIDistrib()" style="flex:1">📈 Run ROI Now</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Generation Levels (% of gen portion)</div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Level</th><th>Default</th><th>Custom %</th></tr></thead>
+          <tbody>
+            <tr><td>Level 1</td><td style="color:var(--gold)">20%</td><td><input type="number" id="gl1" value="20" style="width:60px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td></tr>
+            <tr><td>Level 2</td><td style="color:var(--accent)">10%</td><td><input type="number" id="gl2" value="10" style="width:60px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td></tr>
+            <tr><td>Level 3</td><td>8%</td><td><input type="number" id="gl3" value="8" style="width:60px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td></tr>
+            <tr><td>Level 4</td><td>6%</td><td><input type="number" id="gl4" value="6" style="width:60px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td></tr>
+            <tr><td>Level 5</td><td>4%</td><td><input type="number" id="gl5" value="4" style="width:60px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td></tr>
+            <tr><td>Level 6</td><td>3%</td><td><input type="number" id="gl6" value="3" style="width:60px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td></tr>
+            <tr><td>Level 7</td><td>2%</td><td><input type="number" id="gl7" value="2" style="width:60px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="btn btn-o" onclick="saveGenLevels()" style="width:100%;margin-top:9px">Save Generation Levels</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MATCHING BONUS ===== -->
+<div class="page" id="page-matching">
+  <div class="pg-title">Matching Bonus Management</div>
+  <div class="info-box">💡 Matching bonus শুধু <strong>নতুন (unmatched) activation sales</strong> থেকে হিসাব হয়। প্রতিটা নতুন activation একবারই matched হয় — matched হয়ে গেলে সেটা আর দ্বিতীয়বার count হবে না। যেই leg-এ sale নাই (weaker leg খালি), সেখানে matching হবে না — বাকি (carry) leg-এর জন্য জমা থেকে যাবে পরের বার নতুন sale আসা পর্যন্ত। Weaker leg-এর নতুন volume-এর <strong id="matchPctDisplay">5%</strong> matching bonus হিসেবে user পায়। Capping: <strong id="matchCapDisplay">$1000</strong>।</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Run Matching Bonus</div>
+      <div class="warn-box">⚠ শুধু গত run-এর পর থেকে জমে থাকা নতুন (unmatched) left/right activation ব্যবহার করে matching হিসাব হবে। No new sale = no matching update, বাকি carry হিসেবে জমা থাকবে।</div>
+      <button class="btn btn-p" style="width:100%" onclick="runMatchingBonus()">🤝 Run Matching Bonus Now</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Matching Stats</div>
+      <table style="font-size:.79rem;width:100%">
+        <tr><td style="color:var(--muted);padding:5px 0">Total Matching Paid</td><td style="color:var(--green);font-weight:700" id="matchTotalPaid">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Users at Cap ($1000)</td><td id="matchAtCap">0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Last Distribution</td><td id="matchLastDist" style="color:var(--muted)">Never</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Per-User Leg Carry Status <small style="color:var(--muted);font-weight:400">Unmatched (carry) counts waiting for opposite leg</small></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>User</th><th>Left Carry</th><th>Right Carry</th><th>Total Matched Volume</th></tr></thead>
+        <tbody id="matchCarryTb"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:12px">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GIFT VOUCHER ===== -->
+<div class="page" id="page-voucher">
+  <div class="pg-title">Gift Voucher</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Create Voucher</div>
+      <div class="fg"><label>Amount (USD)</label><input type="number" id="voucherAmt" placeholder="$0.00" min="1"/></div>
+      <div class="fg"><label>Quantity</label><input type="number" id="voucherQty" value="1" min="1" max="100"/></div>
+      <div class="fg"><label>Expiry Date (optional)</label><input type="date" id="voucherExpiry"/></div>
+      <div class="fg"><label>Note (optional)</label><input type="text" id="voucherNote" placeholder="Purpose or campaign name"/></div>
+      <button class="btn btn-p" onclick="createVoucher()" style="width:100%">🎟 Create Voucher(s)</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Voucher Stats</div>
+      <table style="font-size:.79rem;width:100%">
+        <tr><td style="color:var(--muted);padding:5px 0">Total Created</td><td id="voucherTotalCreated">0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Used</td><td id="voucherUsed">0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Active</td><td style="color:var(--green);font-weight:700" id="voucherActive">0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Total Value</td><td style="color:var(--gold);font-weight:700" id="voucherTotalVal">$0</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Voucher List <button class="btn btn-sm btn-o" onclick="loadVouchers()">↻ Refresh</button></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Code</th><th>Amount</th><th>Status</th><th>Used By</th><th>Used At</th><th>Expiry</th><th>Note</th><th>Action</th></tr></thead>
+        <tbody id="voucherTb"><tr><td colspan="8" style="text-align:center;color:var(--muted);padding:16px">No vouchers</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BINARY TREE ===== -->
+<div class="page" id="page-tree">
+  <div class="pg-title">Binary Tree View</div>
+  <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:13px">
+    <input type="text" id="treeSearchInput" placeholder="Search username…" style="flex:1;min-width:160px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 11px;color:var(--text);font-size:.8rem;outline:none"/>
+    <button class="btn btn-p btn-sm" onclick="searchTreeUser()">Search</button>
+    <button class="btn btn-o btn-sm" onclick="loadRootTree()">Root</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Tree <small id="treeRootLabel" style="color:var(--muted);font-weight:400"></small></div>
+    <div style="overflow-x:auto;padding:10px 0" id="treeViewContainer">
+      <div style="text-align:center;color:var(--muted);padding:30px">Loading…</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD CONTROL ===== -->
+<div class="page" id="page-dashctrl">
+  <div class="pg-title">Dashboard Button Control</div>
+  <div class="info-box">💡 User dashboard এর কোন কোন button/section দেখাবে সেটা এখান থেকে globally বা per-user control করা যাবে।</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Global Feature Toggles (All Users)</div>
+      <div id="globalToggles">
+        <div class="toggle-row"><span>ROI Investment Button</span><button class="toggle on" id="tog_roi" onclick="toggleFeature('roi')"></button></div>
+        <div class="toggle-row"><span>Withdrawal Button</span><button class="toggle on" id="tog_withdrawal" onclick="toggleFeature('withdrawal')"></button></div>
+        <div class="toggle-row"><span>Referral / Share Link</span><button class="toggle on" id="tog_referral" onclick="toggleFeature('referral')"></button></div>
+        <div class="toggle-row"><span>Cashback Pool</span><button class="toggle on" id="tog_cashback" onclick="toggleFeature('cashback')"></button></div>
+        <div class="toggle-row"><span>Club Bonus</span><button class="toggle on" id="tog_club" onclick="toggleFeature('club')"></button></div>
+        <div class="toggle-row"><span>Matching Bonus</span><button class="toggle on" id="tog_matching" onclick="toggleFeature('matching')"></button></div>
+        <div class="toggle-row"><span>Fund Request</span><button class="toggle on" id="tog_fundrequest" onclick="toggleFeature('fundrequest')"></button></div>
+        <div class="toggle-row"><span>Gift Voucher Redeem</span><button class="toggle on" id="tog_voucher" onclick="toggleFeature('voucher')"></button></div>
+        <div class="toggle-row"><span>Binary Tree View</span><button class="toggle on" id="tog_tree" onclick="toggleFeature('tree')"></button></div>
+        <div class="toggle-row"><span>Income Report</span><button class="toggle on" id="tog_income" onclick="toggleFeature('income')"></button></div>
+      </div>
+      <button class="btn btn-p" style="width:100%;margin-top:12px" onclick="saveGlobalToggles()">💾 Save Global Settings</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Per-User Feature Override</div>
+      <div class="fg"><label>Select User</label>
+        <select id="perUserSel" onchange="loadPerUserToggles()">
+          <option value="">-- Select User --</option>
+        </select>
+      </div>
+      <div id="perUserToggles" style="color:var(--muted);font-size:.78rem">Select a user to manage their features.</div>
+      <div id="perUserSaveBtn" style="display:none;margin-top:11px">
+        <button class="btn btn-p" style="width:100%" onclick="savePerUserToggles()">💾 Save for This User</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SUB-ADMINS ===== -->
+<div class="page" id="page-subadmin">
+  <div class="pg-title">Sub-Admin Management</div>
+  <div class="info-box">💡 Sub-admins can only access the sections you permit. They cannot create other sub-admins or access backup/restore.</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Add Sub-Admin</div>
+      <div class="fg"><label>User Email (must be registered)</label><input type="text" id="saEmail" placeholder="user@email.com"/></div>
+      <div class="fg"><label>Permissions (select all that apply)</label>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:5px;font-size:.78rem">
+          <label style="display:flex;align-items:center;gap:8px;color:var(--text)"><input type="checkbox" id="perm_users" checked/> Manage Users</label>
+          <label style="display:flex;align-items:center;gap:8px;color:var(--text)"><input type="checkbox" id="perm_activations" checked/> Activations</label>
+          <label style="display:flex;align-items:center;gap:8px;color:var(--text)"><input type="checkbox" id="perm_withdrawals" checked/> Withdrawals</label>
+          <label style="display:flex;align-items:center;gap:8px;color:var(--text)"><input type="checkbox" id="perm_investments"/> Investments</label>
+          <label style="display:flex;align-items:center;gap:8px;color:var(--text)"><input type="checkbox" id="perm_fundreqs" checked/> Fund Requests</label>
+          <label style="display:flex;align-items:center;gap:8px;color:var(--text)"><input type="checkbox" id="perm_distributions"/> Run Distributions</label>
+          <label style="display:flex;align-items:center;gap:8px;color:var(--text)"><input type="checkbox" id="perm_settings"/> System Settings</label>
+          <label style="display:flex;align-items:center;gap:8px;color:var(--text)"><input type="checkbox" id="perm_reports"/> Reports</label>
+        </div>
+      </div>
+      <button class="btn btn-p" style="width:100%;margin-top:6px" onclick="addSubAdmin()">➕ Add Sub-Admin</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Current Sub-Admins</div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Email</th><th>Permissions</th><th>Added</th><th>Action</th></tr></thead>
+          <tbody id="subAdminTb"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:14px">No sub-admins</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== NOTICES ===== -->
+<div class="page" id="page-notices">
+  <div class="pg-title">Notices & Announcements</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Send Notice</div>
+      <div class="fg"><label>Title</label><input type="text" id="noticeTitle" placeholder="Notice title…"/></div>
+      <div class="fg"><label>Message</label><textarea id="noticeMsg" placeholder="Notice content…"></textarea></div>
+      <div class="fg"><label>Type</label>
+        <select id="noticeType">
+          <option value="info">ℹ Info</option>
+          <option value="warning">⚠ Warning</option>
+          <option value="success">✅ Success</option>
+          <option value="urgent">🚨 Urgent</option>
+        </select>
+      </div>
+      <div class="fg"><label>Target</label>
+        <select id="noticeTarget">
+          <option value="all">All Users</option>
+          <option value="active">Active Users Only</option>
+          <option value="inactive">Inactive Users Only</option>
+        </select>
+      </div>
+      <div class="fg"><label>Pin Duration</label>
+        <select id="noticeDuration">
+          <option value="0">Until Dismissed</option>
+          <option value="1">1 Day</option>
+          <option value="3">3 Days</option>
+          <option value="7">7 Days</option>
+          <option value="30">30 Days</option>
+        </select>
+      </div>
+      <button class="btn btn-p" onclick="sendNotice()" style="width:100%">📢 Publish Notice</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Active Notices <button class="btn btn-sm btn-o" onclick="loadNotices()">↻</button></div>
+      <div id="noticeList" style="font-size:.78rem;color:var(--muted)">No notices</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ACTIVITY LOG ===== -->
+<div class="page" id="page-actlog">
+  <div class="pg-title">Activity Log</div>
+  <div class="search-bar">
+    <input type="text" id="logSearchInput" placeholder="Search action or user…" oninput="filterLog()"/>
+    <select id="logTypeSel" onchange="filterLog()">
+      <option value="all">All Actions</option>
+      <option value="activation">Activation</option>
+      <option value="withdrawal">Withdrawal</option>
+      <option value="fund">Fund Requests</option>
+      <option value="settings">Settings Change</option>
+      <option value="distribution">Distribution</option>
+      <option value="user">User Edit</option>
+    </select>
+    <input type="date" id="logDateFilter" onchange="filterLog()"/>
+    <button class="btn btn-o btn-sm" onclick="loadActivityLog()">↻ Refresh</button>
+    <button class="btn btn-r btn-sm" onclick="clearActivityLog()">🗑 Clear Log</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Admin Activity <small id="logCountLbl" style="color:var(--muted);font-weight:400"></small></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Date & Time</th><th>Admin</th><th>Action</th><th>Target</th><th>Details</th></tr></thead>
+        <tbody id="actLogTb"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">No activity yet</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SETTINGS ===== -->
+<div class="page" id="page-settings">
+  <div class="pg-title">System Settings</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Activation & Commission</div>
+      <div class="fg"><label>Activation Fee ($)</label><input type="number" id="setActFee" value="30"/></div>
+      <div class="fg"><label>Sponsor Commission ($)</label><input type="number" id="setSponsComm" value="4"/></div>
+      <div class="fg"><label>Company Fund per Activation ($)</label><input type="number" id="setCompFund" value="5"/></div>
+      <div class="fg"><label>User Capping Limit ($)</label><input type="number" id="setUserCap" value="1000"/></div>
+      <button class="btn btn-p" onclick="saveSettings('activation')">💾 Save</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Matching & MLM</div>
+      <div class="fg"><label>Matching Bonus (%)</label><input type="number" id="setMatchPct" value="5"/></div>
+      <div class="fg"><label>Matching Cap ($)</label><input type="number" id="setMatchCap" value="1000"/></div>
+      <div class="fg"><label>ROI Referral Bonus ($)</label><input type="number" id="setROIRefBonus" value="5"/></div>
+      <button class="btn btn-p" onclick="saveSettings('matching')">💾 Save</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Investment Settings</div>
+      <div class="fg"><label>Minimum Investment ($)</label><input type="number" id="setMinInv" value="100"/></div>
+      <div class="fg"><label>Capital Lock Period (months)</label><input type="number" id="setInvLock" value="6"/></div>
+      <div class="fg"><label>Capital Withdrawal Fee (%)</label><input type="number" id="setInvFee" value="10"/></div>
+      <button class="btn btn-p" onclick="saveSettings('investment')">💾 Save</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Pool & Fund Request</div>
+      <div class="fg"><label>Cashback Pool (%)</label><input type="number" id="setCBPct" value="3"/></div>
+      <div class="fg"><label>Cashback Limit per User ($)</label><input type="number" id="setCBLimit" value="60"/></div>
+      <div class="fg"><label>Club Bonus Pool (%)</label><input type="number" id="setClubPct" value="4"/></div>
+      <div class="fg"><label>Club Min Direct Refs</label><input type="number" id="setClubMinRefs" value="10"/></div>
+      <div class="fg"><label>Club Min Matching ($)</label><input type="number" id="setClubMinMatch" value="50"/></div>
+      <div class="fg"><label>Fund Request Commission (%)</label><input type="number" id="setFRComm" value="5"/></div>
+      <button class="btn btn-p" onclick="saveSettings('pools')">💾 Save</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Admin Wallet (for Fund Requests)</div>
+      <div class="fg"><label>USDT TRC20 Address</label><input type="text" id="setAdminWallet" placeholder="Admin USDT wallet address"/></div>
+      <button class="btn btn-p" onclick="saveSettings('wallet')">💾 Save Wallet</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Minimum Withdrawal</div>
+      <div class="fg"><label>Min Withdrawal Amount ($)</label><input type="number" id="setMinWD" value="10"/></div>
+      <div class="fg"><label>Withdrawal Fee (%)</label><input type="number" id="setWDFee" value="0"/></div>
+      <button class="btn btn-p" onclick="saveSettings('withdrawal')">💾 Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RANKS ===== -->
+<div class="page" id="page-ranks">
+  <div class="pg-title">Rank Management</div>
+  <div class="card">
+    <div class="tw">
+      <table>
+        <thead><tr><th>Rank</th><th>Stars</th><th>Min Matching</th><th>Min Team Sales ($)</th><th>Bonus ($)</th><th>Members</th><th>Save</th></tr></thead>
+        <tbody id="ranksTbody">
+          <tr><td>One Star</td><td>⭐</td><td><input type="number" id="r1m" value="50" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r1s" value="100" style="width:85px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r1b" value="0" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td id="r1cnt" style="color:var(--muted)">0</td><td><button class="btn btn-gr btn-sm" onclick="saveRank(1)">Save</button></td></tr>
+          <tr><td>Two Star</td><td>⭐⭐</td><td><input type="number" id="r2m" value="300" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r2s" value="300" style="width:85px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r2b" value="0" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td id="r2cnt" style="color:var(--muted)">0</td><td><button class="btn btn-gr btn-sm" onclick="saveRank(2)">Save</button></td></tr>
+          <tr><td>Three Star</td><td>⭐⭐⭐</td><td><input type="number" id="r3m" value="1000" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r3s" value="1000" style="width:85px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r3b" value="50" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td id="r3cnt" style="color:var(--muted)">0</td><td><button class="btn btn-gr btn-sm" onclick="saveRank(3)">Save</button></td></tr>
+          <tr><td>Four Star</td><td>⭐⭐⭐⭐</td><td><input type="number" id="r4m" value="3000" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r4s" value="10000" style="width:85px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r4b" value="200" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td id="r4cnt" style="color:var(--muted)">0</td><td><button class="btn btn-gr btn-sm" onclick="saveRank(4)">Save</button></td></tr>
+          <tr><td>Five Star</td><td>⭐⭐⭐⭐⭐</td><td><input type="number" id="r5m" value="10000" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r5s" value="100000" style="width:85px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r5b" value="1000" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td id="r5cnt" style="color:var(--muted)">0</td><td><button class="btn btn-gr btn-sm" onclick="saveRank(5)">Save</button></td></tr>
+          <tr><td>Six Star</td><td>6⭐</td><td><input type="number" id="r6m" value="30000" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r6s" value="300000" style="width:85px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r6b" value="5000" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td id="r6cnt" style="color:var(--muted)">0</td><td><button class="btn btn-gr btn-sm" onclick="saveRank(6)">Save</button></td></tr>
+          <tr><td>Seven Star</td><td>7⭐</td><td><input type="number" id="r7m" value="100000" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r7s" value="10000000" style="width:85px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r7b" value="20000" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td id="r7cnt" style="color:var(--muted)">0</td><td><button class="btn btn-gr btn-sm" onclick="saveRank(7)">Save</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BACKUP & RESTORE ===== -->
+<div class="page" id="page-backup">
+  <div class="pg-title">Backup & Restore</div>
+  <div class="warn-box">⚠ Backup এ সব RTDB data export হয়। Restore করলে existing data replace হয়ে যাবে। এটা irreversible — সাবধানে করুন।</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">💾 Create Backup</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:12px">Date-wise backup file export হবে। যেকোনো সময় download করে রাখতে পারবেন।</div>
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <button class="btn btn-p" onclick="downloadBackup('full')">⬇ Full Backup (All Data)</button>
+        <button class="btn btn-o" onclick="downloadBackup('users')">⬇ Users Only Backup</button>
+        <button class="btn btn-o" onclick="downloadBackup('transactions')">⬇ Transactions Backup</button>
+        <button class="btn btn-o" onclick="downloadBackup('investments')">⬇ Investments Backup</button>
+        <button class="btn btn-o" onclick="downloadBackup('settings')">⬇ Settings Backup</button>
+      </div>
+      <div style="margin-top:12px;font-size:.73rem;color:var(--muted)" id="backupLastTime">Last backup: Never</div>
+    </div>
+    <div class="card">
+      <div class="card-title">📂 Restore from Backup</div>
+      <div class="err-box">🚨 Restore করলে বর্তমান data মুছে যাবে। নিশ্চিত হয়ে করুন।</div>
+      <div class="fg"><label>Restore Type</label>
+        <select id="restoreType">
+          <option value="full">Full Restore</option>
+          <option value="settings">Settings Only</option>
+          <option value="transactions">Transactions Only</option>
+        </select>
+      </div>
+      <div class="fg"><label>Upload Backup File (.json)</label>
+        <input type="file" id="restoreFile" accept=".json" style="padding:6px;font-size:.78rem"/>
+      </div>
+      <button class="btn btn-r" onclick="restoreBackup()" style="width:100%">🔄 Restore Now</button>
+      <hr style="border-color:var(--border);margin:12px 0"/>
+      <div class="card-title" style="font-size:.8rem">Backup History</div>
+      <div id="backupHistory" style="font-size:.75rem;color:var(--muted)">No backups recorded</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== REPORTS ===== -->
+<div class="page" id="page-reports">
+  <div class="pg-title">Reports & Analytics</div>
+  <div class="cards-grid">
+    <div class="sc cb"><div class="sc-lbl">Total Users</div><div class="sc-val" id="rptReg">0</div><div class="sc-ic">👤</div></div>
+    <div class="sc cgr"><div class="sc-lbl">Total Revenue</div><div class="sc-val" id="rptRev">$0</div><div class="sc-ic">💵</div></div>
+    <div class="sc cg"><div class="sc-lbl">Commissions Paid</div><div class="sc-val" id="rptComm">$0</div><div class="sc-ic">💸</div></div>
+    <div class="sc cp"><div class="sc-lbl">Company Fund</div><div class="sc-val" id="rptFund">$0</div><div class="sc-ic">🏦</div></div>
+    <div class="sc cr"><div class="sc-lbl">Total Withdrawn</div><div class="sc-val" id="rptWD">$0</div><div class="sc-ic">💸</div></div>
+    <div class="sc co"><div class="sc-lbl">ROI Paid Out</div><div class="sc-val" id="rptROITotal">$0</div><div class="sc-ic">📈</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Income by Type</div>
+      <table style="font-size:.79rem;width:100%">
+        <tr><td style="color:var(--muted);padding:5px 0">Sponsor Commissions</td><td style="color:var(--green);font-weight:700" id="rptSponsor">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Matching Bonuses</td><td style="color:var(--accent);font-weight:700" id="rptMatch">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Cashback Pool</td><td style="color:var(--gold);font-weight:700" id="rptCB">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Club Bonus</td><td style="color:var(--accent2);font-weight:700" id="rptClub">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">ROI Returns</td><td style="color:var(--green);font-weight:700" id="rptROI">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Generation Bonus</td><td style="color:var(--accent);font-weight:700" id="rptGen">$0</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Gift Vouchers</td><td style="color:var(--gold);font-weight:700" id="rptVoucher">$0</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Export Reports</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-o" onclick="exportCSV('users')">⬇ Export Users (CSV)</button>
+        <button class="btn btn-o" onclick="exportCSV('transactions')">⬇ Export Transactions (CSV)</button>
+        <button class="btn btn-o" onclick="exportCSV('withdrawals')">⬇ Export Withdrawals (CSV)</button>
+        <button class="btn btn-o" onclick="exportCSV('investments')">⬇ Export Investments (CSV)</button>
+        <button class="btn btn-o" onclick="exportCSV('fundreqs')">⬇ Export Fund Requests (CSV)</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- USER EDIT MODAL -->
+<div class="modal-bg" id="userModal">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-title">User Details & Edit <button class="modal-close" onclick="closeModal('userModal')">✕</button></div>
+    <div id="userModalBody">Loading…</div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-bg" id="confirmModal">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-title" id="confirmTitle">Confirm Action <button class="modal-close" onclick="closeModal('confirmModal')">✕</button></div>
+    <div id="confirmBody" style="font-size:.82rem;margin-bottom:16px;color:var(--muted)"></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-r" id="confirmOkBtn" style="flex:1">Confirm</button>
+      <button class="btn btn-o" onclick="closeModal('confirmModal')" style="flex:1">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
+<script>
+// ── FIREBASE CONFIG ──────────────────────────────────
+const firebaseConfig = {
+  apiKey:"AIzaSyA3G2bMOJ_HSDYXJPuM70tVjfbkHlMftr4",
+  authDomain:"livelinemeta.firebaseapp.com",
+  databaseURL:"https://livelinemeta-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"livelinemeta",
+  storageBucket:"livelinemeta.firebasestorage.app",
+  messagingSenderId:"206900805598",
+  appId:"1:206900805598:web:10e6b39100af201b4e674f"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const fsdb = firebase.firestore();
+const rtdb = firebase.database();
+
+// ── GLOBALS ──────────────────────────────────────────
+let CU       = null;
+let ALLU     = {};
+let ALL_ACT  = {};
+let ALL_WD   = {};
+let ALL_INV  = {};
+let ALL_TX   = [];
+let ALL_FR   = {};
+let ALL_LOG  = [];
+let SETTINGS = {};
+let MY_ROLE  = 'admin';
+let MY_PERMS = {};
+
+// Users page pagination + tab state
+let USERS_PAGE = 1;
+const USERS_PER_PAGE = 10;
+let USER_TAB = 'all';
+let USERS_FILTERED = [];
+
+// ── DATE CLOCK ───────────────────────────────────────
+function updateClock() {
+  const el = document.getElementById('ovDateTime');
+  if (el) el.textContent = new Date().toLocaleString('en-BD', { dateStyle:'medium', timeStyle:'short' });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── AUTH GUARD ───────────────────────────────────────
+auth.onAuthStateChanged(async user => {
+  if (!user) { window.location.href = 'login.html'; return; }
+
+  // ── এখানে check হচ্ছে যে user এখন login করলো, সে RTDB-এর admins node-এ আছে কিনা ──
+  const adminSnap = await rtdb.ref('admins/' + user.uid).get();
+  const isRealAdmin = adminSnap.exists() && adminSnap.val() === true;
+
+  const saSnap = await rtdb.ref('subAdmins').get();
+  let isSubAdmin = false;
+  let saData = null;
+  if (saSnap.exists()) {
+    saData = Object.values(saSnap.val()).find(s => s.email === user.email);
+    isSubAdmin = !!saData;
+  }
+
+  // admin ও sub-admin কোনোটাই না হলে — ভেতরে ঢুকতেই পারবে না
+  if (!isRealAdmin && !isSubAdmin) {
+    await auth.signOut();
+    alert('Access denied. এই account admin না।');
+    window.location.href = 'login.html';
+    return;
+  }
+
+  CU = user;
+  document.getElementById('adminEmailD').textContent = user.email || '';
+
+  if (isSubAdmin) {
+    MY_ROLE  = 'subadmin';
+    MY_PERMS = saData.permissions || {};
+    document.getElementById('adminBadgeEl').textContent = '🛡 SUB-ADMIN';
+    document.getElementById('adminBadgeEl').className   = 'subadmin-badge';
+    document.getElementById('roleLabel').textContent    = 'Sub-Admin';
+  } else {
+    MY_ROLE = 'admin';
+  }
+
+  await loadAll();
+});
+
+async function loadAll() {
+  await loadSettings();
+  await loadUsers();
+  await loadActivations();
+  await loadWithdrawals();
+  await loadInvestments();
+  await loadAllTx();
+  await loadFundRequests();
+  await loadVouchers();
+  loadNotices();
+  loadSubAdmins();
+  loadActivityLog();
+  computeOverview();
+  loadGlobalToggles();
+}
+
+// ── SETTINGS ─────────────────────────────────────────
+async function loadSettings() {
+  const snap = await rtdb.ref('settings').get();
+  if (snap.exists()) { SETTINGS = snap.val(); applySettings(); }
+}
+function applySettings() {
+  const S = SETTINGS;
+  safeSet('roiRateInput', S.roiRate||12, 'value');
+  safeSet('setActFee',    S.activationFee||30, 'value');
+  safeSet('setSponsComm', S.sponsorComm||4, 'value');
+  safeSet('setCompFund',  S.companyFund||5, 'value');
+  safeSet('setUserCap',   S.userCap||1000, 'value');
+  safeSet('setMatchPct',  S.matchingPct||5, 'value');
+  safeSet('setMatchCap',  S.matchingCap||1000, 'value');
+  safeSet('setCBPct',     S.cashbackPct||3, 'value');
+  safeSet('setCBLimit',   S.cashbackLimit||60, 'value');
+  safeSet('setClubPct',   S.clubPct||4, 'value');
+  safeSet('setClubMinRefs', S.clubMinRefs||10, 'value');
+  safeSet('setClubMinMatch', S.clubMinMatch||50, 'value');
+  safeSet('setFRComm',    S.fundRequestComm||5, 'value');
+  safeSet('setAdminWallet', S.adminWallet||'', 'value');
+  safeSet('setMinWD',     S.minWithdrawal||10, 'value');
+  safeSet('setWDFee',     S.withdrawalFee||0, 'value');
+  safeSet('setROIRefBonus', S.roiRefBonus||5, 'value');
+  safeSet('setMinInv',    S.minInvestment||100, 'value');
+  safeSet('setInvLock',   S.invLockMonths||6, 'value');
+  safeSet('setInvFee',    S.invFee||10, 'value');
+  set('qsROIRate', (S.roiRate||12)+'%');
+  set('actFeeDisplay', '$'+(S.activationFee||30));
+  set('sponsCommDisplay', '$'+(S.sponsorComm||4));
+  set('compFundDisplay', '$'+(S.companyFund||5));
+  set('clubPctDisplay', (S.clubPct||4)+'%');
+  set('clubMinRefsDisplay', S.clubMinRefs||10);
+  set('clubMinMatchDisplay', '$'+(S.clubMinMatch||50));
+  set('matchPctDisplay', (S.matchingPct||5)+'%');
+  set('matchCapDisplay', '$'+(S.matchingCap||1000));
+  set('frCommDisplay', (S.fundRequestComm||5)+'%');
+  if (S.generationLevels) S.generationLevels.forEach((v,i)=>{ const el=document.getElementById('gl'+(i+1)); if(el) el.value=v; });
+}
+
+// ── USERS ─────────────────────────────────────────────
+window.loadUsers = async () => {
+  const snap = await fsdb.collection('users').get();
+  ALLU = {};
+  snap.forEach(d => { ALLU[d.id] = { id:d.id, ...d.data() }; });
+  applyUserTabFilter();
+  populatePerUserSel();
+};
+
+window.switchUserTab = (tab) => {
+  USER_TAB = tab;
+  USERS_PAGE = 1;
+  ['all','active','inactive','investment'].forEach(t=>{
+    document.getElementById('utab_'+t).classList.toggle('active', t===tab);
+  });
+  applyUserTabFilter();
+};
+
+function applyUserTabFilter() {
+  let list = Object.values(ALLU);
+  if (USER_TAB === 'active')     list = list.filter(u=>u.isActive && !u.isBanned);
+  if (USER_TAB === 'inactive')   list = list.filter(u=>!u.isActive && !u.isBanned);
+  if (USER_TAB === 'investment') list = list.filter(u=>parseFloat(u.totalInvested||0) > 0);
+
+  document.getElementById('ucnt_all').textContent        = Object.values(ALLU).length;
+  document.getElementById('ucnt_active').textContent     = Object.values(ALLU).filter(u=>u.isActive && !u.isBanned).length;
+  document.getElementById('ucnt_inactive').textContent   = Object.values(ALLU).filter(u=>!u.isActive && !u.isBanned).length;
+  document.getElementById('ucnt_investment').textContent = Object.values(ALLU).filter(u=>parseFloat(u.totalInvested||0) > 0).length;
+
+  const q = (document.getElementById('userSearchInput')?.value||'').toLowerCase();
+  if (q) list = list.filter(u =>
+    (u.fullName||'').toLowerCase().includes(q) ||
+    (u.username||'').toLowerCase().includes(q) ||
+    (u.email||'').toLowerCase().includes(q) ||
+    (u.memberId||'').toLowerCase().includes(q) ||
+    u.id.toLowerCase().includes(q));
+
+  USERS_FILTERED = list;
+  renderUsersPaged();
+}
+
+function renderUsersPaged() {
+  const total = USERS_FILTERED.length;
+  const totalPages = Math.max(1, Math.ceil(total / USERS_PER_PAGE));
+  if (USERS_PAGE > totalPages) USERS_PAGE = totalPages;
+  const start = (USERS_PAGE-1)*USERS_PER_PAGE;
+  const pageList = USERS_FILTERED.slice(start, start+USERS_PER_PAGE);
+  renderUsers(pageList, start);
+  renderUsersPagination(totalPages);
+}
+
+function renderUsersPagination(totalPages) {
+  const el = document.getElementById('usersPagination');
+  if (!el) return;
+  if (totalPages <= 1) { el.innerHTML=''; return; }
+  let html = '';
+  html += `<button class="page-btn" ${USERS_PAGE===1?'disabled':''} onclick="goUsersPage(${USERS_PAGE-1})">‹ Prev</button>`;
+  const windowSize = 3;
+  let pages = [];
+  pages.push(1);
+  for (let p=USERS_PAGE-windowSize; p<=USERS_PAGE+windowSize; p++) if (p>1 && p<totalPages) pages.push(p);
+  if (totalPages>1) pages.push(totalPages);
+  pages = [...new Set(pages)].sort((a,b)=>a-b);
+  let prev = 0;
+  pages.forEach(p=>{
+    if (p - prev > 1) html += `<span class="page-btn dots">…</span>`;
+    html += `<button class="page-btn ${p===USERS_PAGE?'active':''}" onclick="goUsersPage(${p})">${p}</button>`;
+    prev = p;
+  });
+  html += `<button class="page-btn" ${USERS_PAGE===totalPages?'disabled':''} onclick="goUsersPage(${USERS_PAGE+1})">Next ›</button>`;
+  el.innerHTML = html;
+}
+
+window.goUsersPage = (p) => {
+  USERS_PAGE = p;
+  renderUsersPaged();
+};
+
+function renderUsers(list, startIdx) {
+  set('userCountLbl', USERS_FILTERED.length+' users (page '+USERS_PAGE+')');
+  const tb = document.getElementById('usersTb');
+  if (!list.length) { tb.innerHTML='<tr><td colspan="13" style="text-align:center;color:var(--muted);padding:16px">No users</td></tr>'; return; }
+  tb.innerHTML = list.map((u,i) => {
+    const joined = formatDate(u.createdAt);
+    const incOff = u.incomeBlocked ? '🔴' : '🟢';
+    const wdOff  = u.withdrawalBlocked ? '🔴' : '🟢';
+    const status = u.isBanned ? 'Banned' : u.isActive ? 'Active' : 'Inactive';
+    const statusCls = u.isBanned ? 'pr' : u.isActive ? 'pg' : 'py';
+    const sponsorName = u.sponsorId ? (ALLU[u.sponsorId]?.username || u.sponsorId.slice(0,10)+'…') : 'Root';
+    return `<tr>
+      <td style="color:var(--muted)">${(startIdx||0)+i+1}</td>
+      <td style="font-weight:700;min-width:100px">${u.fullName||'—'}</td>
+      <td style="color:var(--muted)">@${u.username||'—'}</td>
+      <td style="font-size:.71rem;color:var(--muted);max-width:140px;overflow:hidden;text-overflow:ellipsis">${u.email||'—'}</td>
+      <td style="font-family:monospace;font-size:.68rem;color:var(--accent)">${u.memberId||u.id.slice(0,10)}</td>
+      <td style="font-size:.72rem">${sponsorName}</td>
+      <td style="font-size:.72rem">${joined}</td>
+      <td><span class="pill ${statusCls}">${status}</span></td>
+      <td style="font-size:.72rem">${u.rank||'—'}</td>
+      <td style="color:var(--green);font-weight:700">$${(u.walletBalance||0).toFixed(2)}</td>
+      <td title="Income ${u.incomeBlocked?'Blocked':'Active'}">${incOff}</td>
+      <td title="Withdrawal ${u.withdrawalBlocked?'Blocked':'Active'}">${wdOff}</td>
+      <td>
+        <div style="display:flex;gap:4px;flex-wrap:wrap">
+          <button class="btn btn-o btn-sm" onclick="viewUser('${u.id}')">✏ Edit</button>
+          ${!u.isActive&&!u.isBanned?`<button class="btn btn-gr btn-sm" onclick="activateUser('${u.id}')">✅</button>`:''}
+          ${u.isBanned?`<button class="btn btn-gr btn-sm" onclick="unbanUser('${u.id}')">Unban</button>`:`<button class="btn btn-r btn-sm" onclick="blockUser('${u.id}')">Ban</button>`}
+          <button class="btn btn-sm" style="background:var(--border);color:var(--text)" onclick="toggleIncomeBlock('${u.id}',${!!u.incomeBlocked})">${u.incomeBlocked?'Inc✅':'Inc🚫'}</button>
+          <button class="btn btn-sm" style="background:var(--border);color:var(--text)" onclick="toggleWDBlock('${u.id}',${!!u.withdrawalBlocked})">${u.withdrawalBlocked?'WD✅':'WD🚫'}</button>
+          <button class="btn btn-g btn-sm" onclick="adjustBalance('${u.id}','${(u.fullName||u.username||'User').replace(/'/g,"\\'")}')">💰</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+  renderBlockList();
+}
+
+window.filterUsers = () => {
+  USERS_PAGE = 1;
+  applyUserTabFilter();
+};
+
+function renderBlockList() {
+  const blocked = Object.values(ALLU).filter(u=>u.isBanned);
+  const tb = document.getElementById('blockListTb');
+  tb.innerHTML = blocked.length ? blocked.map(u=>`<tr>
+    <td style="font-weight:700">${u.fullName||'User'}</td>
+    <td style="color:var(--muted)">${u.email||'—'}</td>
+    <td>@${u.username||'—'}</td>
+    <td style="font-size:.72rem">${u.bannedAt?new Date(u.bannedAt).toLocaleDateString():'—'}</td>
+    <td style="font-size:.72rem;color:var(--muted)">${u.banReason||'Admin action'}</td>
+    <td><button class="btn btn-gr btn-sm" onclick="unbanUser('${u.id}')">✅ Unban</button></td>
+  </tr>`).join('')
+  : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">No blocked users</td></tr>';
+}
+
+window.viewUser = uid => {
+  const u = ALLU[uid]; if (!u) return;
+  const joined = formatDate(u.createdAt);
+  document.getElementById('userModalBody').innerHTML = `
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px">
+      <div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;color:#fff;flex-shrink:0">${(u.fullName||u.username||'U')[0].toUpperCase()}</div>
+      <div>
+        <div style="font-weight:800;font-size:.95rem">${u.fullName||'User'}</div>
+        <div style="font-size:.74rem;color:var(--muted)">${u.email||'—'}</div>
+        <span class="pill ${u.isBanned?'pr':u.isActive?'pg':'py'}" style="margin-top:4px;display:inline-block">${u.isBanned?'Banned':u.isActive?'Active':'Inactive'}</span>
+      </div>
+    </div>
+    <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Edit User Info</div>
+    <div class="fg"><label>Full Name</label><input type="text" id="editName" value="${u.fullName||''}"/></div>
+    <div class="fg"><label>Email</label><input type="text" id="editEmail" value="${u.email||''}"/></div>
+    <div class="fg"><label>Username</label><input type="text" id="editUsername" value="${u.username||''}"/></div>
+    <div class="fg"><label>Mobile</label><input type="text" id="editMobile" value="${u.mobile||''}"/></div>
+    <div class="fg"><label>USDT Wallet</label><input type="text" id="editWallet" value="${u.paymentWallet||''}"/></div>
+    <div class="fg"><label>Sponsor ID (change with care!)</label><input type="text" id="editSponsor" value="${u.sponsorId||''}"/></div>
+    <div class="fg"><label>Wallet Balance ($)</label><input type="number" id="editBalance" value="${(u.walletBalance||0).toFixed(2)}" step="0.01"/></div>
+    <button class="btn btn-p" onclick="saveUserEdit('${uid}')" style="width:100%;margin-bottom:10px">💾 Save Changes</button>
+    <hr style="border-color:var(--border);margin:10px 0"/>
+    <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Account Info</div>
+    <table style="width:100%;font-size:.77rem">
+      <tr><td style="color:var(--muted);padding:4px 0;width:110px">Member ID</td><td style="font-family:monospace;font-size:.7rem">${u.memberId||uid}</td></tr>
+      <tr><td style="color:var(--muted);padding:4px 0">Left Child</td><td style="font-size:.72rem">${u.leftChild||(ALLU[u.leftChild]?.username||'Empty')}</td></tr>
+      <tr><td style="color:var(--muted);padding:4px 0">Right Child</td><td style="font-size:.72rem">${u.rightChild||(ALLU[u.rightChild]?.username||'Empty')}</td></tr>
+      <tr><td style="color:var(--muted);padding:4px 0">Joined</td><td>${joined}</td></tr>
+      <tr><td style="color:var(--muted);padding:4px 0">Method</td><td>${u.signupMethod||'email'}</td></tr>
+    </table>
+    <hr style="border-color:var(--border);margin:10px 0"/>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:4px">
+      ${!u.isActive?`<button class="btn btn-gr btn-sm" onclick="activateUser('${uid}');closeModal('userModal')">✅ Activate</button>`:''}
+      <button class="btn btn-sm" style="background:rgba(0,212,255,.15);color:var(--accent)" onclick="adjustBalance('${uid}','${(u.fullName||'User').replace(/'/g,"\\'")}');closeModal('userModal')">💰 Adjust Balance</button>
+      ${u.isBanned
+        ?`<button class="btn btn-gr btn-sm" onclick="unbanUser('${uid}');closeModal('userModal')">✅ Unban</button>`
+        :`<button class="btn btn-r btn-sm" onclick="blockUser('${uid}');closeModal('userModal')">🚫 Ban</button>`}
+      <button class="btn btn-sm" style="background:var(--border)" onclick="toggleIncomeBlock('${uid}',${!!u.incomeBlocked});closeModal('userModal')">${u.incomeBlocked?'✅ Enable Income':'🚫 Block Income'}</button>
+      <button class="btn btn-sm" style="background:var(--border)" onclick="toggleWDBlock('${uid}',${!!u.withdrawalBlocked});closeModal('userModal')">${u.withdrawalBlocked?'✅ Enable WD':'🚫 Block WD'}</button>
+      <button class="btn btn-r btn-sm" onclick="deleteUser('${uid}');closeModal('userModal')">🗑 Delete</button>
+    </div>`;
+  document.getElementById('userModal').classList.add('show');
+};
+
+window.saveUserEdit = async uid => {
+  const updates = {
+    fullName:      document.getElementById('editName').value.trim(),
+    email:         document.getElementById('editEmail').value.trim(),
+    username:      document.getElementById('editUsername').value.trim(),
+    mobile:        document.getElementById('editMobile').value.trim(),
+    paymentWallet: document.getElementById('editWallet').value.trim(),
+    sponsorId:     document.getElementById('editSponsor').value.trim(),
+    updatedAt:     new Date()
+  };
+  const newBal = parseFloat(document.getElementById('editBalance').value);
+  try {
+    await fsdb.collection('users').doc(uid).update(updates);
+    if (!isNaN(newBal)) {
+      await rtdb.ref('users/'+uid+'/walletBalance').set(newBal);
+      updates.walletBalance = newBal;
+    }
+    ALLU[uid] = { ...ALLU[uid], ...updates };
+    toast('✅ User updated!');
+    logAdminAction('user', 'Edit User', uid, 'Updated profile info');
+    closeModal('userModal');
+    applyUserTabFilter();
+  } catch(e) { toast('Error: '+e.message); }
+};
+
+window.blockUser = async uid => {
+  const reason = prompt('Reason for ban (optional):') || 'Admin action';
+  if (reason === null) return;
+  await fsdb.collection('users').doc(uid).update({ isBanned:true, isActive:false, banReason:reason, bannedAt:Date.now() });
+  ALLU[uid] = { ...ALLU[uid], isBanned:true, isActive:false, banReason:reason };
+  logAdminAction('user','Ban User',uid,reason);
+  toast('User banned.');
+  applyUserTabFilter();
+};
+
+window.unbanUser = async uid => {
+  await fsdb.collection('users').doc(uid).update({ isBanned:false, banReason:'' });
+  ALLU[uid] = { ...ALLU[uid], isBanned:false };
+  logAdminAction('user','Unban User',uid,'Unbanned');
+  toast('✅ User unbanned.');
+  applyUserTabFilter();
+};
+
+window.toggleIncomeBlock = async (uid, current) => {
+  const newVal = !current;
+  await fsdb.collection('users').doc(uid).update({ incomeBlocked:newVal });
+  ALLU[uid] = { ...ALLU[uid], incomeBlocked:newVal };
+  logAdminAction('user', newVal?'Block Income':'Unblock Income', uid, '');
+  toast(newVal ? '🚫 Income blocked for user' : '✅ Income unblocked');
+  applyUserTabFilter();
+};
+
+window.toggleWDBlock = async (uid, current) => {
+  const newVal = !current;
+  await fsdb.collection('users').doc(uid).update({ withdrawalBlocked:newVal });
+  ALLU[uid] = { ...ALLU[uid], withdrawalBlocked:newVal };
+  logAdminAction('user', newVal?'Block Withdrawal':'Unblock WD', uid, '');
+  toast(newVal ? '🚫 Withdrawal blocked' : '✅ Withdrawal unblocked');
+  applyUserTabFilter();
+};
+
+window.deleteUser = async uid => {
+  showConfirm('Delete User', 'This will permanently delete user data from Firestore. Are you sure?', async () => {
+    await fsdb.collection('users').doc(uid).delete();
+    delete ALLU[uid];
+    logAdminAction('user','Delete User',uid,'Deleted');
+    toast('User deleted.');
+    applyUserTabFilter();
+    computeOverview();
+  });
+};
+
+window.confirmDeleteAllUsers = () => {
+  showConfirm('🚨 Delete ALL Users', 'This will DELETE ALL USERS from Firestore. This is irreversible!', async () => {
+    const batch = fsdb.batch();
+    Object.keys(ALLU).forEach(uid => batch.delete(fsdb.collection('users').doc(uid)));
+    await batch.commit();
+    ALLU = {};
+    logAdminAction('user','Delete ALL Users','ALL','Mass delete');
+    toast('All users deleted.');
+    applyUserTabFilter();
+  });
+};
+
+window.adjustBalance = (uid, name) => {
+  const amt = parseFloat(prompt('Adjust balance for '+name+'\n(+add / -deduct):'));
+  if (isNaN(amt)) return;
+  rtdb.ref('users/'+uid+'/walletBalance').get().then(snap => {
+    const cur    = parseFloat(snap.exists()?snap.val():0);
+    const newBal = cur+amt;
+    rtdb.ref('users/'+uid+'/walletBalance').set(newBal).then(()=>{
+      rtdb.ref('transactions/'+uid).push({
+        type:'Admin Adjustment', amount:amt,
+        note:'Manual adjustment by admin',
+        timestamp:Date.now(), status:'completed', balance:newBal
+      });
+      logAdminAction('user','Balance Adjust',uid,'$'+amt);
+      toast('Balance adjusted by $'+amt.toFixed(2));
+    });
+  });
+};
+
+// ── ACTIVATIONS ───────────────────────────────────────
+window.loadActivations = async () => {
+  const snap  = await rtdb.ref('activationRequests').get();
+  ALL_ACT = snap.exists() ? snap.val() : {};
+  renderActivations(Object.entries(ALL_ACT));
+};
+
+function renderActivations(entries) {
+  entries.sort(([,a],[,b])=>b.createdAt-a.createdAt);
+  const pending = entries.filter(([,a])=>a.status==='pending');
+  set('ovPendAct', pending.length);
+  const badge = document.getElementById('actBadge');
+  badge.textContent = pending.length>0?pending.length:'';
+  set('actCountLbl', entries.length+' ('+pending.length+' pending)');
+  const tb = document.getElementById('actTb');
+  tb.innerHTML = entries.length ? entries.map(([id,a],i)=>`<tr>
+    <td style="color:var(--muted)">${i+1}</td>
+    <td style="font-weight:700">${a.name||'—'}</td>
+    <td style="color:var(--muted)">@${a.username||'—'}</td>
+    <td style="font-size:.72rem">${a.email||'—'}</td>
+    <td style="color:var(--green);font-weight:700">$${a.amount||30}</td>
+    <td>${a.method||'USDT'}</td>
+    <td style="font-family:monospace;font-size:.68rem;max-width:100px;overflow:hidden;text-overflow:ellipsis" title="${a.txid||''}">${(a.txid||'—').slice(0,16)}…</td>
+    <td style="font-size:.72rem">${a.createdAt?new Date(a.createdAt).toLocaleDateString():'—'}</td>
+    <td><span class="pill ${a.status==='approved'?'pg':a.status==='rejected'?'pr':'py'}">${a.status||'pending'}</span></td>
+    <td style="display:flex;gap:4px">
+      ${a.status==='pending'?`
+        <button class="btn btn-gr btn-sm" onclick="approveAct('${id}','${a.uid}')">✅</button>
+        <button class="btn btn-r btn-sm" onclick="rejectAct('${id}')">✕</button>`:'—'}
+    </td>
+  </tr>`).join('')
+  : '<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:16px">No requests</td></tr>';
+
+  const ovTb = document.getElementById('ovActTb');
+  ovTb.innerHTML = entries.slice(0,5).map(([id,a])=>`<tr>
+    <td style="font-weight:600">${a.name||'User'}</td>
+    <td>${a.method||'USDT'}</td>
+    <td style="font-size:.72rem">${a.createdAt?new Date(a.createdAt).toLocaleDateString():'—'}</td>
+    <td><span class="pill ${a.status==='approved'?'pg':a.status==='rejected'?'pr':'py'}">${a.status}</span></td>
+    <td>${a.status==='pending'?`<button class="btn btn-gr btn-sm" onclick="approveAct('${id}','${a.uid}')">✅</button>`:'—'}</td>
+  </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--muted)">None</td></tr>';
+}
+
+window.filterActivations = () => {
+  const f = document.getElementById('actFilterSel').value;
+  const entries = Object.entries(ALL_ACT);
+  renderActivations(f==='all'?entries:entries.filter(([,a])=>a.status===f));
+};
+
+window.approveAct = async (id, uid) => {
+  await rtdb.ref('activationRequests/'+id).update({ status:'approved', approvedAt:Date.now(), approvedBy:CU.email });
+  ALL_ACT[id].status = 'approved';
+  await activateUser(uid);
+  logAdminAction('activation','Approve Activation',uid,'ID:'+id);
+  renderActivations(Object.entries(ALL_ACT));
+};
+
+window.rejectAct = async id => {
+  if (!confirm('Reject this activation?')) return;
+  await rtdb.ref('activationRequests/'+id).update({ status:'rejected', rejectedBy:CU.email });
+  ALL_ACT[id].status = 'rejected';
+  logAdminAction('activation','Reject Activation','—','ID:'+id);
+  renderActivations(Object.entries(ALL_ACT));
+  toast('Rejected.');
+};
+
+window.approveAllPendingAct = async () => {
+  const pending = Object.entries(ALL_ACT).filter(([,a])=>a.status==='pending');
+  if (!pending.length) { toast('No pending activations'); return; }
+  if (!confirm('Approve all '+pending.length+' pending activations?')) return;
+  for (const [id, a] of pending) await approveAct(id, a.uid);
+  toast('✅ All pending activations approved!');
+};
+
+window.activateUser = async uid => {
+  try {
+    await fsdb.collection('users').doc(uid).update({ isActive:true, activatedAt:new Date() });
+    const u = ALLU[uid]||{};
+    ALLU[uid] = { ...u, isActive:true };
+    const sponsComm = parseFloat(SETTINGS.sponsorComm||4);
+    const compFund  = parseFloat(SETTINGS.companyFund||5);
+    const actFee    = parseFloat(SETTINGS.activationFee||30);
+
+    if (u.sponsorId) {
+      const sRef   = rtdb.ref('users/'+u.sponsorId+'/income/sponsor');
+      const sSnap  = await sRef.get();
+      const newInc = parseFloat(sSnap.exists()?sSnap.val():0)+sponsComm;
+      await sRef.set(newInc);
+      const wRef   = rtdb.ref('users/'+u.sponsorId+'/walletBalance');
+      const wSnap  = await wRef.get();
+      const newBal = parseFloat(wSnap.exists()?wSnap.val():0)+sponsComm;
+      await wRef.set(newBal);
+      await rtdb.ref('transactions/'+u.sponsorId).push({
+        type:'Sponsor Commission', amount:sponsComm,
+        note:'From '+(u.fullName||u.username||'User')+' activation',
+        timestamp:Date.now(), status:'completed', balance:newBal
+      });
+
+      // Register this activation as unmatched leg-carry (matching) and unused sale (cashback).
+      // Only NEW activations count — old/already-processed sales never contribute again.
+      await registerNewSaleForMatchingAndCashback(uid, u.sponsorId, actFee);
+    }
+
+    const cfRef  = rtdb.ref('settings/companyFundBalance');
+    const cfSnap = await cfRef.get();
+    await cfRef.set(parseFloat(cfSnap.exists()?cfSnap.val():0)+compFund);
+    toast('✅ Activated! $'+sponsComm+' → Sponsor, $'+compFund+' → Company Fund');
+    logAdminAction('activation','Activate User',uid,'Manual activation');
+    applyUserTabFilter();
+    computeOverview();
+  } catch(e) { toast('Error: '+e.message); }
+};
+
+// Registers a freshly-activated user's sale into:
+//  1) cashback: cashbackSales ledger — each sale usable exactly once
+//  2) matching: sponsor's left/right unmatched leg carry counters
+async function registerNewSaleForMatchingAndCashback(newUserUid, sponsorUid, amount) {
+  await rtdb.ref('cashbackSales').push({
+    uid: newUserUid, sponsorUid, amount, used:false, createdAt: Date.now()
+  });
+
+  const sponsorSnap = await rtdb.ref('users/'+sponsorUid).get();
+  const sponsor = sponsorSnap.exists()?sponsorSnap.val():null;
+  if (!sponsor) return;
+  let side = null;
+  if (sponsor.leftChild === newUserUid) side = 'left';
+  else if (sponsor.rightChild === newUserUid) side = 'right';
+  else {
+    let cur = newUserUid;
+    let guard = 0;
+    while (guard < 50) {
+      const curSnap = await rtdb.ref('users/'+cur).get();
+      if (!curSnap.exists()) break;
+      const curData = curSnap.val();
+      if (curData.sponsorId === sponsorUid) {
+        if (sponsor.leftChild === cur) side = 'left';
+        else if (sponsor.rightChild === cur) side = 'right';
+        break;
+      }
+      cur = curData.sponsorId;
+      if (!cur) break;
+      guard++;
+    }
+  }
+  if (!side) return;
+
+  const carryRef = rtdb.ref('matchingCarry/'+sponsorUid+'/'+side);
+  const carrySnap = await carryRef.get();
+  const cur = carrySnap.exists()?carrySnap.val():0;
+  await carryRef.set(cur+amount);
+}
+
+// ── FUND REQUESTS (Deposits only) ────────────────────
+window.loadFundRequests = async () => {
+  const snap = await rtdb.ref('fundRequests').get();
+  ALL_FR = snap.exists() ? snap.val() : {};
+  renderFundReqs(Object.entries(ALL_FR));
+};
+
+function renderFundReqs(entries) {
+  entries.sort(([,a],[,b])=>b.createdAt-a.createdAt);
+  const pending   = entries.filter(([,f])=>f.status==='pending');
+  const approved  = entries.filter(([,f])=>f.status==='approved');
+  const today     = new Date(); today.setHours(0,0,0,0);
+  const apprToday = approved.filter(([,f])=>f.approvedAt&&f.approvedAt>=today.getTime()).length;
+  const totalCred = approved.reduce((s,[,f])=>s+(f.netCredited||0),0);
+  set('ovPendFR',      pending.length);
+  set('frPendCount',   pending.length);
+  set('frApprCount',   apprToday);
+  set('frTotalCredited','$'+totalCred.toFixed(2));
+  const badge = document.getElementById('frBadge');
+  badge.textContent = pending.length>0?pending.length:'';
+  const tb = document.getElementById('frTb');
+  tb.innerHTML = entries.length ? entries.map(([id,f],i)=>{
+    const comm    = parseFloat(SETTINGS.fundRequestComm||5)/100;
+    const net     = f.netCredited || (f.amount*(1-comm));
+    const sc      = f.status==='approved'?'pg':f.status==='rejected'?'pr':'py';
+    const userName = ALLU[f.uid]?.fullName||ALLU[f.uid]?.username||f.name||f.uid?.slice(0,10)||'—';
+    return `<tr>
+      <td style="color:var(--muted)">${i+1}</td>
+      <td style="font-weight:700">${userName}</td>
+      <td style="color:var(--accent);font-weight:700">$${Number(f.amount||0).toFixed(2)}</td>
+      <td>${f.network||'TRC-20'}</td>
+      <td style="font-family:monospace;font-size:.68rem;max-width:100px;overflow:hidden;text-overflow:ellipsis" title="${f.txHash||''}">${(f.txHash||'—').slice(0,16)}…</td>
+      <td style="color:var(--green);font-weight:700">$${Number(net).toFixed(2)}</td>
+      <td style="font-size:.72rem">${f.createdAt?new Date(f.createdAt).toLocaleDateString():'—'}</td>
+      <td><span class="pill ${sc}">${f.status||'pending'}</span></td>
+      <td style="display:flex;gap:4px">
+        ${f.status==='pending'?`
+          <button class="btn btn-gr btn-sm" onclick="approveFR('${id}','${f.uid}',${f.amount||0})">✅</button>
+          <button class="btn btn-r btn-sm" onclick="rejectFR('${id}')">✕</button>`:'—'}
+      </td>
+    </tr>`;
+  }).join('')
+  : '<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:16px">No requests</td></tr>';
+}
+
+window.filterFundReqs = () => {
+  const f = document.getElementById('frFilterSel').value;
+  renderFundReqs(f==='all'?Object.entries(ALL_FR):Object.entries(ALL_FR).filter(([,x])=>x.status===f));
+};
+
+window.approveFR = async (id, uid, amount) => {
+  const commPct = parseFloat(SETTINGS.fundRequestComm||5)/100;
+  const comm    = amount*commPct;
+  const net     = amount-comm;
+  await rtdb.ref('fundRequests/'+id).update({ status:'approved', approvedAt:Date.now(), netCredited:net, approvedBy:CU.email });
+  const wRef  = rtdb.ref('users/'+uid+'/walletBalance');
+  const wSnap = await wRef.get();
+  const newBal= parseFloat(wSnap.exists()?wSnap.val():0)+net;
+  await wRef.set(newBal);
+  await rtdb.ref('transactions/'+uid).push({
+    type:'Fund Deposit', amount:net,
+    note:'Fund request approved. Sent: $'+amount+', Comm: $'+comm.toFixed(2),
+    timestamp:Date.now(), status:'completed', balance:newBal
+  });
+  ALL_FR[id] = { ...ALL_FR[id], status:'approved', netCredited:net };
+  logAdminAction('fund','Approve Fund Request',uid,'$'+amount+' → $'+net.toFixed(2)+' credited');
+  toast('✅ Fund credited! $'+net.toFixed(2)+' (after '+commPct*100+'% comm)');
+  renderFundReqs(Object.entries(ALL_FR));
+  computeOverview();
+};
+
+window.rejectFR = async id => {
+  if (!confirm('Reject this fund request?')) return;
+  await rtdb.ref('fundRequests/'+id).update({ status:'rejected', rejectedBy:CU.email });
+  ALL_FR[id] = { ...ALL_FR[id], status:'rejected' };
+  logAdminAction('fund','Reject Fund Request','—','ID:'+id);
+  toast('Fund request rejected.');
+  renderFundReqs(Object.entries(ALL_FR));
+};
+
+window.approveAllPendingFR = async () => {
+  const pending = Object.entries(ALL_FR).filter(([,f])=>f.status==='pending');
+  if (!pending.length) { toast('No pending fund requests'); return; }
+  if (!confirm('Approve all '+pending.length+' pending fund requests?')) return;
+  for (const [id, f] of pending) await approveFR(id, f.uid, f.amount||0);
+  toast('✅ All fund requests approved!');
+};
+
+// ── WITHDRAWALS (separate from Fund Requests) ────────
+window.loadWithdrawals = async () => {
+  const snap = await rtdb.ref('withdrawals').get();
+  ALL_WD = {};
+  if (snap.exists()) {
+    Object.entries(snap.val()).forEach(([uid,wds])=>{
+      Object.entries(wds).forEach(([wid,w])=>{ ALL_WD[uid+'__'+wid]={...w,uid}; });
+    });
+  }
+  renderWithdrawals(Object.entries(ALL_WD));
+};
+
+function renderWithdrawals(entries) {
+  entries.sort(([,a],[,b])=>b.createdAt-a.createdAt);
+  const pending  = entries.filter(([,w])=>w.status==='pending');
+  const approved = entries.filter(([,w])=>w.status==='approved');
+  const totalPaid= approved.reduce((s,[,w])=>s+(w.amount||0),0);
+  set('ovPendWd',   pending.length);
+  set('wdPendCount',pending.length);
+  set('wdApprCount',approved.length);
+  set('wdTotalPaid','$'+totalPaid.toFixed(0));
+  const badge = document.getElementById('wdBadge');
+  badge.textContent = pending.length>0?pending.length:'';
+  const tb = document.getElementById('wdTb');
+  tb.innerHTML = entries.length ? entries.map(([key,w],i)=>`<tr>
+    <td style="color:var(--muted)">${i+1}</td>
+    <td style="font-weight:600">${ALLU[w.uid]?.fullName||ALLU[w.uid]?.username||w.uid?.slice(0,10)||'—'}</td>
+    <td style="color:var(--green);font-weight:700">$${(w.amount||0).toFixed(2)}</td>
+    <td style="font-family:monospace;font-size:.69rem;max-width:130px;overflow:hidden;text-overflow:ellipsis" title="${w.address||''}">${(w.address||'—').slice(0,20)}…</td>
+    <td style="font-size:.72rem">${w.createdAt?new Date(w.createdAt).toLocaleDateString():'—'}</td>
+    <td><span class="pill ${w.status==='approved'?'pg':w.status==='rejected'?'pr':'py'}">${w.status||'pending'}</span></td>
+    <td style="display:flex;gap:4px">
+      ${w.status==='pending'?`
+        <button class="btn btn-gr btn-sm" onclick="approveWD('${key}','${w.uid}',${w.amount||0})">✅ Pay</button>
+        <button class="btn btn-r btn-sm" onclick="rejectWD('${key}','${w.uid}',${w.amount||0})">✕</button>`:'—'}
+    </td>
+  </tr>`).join('')
+  : '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:16px">No withdrawals</td></tr>';
+}
+
+window.filterWithdrawals = ()=>{
+  const f=document.getElementById('wdFilterSel').value;
+  renderWithdrawals(f==='all'?Object.entries(ALL_WD):Object.entries(ALL_WD).filter(([,w])=>w.status===f));
+};
+
+window.approveWD = async (key, uid, amount) => {
+  const u = ALLU[uid];
+  if (u?.withdrawalBlocked) { toast('This user has withdrawal blocked!'); return; }
+  if (!confirm('Approve $'+amount+' withdrawal and deduct from balance?')) return;
+  const [,wid] = key.split('__');
+  const wdFee  = parseFloat(SETTINGS.withdrawalFee||0)/100;
+  const netAmt = amount*(1-wdFee);
+  await rtdb.ref('withdrawals/'+uid+'/'+wid).update({ status:'approved', paidAt:Date.now(), paidBy:CU.email });
+  const wRef = rtdb.ref('users/'+uid+'/walletBalance');
+  const wSnap= await wRef.get();
+  const newBal= Math.max(0,parseFloat(wSnap.exists()?wSnap.val():0)-amount);
+  await wRef.set(newBal);
+  await rtdb.ref('transactions/'+uid).push({
+    type:'Withdrawal', amount:-amount,
+    note:'Withdrawal approved & paid', timestamp:Date.now(), status:'completed', balance:newBal
+  });
+  const twRef=rtdb.ref('users/'+uid+'/totalWithdrawn');
+  const twSnap=await twRef.get();
+  await twRef.set(parseFloat(twSnap.exists()?twSnap.val():0)+amount);
+  ALL_WD[key].status='approved';
+  logAdminAction('withdrawal','Approve Withdrawal',uid,'$'+amount);
+  renderWithdrawals(Object.entries(ALL_WD));
+  toast('✅ Withdrawal approved!');
+};
+
+window.rejectWD = async (key, uid, amount) => {
+  if (!confirm('Reject & refund $'+amount+'?')) return;
+  const [,wid]=key.split('__');
+  await rtdb.ref('withdrawals/'+uid+'/'+wid).update({ status:'rejected' });
+  const wRef=rtdb.ref('users/'+uid+'/walletBalance');
+  const wSnap=await wRef.get();
+  const newBal=parseFloat(wSnap.exists()?wSnap.val():0)+amount;
+  await wRef.set(newBal);
+  await rtdb.ref('transactions/'+uid).push({
+    type:'Withdrawal Refund', amount:amount,
+    note:'Withdrawal rejected — refunded', timestamp:Date.now(), status:'completed', balance:newBal
+  });
+  ALL_WD[key].status='rejected';
+  logAdminAction('withdrawal','Reject Withdrawal',uid,'$'+amount+' refunded');
+  renderWithdrawals(Object.entries(ALL_WD));
+  toast('Withdrawal rejected & refunded.');
+};
+
+window.approveAllPendingWD = async () => {
+  const pending = Object.entries(ALL_WD).filter(([,w])=>w.status==='pending');
+  if (!pending.length) { toast('No pending withdrawals'); return; }
+  if (!confirm('Approve all '+pending.length+' withdrawals?')) return;
+  for (const [key, w] of pending) await approveWD(key, w.uid, w.amount||0);
+};
+
+// ── INVESTMENTS ───────────────────────────────────────
+window.loadInvestments = async () => {
+  const snap = await rtdb.ref('investments').get();
+  ALL_INV = {};
+  if (snap.exists()) {
+    Object.entries(snap.val()).forEach(([uid,plans])=>{
+      Object.entries(plans).forEach(([pid,p])=>{ ALL_INV[uid+'__'+pid]={...p,uid}; });
+    });
+  }
+  renderInvestments(Object.entries(ALL_INV));
+};
+
+function renderInvestments(entries) {
+  entries.sort(([,a],[,b])=>b.createdAt-a.createdAt);
+  const total   = entries.reduce((s,[,p])=>s+(p.amount||0),0);
+  const active  = entries.filter(([,p])=>p.status==='active').length;
+  const pending = entries.filter(([,p])=>p.status==='pending').length;
+  const roiPaid = entries.reduce((s,[,p])=>s+(p.earnedROI||0),0);
+  set('invTotal',      '$'+total.toFixed(0));
+  set('invActiveCount', active);
+  set('invPendCount',  pending);
+  set('invROIPaid',    '$'+roiPaid.toFixed(0));
+  set('ovInvested',    '$'+total.toFixed(0));
+  const tb = document.getElementById('invTb');
+  tb.innerHTML = entries.length ? entries.map(([key,p])=>{
+    const unlockDate = new Date(p.createdAt+6*30*24*60*60*1000);
+    return `<tr>
+      <td style="font-weight:600">${ALLU[p.uid]?.fullName||ALLU[p.uid]?.username||p.uid?.slice(0,10)||'—'}</td>
+      <td style="color:var(--accent);font-weight:700">$${p.amount||0}</td>
+      <td style="color:var(--green)">${p.roiRate||12}%</td>
+      <td style="font-size:.72rem">${p.createdAt?new Date(p.createdAt).toLocaleDateString():'—'}</td>
+      <td style="color:var(--gold)">$${(p.earnedROI||0).toFixed(2)}</td>
+      <td style="font-size:.72rem">${p.method||'USDT'}</td>
+      <td style="font-family:monospace;font-size:.67rem;max-width:80px;overflow:hidden;text-overflow:ellipsis">${(p.txid||'—').slice(0,12)}…</td>
+      <td style="font-size:.72rem">${unlockDate.toLocaleDateString()}</td>
+      <td><span class="pill ${p.status==='active'?'pg':p.status==='pending'?'py':'pb'}">${p.status||'pending'}</span></td>
+      <td style="display:flex;gap:4px;flex-wrap:wrap">
+        ${p.status==='pending'?`<button class="btn btn-gr btn-sm" onclick="approveInv('${key}','${p.uid}',${p.amount||0})">✅</button>`:''}
+        <button class="btn btn-o btn-sm" onclick="setInvROI('${key}')">ROI%</button>
+        ${p.status==='active'?`<button class="btn btn-r btn-sm" onclick="cancelInv('${key}','${p.uid}',${p.amount||0})">Cancel</button>`:''}
+      </td>
+    </tr>`;
+  }).join('')
+  : '<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:16px">No investments</td></tr>';
+}
+
+window.filterInvestments = () => {
+  const f = document.getElementById('invFilterSel').value;
+  renderInvestments(f==='all'?Object.entries(ALL_INV):Object.entries(ALL_INV).filter(([,p])=>p.status===f));
+};
+
+window.approveInv = async (key, uid, amount) => {
+  const [,pid] = key.split('__');
+  await rtdb.ref('investments/'+uid+'/'+pid).update({ status:'active', activatedAt:Date.now() });
+  ALL_INV[key].status = 'active';
+  const uData = ALLU[uid];
+  const roiRef= parseFloat(SETTINGS.roiRefBonus||5);
+  if (uData?.sponsorId) {
+    const sRef  = rtdb.ref('users/'+uData.sponsorId+'/walletBalance');
+    const sSnap = await sRef.get();
+    const sNewBal= parseFloat(sSnap.exists()?sSnap.val():0)+roiRef;
+    await sRef.set(sNewBal);
+    await rtdb.ref('users/'+uData.sponsorId+'/income/roi_referral').get().then(async snap=>{
+      await rtdb.ref('users/'+uData.sponsorId+'/income/roi_referral').set(parseFloat(snap.exists()?snap.val():0)+roiRef);
+    });
+    await rtdb.ref('transactions/'+uData.sponsorId).push({
+      type:'ROI Referral Bonus', amount:roiRef,
+      note:'From '+(uData.fullName||'User')+' $'+amount+' investment',
+      timestamp:Date.now(), status:'completed', balance:sNewBal
+    });
+  }
+  logAdminAction('investments','Approve Investment',uid,'$'+amount);
+  renderInvestments(Object.entries(ALL_INV));
+  toast('✅ Investment activated! Sponsor got $'+roiRef);
+};
+
+window.approveAllPendingInv = async () => {
+  const pending = Object.entries(ALL_INV).filter(([,p])=>p.status==='pending');
+  if (!pending.length) { toast('No pending investments'); return; }
+  if (!confirm('Approve all '+pending.length+' investment plans?')) return;
+  for (const [key, p] of pending) await approveInv(key, p.uid, p.amount||0);
+};
+
+window.setInvROI = async key => {
+  const rate = parseFloat(prompt('New ROI rate (any %):'));
+  if (isNaN(rate)) return;
+  const [uid,pid] = key.split('__');
+  await rtdb.ref('investments/'+uid+'/'+pid).update({ roiRate:rate });
+  ALL_INV[key].roiRate = rate;
+  renderInvestments(Object.entries(ALL_INV));
+  toast('ROI updated to '+rate+'%');
+};
+
+window.cancelInv = async (key, uid, amount) => {
+  if (!confirm('Cancel this investment? Investor will get refund (minus withdrawal fee).')) return;
+  const [,pid] = key.split('__');
+  const fee    = parseFloat(SETTINGS.invFee||10)/100;
+  const refund = amount*(1-fee);
+  await rtdb.ref('investments/'+uid+'/'+pid).update({ status:'cancelled', cancelledAt:Date.now() });
+  ALL_INV[key].status = 'cancelled';
+  const wRef = rtdb.ref('users/'+uid+'/walletBalance');
+  const wSnap= await wRef.get();
+  const newBal= parseFloat(wSnap.exists()?wSnap.val():0)+refund;
+  await wRef.set(newBal);
+  await rtdb.ref('transactions/'+uid).push({
+    type:'Investment Refund', amount:refund,
+    note:'Investment cancelled. $'+amount+' - '+fee*100+'% fee = $'+refund.toFixed(2),
+    timestamp:Date.now(), status:'completed', balance:newBal
+  });
+  logAdminAction('investments','Cancel Investment',uid,'$'+amount+' → $'+refund.toFixed(2)+' refunded');
+  renderInvestments(Object.entries(ALL_INV));
+  toast('Investment cancelled. $'+refund.toFixed(2)+' refunded.');
+};
+
+// ── TRANSACTIONS ──────────────────────────────────────
+window.loadAllTx = async () => {
+  const snap = await rtdb.ref('transactions').get();
+  ALL_TX = [];
+  if (snap.exists()) {
+    Object.entries(snap.val()).forEach(([uid,txs])=>{
+      Object.entries(txs).forEach(([tid,t])=>{ ALL_TX.push({...t,uid,_tid:tid}); });
+    });
+  }
+  ALL_TX.sort((a,b)=>b.timestamp-a.timestamp);
+  renderTx(ALL_TX);
+};
+
+function renderTx(list) {
+  set('txCountLbl', list.length+' records');
+  const tb = document.getElementById('txTb');
+  tb.innerHTML = list.length ? list.slice(0,300).map(t=>`<tr>
+    <td style="font-size:.71rem;color:var(--muted)">${new Date(t.timestamp).toLocaleDateString()+' '+new Date(t.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td>
+    <td style="font-size:.73rem">${ALLU[t.uid]?.fullName||ALLU[t.uid]?.username||t.uid?.slice(0,10)||'—'}</td>
+    <td>${t.type||'—'}</td>
+    <td style="font-weight:700;color:${(t.amount||0)>0?'var(--green)':'var(--red)'}">
+      ${(t.amount||0)>0?'+':''}$${Math.abs(t.amount||0).toFixed(2)}
+    </td>
+    <td style="color:var(--muted);font-size:.72rem;max-width:180px;overflow:hidden;text-overflow:ellipsis">${t.note||'—'}</td>
+    <td><span class="pill ${t.status==='completed'?'pg':t.status==='pending'?'py':'pb'}">${t.status||'done'}</span></td>
+  </tr>`).join('')
+  : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">No transactions</td></tr>';
+}
+
+window.filterTx = () => {
+  const q    = document.getElementById('txSearchInput').value.toLowerCase();
+  const type = document.getElementById('txTypeSel').value;
+  const from = document.getElementById('txDateFrom').value ? new Date(document.getElementById('txDateFrom').value).getTime() : 0;
+  const to   = document.getElementById('txDateTo').value ? new Date(document.getElementById('txDateTo').value).getTime()+86400000 : Infinity;
+  let list = ALL_TX;
+  if (q) list = list.filter(t=>
+    (ALLU[t.uid]?.fullName||'').toLowerCase().includes(q)||
+    (ALLU[t.uid]?.username||'').toLowerCase().includes(q)||
+    (t.type||'').toLowerCase().includes(q));
+  if (type!=='all') list = list.filter(t=>t.type===type);
+  if (from) list = list.filter(t=>t.timestamp>=from&&t.timestamp<=to);
+  renderTx(list);
+};
+
+// ── CASHBACK: NEW-SALES-ONLY LOGIC ───────────────────
+// cashbackSales/{id} = { uid, sponsorUid, amount, used:false, createdAt }
+// Each sale is counted exactly once. Distributing marks used sales as used:true so
+// they never contribute to cashback again. Admin can also push a custom fixed amount
+// that is independent from the new-sales pool.
+async function getUnusedCashbackSales() {
+  const snap = await rtdb.ref('cashbackSales').get();
+  if (!snap.exists()) return [];
+  return Object.entries(snap.val())
+    .map(([id,s])=>({id,...s}))
+    .filter(s=>!s.used);
+}
+
+async function refreshCashbackPoolPreview() {
+  const unused = await getUnusedCashbackSales();
+  const volume = unused.reduce((s,x)=>s+(x.amount||0),0);
+  const cbPct  = parseFloat(SETTINGS.cashbackPct||3)/100;
+  const pool   = volume*cbPct;
+  const users  = Object.values(ALLU);
+  const active = users.filter(u=>u.isActive&&!u.isBanned&&!u.incomeBlocked);
+  set('cbNewVolume', '$'+volume.toFixed(2));
+  set('cbNewCount', unused.length);
+  set('cbPool', '$'+pool.toFixed(2));
+  set('cbEligCount', active.length);
+  set('cbPerMember', active.length>0?'$'+(pool/active.length).toFixed(4):'$0');
+}
+
+window.runCashback = async () => {
+  const unused = await getUnusedCashbackSales();
+  if (!unused.length) { toast('কোনো নতুন (unused) sales নেই — cashback distribute করার কিছু নেই'); return; }
+  const volume = unused.reduce((s,x)=>s+(x.amount||0),0);
+  const cbPct  = parseFloat(SETTINGS.cashbackPct||3)/100;
+  const pool   = volume*cbPct;
+  if (!confirm('New sales volume: $'+volume.toFixed(2)+' → Pool: $'+pool.toFixed(2)+'. Distribute now?')) return;
+
+  const users    = Object.values(ALLU);
+  const cbLimit  = parseFloat(SETTINGS.cashbackLimit||60);
+  const eligible = [];
+  for (const u of users) {
+    if (!u.isActive||u.isBanned||u.incomeBlocked) continue;
+    const snap = await rtdb.ref('users/'+u.id+'/income/cashback').get();
+    const earned = parseFloat(snap.exists()?snap.val():0);
+    if (earned < cbLimit) eligible.push({...u, cbEarned:earned});
+  }
+  if (!eligible.length) { toast('No eligible members (all at limit)'); return; }
+  const perUser = pool/eligible.length;
+  for (const u of eligible) {
+    const give = Math.min(perUser, cbLimit-u.cbEarned);
+    if (give<=0) continue;
+    await rtdb.ref('users/'+u.id+'/income/cashback').set(u.cbEarned+give);
+    const wRef  = rtdb.ref('users/'+u.id+'/walletBalance');
+    const wSnap = await wRef.get();
+    const newBal= parseFloat(wSnap.exists()?wSnap.val():0)+give;
+    await wRef.set(newBal);
+    await rtdb.ref('transactions/'+u.id).push({
+      type:'Daily Cashback', amount:give,
+      note:'New-sales pool: $'+pool.toFixed(2)+' / '+eligible.length+' members',
+      timestamp:Date.now(), status:'completed', balance:newBal
+    });
+  }
+  const updates = {};
+  unused.forEach(s=>{ updates['cashbackSales/'+s.id+'/used'] = true; updates['cashbackSales/'+s.id+'/usedAt'] = Date.now(); });
+  await rtdb.ref().update(updates);
+
+  await rtdb.ref('cashbackHistory').push({ source:'new-sales', pool:pool.toFixed(2), members:eligible.length, perUser:perUser.toFixed(4), timestamp:Date.now() });
+  logAdminAction('distribution','Cashback Distribution (new sales)','ALL','Pool: $'+pool.toFixed(2)+', Members: '+eligible.length);
+  toast('✅ Cashback done! $'+perUser.toFixed(4)+'/member');
+  computeOverview();
+  loadCashbackHistory();
+  refreshCashbackPoolPreview();
+};
+
+window.runCustomCashback = async () => {
+  const amt = parseFloat(document.getElementById('cbCustomAmt').value);
+  if (!amt || amt<=0) { toast('সঠিক amount দাও'); return; }
+  if (!confirm('Custom pool $'+amt.toFixed(2)+' — সব eligible active member এর মাঝে সমান ভাগে distribute করবে। Confirm?')) return;
+
+  const users    = Object.values(ALLU);
+  const eligible = [];
+  for (const u of users) {
+    if (!u.isActive||u.isBanned||u.incomeBlocked) continue;
+    const snap = await rtdb.ref('users/'+u.id+'/income/cashback').get();
+    const earned = parseFloat(snap.exists()?snap.val():0);
+    eligible.push({...u, cbEarned:earned});
+  }
+  if (!eligible.length) { toast('No eligible members'); return; }
+  const perUser = amt/eligible.length;
+  for (const u of eligible) {
+    await rtdb.ref('users/'+u.id+'/income/cashback').set(u.cbEarned+perUser);
+    const wRef  = rtdb.ref('users/'+u.id+'/walletBalance');
+    const wSnap = await wRef.get();
+    const newBal= parseFloat(wSnap.exists()?wSnap.val():0)+perUser;
+    await wRef.set(newBal);
+    await rtdb.ref('transactions/'+u.id).push({
+      type:'Daily Cashback', amount:perUser,
+      note:'Admin custom pool: $'+amt.toFixed(2)+' / '+eligible.length+' members',
+      timestamp:Date.now(), status:'completed', balance:newBal
+    });
+  }
+  await rtdb.ref('cashbackHistory').push({ source:'admin-custom', pool:amt.toFixed(2), members:eligible.length, perUser:perUser.toFixed(4), timestamp:Date.now() });
+  logAdminAction('distribution','Cashback Distribution (custom)','ALL','Pool: $'+amt.toFixed(2)+', Members: '+eligible.length);
+  toast('✅ Custom cashback done! $'+perUser.toFixed(4)+'/member');
+  document.getElementById('cbCustomAmt').value = '';
+  computeOverview();
+  loadCashbackHistory();
+};
+
+async function loadCashbackHistory() {
+  const snap = await rtdb.ref('cashbackHistory').get();
+  const tb = document.getElementById('cbHistTb');
+  if (!tb) return;
+  if (!snap.exists()) { tb.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted)">No history</td></tr>'; return; }
+  const list = Object.values(snap.val()).sort((a,b)=>b.timestamp-a.timestamp);
+  tb.innerHTML = list.slice(0,15).map(h=>`<tr>
+    <td style="font-size:.72rem">${new Date(h.timestamp).toLocaleDateString()}</td>
+    <td><span class="pill ${h.source==='admin-custom'?'pp':'pb'}">${h.source==='admin-custom'?'Custom':'New Sales'}</span></td>
+    <td style="color:var(--green);font-weight:700">$${h.pool}</td>
+    <td>${h.members}</td>
+    <td style="color:var(--gold)">$${Number(h.perUser).toFixed(4)}</td>
+  </tr>`).join('');
+  set('cbLastDist', list[0]?new Date(list[0].timestamp).toLocaleDateString():'Never');
+}
+
+// ── CLUB BONUS ─────────────────────────────────────────
+window.runClubBonus = async () => {
+  if (!confirm('Distribute club bonus?')) return;
+  const users    = Object.values(ALLU);
+  const active   = users.filter(u=>u.isActive&&!u.isBanned&&!u.incomeBlocked);
+  const vol      = active.length*(parseFloat(SETTINGS.activationFee||30));
+  const clubPct  = parseFloat(SETTINGS.clubPct||4)/100;
+  const pool     = vol*clubPct;
+  const minRefs  = parseInt(SETTINGS.clubMinRefs||10);
+  const minMatch = parseFloat(SETTINGS.clubMinMatch||50);
+  const eligible = [];
+  for (const u of active) {
+    const dir   = users.filter(u2=>u2.sponsorId===u.id).length;
+    const mSnap = await rtdb.ref('users/'+u.id+'/income/matching').get();
+    const match = parseFloat(mSnap.exists()?mSnap.val():0);
+    if (dir>=minRefs||match>=minMatch) eligible.push(u);
+  }
+  if (!eligible.length) { toast('No eligible club members'); return; }
+  const perUser = pool/eligible.length;
+  for (const u of eligible) {
+    const ref   = rtdb.ref('users/'+u.id+'/income/club');
+    const snap  = await ref.get();
+    await ref.set(parseFloat(snap.exists()?snap.val():0)+perUser);
+    const wRef  = rtdb.ref('users/'+u.id+'/walletBalance');
+    const wSnap = await wRef.get();
+    const newBal= parseFloat(wSnap.exists()?wSnap.val():0)+perUser;
+    await wRef.set(newBal);
+    await rtdb.ref('transactions/'+u.id).push({
+      type:'Club Bonus', amount:perUser,
+      note:'Club pool: $'+pool.toFixed(2)+' / '+eligible.length+' members',
+      timestamp:Date.now(), status:'completed', balance:newBal
+    });
+  }
+  await rtdb.ref('clubBonusHistory').push({ pool:pool.toFixed(2), members:eligible.length, perUser:perUser.toFixed(4), timestamp:Date.now() });
+  logAdminAction('distribution','Club Bonus','ALL','Pool: $'+pool.toFixed(2)+', Members: '+eligible.length);
+  toast('✅ Club bonus: $'+perUser.toFixed(4)+'/member');
+};
+
+// ── ROI DISTRIBUTION ──────────────────────────────────
+window.runROIDistrib = async () => {
+  if (!confirm('Run ROI distribution for all active plans?')) return;
+  const directPct = parseFloat(document.getElementById('roiDirectPct').value)/100;
+  const genPct    = 1-directPct;
+  const genLvls   = [1,2,3,4,5,6,7].map(i=>parseFloat(document.getElementById('gl'+i).value)/100);
+  let count = 0;
+  for (const [key,p] of Object.entries(ALL_INV)) {
+    if (p.status!=='active') continue;
+    const u = ALLU[p.uid];
+    if (u?.incomeBlocked) continue;
+    const monthly   = (p.amount||0)*(p.roiRate||12)/100;
+    const directAmt = monthly*directPct;
+    const genAmt    = monthly*genPct;
+    const [uid,pid] = key.split('__');
+    const iRef  = rtdb.ref('users/'+uid+'/income/roi');
+    const iSnap = await iRef.get();
+    await iRef.set(parseFloat(iSnap.exists()?iSnap.val():0)+directAmt);
+    const wRef  = rtdb.ref('users/'+uid+'/walletBalance');
+    const wSnap = await wRef.get();
+    const newBal= parseFloat(wSnap.exists()?wSnap.val():0)+directAmt;
+    await wRef.set(newBal);
+    await rtdb.ref('investments/'+uid+'/'+pid).update({ earnedROI:(p.earnedROI||0)+monthly, lastROI:Date.now() });
+    await rtdb.ref('transactions/'+uid).push({
+      type:'ROI Payout', amount:directAmt,
+      note:'Monthly ROI '+Math.round(directPct*100)+'% on $'+p.amount,
+      timestamp:Date.now(), status:'completed', balance:newBal
+    });
+    let curUID = uid;
+    for (let lvl=0;lvl<7;lvl++) {
+      const parent = ALLU[curUID]?.sponsorId;
+      if (!parent||!ALLU[parent]) break;
+      if (ALLU[parent]?.incomeBlocked) { curUID=parent; continue; }
+      const lvlAmt = genAmt*genLvls[lvl];
+      if (lvlAmt<=0) { curUID=parent; continue; }
+      const gRef  = rtdb.ref('users/'+parent+'/income/generation');
+      const gSnap = await gRef.get();
+      await gRef.set(parseFloat(gSnap.exists()?gSnap.val():0)+lvlAmt);
+      const gwRef = rtdb.ref('users/'+parent+'/walletBalance');
+      const gwSnap= await gwRef.get();
+      const gBal  = parseFloat(gwSnap.exists()?gwSnap.val():0)+lvlAmt;
+      await gwRef.set(gBal);
+      await rtdb.ref('transactions/'+parent).push({
+        type:'Generation Bonus L'+(lvl+1), amount:lvlAmt,
+        note:'From '+(ALLU[uid]?.fullName||uid.slice(0,8))+' ROI on $'+p.amount,
+        timestamp:Date.now(), status:'completed', balance:gBal
+      });
+      curUID=parent;
+    }
+    count++;
+  }
+  logAdminAction('distribution','ROI Distribution','ALL',count+' plans processed');
+  toast('✅ ROI done for '+count+' plan(s)!');
+  loadAllTx();
+};
+
+// ── MATCHING BONUS: UNMATCHED-CARRY LOGIC ────────────
+// matchingCarry/{uid}/{left|right} = unmatched activation-fee volume waiting for opposite leg.
+// Each new activation adds its fee amount to the sponsor's correct side (registerNewSaleForMatchingAndCashback).
+// On run: matched = min(leftCarry, rightCarry). Pay matchPct% of matched amount, then subtract
+// matched from BOTH sides (consumed exactly once) — the excess stays as carry for next run.
+window.runMatchingBonus = async () => {
+  if (!confirm('Run matching bonus using new (unmatched) activation volume only?')) return;
+  const carrySnap = await rtdb.ref('matchingCarry').get();
+  const carryData = carrySnap.exists() ? carrySnap.val() : {};
+  const matchPct = parseFloat(SETTINGS.matchingPct||5)/100;
+  const matchCap = parseFloat(SETTINGS.matchingCap||1000);
+  let count = 0, totalPaid = 0;
+
+  for (const [uid, legs] of Object.entries(carryData)) {
+    const u = ALLU[uid];
+    if (!u || !u.isActive || u.isBanned || u.incomeBlocked) continue;
+    const leftCarry  = parseFloat(legs.left||0);
+    const rightCarry = parseFloat(legs.right||0);
+    const matched = Math.min(leftCarry, rightCarry);
+    if (matched <= 0) continue; // no new sale on one side = no matching update
+
+    const bonus = matched*matchPct;
+    const mRef  = rtdb.ref('users/'+uid+'/income/matching');
+    const mSnap = await mRef.get();
+    const curMatch = parseFloat(mSnap.exists()?mSnap.val():0);
+    if (curMatch >= matchCap) {
+      await rtdb.ref('matchingCarry/'+uid+'/left').set(leftCarry-matched);
+      await rtdb.ref('matchingCarry/'+uid+'/right').set(rightCarry-matched);
+      continue;
+    }
+    const give = Math.min(bonus, matchCap-curMatch);
+    await mRef.set(curMatch+give);
+    const wRef  = rtdb.ref('users/'+uid+'/walletBalance');
+    const wSnap = await wRef.get();
+    const newBal= parseFloat(wSnap.exists()?wSnap.val():0)+give;
+    await wRef.set(newBal);
+    await rtdb.ref('transactions/'+uid).push({
+      type:'Matching Bonus', amount:give,
+      note:'Matched new volume: $'+matched.toFixed(2)+' (Left carry was $'+leftCarry.toFixed(2)+', Right carry was $'+rightCarry.toFixed(2)+')',
+      timestamp:Date.now(), status:'completed', balance:newBal
+    });
+    await rtdb.ref('matchingCarry/'+uid+'/left').set(leftCarry-matched);
+    await rtdb.ref('matchingCarry/'+uid+'/right').set(rightCarry-matched);
+    count++;
+    totalPaid += give;
+  }
+  logAdminAction('distribution','Matching Bonus (new sales only)','ALL',count+' users paid, $'+totalPaid.toFixed(2));
+  toast(count>0 ? '✅ Matching bonus paid to '+count+' users! Total: $'+totalPaid.toFixed(2) : 'কোনো নতুন matched sale পাওয়া যায়নি — সব carry হিসেবে জমা আছে');
+  set('matchLastDist', new Date().toLocaleDateString());
+  loadMatchCarryTable();
+  computeOverview();
+};
+
+async function loadMatchCarryTable() {
+  const snap = await rtdb.ref('matchingCarry').get();
+  const tb = document.getElementById('matchCarryTb');
+  if (!tb) return;
+  if (!snap.exists()) { tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:12px">No carry data yet</td></tr>'; return; }
+  const data = snap.val();
+  const rows = Object.entries(data).map(([uid,legs])=>{
+    const u = ALLU[uid];
+    const matchedVal = u?.income?.matching || 0;
+    return { uid, name:u?(u.fullName||u.username||uid.slice(0,8)):uid.slice(0,8), left:parseFloat(legs.left||0), right:parseFloat(legs.right||0), matched:parseFloat(matchedVal||0) };
+  }).filter(r=>r.left>0||r.right>0||r.matched>0);
+  tb.innerHTML = rows.length ? rows.map(r=>`<tr>
+    <td style="font-weight:600">${r.name}</td>
+    <td style="color:var(--accent)">$${r.left.toFixed(2)}</td>
+    <td style="color:var(--accent2)">$${r.right.toFixed(2)}</td>
+    <td style="color:var(--green)">$${r.matched.toFixed(2)}</td>
+  </tr>`).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:12px">No carry data yet</td></tr>';
+
+  const atCap = Object.values(ALLU).filter(u=>parseFloat(u.income?.matching||0)>=(parseFloat(SETTINGS.matchingCap||1000))).length;
+  const totalPaid = Object.values(ALLU).reduce((s,u)=>s+parseFloat(u.income?.matching||0),0);
+  set('matchTotalPaid','$'+totalPaid.toFixed(2));
+  set('matchAtCap', atCap);
+}
+
+// ── GIFT VOUCHER ──────────────────────────────────────
+window.loadVouchers = async () => {
+  const snap = await rtdb.ref('giftVouchers').get();
+  if (!snap.exists()) { document.getElementById('voucherTb').innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:16px">No vouchers</td></tr>'; return; }
+  const vouchers = snap.val();
+  const entries  = Object.entries(vouchers).sort(([,a],[,b])=>b.createdAt-a.createdAt);
+  const active   = entries.filter(([,v])=>v.status==='active').length;
+  const used     = entries.filter(([,v])=>v.status==='used').length;
+  const totalVal = entries.filter(([,v])=>v.status==='active').reduce((s,[,v])=>s+(v.amount||0),0);
+  set('voucherTotalCreated', entries.length);
+  set('voucherUsed',   used);
+  set('voucherActive', active);
+  set('voucherTotalVal', '$'+totalVal.toFixed(2));
+  set('ovVouchers', active);
+  const tb = document.getElementById('voucherTb');
+  tb.innerHTML = entries.map(([id,v])=>`<tr>
+    <td style="font-family:monospace;font-weight:700;color:var(--accent);font-size:.78rem">${v.code||id.slice(0,10)}</td>
+    <td style="color:var(--green);font-weight:700">$${v.amount||0}</td>
+    <td><span class="pill ${v.status==='used'?'pg':v.status==='expired'?'pr':'pb'}">${v.status||'active'}</span></td>
+    <td style="font-size:.72rem">${v.usedBy?(ALLU[v.usedBy]?.fullName||v.usedBy.slice(0,10)):'—'}</td>
+    <td style="font-size:.72rem">${v.usedAt?new Date(v.usedAt).toLocaleDateString():'—'}</td>
+    <td style="font-size:.72rem">${v.expiry||'No expiry'}</td>
+    <td style="font-size:.72rem;color:var(--muted)">${v.note||'—'}</td>
+    <td>${v.status==='active'?`<button class="btn btn-r btn-sm" onclick="deleteVoucher('${id}')">Delete</button>`:'—'}</td>
+  </tr>`).join('');
+};
+
+window.createVoucher = async () => {
+  const amt    = parseFloat(document.getElementById('voucherAmt').value);
+  const qty    = parseInt(document.getElementById('voucherQty').value)||1;
+  const expiry = document.getElementById('voucherExpiry').value;
+  const note   = document.getElementById('voucherNote').value.trim();
+  if (!amt||amt<=0) { toast('Enter valid amount'); return; }
+  for (let i=0;i<qty;i++) {
+    const code = 'LLM-'+Math.random().toString(36).substr(2,4).toUpperCase()+'-'+Math.random().toString(36).substr(2,4).toUpperCase();
+    await rtdb.ref('giftVouchers').push({
+      code, amount:amt, status:'active', expiry:expiry||null, note, createdAt:Date.now(), createdBy:CU.email
+    });
+  }
+  logAdminAction('voucher','Create Voucher','—',qty+'x $'+amt);
+  toast('✅ '+qty+' voucher(s) created!');
+  document.getElementById('voucherAmt').value = '';
+  document.getElementById('voucherQty').value = '1';
+  loadVouchers();
+};
+
+window.deleteVoucher = async id => {
+  if (!confirm('Delete this voucher?')) return;
+  await rtdb.ref('giftVouchers/'+id).remove();
+  toast('Voucher deleted.');
+  loadVouchers();
+};
+
+// ── BINARY TREE ───────────────────────────────────────
+window.loadRootTree = async () => {
+  const root = Object.values(ALLU).find(u=>u.isRoot||!u.parentId&&!u.sponsorId);
+  if (root) renderAdminTree(root.id);
+  else {
+    const first = Object.values(ALLU)[0];
+    if (first) renderAdminTree(first.id);
+    else document.getElementById('treeViewContainer').innerHTML='<p style="color:var(--muted);padding:20px">No users yet</p>';
+  }
+};
+
+window.searchTreeUser = async () => {
+  const q = document.getElementById('treeSearchInput').value.trim().toLowerCase();
+  if (!q) { loadRootTree(); return; }
+  const found = Object.values(ALLU).find(u=>(u.username||'').toLowerCase()===q||(u.email||'').toLowerCase()===q||(u.memberId||'').toLowerCase()===q);
+  if (found) renderAdminTree(found.id);
+  else toast('User not found: '+q);
+};
+
+function renderAdminTree(rootUid) {
+  const u = ALLU[rootUid]; if (!u) return;
+  set('treeRootLabel','Root: '+(u.fullName||u.username||rootUid));
+  function nodeHTML(uid, label) {
+    if (!uid) return `<div style="display:flex;flex-direction:column;align-items:center">
+      <div style="border:2px dashed var(--muted);border-radius:10px;padding:6px 10px;min-width:82px;text-align:center;opacity:.4;font-size:.71rem;color:var(--muted)">Empty<br>${label}</div></div>`;
+    const n=ALLU[uid]; const name=n?(n.fullName||n.username||uid.slice(0,8)):uid.slice(0,8);
+    const active=n?n.isActive:false; const banned=n?n.isBanned:false;
+    const borderColor=uid===rootUid?'var(--accent)':banned?'var(--red)':active?'var(--green)':'var(--border)';
+    return `<div style="display:flex;flex-direction:column;align-items:center">
+      <div style="border:2px solid ${borderColor};background:${uid===rootUid?'rgba(0,212,255,.08)':'var(--card)'};border-radius:10px;padding:6px 10px;min-width:82px;text-align:center;cursor:pointer;font-size:.72rem;transition:.2s" onclick="renderAdminTree('${uid}')" title="${uid}">
+        <div style="font-weight:800;font-size:.77rem;max-width:75px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</div>
+        <div style="font-size:.61rem;color:var(--muted);margin-top:1px">@${n?n.username:'?'}</div>
+        <span class="pill ${banned?'pr':active?'pg':'py'}" style="margin-top:2px;display:inline-block">${banned?'Ban':active?'✅':'Inact'}</span>
+        <div style="font-size:.6rem;color:var(--muted);margin-top:1px">${label}</div>
+      </div></div>`;
+  }
+  function lvl2(uid) {
+    const n=uid?ALLU[uid]:null;
+    return `<div style="display:flex;gap:12px">${nodeHTML(n?.leftChild,'L')}${nodeHTML(n?.rightChild,'R')}</div>`;
+  }
+  const lc=u.leftChild, rc=u.rightChild;
+  document.getElementById('treeViewContainer').innerHTML=`
+    <div style="display:flex;flex-direction:column;align-items:center;gap:0;padding:10px">
+      ${nodeHTML(rootUid,'ROOT')}
+      <div style="width:1px;height:16px;background:var(--border)"></div>
+      <div style="display:flex;gap:32px">
+        <div style="display:flex;flex-direction:column;align-items:center">
+          ${nodeHTML(lc,'LEFT')}
+          ${lc?`<div style="width:1px;height:13px;background:var(--border)"></div>${lvl2(lc)}`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center">
+          ${nodeHTML(rc,'RIGHT')}
+          ${rc?`<div style="width:1px;height:13px;background:var(--border)"></div>${lvl2(rc)}`:''}
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── DASHBOARD CONTROLS ───────────────────────────────
+const FEATURES = ['roi','withdrawal','referral','cashback','club','matching','fundrequest','voucher','tree','income'];
+let GLOBAL_TOGGLES = {};
+
+async function loadGlobalToggles() {
+  const snap = await rtdb.ref('dashboardControl/global').get();
+  GLOBAL_TOGGLES = snap.exists() ? snap.val() : {};
+  FEATURES.forEach(f => {
+    const el = document.getElementById('tog_'+f);
+    if (!el) return;
+    const val = GLOBAL_TOGGLES[f] !== false;
+    el.classList.toggle('on', val);
+  });
+}
+
+window.toggleFeature = f => {
+  const el = document.getElementById('tog_'+f);
+  if (!el) return;
+  const now = !el.classList.contains('on');
+  el.classList.toggle('on', now);
+  GLOBAL_TOGGLES[f] = now;
+};
+
+window.saveGlobalToggles = async () => {
+  await rtdb.ref('dashboardControl/global').set(GLOBAL_TOGGLES);
+  logAdminAction('settings','Dashboard Control Update','ALL',JSON.stringify(GLOBAL_TOGGLES));
+  toast('✅ Global dashboard settings saved!');
+};
+
+function populatePerUserSel() {
+  const sel = document.getElementById('perUserSel');
+  sel.innerHTML = '<option value="">-- Select User --</option>';
+  Object.values(ALLU).forEach(u=>{
+    const opt = document.createElement('option');
+    opt.value = u.id;
+    opt.textContent = (u.fullName||u.username||'User')+' ('+u.email+')';
+    sel.appendChild(opt);
+  });
+}
+
+window.loadPerUserToggles = async () => {
+  const uid = document.getElementById('perUserSel').value;
+  const container = document.getElementById('perUserToggles');
+  const saveBtn = document.getElementById('perUserSaveBtn');
+  if (!uid) { container.innerHTML='<span style="color:var(--muted)">Select a user first.</span>'; saveBtn.style.display='none'; return; }
+  const snap = await rtdb.ref('dashboardControl/users/'+uid).get();
+  const userToggles = snap.exists() ? snap.val() : {};
+  container.innerHTML = FEATURES.map(f=>{
+    const val = userToggles[f] !== false;
+    return `<div class="toggle-row">
+      <span style="font-size:.78rem">${f.charAt(0).toUpperCase()+f.slice(1)}</span>
+      <button class="toggle ${val?'on':''}" id="utog_${f}" onclick="this.classList.toggle('on')"></button>
+    </div>`;
+  }).join('');
+  saveBtn.style.display = 'block';
+};
+
+window.savePerUserToggles = async () => {
+  const uid = document.getElementById('perUserSel').value;
+  if (!uid) return;
+  const updates = {};
+  FEATURES.forEach(f=>{
+    const el=document.getElementById('utog_'+f);
+    if (el) updates[f]=el.classList.contains('on');
+  });
+  await rtdb.ref('dashboardControl/users/'+uid).set(updates);
+  logAdminAction('settings','Per-User Dashboard Control',uid,JSON.stringify(updates));
+  toast('✅ User dashboard settings saved!');
+};
+
+// ── SUB-ADMINS ────────────────────────────────────────
+const PERMS_LIST = ['users','activations','withdrawals','investments','fundreqs','distributions','settings','reports'];
+
+window.addSubAdmin = async () => {
+  const email = document.getElementById('saEmail').value.trim();
+  if (!email) { toast('Enter email'); return; }
+  const perms = {};
+  PERMS_LIST.forEach(p=>{ perms[p]=document.getElementById('perm_'+p)?.checked||false; });
+  await rtdb.ref('subAdmins').push({ email, permissions:perms, addedBy:CU.email, addedAt:Date.now() });
+  logAdminAction('settings','Add Sub-Admin',email,JSON.stringify(perms));
+  toast('✅ Sub-admin added: '+email);
+  document.getElementById('saEmail').value='';
+  loadSubAdmins();
+};
+
+async function loadSubAdmins() {
+  const snap = await rtdb.ref('subAdmins').get();
+  const tb   = document.getElementById('subAdminTb');
+  if (!snap.exists()) { tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:14px">No sub-admins</td></tr>'; return; }
+  const entries = Object.entries(snap.val()).sort(([,a],[,b])=>b.addedAt-a.addedAt);
+  tb.innerHTML = entries.map(([id,s])=>`<tr>
+    <td style="font-weight:700;color:var(--accent2)">${s.email}</td>
+    <td style="font-size:.72rem;color:var(--muted)">${Object.entries(s.permissions||{}).filter(([,v])=>v).map(([k])=>k).join(', ')||'None'}</td>
+    <td style="font-size:.72rem">${s.addedAt?new Date(s.addedAt).toLocaleDateString():'—'}</td>
+    <td><button class="btn btn-r btn-sm" onclick="removeSubAdmin('${id}','${s.email}')">Remove</button></td>
+  </tr>`).join('');
+}
+
+window.removeSubAdmin = async (id, email) => {
+  if (!confirm('Remove sub-admin: '+email+'?')) return;
+  await rtdb.ref('subAdmins/'+id).remove();
+  logAdminAction('settings','Remove Sub-Admin',email,'');
+  toast('Sub-admin removed: '+email);
+  loadSubAdmins();
+};
+
+// ── NOTICES ───────────────────────────────────────────
+window.sendNotice = async () => {
+  const title  = document.getElementById('noticeTitle').value.trim();
+  const msg    = document.getElementById('noticeMsg').value.trim();
+  const type   = document.getElementById('noticeType').value;
+  const target = document.getElementById('noticeTarget').value;
+  const dur    = parseInt(document.getElementById('noticeDuration').value);
+  if (!title||!msg) { toast('Fill title and message'); return; }
+  const expiry = dur>0 ? Date.now()+dur*24*60*60*1000 : null;
+  await rtdb.ref('notices').push({ title, message:msg, type, target, expiry, createdAt:Date.now(), createdBy:CU.email, active:true });
+  document.getElementById('noticeTitle').value='';
+  document.getElementById('noticeMsg').value='';
+  logAdminAction('settings','Send Notice','ALL',title);
+  toast('✅ Notice published!');
+  loadNotices();
+};
+
+async function loadNotices() {
+  const snap = await rtdb.ref('notices').get();
+  const elPanel = document.getElementById('noticeList');
+  const elOv    = document.getElementById('ovNoticesList');
+  if (!snap.exists()) {
+    elPanel.innerHTML='<div style="text-align:center;color:var(--muted);padding:12px">No notices</div>';
+    if(elOv) elOv.innerHTML='No notices';
+    return;
+  }
+  const notices = Object.entries(snap.val()).sort(([,a],[,b])=>b.createdAt-a.createdAt);
+  const typeColor = {info:'var(--accent)',warning:'var(--gold)',success:'var(--green)',urgent:'var(--red)'};
+  elPanel.innerHTML = notices.map(([id,n])=>`
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px 12px;margin-bottom:9px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div style="font-weight:800;font-size:.8rem;color:${typeColor[n.type]||'var(--text)'}">${n.title}</div>
+        <button class="btn btn-r btn-sm" onclick="deleteNotice('${id}')">✕</button>
+      </div>
+      <div style="font-size:.75rem;color:var(--muted);margin:4px 0">${n.message}</div>
+      <div style="display:flex;gap:8px;font-size:.68rem;color:var(--muted)">
+        <span>${n.createdAt?new Date(n.createdAt).toLocaleDateString():''}</span>
+        <span class="pill py">${n.target||'all'}</span>
+        ${n.expiry?`<span>Expires: ${new Date(n.expiry).toLocaleDateString()}</span>`:'<span>No expiry</span>'}
+      </div>
+    </div>`).join('');
+  if(elOv) elOv.innerHTML = notices.slice(0,3).map(([,n])=>`
+    <div style="padding:7px 0;border-bottom:1px solid var(--border);font-size:.78rem">
+      <span style="font-weight:700;color:${typeColor[n.type]||'var(--text)'}">${n.title}</span>
+      <span style="color:var(--muted);margin-left:8px;font-size:.72rem">${n.message.slice(0,60)}${n.message.length>60?'…':''}</span>
+    </div>`).join('');
+};
+
+window.deleteNotice = async id => {
+  await rtdb.ref('notices/'+id).remove();
+  toast('Notice deleted.');
+  loadNotices();
+};
+
+// ── ACTIVITY LOG ──────────────────────────────────────
+async function logAdminAction(type, action, target, details) {
+  await rtdb.ref('adminLog').push({
+    type, action, target:String(target), details:String(details),
+    adminEmail:CU?.email||'—', timestamp:Date.now()
+  });
+}
+
+window.loadActivityLog = async () => {
+  const snap = await rtdb.ref('adminLog').get();
+  ALL_LOG = [];
+  if (snap.exists()) {
+    Object.entries(snap.val()).forEach(([id,l])=>ALL_LOG.push({...l,id}));
+  }
+  ALL_LOG.sort((a,b)=>b.timestamp-a.timestamp);
+  renderLog(ALL_LOG);
+};
+
+function renderLog(list) {
+  set('logCountLbl', list.length+' entries');
+  const tb = document.getElementById('actLogTb');
+  tb.innerHTML = list.length ? list.slice(0,200).map(l=>`<tr>
+    <td style="font-size:.71rem;color:var(--muted)">${new Date(l.timestamp).toLocaleDateString()+' '+new Date(l.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td>
+    <td style="font-size:.73rem;color:var(--accent2)">${l.adminEmail||'—'}</td>
+    <td style="font-weight:700">${l.action||'—'}</td>
+    <td style="font-size:.72rem;max-width:100px;overflow:hidden;text-overflow:ellipsis">${l.target||'—'}</td>
+    <td style="font-size:.72rem;color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis">${l.details||'—'}</td>
+  </tr>`).join('')
+  : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">No activity</td></tr>';
+}
+
+window.filterLog = () => {
+  const q    = document.getElementById('logSearchInput').value.toLowerCase();
+  const type = document.getElementById('logTypeSel').value;
+  const date = document.getElementById('logDateFilter').value;
+  let list = ALL_LOG;
+  if (q) list = list.filter(l=>(l.action||'').toLowerCase().includes(q)||(l.target||'').toLowerCase().includes(q)||(l.adminEmail||'').toLowerCase().includes(q));
+  if (type!=='all') list = list.filter(l=>l.type===type);
+  if (date) {
+    const d = new Date(date); d.setHours(0,0,0,0);
+    list = list.filter(l=>l.timestamp>=d.getTime()&&l.timestamp<d.getTime()+86400000);
+  }
+  renderLog(list);
+};
+
+window.clearActivityLog = () => {
+  showConfirm('Clear Activity Log','This will delete all admin activity logs. Are you sure?', async ()=>{
+    await rtdb.ref('adminLog').remove();
+    ALL_LOG = [];
+    renderLog([]);
+    toast('Activity log cleared.');
+  });
+};
+
+// ── SETTINGS SAVE ─────────────────────────────────────
+window.saveROIRate = async () => {
+  const rate = parseFloat(document.getElementById('roiRateInput').value);
+  await rtdb.ref('settings/roiRate').set(rate);
+  SETTINGS.roiRate = rate;
+  set('qsROIRate', rate+'%');
+  for (const [key,p] of Object.entries(ALL_INV)) {
+    if (p.status==='active') { const [uid,pid]=key.split('__'); await rtdb.ref('investments/'+uid+'/'+pid).update({ roiRate:rate }); }
+  }
+  logAdminAction('settings','Change ROI Rate','ALL',rate+'%');
+  toast('✅ ROI rate set to '+rate+'%');
+};
+
+window.saveGenLevels = async () => {
+  const levels = [1,2,3,4,5,6,7].map(i=>parseFloat(document.getElementById('gl'+i).value)||0);
+  await rtdb.ref('settings/generationLevels').set(levels);
+  logAdminAction('settings','Save Gen Levels','ALL',JSON.stringify(levels));
+  toast('✅ Generation levels saved');
+};
+
+window.saveSettings = async type => {
+  const updates = {};
+  const el = id => document.getElementById(id);
+  if (type==='activation') {
+    updates.activationFee = parseFloat(el('setActFee').value);
+    updates.sponsorComm   = parseFloat(el('setSponsComm').value);
+    updates.companyFund   = parseFloat(el('setCompFund').value);
+    updates.userCap       = parseFloat(el('setUserCap').value);
+  } else if (type==='matching') {
+    updates.matchingPct   = parseFloat(el('setMatchPct').value);
+    updates.matchingCap   = parseFloat(el('setMatchCap').value);
+    updates.roiRefBonus   = parseFloat(el('setROIRefBonus').value);
+  } else if (type==='investment') {
+    updates.minInvestment = parseFloat(el('setMinInv').value);
+    updates.invLockMonths = parseFloat(el('setInvLock').value);
+    updates.invFee        = parseFloat(el('setInvFee').value);
+  } else if (type==='pools') {
+    updates.cashbackPct   = parseFloat(el('setCBPct').value);
+    updates.cashbackLimit = parseFloat(el('setCBLimit').value);
+    updates.clubPct       = parseFloat(el('setClubPct').value);
+    updates.clubMinRefs   = parseFloat(el('setClubMinRefs').value);
+    updates.clubMinMatch  = parseFloat(el('setClubMinMatch').value);
+    updates.fundRequestComm = parseFloat(el('setFRComm').value);
+  } else if (type==='wallet') {
+    updates.adminWallet   = el('setAdminWallet').value.trim();
+  } else if (type==='withdrawal') {
+    updates.minWithdrawal = parseFloat(el('setMinWD').value);
+    updates.withdrawalFee = parseFloat(el('setWDFee').value);
+  }
+  await rtdb.ref('settings').update(updates);
+  Object.assign(SETTINGS, updates);
+  applySettings();
+  logAdminAction('settings','Save Settings '+type,'—',JSON.stringify(updates));
+  toast('✅ Settings saved!');
+  refreshCashbackPoolPreview();
+};
+
+window.saveRank = async n => {
+  const data = {
+    minMatching: parseFloat(document.getElementById('r'+n+'m').value),
+    minSales:    parseFloat(document.getElementById('r'+n+'s').value),
+    bonus:       parseFloat(document.getElementById('r'+n+'b').value)
+  };
+  await rtdb.ref('settings/ranks/rank'+n).set(data);
+  logAdminAction('settings','Save Rank '+n,'—',JSON.stringify(data));
+  toast('⭐ Rank '+n+' saved!');
+};
+
+// ── BACKUP & RESTORE ──────────────────────────────────
+window.downloadBackup = async type => {
+  toast('Preparing backup…');
+  let data = {};
+  const dateStr = new Date().toISOString().slice(0,10);
+  try {
+    if (type==='full') {
+      const [rtSnap, fsSnap] = await Promise.all([
+        rtdb.ref('/').get(),
+        fsdb.collection('users').get()
+      ]);
+      const fsUsers = {};
+      fsSnap.forEach(d=>{ fsUsers[d.id]=d.data(); });
+      data = { rtdb: rtSnap.exists()?rtSnap.val():{}, firestore:{ users:fsUsers }, exportedAt:Date.now(), type };
+    } else if (type==='users') {
+      const snap = await fsdb.collection('users').get();
+      snap.forEach(d=>{ data[d.id]=d.data(); });
+    } else {
+      const paths = { transactions:'transactions', investments:'investments', settings:'settings' };
+      const path  = paths[type]||type;
+      const snap  = await rtdb.ref(path).get();
+      data = snap.exists()?snap.val():{};
+    }
+    const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const a    = document.createElement('a');
+    a.href     = URL.createObjectURL(blob);
+    a.download = 'llm_backup_'+type+'_'+dateStr+'.json';
+    a.click();
+    await rtdb.ref('backupHistory').push({ type, dateStr, timestamp:Date.now(), by:CU.email });
+    set('backupLastTime','Last backup: '+dateStr);
+    logAdminAction('backup','Download Backup',type,dateStr);
+    toast('✅ Backup downloaded!');
+    loadBackupHistory();
+  } catch(e) { toast('Backup error: '+e.message); }
+};
+
+async function loadBackupHistory() {
+  const snap = await rtdb.ref('backupHistory').get();
+  const el   = document.getElementById('backupHistory');
+  if (!snap.exists()) { el.innerHTML='No backups yet'; return; }
+  const list = Object.values(snap.val()).sort((a,b)=>b.timestamp-a.timestamp);
+  el.innerHTML = list.slice(0,10).map(b=>`<div style="padding:5px 0;border-bottom:1px solid var(--border)">
+    <span style="color:var(--accent)">${b.type}</span>
+    <span style="color:var(--muted);margin-left:8px">${b.dateStr}</span>
+    <span style="color:var(--muted);margin-left:8px;font-size:.7rem">by ${b.by||'admin'}</span>
+  </div>`).join('');
+}
+
+window.restoreBackup = () => {
+  const file = document.getElementById('restoreFile').files[0];
+  const type = document.getElementById('restoreType').value;
+  if (!file) { toast('Select a backup file first'); return; }
+  showConfirm('🚨 Confirm Restore', 'This will REPLACE current '+type+' data with the backup. This cannot be undone!', async () => {
+    const reader = new FileReader();
+    reader.onload = async e => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (type==='full') {
+          if (data.rtdb) await rtdb.ref('/').set(data.rtdb);
+          if (data.firestore?.users) {
+            const batch = fsdb.batch();
+            Object.entries(data.firestore.users).forEach(([uid,udata])=>{
+              batch.set(fsdb.collection('users').doc(uid),udata);
+            });
+            await batch.commit();
+          }
+        } else if (type==='settings') {
+          await rtdb.ref('settings').set(data);
+        } else if (type==='transactions') {
+          await rtdb.ref('transactions').set(data);
+        }
+        logAdminAction('backup','Restore Backup',type,'From file: '+file.name);
+        toast('✅ Restore complete! Refreshing…');
+        setTimeout(()=>location.reload(), 2000);
+      } catch(err) { toast('Restore error: '+err.message); }
+    };
+    reader.readAsText(file);
+  });
+};
+
+// ── COMPUTE OVERVIEW ─────────────────────────────────
+function computeOverview() {
+  const users  = Object.values(ALLU);
+  const active = users.filter(u=>u.isActive&&!u.isBanned);
+  const total  = users.length;
+  const actFee = parseFloat(SETTINGS.activationFee||30);
+  const rev    = active.length*actFee;
+  const fund   = active.length*(parseFloat(SETTINGS.companyFund||5));
+  const comm   = active.length*(parseFloat(SETTINGS.sponsorComm||4));
+  set('ovUsers',       total);
+  set('ovActiveUsers', active.length+' active');
+  set('ovRevenue',     '$'+rev);
+  set('ovFund',        '$'+fund);
+  set('qsClubPool',    '$'+(rev*(parseFloat(SETTINGS.clubPct||4)/100)).toFixed(2));
+  set('qsComm',        '$'+comm);
+  set('rptReg',   total);
+  set('rptRev',   '$'+rev);
+  set('rptFund',  '$'+fund);
+  set('rptComm',  '$'+comm);
+  set('clubPool', '$'+(rev*(parseFloat(SETTINGS.clubPct||4)/100)).toFixed(2));
+  const minRefs = parseInt(SETTINGS.clubMinRefs||10);
+  const clubElig = active.filter(u=>users.filter(u2=>u2.sponsorId===u.id).length>=minRefs);
+  set('clubEligCount', clubElig.length);
+  set('clubPerMember', clubElig.length>0?'$'+((rev*(parseFloat(SETTINGS.clubPct||4)/100))/clubElig.length).toFixed(2):'$0');
+  const ctb = document.getElementById('clubEligTb');
+  if(ctb) ctb.innerHTML = clubElig.length ? clubElig.map(u=>{
+    const dir=users.filter(u2=>u2.sponsorId===u.id).length;
+    return `<tr><td style="font-weight:600">${u.fullName||u.username||'User'}</td><td>${dir}</td><td>—</td><td><span class="pill pg">✅ Refs</span></td></tr>`;
+  }).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--muted)">None</td></tr>';
+  [50,300,1000,3000,10000,30000,100000].forEach((mReq,i)=>{
+    set('r'+(i+1)+'cnt', active.filter(u=>(u.matching||0)>=mReq).length);
+  });
+  let tS=0,tM=0,tC=0,tCl=0,tR=0,tG=0,tV=0,tWD=0,tROI=0;
+  users.forEach(u=>{ const inc=u.income||{}; tS+=(inc.sponsor||0);tM+=(inc.matching||0);tC+=(inc.cashback||0);tCl+=(inc.club||0);tR+=(inc.roi||0);tG+=(inc.generation||0); });
+  set('rptSponsor','$'+tS.toFixed(0)); set('rptMatch','$'+tM.toFixed(0));
+  set('rptCB','$'+tC.toFixed(0)); set('rptClub','$'+tCl.toFixed(0));
+  set('rptROI','$'+tR.toFixed(0)); set('rptGen','$'+tG.toFixed(0));
+  set('rptVoucher','$0');
+  set('matchTotalPaid','$'+tM.toFixed(2));
+  set('matchAtCap', users.filter(u=>(u.matching||0)>=(parseFloat(SETTINGS.matchingCap||1000))).length);
+  loadBackupHistory();
+  loadCashbackHistory();
+  refreshCashbackPoolPreview();
+  loadMatchCarryTable();
+}
+
+// ── EXPORT CSV ────────────────────────────────────────
+window.exportCSV = type => {
+  let rows = [], filename = type+'.csv';
+  if (type==='users') {
+    rows=[['Name','Username','Email','MemberID','Country','Mobile','Sponsor','Joined','Status','Balance']];
+    Object.values(ALLU).forEach(u=>rows.push([u.fullName||'',u.username||'',u.email||'',u.memberId||u.id,u.country||'',u.mobile||'',u.sponsorId||'',formatDate(u.createdAt),u.isBanned?'Banned':u.isActive?'Active':'Inactive',u.walletBalance||0]));
+  } else if (type==='withdrawals') {
+    rows=[['User','Amount','Address','Date','Status']];
+    Object.entries(ALL_WD).forEach(([k,w])=>rows.push([ALLU[w.uid]?.fullName||w.uid,w.amount||0,w.address||'',w.createdAt?new Date(w.createdAt).toLocaleDateString():'',w.status||'']));
+  } else if (type==='investments') {
+    rows=[['User','Amount','ROI%','Date','Earned','TxID','Status']];
+    Object.entries(ALL_INV).forEach(([k,p])=>rows.push([ALLU[p.uid]?.fullName||p.uid,p.amount||0,p.roiRate||12,p.createdAt?new Date(p.createdAt).toLocaleDateString():'',p.earnedROI||0,p.txid||'',p.status||'']));
+  } else if (type==='transactions') {
+    rows=[['Date','User','Type','Amount','Note','Status']];
+    ALL_TX.forEach(t=>rows.push([new Date(t.timestamp).toLocaleDateString(),ALLU[t.uid]?.fullName||t.uid,t.type||'',t.amount||0,t.note||'',t.status||'']));
+  } else if (type==='fundreqs') {
+    rows=[['User','Amount','Network','TxHash','NetCredited','Date','Status']];
+    Object.entries(ALL_FR).forEach(([k,f])=>rows.push([ALLU[f.uid]?.fullName||f.name||f.uid,f.amount||0,f.network||'',f.txHash||'',f.netCredited||0,f.createdAt?new Date(f.createdAt).toLocaleDateString():'',f.status||'']));
+  }
+  const csv = rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a   = document.createElement('a');
+  a.href    = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download= filename;
+  a.click();
+  toast('⬇ Exporting '+filename);
+};
+
+// ── HELPERS ───────────────────────────────────────────
+function set(id,val){ const el=document.getElementById(id); if(el) el.textContent=val; }
+function safeSet(id,val,prop='textContent'){ const el=document.getElementById(id); if(el) el[prop]=val; }
+function formatDate(d){ if(!d) return '—'; try{ return d.toDate?d.toDate().toLocaleDateString():new Date(d).toLocaleDateString(); } catch(e){ return '—'; } }
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+function showConfirm(title, body, onOk) {
+  document.getElementById('confirmTitle').innerHTML = title + ' <button class="modal-close" onclick="closeModal(\'confirmModal\')">✕</button>';
+  document.getElementById('confirmBody').textContent = body;
+  document.getElementById('confirmOkBtn').onclick = ()=>{ closeModal('confirmModal'); onOk(); };
+  document.getElementById('confirmModal').classList.add('show');
+}
+
+window.closeModal = id => document.getElementById(id).classList.remove('show');
+window.doLogout   = async () => { await auth.signOut(); window.location.href='login.html'; };
+
+// ── NAV ──────────────────────────────────────────────
+const PAGE_LABELS = {
+  overview:'Overview', users:'All Users', activations:'Activations', blocklist:'Block List', fundreqs:'Fund Requests',
+  withdrawals:'Withdrawals', investments:'Investments', transactions:'Transactions',
+  cashback:'Cashback Pool', clubbonus:'Club Bonus', roi:'ROI Management', voucher:'Gift Voucher', matching:'Matching Bonus',
+  tree:'Binary Tree', dashctrl:'Dashboard Control', subadmin:'Sub-Admins', notices:'Notices', actlog:'Activity Log',
+  settings:'Settings', ranks:'Ranks', backup:'Backup & Restore', reports:'Reports'
+};
+
+window.showPage = (page, el) => {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const t=document.getElementById('page-'+page);
+  if(t) t.classList.add('active');
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('pgLbl').textContent = PAGE_LABELS[page]||page;
+  closeSidebar();
+  if(page==='tree') loadRootTree();
+  if(page==='notices') loadNotices();
+  if(page==='actlog') loadActivityLog();
+  if(page==='voucher') loadVouchers();
+  if(page==='cashback') { loadCashbackHistory(); refreshCashbackPoolPreview(); }
+  if(page==='matching') loadMatchCarryTable();
+  if(page==='dashctrl') { loadGlobalToggles(); populatePerUserSel(); }
+  if(page==='subadmin') loadSubAdmins();
+  if(page==='backup') loadBackupHistory();
+  if(page==='users') applyUserTabFilter();
+};
+
+window.toggleSidebar = () => {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('mobOverlay').classList.toggle('show');
+};
+window.closeSidebar = () => {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('mobOverlay').classList.remove('show');
+};
+</script>
+</body>
+</html>

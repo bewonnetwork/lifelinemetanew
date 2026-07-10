@@ -4,12 +4,6 @@
   <meta charset="utf-8" />
   <title>LIFELINEMETA – Register</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script>
-    (function(){
-      emailjs.init("7AI6ONWWOFZbRJQUK");
-    })();
-  </script>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{
@@ -18,6 +12,8 @@
       font-family:system-ui,sans-serif;
       display:flex;flex-direction:column;align-items:center;
     }
+
+    /* ── BLUE PAGE BORDER ── */
     body::before{
       content:'';
       position:fixed;inset:0;
@@ -27,6 +23,7 @@
       z-index:1000;
       box-shadow:inset 0 0 40px rgba(30,58,138,0.07);
     }
+
     .header{
       width:100%;max-width:500px;padding:30px 20px 6px;
       display:flex;flex-direction:column;align-items:center;gap:10px;
@@ -37,7 +34,10 @@
       box-shadow:0 6px 20px -4px rgba(30,58,138,0.4);
     }
     .title{font-size:24px;font-weight:900;color:#1e3a8a;letter-spacing:.8px;}
+
     .container{width:100%;max-width:500px;padding:10px 16px 50px;}
+
+    /* ── 3D CARD ── */
     .card{
       background:#fff;border-radius:22px;padding:34px 30px;
       border:2px solid rgba(30,58,138,0.22);
@@ -51,6 +51,7 @@
         0 10px 20px -6px rgba(30,58,138,0.2);
       position:relative;
     }
+
     h1{
       text-align:center;color:#111827;margin-bottom:6px;
       font-size:22px;font-weight:900;
@@ -60,6 +61,8 @@
       text-align:center;color:#6b7280;font-size:13px;
       margin-bottom:22px;font-weight:600;
     }
+
+    /* ── METHOD BUTTONS ── */
     .method-options{display:flex;flex-direction:column;gap:12px;margin-top:4px;}
     .method-btn{
       width:100%;padding:16px 18px;border:2px solid #1e3a8a;border-radius:14px;
@@ -78,6 +81,8 @@
     .method-btn.google-btn .m-icon{background:#fff;border:1px solid #e5e7eb;}
     .method-btn .m-icon svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:1.8;}
     .method-btn .m-text small{display:block;font-weight:600;color:#6b7280;font-size:12px;margin-top:2px;}
+
+    /* ── GOOGLE EMAIL BOX ── */
     .google-email-box{
       display:flex;align-items:center;gap:10px;
       background:#eff6ff;border:1.5px solid #1e3a8a;border-radius:12px;
@@ -87,6 +92,8 @@
     .google-email-box svg{width:20px;height:20px;stroke:#1e3a8a;fill:none;stroke-width:1.8;flex-shrink:0;}
     .google-email-box .ge-text{font-size:14px;color:#111827;font-weight:700;word-break:break-all;}
     .google-email-box .ge-label{font-size:11px;color:#6b7280;font-weight:600;display:block;}
+
+    /* ── FORM FIELDS ── */
     .form-group{margin-bottom:16px;position:relative;}
     label{font-size:13.5px;font-weight:800;color:#111827;margin-bottom:5px;display:block;}
     input,select{
@@ -105,6 +112,8 @@
     input::placeholder{font-weight:500;color:#9ca3af;}
     input.field-error{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,0.12);}
     input.field-ok{border-color:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,0.1);}
+
+    /* ── FIELD ICON (left) ── */
     .f-icon{
       position:absolute;left:13px;top:37px;
       width:20px;height:20px;
@@ -112,17 +121,23 @@
       pointer-events:none;
     }
     .f-icon svg{width:18px;height:18px;stroke:#1e3a8a;fill:none;stroke-width:2;}
+
+    /* ── EYE TOGGLE ── */
     .eye{
       position:absolute;right:12px;top:35px;cursor:pointer;
       width:24px;height:24px;display:flex;align-items:center;justify-content:center;
     }
     .eye svg{width:20px;height:20px;stroke:#1e3a8a;fill:none;stroke-width:1.8;}
+
+    /* ── MOBILE ROW ── */
     .mobile-row{display:flex;gap:8px;}
     .mobile-row .code-box{width:100px;flex-shrink:0;position:relative;}
     .mobile-row .code-box input{padding-left:12px;text-align:center;font-weight:800;background:#eff6ff;border-color:#1e3a8a;}
     .mobile-row .phone-box{flex:1;position:relative;}
     .mobile-row .phone-box .f-icon{left:13px;top:15px;}
     .mobile-row .phone-box input{padding-left:44px;}
+
+    /* ── COUNTRY FLAG (original system restored) ── */
     .country-wrap{position:relative;}
     .country-wrap select{padding-left:44px;}
     .country-flag-display{
@@ -137,8 +152,12 @@
       display:none;
     }
     .country-wrap.has-flag select{padding-left:72px;}
+
+    /* ── STRENGTH & MATCH ── */
     .strength,.match{font-size:12.5px;margin-top:4px;font-weight:700;}
     .hint{font-size:12px;color:#6b7280;margin-top:4px;font-weight:600;}
+
+    /* ── TERMS ── */
     .terms-row{
       display:flex;align-items:flex-start;gap:8px;
       margin:14px 0 6px;font-size:13px;color:#111827;font-weight:600;
@@ -147,6 +166,8 @@
       width:17px;height:17px;padding:0;accent-color:#1e3a8a;
       margin-top:2px;border:none;flex-shrink:0;
     }
+
+    /* ── SUBMIT BUTTON with seed symbol ── */
     .submit-btn{
       width:100%;padding:16px 20px;
       background:linear-gradient(135deg,#1e3a8a,#2563eb);
@@ -164,11 +185,13 @@
     }
     .submit-btn:active{transform:translateY(0);}
     .submit-btn:disabled{background:#9ca3af;cursor:not-allowed;box-shadow:none;transform:none;}
+    /* seed symbol inside button */
     .btn-seed{
       width:26px;height:26px;background:rgba(255,255,255,0.2);
       border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;
     }
     .btn-seed svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;}
+
     .back-link{
       display:inline-flex;align-items:center;gap:6px;
       font-size:13px;color:#1e3a8a;font-weight:800;cursor:pointer;
@@ -177,17 +200,22 @@
     }
     .back-link svg{width:16px;height:16px;stroke:#1e3a8a;fill:none;stroke-width:2.5;}
     .back-link:hover{background:none;transform:none;box-shadow:none;text-decoration:underline;}
+
+    /* ── MESSAGE AREA ── */
     #message{
       text-align:center;margin:12px 0 4px;font-weight:700;
       min-height:24px;font-size:13.5px;border-radius:8px;padding:0 4px;
     }
     .msg-error{color:#dc2626;background:#fef2f2;border:1px solid #fecaca;padding:9px 14px!important;border-radius:8px;}
     .msg-info{color:#1e3a8a;background:#eff6ff;border:1px solid #bfdbfe;padding:9px 14px!important;border-radius:8px;}
+
     .signin-row{
       text-align:center;margin-top:18px;font-size:14px;color:#374151;font-weight:600;
     }
     .signin-row a{color:#1e3a8a;font-weight:900;text-decoration:none;}
     .signin-row a:hover{text-decoration:underline;}
+
+    /* ── SUCCESS OVERLAY ── */
     .success-overlay{
       position:fixed;inset:0;background:rgba(239,246,255,0.97);
       display:none;align-items:center;justify-content:center;
@@ -209,67 +237,15 @@
       background:#eff6ff;padding:10px 20px;border-radius:10px;
       border:1px solid #bfdbfe;letter-spacing:.5px;
     }
-    .success-cred{
-      font-size:12.5px;color:#111827;font-weight:700;
-      background:#fff7ed;padding:10px 16px;border-radius:10px;
-      border:1px solid #fed7aa;letter-spacing:.3px;line-height:1.7;
-    }
     .success-loader{
       width:28px;height:28px;border:3px solid #dbeafe;
       border-top-color:#1e3a8a;border-radius:50%;
       animation:spin .8s linear infinite;
     }
     @keyframes spin{to{transform:rotate(360deg)}}
+
     .page-step{display:none;}
     .page-step.active{display:block;}
-
-    /* ── TREE PLACEMENT PICKER ── */
-    .tree-picker-box{
-      border:1.5px solid #93c5fd;border-radius:12px;background:#f8faff;
-      padding:12px;margin-top:6px;
-    }
-    .tree-picker-toolbar{
-      display:flex;justify-content:space-between;align-items:center;
-      margin-bottom:8px;font-size:12px;color:#6b7280;font-weight:700;
-    }
-    .tree-picker-toolbar button{
-      background:#eff6ff;border:1px solid #93c5fd;color:#1e3a8a;
-      font-size:11px;font-weight:800;padding:5px 10px;border-radius:8px;
-      cursor:pointer;
-    }
-    .tree-scroll{
-      max-height:260px;overflow:auto;padding:6px 2px;
-      background:#fff;border-radius:10px;border:1px solid #e5e7eb;
-    }
-    .tree-node{margin-left:18px;position:relative;padding:2px 0;}
-    .tree-node:first-child{margin-left:0;}
-    .tree-node-row{
-      display:flex;align-items:center;gap:8px;padding:6px 8px;
-      border-radius:8px;font-size:12.5px;font-weight:700;color:#111827;
-    }
-    .tree-node-row .tn-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-    .tree-slot-btn{
-      display:inline-flex;align-items:center;gap:4px;
-      font-size:11px;font-weight:800;padding:4px 9px;border-radius:7px;
-      border:1.5px dashed #93c5fd;color:#1e3a8a;background:#eff6ff;cursor:pointer;
-    }
-    .tree-slot-btn:hover{background:#1e3a8a;color:#fff;border-color:#1e3a8a;}
-    .tree-slot-btn.taken{
-      border:1.5px solid #d1d5db;background:#f3f4f6;color:#9ca3af;cursor:default;
-    }
-    .tree-slot-btn.selected{background:#16a34a;border-color:#16a34a;color:#fff;}
-    .tree-children{margin-left:14px;border-left:1.5px dashed #cbd5e1;padding-left:10px;}
-    .selected-placement-box{
-      margin-top:10px;padding:10px 12px;border-radius:10px;
-      background:#ecfdf5;border:1.5px solid #6ee7b7;font-size:12.5px;
-      font-weight:700;color:#065f46;display:none;align-items:center;gap:8px;justify-content:space-between;
-    }
-    .selected-placement-box.show{display:flex;}
-    .selected-placement-box .clear-sel{
-      background:none;border:none;color:#065f46;font-weight:900;cursor:pointer;
-      text-decoration:underline;font-size:12px;
-    }
-    .tree-loading{font-size:12px;color:#6b7280;font-weight:600;padding:10px;text-align:center;}
   </style>
 </head>
 <body>
@@ -306,7 +282,7 @@
             </svg>
           </span>
           <span class="m-text">Continue with Google
-            <small>Sign up instantly using your Google account</small>
+            <small>Use your Google account email</small>
           </span>
         </button>
 
@@ -314,8 +290,8 @@
           <span class="m-icon">
             <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
           </span>
-          <span class="m-text">Continue without Google
-            <small>Sign up using your own email &amp; password</small>
+          <span class="m-text">Continue with Email
+            <small>Sign up using your own email address</small>
           </span>
         </button>
       </div>
@@ -357,7 +333,7 @@
           <input type="text" id="fullName" placeholder="Full Name" autocomplete="off" required>
         </div>
 
-        <!-- USERNAME with live duplicate check (case-insensitive) -->
+        <!-- USERNAME with live duplicate check -->
         <div class="form-group">
           <label>Username</label>
           <span class="f-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M16 15v-3a4 4 0 1 0-1.5 3.1"/></svg></span>
@@ -402,39 +378,23 @@
           <div class="hint">Select your country — the dial code fills in automatically.</div>
         </div>
 
-        <!-- REFERRAL CODE (required) -->
+        <!-- REFERRAL CODE -->
         <div class="form-group">
-          <label>Referral Code <span style="font-weight:700;color:#dc2626">*Required</span></label>
+          <label>Referral Code <span style="font-weight:500;color:#9ca3af">(Optional)</span></label>
           <span class="f-icon"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l1.93-1.93a5 5 0 0 0-7.07-7.07L10.5 5.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-1.93 1.93a5 5 0 0 0 7.07 7.07L13.5 18.5"/></svg></span>
-          <input type="text" id="refCode" placeholder="Enter your sponsor's referral code" autocomplete="off" required>
-          <div class="hint" id="refCodeHint">You must enter a valid sponsor's referral code to register.</div>
+          <input type="text" id="refCode" placeholder="Leave empty for auto-placement" autocomplete="off">
+          <div class="hint">No sponsor? Leave empty — you'll be auto-placed.</div>
         </div>
 
-        <!-- PLACEMENT SIDE + TREE PICKER (required) -->
+        <!-- PLACEMENT SIDE -->
         <div class="form-group">
-          <label>Placement Position <span style="font-weight:700;color:#dc2626">*Required</span></label>
+          <label>Placement Side <span style="font-weight:500;color:#9ca3af">(Optional)</span></label>
           <span class="f-icon"><svg viewBox="0 0 24 24"><path d="M3 12h18"/><path d="m12 5-7 7 7 7"/><path d="m12 5 7 7-7 7"/></svg></span>
-          <select id="placement" required>
-            <option value="" disabled selected>Choose placement — required</option>
-            <option value="left">Left (under sponsor)</option>
-            <option value="right">Right (under sponsor)</option>
-            <option value="tree">Pick exact position from tree below</option>
+          <select id="placement">
+            <option value="">Auto (system will choose)</option>
+            <option value="left">Left</option>
+            <option value="right">Right</option>
           </select>
-          <div class="hint">Choose Left/Right under your sponsor, or "Pick exact position from tree" to tap any open slot anywhere in the tree.</div>
-
-          <div class="tree-picker-box" id="treePickerBox" style="display:none">
-            <div class="tree-picker-toolbar">
-              <span>Tap any empty slot to place the new member there</span>
-              <button type="button" id="refreshTreeBtn">Refresh</button>
-            </div>
-            <div class="tree-scroll" id="treeScroll">
-              <div class="tree-loading">Loading tree…</div>
-            </div>
-            <div class="selected-placement-box" id="selectedPlacementBox">
-              <span id="selectedPlacementText"></span>
-              <button type="button" class="clear-sel" id="clearSelBtn">Change</button>
-            </div>
-          </div>
         </div>
 
         <!-- PASSWORD FIELDS (email method only) -->
@@ -470,6 +430,7 @@
         <button type="submit" class="submit-btn" id="submitBtn">
           <span class="btn-seed">
             <svg viewBox="0 0 24 24">
+              <!-- seed / sprout symbol -->
               <path d="M12 22V12"/>
               <path d="M12 12C12 12 8 8 4 10c-2 1-2 4 0 5 3 2 8-3 8-3z"/>
               <path d="M12 12c0 0 4-4 8-2 2 1 2 4 0 5-3 2-8-3-8-3z"/>
@@ -494,9 +455,8 @@
     <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
   </div>
   <div class="success-title">Registration Successful!</div>
-  <div class="success-sub">Your account has been created.<br>Logging you in…</div>
+  <div class="success-sub">Your account has been created.<br>Redirecting to login page…</div>
   <div class="success-id" id="successId">ID: —</div>
-  <div class="success-cred" id="successCred" style="display:none"></div>
   <div class="success-loader"></div>
 </div>
 
@@ -519,9 +479,6 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
-
-/* ── SITE DOMAIN (for referral links elsewhere in the app) ── */
-const SITE_DOMAIN = "lifelinemeta.alive"; // e.g. used when building refer links: SITE_DOMAIN + '/register.html?ref=' + myRefCode
 
 /* ── COUNTRIES ── */
 const COUNTRIES = [
@@ -637,27 +594,21 @@ document.getElementById('chooseGoogleBtn').addEventListener('click',async functi
   }
 });
 
-/* ── USERNAME NORMALIZATION HELPER (case-insensitive) ── */
-function normUsername(v){
-  return (v||'').trim().toLowerCase();
-}
-
-/* ── DUPLICATE CHECK: USERNAME (case-insensitive via usernameLower field) ── */
+/* ── DUPLICATE CHECK: USERNAME ── */
 let usernameTimer=null;
 document.getElementById('username').addEventListener('input',function(){
   clearTimeout(usernameTimer);
-  const raw=this.value.trim();
-  const val=normUsername(raw);
+  const val=this.value.trim();
   const msgEl=document.getElementById('usernameMsg');
   this.classList.remove('field-error','field-ok');
   if(!val){msgEl.textContent='';return;}
   usernameTimer=setTimeout(async function(){
     try{
-      const snap=await db.collection('users').where('usernameLower','==',val).limit(1).get();
+      const snap=await db.collection('users').where('username','==',val).limit(1).get();
       if(!snap.empty){
         document.getElementById('username').classList.add('field-error');
         msgEl.style.color='#dc2626';
-        msgEl.textContent='⚠ This username is already taken (usernames are not case sensitive). Please try a different one.';
+        msgEl.textContent='⚠ This username is already taken. Please try a different one.';
       }else{
         document.getElementById('username').classList.add('field-ok');
         msgEl.style.color='#16a34a';
@@ -744,36 +695,6 @@ function setMsg(text,type){
   else if(type==='info')el.classList.add('msg-info');
 }
 
-document.getElementById('refCode').addEventListener('input',function(){
-  this.classList.remove('field-error');
-});
-
-/* ── AUTO-FILL REFERRAL FROM LINK: ?ref=CODE (lifelinemeta.alive/register.html?ref=XXXX) ── */
-let refFromLinkSponsor=null; // resolved sponsor doc, so we can show a name confirmation
-(function autoFillReferralFromLink(){
-  const params=new URLSearchParams(window.location.search);
-  const ref=params.get('ref')||params.get('sponsor')||params.get('refcode');
-  if(!ref)return;
-  const refInput=document.getElementById('refCode');
-  refInput.value=ref;
-  refInput.readOnly=true; // came from a real referral link, lock it in
-  const hint=document.getElementById('refCodeHint');
-  hint.textContent='Sponsor ID auto-filled from your referral link.';
-  hint.style.color='#1e3a8a';
-  window.__refLocked=true;
-  // Try to resolve & show sponsor's name for confirmation
-  findUserBySponsorCode(ref).then(function(sponsor){
-    refFromLinkSponsor=sponsor;
-    if(sponsor){
-      hint.textContent='✓ Referred by: '+(sponsor.fullName||sponsor.username||ref);
-      hint.style.color='#16a34a';
-    }else{
-      hint.textContent='⚠ Referral code "'+ref+'" not found — you may be auto-placed instead.';
-      hint.style.color='#d97706';
-    }
-  });
-})();
-
 /* ── MLM BINARY PLACEMENT ── */
 async function getRootUserId(){
   try{
@@ -786,7 +707,7 @@ async function findUserBySponsorCode(code){
   if(!code)return null;
   try{const d=await db.collection('users').doc(code).get();if(d.exists)return{id:d.id,...d.data()};}catch(e){}
   try{const q=await db.collection('users').where('myRefCode','==',code).limit(1).get();if(!q.empty){const d=q.docs[0];return{id:d.id,...d.data()};}}catch(e){}
-  try{const q=await db.collection('users').where('usernameLower','==',normUsername(code)).limit(1).get();if(!q.empty){const d=q.docs[0];return{id:d.id,...d.data()};}}catch(e){}
+  try{const q=await db.collection('users').where('username','==',code).limit(1).get();if(!q.empty){const d=q.docs[0];return{id:d.id,...d.data()};}}catch(e){}
   return null;
 }
 async function findEmptySlot(startId,preferSide){
@@ -814,108 +735,6 @@ async function resolvePlacement(refCodeInput,placementInput){
   return{sponsorId:sponsor?sponsor.id:null,...slot,isRoot:false};
 }
 
-/* ── TREE PICKER: pick exact spot anywhere in the tree ── */
-let manualPlacement=null; // {parentId, side, label}
-
-document.getElementById('placement').addEventListener('change',function(){
-  const box=document.getElementById('treePickerBox');
-  if(this.value==='tree'){
-    box.style.display='block';
-    loadTreePicker();
-  }else{
-    box.style.display='none';
-    manualPlacement=null;
-    document.getElementById('selectedPlacementBox').classList.remove('show');
-  }
-});
-
-document.getElementById('refreshTreeBtn').addEventListener('click',loadTreePicker);
-
-document.getElementById('clearSelBtn').addEventListener('click',function(){
-  manualPlacement=null;
-  document.getElementById('selectedPlacementBox').classList.remove('show');
-  document.querySelectorAll('.tree-slot-btn.selected').forEach(b=>b.classList.remove('selected'));
-});
-
-async function loadTreePicker(){
-  const scroll=document.getElementById('treeScroll');
-  scroll.innerHTML='<div class="tree-loading">Loading tree…</div>';
-  try{
-    // Determine tree root: prefer sponsor from refCode, else global root
-    const refCodeInput=document.getElementById('refCode').value.trim();
-    const sponsor=await findUserBySponsorCode(refCodeInput);
-    let rootId=sponsor?sponsor.id:await getRootUserId();
-    if(!rootId){
-      scroll.innerHTML='<div class="tree-loading">No existing members yet — you will become the root member.</div>';
-      return;
-    }
-    // Load a reasonable subtree (BFS, capped) so this stays fast on large trees
-    const nodes={};
-    const queue=[rootId];
-    let loaded=0;
-    while(queue.length&&loaded<150){
-      const id=queue.shift();
-      if(nodes[id])continue;
-      const snap=await db.collection('users').doc(id).get();
-      if(!snap.exists)continue;
-      const data=snap.data();
-      nodes[id]={id,fullName:data.fullName,username:data.username,leftChild:data.leftChild||null,rightChild:data.rightChild||null};
-      loaded++;
-      if(data.leftChild)queue.push(data.leftChild);
-      if(data.rightChild)queue.push(data.rightChild);
-    }
-    scroll.innerHTML='';
-    scroll.appendChild(renderTreeNode(rootId,nodes));
-  }catch(err){
-    console.error(err);
-    scroll.innerHTML='<div class="tree-loading">Could not load tree. Tap Refresh to try again.</div>';
-  }
-}
-
-function renderTreeNode(id,nodes){
-  const data=nodes[id];
-  const wrap=document.createElement('div');
-  wrap.className='tree-node';
-  if(!data){
-    wrap.innerHTML='<div class="tree-node-row"><span class="tn-name">—</span></div>';
-    return wrap;
-  }
-  const row=document.createElement('div');
-  row.className='tree-node-row';
-  row.innerHTML='<span class="tn-name">👤 '+(data.fullName||data.username||data.id)+'</span>';
-  wrap.appendChild(row);
-
-  const childrenBox=document.createElement('div');
-  childrenBox.className='tree-children';
-
-  ['left','right'].forEach(function(side){
-    const childId=side==='left'?data.leftChild:data.rightChild;
-    if(childId&&nodes[childId]){
-      childrenBox.appendChild(renderTreeNode(childId,nodes));
-    }else{
-      const slotBtn=document.createElement('button');
-      slotBtn.type='button';
-      slotBtn.className='tree-slot-btn';
-      slotBtn.textContent='+ Empty '+side.charAt(0).toUpperCase()+side.slice(1)+' slot';
-      slotBtn.addEventListener('click',function(){
-        document.querySelectorAll('.tree-slot-btn.selected').forEach(b=>b.classList.remove('selected'));
-        slotBtn.classList.add('selected');
-        manualPlacement={parentId:data.id,side:side,label:(data.fullName||data.username||data.id)+' → '+side.toUpperCase()};
-        const selBox=document.getElementById('selectedPlacementBox');
-        document.getElementById('selectedPlacementText').textContent='✓ Selected: under '+manualPlacement.label;
-        selBox.classList.add('show');
-      });
-      const holder=document.createElement('div');
-      holder.className='tree-node';
-      holder.appendChild(slotBtn);
-      childrenBox.appendChild(holder);
-    }
-  });
-
-  wrap.appendChild(childrenBox);
-  return wrap;
-}
-
 /* ── FORM SUBMIT ── */
 document.getElementById('registerForm').addEventListener('submit',async function(e){
   e.preventDefault();
@@ -924,8 +743,7 @@ document.getElementById('registerForm').addEventListener('submit',async function
   setMsg('Creating your account… Please wait.','info');
 
   const fullName=document.getElementById('fullName').value.trim();
-  const usernameRaw=document.getElementById('username').value.trim();
-  const usernameLower=normUsername(usernameRaw);
+  const username=document.getElementById('username').value.trim();
   const country=document.getElementById('country').value;
   const countryCode=document.getElementById('countryCode').value.trim();
   const mobileRaw=document.getElementById('mobile').value.trim();
@@ -933,28 +751,8 @@ document.getElementById('registerForm').addEventListener('submit',async function
   const refCodeInput=document.getElementById('refCode').value.trim();
   const placementInput=document.getElementById('placement').value;
 
-  if(!fullName||!usernameRaw||!country||!mobileRaw){
+  if(!fullName||!username||!country||!mobileRaw){
     setMsg('Please fill in all required fields.','error');
-    btn.disabled=false;return;
-  }
-  if(!refCodeInput){
-    setMsg('⚠ Referral Code is required. Please enter your sponsor\'s referral code.','error');
-    document.getElementById('refCode').classList.add('field-error');
-    btn.disabled=false;return;
-  }
-  if(!placementInput){
-    setMsg('⚠ Please choose a Placement Position (Left, Right, or pick from tree).','error');
-    btn.disabled=false;return;
-  }
-  if(placementInput==='tree'&&!manualPlacement){
-    setMsg('Please tap an empty slot in the tree to choose the exact position.','error');
-    btn.disabled=false;return;
-  }
-  // Verify the referral code actually resolves to a real sponsor — required, so it must be valid
-  const sponsorCheck=await findUserBySponsorCode(refCodeInput);
-  if(!sponsorCheck){
-    setMsg('⚠ Referral Code "'+refCodeInput+'" was not found. Please check with your sponsor and try again.','error');
-    document.getElementById('refCode').classList.add('field-error');
     btn.disabled=false;return;
   }
   if(!document.getElementById('agreeTerms').checked){
@@ -962,31 +760,24 @@ document.getElementById('registerForm').addEventListener('submit',async function
     btn.disabled=false;return;
   }
 
-  // Check username duplicate (final server-side, case-insensitive)
+  // Check username duplicate (final server-side)
   try{
-    const usnap=await db.collection('users').where('usernameLower','==',usernameLower).limit(1).get();
+    const usnap=await db.collection('users').where('username','==',username).limit(1).get();
     if(!usnap.empty){
-      setMsg('⚠ Username "'+usernameRaw+'" is already taken (usernames are not case sensitive). Please choose a different username.','error');
+      setMsg('⚠ Username "'+username+'" is already taken. Please choose a different username.','error');
       document.getElementById('username').classList.add('field-error');
       btn.disabled=false;return;
     }
   }catch(err){}
 
-  // Generate an auto password up-front in case we need to auto-create+auto-login (google/manual)
-  function genAutoPassword(){
-    const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
-    let out='';
-    for(let i=0;i<10;i++)out+=chars[Math.floor(Math.random()*chars.length)];
-    return out+'!'+Math.floor(Math.random()*90+10);
-  }
-
   try{
-    let uid,email,autoPassword=null;
+    let uid,email;
 
     if(signupMethod==='google'){
       if(!googleUser)throw new Error('Google session expired. Please try again.');
       uid=googleUser.uid;email=googleUser.email;
 
+      // Check if this Google account already exists in Firestore
       const existing=await db.collection('users').doc(uid).get();
       if(existing.exists){
         setMsg('⚠ This Google account is already registered. Please sign in instead.','error');
@@ -1001,6 +792,7 @@ document.getElementById('registerForm').addEventListener('submit',async function
       if(p!==p2){setMsg('Passwords do not match!','error');btn.disabled=false;return;}
       if(p.length<6){setMsg('Password must be at least 6 characters.','error');btn.disabled=false;return;}
 
+      // Check email duplicate via Firebase Auth
       try{
         const methods=await auth.fetchSignInMethodsForEmail(email);
         if(methods&&methods.length>0){
@@ -1010,32 +802,15 @@ document.getElementById('registerForm').addEventListener('submit',async function
         }
       }catch(err){}
 
-      autoPassword=p;
       const cred=await auth.createUserWithEmailAndPassword(email,p);
       uid=cred.user.uid;
     }
 
-    // Resolve placement: manual tree pick takes priority over auto/left/right
-    let placement;
-    if(placementInput==='tree'&&manualPlacement){
-      const sponsor=await findUserBySponsorCode(refCodeInput);
-      placement={
-        sponsorId:sponsor?sponsor.id:null,
-        parentId:manualPlacement.parentId,
-        side:manualPlacement.side,
-        isRoot:false
-      };
-    }else{
-      placement=await resolvePlacement(refCodeInput,placementInput);
-    }
+    const placement=await resolvePlacement(refCodeInput,placementInput);
 
     const userDoc={
-      fullName,
-      username:usernameRaw,
-      usernameLower,
-      email:email?email.toLowerCase():'',
-      country,mobile,mobileCode:countryCode,
-      signupMethod,refCode:refCodeInput||'',myRefCode:usernameRaw||uid,
+      fullName,username,email,country,mobile,mobileCode:countryCode,
+      signupMethod,refCode:refCodeInput||'',myRefCode:username||uid,
       sponsorId:placement.sponsorId||null,
       parentId:placement.parentId||null,
       side:placement.side||null,
@@ -1056,35 +831,19 @@ document.getElementById('registerForm').addEventListener('submit',async function
     }
 
     document.getElementById('successId').textContent='Member ID: '+uid.substring(0,12).toUpperCase();
+    document.getElementById('successOverlay').classList.add('show');
 
-    // ── Send account info email via EmailJS — silent, fire-and-forget, no confirmation shown to user ──
-    if(email){
-      emailjs.send('service_9gihpbq','template_d9c1z6a',{
-        to_email:email,
-        to_name:fullName,
-        user_id:uid.substring(0,12).toUpperCase(),
-        user_username:usernameRaw,
-        user_password:autoPassword||'(signed up with Google — no password set)',
-        login_link:window.location.origin+'/login.html'
-      }).catch(function(err){ console.error('Welcome email failed to send:',err); });
-    }
+    // Sign out so user must login fresh — redirect with uid in URL only (no localStorage)
+    await auth.signOut();
 
-    if(signupMethod==='email'){
-      // Already signed in via createUserWithEmailAndPassword — keep session, go straight to dashboard
-      document.getElementById('successOverlay').classList.add('show');
-      setTimeout(function(){
-        window.location.href='dashboard.html';
-      },1800);
-    }else{
-      // Google signup — already signed in via popup, keep session
-      document.getElementById('successOverlay').classList.add('show');
-      setTimeout(function(){
-        window.location.href='dashboard.html';
-      },1800);
-    }
+    // Auto redirect to login after 3 seconds — uid passed via URL for auto-fill
+    setTimeout(function(){
+      window.location.href='login.html?uid='+encodeURIComponent(uid);
+    },3000);
 
   }catch(err){
     console.error(err);
+    // Handle common Firebase errors with friendly messages
     let friendlyMsg=err.message;
     if(err.code==='auth/email-already-in-use'){
       friendlyMsg='⚠ This email is already registered. Please sign in or use a different email.';

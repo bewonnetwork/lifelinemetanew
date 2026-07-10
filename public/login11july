@@ -253,7 +253,7 @@
     <div class="tab-row" id="tabRow">
       <button class="tab-btn active" id="tab-uid" onclick="switchTab('uid')">
         <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3h-8l-2 4h12z"/></svg>
-        ID / Username
+        Member ID
       </button>
       <button class="tab-btn" id="tab-email" onclick="switchTab('email')">
         <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
@@ -265,11 +265,11 @@
       </button>
     </div>
 
-    <!-- MEMBER ID / USERNAME FIELD -->
+    <!-- MEMBER ID FIELD -->
     <div class="form-group" id="field-uid">
-      <label>Member ID or Username</label>
+      <label>Member ID</label>
       <span class="f-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3h-8l-2 4h12z"/></svg></span>
-      <input type="text" id="inputUid" placeholder="Enter your Member ID or Username" autocomplete="off">
+      <input type="text" id="inputUid" placeholder="Enter your Member ID" autocomplete="off">
     </div>
 
     <!-- EMAIL FIELD -->
@@ -339,15 +339,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
-
-/* ══════════════════════════════════════════
-   HELPERS
-══════════════════════════════════════════ */
-function normUsername(v){ return (v||'').trim().toLowerCase(); }
-
-// Normalize a mobile number down to just digits, so "+880 1712345678",
-// "01712345678", "880-1712345678" etc. all compare equal.
-function normMobile(v){ return (v||'').replace(/[^0-9]/g,''); }
 
 /* ══════════════════════════════════════════
    AUTO-FILL: read uid from URL → Firestore
@@ -453,73 +444,6 @@ function setMsg(text, type){
 }
 
 /* ══════════════════════════════════════
-   LOOKUP HELPERS — resolve any identifier to an email
-══════════════════════════════════════ */
-
-// Member ID (Firestore doc id) OR Username (case-insensitive)
-async function findEmailByUidOrUsername(raw){
-  const val = raw.trim();
-  if(!val) return '';
-
-  // 1) Try as a direct Firestore doc id (Member ID / UID)
-  try{
-    const snap = await db.collection('users').doc(val).get();
-    if(snap.exists) return snap.data().email || '';
-  }catch(e){}
-
-  // 2) Try usernameLower (case-insensitive username match)
-  try{
-    const q = await db.collection('users').where('usernameLower','==', normUsername(val)).limit(1).get();
-    if(!q.empty) return q.docs[0].data().email || '';
-  }catch(e){}
-
-  // 3) Fallback: legacy exact 'username' field (older records without usernameLower)
-  try{
-    const q2 = await db.collection('users').where('username','==', val).limit(1).get();
-    if(!q2.empty) return q2.docs[0].data().email || '';
-  }catch(e){}
-
-  // 4) Fallback: myRefCode (some accounts use this as their public ID)
-  try{
-    const q3 = await db.collection('users').where('myRefCode','==', val).limit(1).get();
-    if(!q3.empty) return q3.docs[0].data().email || '';
-  }catch(e){}
-
-  return '';
-}
-
-// Mobile number — compares by digits-only so formatting differences don't matter
-async function findEmailByMobile(raw){
-  const target = normMobile(raw);
-  if(!target) return '';
-
-  // Try exact match on stored 'mobile' field first (fast path, works if formats match)
-  try{
-    const q = await db.collection('users').where('mobile','==', raw.trim()).limit(1).get();
-    if(!q.empty) return q.docs[0].data().email || '';
-  }catch(e){}
-
-  // Otherwise scan users and compare normalized digits (handles +880 / 0 / spacing differences).
-  // NOTE: for very large user bases, replace this with a dedicated 'mobileDigits' indexed field
-  // written at registration time, and query that field directly instead of scanning.
-  try{
-    const snap = await db.collection('users').get();
-    for(const doc of snap.docs){
-      const data = doc.data();
-      if(normMobile(data.mobile) === target){
-        return data.email || '';
-      }
-      // also compare ignoring the leading country/dial code (last 8-11 digits)
-      const storedTail = normMobile(data.mobile).slice(-10);
-      const targetTail = target.slice(-10);
-      if(storedTail && storedTail === targetTail) return data.email || '';
-    }
-  }catch(e){}
-
-  return '';
-}
-
-/* ══════════════════════════════════════
    LOGIN LOGIC
 ══════════════════════════════════════ */
 async function doLogin(){
@@ -535,38 +459,53 @@ async function doLogin(){
     let emailToUse = '';
 
     if(activeTab === 'email'){
+      // Direct email login
       emailToUse = document.getElementById('inputEmail').value.trim();
       if(!emailToUse){ setMsg('Please enter your email.','error'); btn.disabled=false; return; }
 
     } else if(activeTab === 'uid'){
-      const idVal = document.getElementById('inputUid').value.trim();
-      if(!idVal){ setMsg('Please enter your Member ID or Username.','error'); btn.disabled=false; return; }
+      // Login by Member ID — look up email in Firestore
+      const uid = document.getElementById('inputUid').value.trim();
+      if(!uid){ setMsg('Please enter your Member ID.','error'); btn.disabled=false; return; }
 
-      emailToUse = await findEmailByUidOrUsername(idVal);
+      // Try direct uid doc first
+      const snap = await db.collection('users').doc(uid).get();
+      if(snap.exists){
+        emailToUse = snap.data().email || '';
+      } else {
+        // Try username field
+        const q = await db.collection('users').where('username','==',uid).limit(1).get();
+        if(!q.empty){ emailToUse = q.docs[0].data().email || ''; }
+      }
 
-      // Fall back to the email we already fetched at page-load for auto-filled logins
-      if(!emailToUse && autoEmail) emailToUse = autoEmail;
+      // Also try autoEmail from Firestore fetch done at page load
+      if(!emailToUse && autoEmail){ emailToUse = autoEmail; }
 
       if(!emailToUse){
-        setMsg('⚠ Member ID / Username not found. Please check and try again.','error');
+        setMsg('⚠ Member ID not found. Please check and try again.','error');
         btn.disabled=false; return;
       }
 
     } else if(activeTab === 'mobile'){
+      // Login by mobile — look up email in Firestore
       const mob = document.getElementById('inputMobile').value.trim();
       if(!mob){ setMsg('Please enter your mobile number.','error'); btn.disabled=false; return; }
 
-      emailToUse = await findEmailByMobile(mob);
-
-      if(!emailToUse){
-        setMsg('⚠ Mobile number not found. Please check and try again.','error');
-        btn.disabled=false; return;
+      const q = await db.collection('users').where('mobile','==',mob).limit(1).get();
+      if(q.empty){
+        // Try with country code variations
+        const q2 = await db.collection('users')
+          .where('mobile','>=',mob)
+          .where('mobile','<=',mob+'\uf8ff')
+          .limit(1).get();
+        if(q2.empty){
+          setMsg('⚠ Mobile number not found. Please check and try again.','error');
+          btn.disabled=false; return;
+        }
+        emailToUse = q2.docs[0].data().email || '';
+      } else {
+        emailToUse = q.docs[0].data().email || '';
       }
-    }
-
-    if(!emailToUse){
-      setMsg('⚠ Could not find an account matching that information.','error');
-      btn.disabled=false; return;
     }
 
     // Firebase sign in with email + password
@@ -577,7 +516,7 @@ async function doLogin(){
 
     setTimeout(function(){
       window.location.href = 'dashboard.html';
-    }, 1500);
+    }, 2000);
 
   } catch(err){
     console.error(err);
@@ -596,8 +535,8 @@ async function doLogin(){
   }
 }
 
-// Allow pressing Enter (in password field) to submit — avoids interfering with other inputs
-document.getElementById('inputPassword').addEventListener('keydown', function(e){
+// Allow pressing Enter to submit
+document.addEventListener('keydown', function(e){
   if(e.key === 'Enter') doLogin();
 });
 </script>
