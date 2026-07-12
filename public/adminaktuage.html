@@ -426,11 +426,7 @@ tr:last-child td{border-bottom:none}
       <option value="Daily Cashback">Cashback</option>
       <option value="ROI Payout">ROI</option>
       <option value="Club Bonus">Club</option>
-      <option value="Rank Salary">Rank Salary</option>
-      <option value="Direct Investment Commission">Investment Referral</option>
       <option value="Withdrawal">Withdrawal</option>
-      <option value="Withdrawal Requested">Withdrawal Requested</option>
-      <option value="Withdrawal Refund">Withdrawal Refund</option>
       <option value="Fund Deposit">Fund Deposit</option>
       <option value="Gift Voucher">Voucher</option>
       <option value="Admin Adjustment">Admin Adj</option>
@@ -1168,25 +1164,11 @@ window.loadUsers = async () => {
   populatePerUserSel();
 };
 
-let USERS_PAGE = 1;
-const USERS_PER_PAGE = 10;
-
 function renderUsers(list) {
-  // Sort newest-joined first so SL 1 = most recently joined, matching the
-  // requested date-wise serial numbering.
-  list = [...list].sort((a,b) => (b.createdAt?new Date(b.createdAt).getTime():0) - (a.createdAt?new Date(a.createdAt).getTime():0));
-
   set('userCountLbl', list.length+' users');
   const tb = document.getElementById('usersTb');
-  if (!list.length) { tb.innerHTML='<tr><td colspan="13" style="text-align:center;color:var(--muted);padding:16px">No users</td></tr>'; renderUsersPagination(0); return; }
-
-  const totalPages = Math.max(1, Math.ceil(list.length / USERS_PER_PAGE));
-  if (USERS_PAGE > totalPages) USERS_PAGE = totalPages;
-  const startIdx = (USERS_PAGE-1) * USERS_PER_PAGE;
-  const pageList = list.slice(startIdx, startIdx + USERS_PER_PAGE);
-
-  tb.innerHTML = pageList.map((u,i) => {
-    const sl = startIdx + i + 1; // date-wise serial number across all pages
+  if (!list.length) { tb.innerHTML='<tr><td colspan="13" style="text-align:center;color:var(--muted);padding:16px">No users</td></tr>'; return; }
+  tb.innerHTML = list.map((u,i) => {
     const joined = formatDate(u.createdAt);
     const incOff = u.incomeBlocked ? '🔴' : '🟢';
     const wdOff  = u.withdrawalBlocked ? '🔴' : '🟢';
@@ -1194,7 +1176,7 @@ function renderUsers(list) {
     const statusCls = u.isBanned ? 'pr' : u.isActive ? 'pg' : 'py';
     const sponsorName = u.sponsorId ? (ALLU[u.sponsorId]?.username || u.sponsorId.slice(0,10)+'…') : 'Root';
     return `<tr>
-      <td style="color:var(--muted)">${sl}</td>
+      <td style="color:var(--muted)">${i+1}</td>
       <td style="font-weight:700;min-width:100px">${u.fullName||'—'}</td>
       <td style="color:var(--muted)">@${u.username||'—'}</td>
       <td style="font-size:.71rem;color:var(--muted);max-width:140px;overflow:hidden;text-overflow:ellipsis">${u.email||'—'}</td>
@@ -1218,38 +1200,10 @@ function renderUsers(list) {
       </td>
     </tr>`;
   }).join('');
-  renderUsersPagination(totalPages);
   renderBlockList();
 }
 
-function renderUsersPagination(totalPages) {
-  let el = document.getElementById('usersPagination');
-  if (!el) {
-    const tb = document.getElementById('usersTb');
-    const table = tb ? tb.closest('table') : null;
-    const host = table ? table.parentElement : null;
-    if (!host) return;
-    el = document.createElement('div');
-    el.id = 'usersPagination';
-    el.style.cssText = 'display:flex;gap:6px;justify-content:center;align-items:center;margin-top:12px;flex-wrap:wrap';
-    host.appendChild(el);
-  }
-  if (totalPages <= 1) { el.innerHTML = ''; return; }
-  let html = `<button class="btn btn-sm" style="background:var(--border)" ${USERS_PAGE<=1?'disabled':''} onclick="gotoUsersPage(${USERS_PAGE-1})">‹ Prev</button>`;
-  for (let p=1; p<=totalPages; p++) {
-    html += `<button class="btn btn-sm" style="${p===USERS_PAGE?'background:var(--accent);color:#fff':'background:var(--border)'}" onclick="gotoUsersPage(${p})">${p}</button>`;
-  }
-  html += `<button class="btn btn-sm" style="background:var(--border)" ${USERS_PAGE>=totalPages?'disabled':''} onclick="gotoUsersPage(${USERS_PAGE+1})">Next ›</button>`;
-  el.innerHTML = html;
-}
-
-window.gotoUsersPage = (p) => {
-  USERS_PAGE = p;
-  filterUsers();
-};
-
 window.filterUsers = () => {
-  USERS_PAGE = 1;
   const q = document.getElementById('userSearchInput').value.toLowerCase();
   const f = document.getElementById('userFilterSel').value;
   let list = Object.values(ALLU);
@@ -1299,15 +1253,6 @@ window.viewUser = uid => {
     <div class="fg"><label>USDT Wallet</label><input type="text" id="editWallet" value="${u.paymentWallet||''}"/></div>
     <div class="fg"><label>Sponsor ID (change with care!)</label><input type="text" id="editSponsor" value="${u.sponsorId||''}"/></div>
     <div class="fg"><label>Wallet Balance ($)</label><input type="number" id="editBalance" value="${(u.walletBalance||0).toFixed(2)}" step="0.01"/></div>
-    <div class="fg">
-      <label>Rank (auto-calculated unless locked below)</label>
-      <select id="editRank">
-        ${['No Rank','One Star','Two Star','Three Star','Four Star','Five Star','Six Star','Seven Star'].map(r=>`<option value="${r}" ${((u.rank||'No Rank')===r)?'selected':''}>${r}</option>`).join('')}
-      </select>
-      <label style="display:flex;align-items:center;gap:6px;margin-top:6px;font-weight:400;font-size:.75rem;cursor:pointer">
-        <input type="checkbox" id="editRankOverride" ${u.rankOverride?'checked':''}/> Lock this rank manually (stop auto-calculation for this user)
-      </label>
-    </div>
     <button class="btn btn-p" onclick="saveUserEdit('${uid}')" style="width:100%;margin-bottom:10px">💾 Save Changes</button>
     <hr style="border-color:var(--border);margin:10px 0"/>
     <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Account Info</div>
@@ -1342,8 +1287,6 @@ window.saveUserEdit = async uid => {
     mobile:        document.getElementById('editMobile').value.trim(),
     paymentWallet: document.getElementById('editWallet').value.trim(),
     sponsorId:     document.getElementById('editSponsor').value.trim(),
-    rank:          document.getElementById('editRank').value,
-    rankOverride:  document.getElementById('editRankOverride').checked,
     updatedAt:     new Date()
   };
   const newBal = parseFloat(document.getElementById('editBalance').value);
@@ -1682,15 +1625,18 @@ window.filterWithdrawals = ()=>{
 window.approveWD = async (key, uid, amount) => {
   const u = ALLU[uid];
   if (u?.withdrawalBlocked) { toast('This user has withdrawal blocked!'); return; }
-  if (!confirm('Approve $'+amount+' withdrawal? (Balance was already deducted when the request was submitted — this just marks it paid.)')) return;
+  if (!confirm('Approve $'+amount+' withdrawal and deduct from balance?')) return;
   const [,wid] = key.split('__');
+  const wdFee  = parseFloat(SETTINGS.withdrawalFee||0)/100;
+  const netAmt = amount*(1-wdFee);
   await rtdb.ref('withdrawals/'+uid+'/'+wid).update({ status:'approved', paidAt:Date.now(), paidBy:CU.email });
-  // NOTE: walletBalance is NOT deducted here anymore — it was already deducted
-  // the moment the user submitted the request (see dashboard.html submitWithdraw).
-  // Deducting again here would be a double-deduction bug.
+  const wRef = rtdb.ref('users/'+uid+'/walletBalance');
+  const wSnap= await wRef.get();
+  const newBal= Math.max(0,parseFloat(wSnap.exists()?wSnap.val():0)-amount);
+  await wRef.set(newBal);
   await rtdb.ref('transactions/'+uid).push({
-    type:'Withdrawal', amount:0,
-    note:'Withdrawal approved & paid ($'+amount+')', timestamp:Date.now(), status:'completed'
+    type:'Withdrawal', amount:-amount,
+    note:'Withdrawal approved & paid', timestamp:Date.now(), status:'completed', balance:newBal
   });
   const twRef=rtdb.ref('users/'+uid+'/totalWithdrawn');
   const twSnap=await twRef.get();
@@ -1702,18 +1648,16 @@ window.approveWD = async (key, uid, amount) => {
 };
 
 window.rejectWD = async (key, uid, amount) => {
-  if (!confirm('Reject & refund $'+amount+' back to Main Wallet?')) return;
+  if (!confirm('Reject & refund $'+amount+'?')) return;
   const [,wid]=key.split('__');
-  await rtdb.ref('withdrawals/'+uid+'/'+wid).update({ status:'rejected', rejectedAt:Date.now(), rejectedBy:CU.email });
-  // Refund is correct here because the amount WAS deducted from walletBalance
-  // at request-submission time (dashboard.html). This restores it.
+  await rtdb.ref('withdrawals/'+uid+'/'+wid).update({ status:'rejected' });
   const wRef=rtdb.ref('users/'+uid+'/walletBalance');
   const wSnap=await wRef.get();
   const newBal=parseFloat(wSnap.exists()?wSnap.val():0)+amount;
   await wRef.set(newBal);
   await rtdb.ref('transactions/'+uid).push({
     type:'Withdrawal Refund', amount:amount,
-    note:'Withdrawal rejected — refunded to Main Wallet', timestamp:Date.now(), status:'completed', balance:newBal
+    note:'Withdrawal rejected — refunded', timestamp:Date.now(), status:'completed', balance:newBal
   });
   ALL_WD[key].status='rejected';
   logAdminAction('withdrawal','Reject Withdrawal',uid,'$'+amount+' refunded');
@@ -2009,28 +1953,16 @@ window.runClubBonus = async () => {
 };
 
 window.runROIDistrib = async () => {
-  if (!confirm('Run ROI distribution for all active plans?\n\nROI is prorated: a plan only earns for the number of days since it was activated (or since its last payout) — e.g. an investment made 2 days ago gets 2/30 of a month\'s ROI, not a full month.')) return;
+  if (!confirm('Run ROI distribution for all active plans?')) return;
   const directPct = parseFloat(document.getElementById('roiDirectPct').value)/100;
   const genPct    = 1-directPct;
   const genLvls   = [1,2,3,4,5,6,7].map(i=>parseFloat(document.getElementById('gl'+i).value)/100);
-  const now = Date.now();
-  const DAY_MS = 24*60*60*1000;
   let count = 0;
   for (const [key,p] of Object.entries(ALL_INV)) {
     if (p.status!=='active') continue;
     const u = ALLU[p.uid];
     if (u?.incomeBlocked) continue;
-
-    // Prorate by days since the plan's last ROI payout (or since it was
-    // activated, for the very first payout). Capped at 30 days so a plan
-    // that was never paid for a long time doesn't get an inflated lump sum.
-    const since = p.lastROI || p.activatedAt || p.createdAt || now;
-    const daysElapsed = Math.max(0, Math.floor((now - since) / DAY_MS));
-    const daysToPay = Math.min(daysElapsed, 30);
-    if (daysToPay <= 0) continue; // already paid today / nothing accrued yet
-
-    const fullMonthly = (p.amount||0)*(p.roiRate||12)/100;
-    const monthly   = fullMonthly * (daysToPay/30);
+    const monthly   = (p.amount||0)*(p.roiRate||12)/100;
     const directAmt = monthly*directPct;
     const genAmt    = monthly*genPct;
     const [uid,pid] = key.split('__');
@@ -2041,11 +1973,11 @@ window.runROIDistrib = async () => {
     const wSnap = await wRef.get();
     const newBal= parseFloat(wSnap.exists()?wSnap.val():0)+directAmt;
     await wRef.set(newBal);
-    await rtdb.ref('investments/'+uid+'/'+pid).update({ earnedROI:(p.earnedROI||0)+monthly, lastROI:now });
+    await rtdb.ref('investments/'+uid+'/'+pid).update({ earnedROI:(p.earnedROI||0)+monthly, lastROI:Date.now() });
     await rtdb.ref('transactions/'+uid).push({
       type:'ROI Payout', amount:directAmt,
-      note:daysToPay+'-day ROI ('+Math.round(directPct*100)+'% of prorated) on $'+p.amount,
-      timestamp:now, status:'completed', balance:newBal
+      note:'Monthly ROI '+Math.round(directPct*100)+'% on $'+p.amount,
+      timestamp:Date.now(), status:'completed', balance:newBal
     });
     let curUID = uid;
     for (let lvl=0;lvl<7;lvl++) {
@@ -2093,31 +2025,6 @@ window.runMatchingBonus = async () => {
     const rightVol = countLeg(u.id,'right') * parseFloat(SETTINGS.activationFee||30);
     const weaker   = Math.min(leftVol, rightVol);
     const bonus    = weaker * matchPct;
-
-    // Auto-update rank based on matching volume + total team sales — unless
-    // the admin has manually overridden this user's rank (u.rankOverride).
-    if (!u.rankOverride) {
-      const RANKS = [
-        {name:'No Rank',    mReq:0,      sReq:0},
-        {name:'One Star',   mReq:50,     sReq:100},
-        {name:'Two Star',   mReq:300,    sReq:300},
-        {name:'Three Star', mReq:1000,   sReq:1000},
-        {name:'Four Star',  mReq:3000,   sReq:10000},
-        {name:'Five Star',  mReq:10000,  sReq:100000},
-        {name:'Six Star',   mReq:30000,  sReq:300000},
-        {name:'Seven Star', mReq:100000, sReq:10000000}
-      ];
-      const teamSales = leftVol + rightVol;
-      let rIdx = 0;
-      for (let i=1;i<RANKS.length;i++) if (weaker>=RANKS[i].mReq && teamSales>=RANKS[i].sReq) rIdx = i;
-      const newRank = RANKS[rIdx].name;
-      if (u.rank !== newRank) {
-        await fsdb.collection('users').doc(u.id).update({ rank: newRank });
-        await rtdb.ref('users/'+u.id+'/rank').set(newRank);
-        ALLU[u.id] = { ...ALLU[u.id], rank: newRank };
-      }
-    }
-
     if (bonus <= 0) continue;
     const mRef  = rtdb.ref('users/'+u.id+'/income/matching');
     const mSnap = await mRef.get();
@@ -2188,7 +2095,7 @@ window.createVoucher = async () => {
   const note   = document.getElementById('voucherNote').value.trim();
   if (!amt||amt<=0) { toast('Enter valid amount'); return; }
   for (let i=0;i<qty;i++) {
-    const code = 'GIFT-'+Math.random().toString(36).substr(2,4).toUpperCase()+'-'+Math.random().toString(36).substr(2,4).toUpperCase();
+    const code = 'LLM-'+Math.random().toString(36).substr(2,4).toUpperCase()+'-'+Math.random().toString(36).substr(2,4).toUpperCase();
     await rtdb.ref('giftVouchers').push({
       code, amount:amt, status:'active', expiry:expiry||null, note, createdAt:Date.now(), createdBy:CU.email
     });
@@ -2816,12 +2723,10 @@ function legInvestmentVolume(startUid, side){
 
 window.runRankSalary = async () => {
   const monthKey = new Date().toISOString().slice(0,7); // e.g. "2026-07"
-  if (!confirm('মাসিক Rank Salary চালাবেন? (মাস: '+monthKey+')\n\nNote: Salary is prorated — a user who has been active for fewer than 30 days since joining (or since their last salary payment) gets a proportional share, not the full tier amount.')) return;
+  if (!confirm('মাসিক Rank Salary চালাবেন? (মাস: '+monthKey+')')) return;
   const tiers = SETTINGS.rankSalaryTiers || {};
   const rankList = [5,4,3,2,1].map(n=>({ n, ...(tiers['rank'+n]||{leftVol:Infinity,rightVol:Infinity,salary:0}) }));
   const active = Object.values(ALLU).filter(u=>u.isActive && !u.isBanned && !u.incomeBlocked);
-  const now = Date.now();
-  const DAY_MS = 24*60*60*1000;
   let paidCount=0, totalPaid=0;
   for (const u of active){
     // Prevent duplicate payment for the same month
@@ -2837,33 +2742,23 @@ window.runRankSalary = async () => {
     }
     if (!matched || matched.salary<=0) continue;
 
-    // Prorate by days since joining (or since the last salary payment,
-    // whichever is more recent) — capped at a 30-day cycle. e.g. someone
-    // who joined 8 days before this distribution gets 8/30 of the tier salary.
-    const joinedAt = u.createdAt ? new Date(u.createdAt).getTime() : now;
-    const since = u.rankSalaryLastPaidAt || joinedAt;
-    const daysElapsed = Math.max(0, Math.floor((now - since) / DAY_MS));
-    const daysToPay = Math.min(daysElapsed, 30);
-    if (daysToPay <= 0) continue; // nothing accrued yet
-    const proratedSalary = matched.salary * (daysToPay/30);
-
     const wRef  = rtdb.ref('users/'+u.id+'/walletBalance');
     const wSnap = await wRef.get();
-    const newBal= parseFloat(wSnap.exists()?wSnap.val():0)+proratedSalary;
+    const newBal= parseFloat(wSnap.exists()?wSnap.val():0)+matched.salary;
     await wRef.set(newBal);
     const iRef  = rtdb.ref('users/'+u.id+'/income/rankSalary');
     const iSnap = await iRef.get();
-    await iRef.set(parseFloat(iSnap.exists()?iSnap.val():0)+proratedSalary);
-    await rtdb.ref('users/'+u.id).update({ currentRank: matched.n, rankSalaryLastPaidAt: now });
-    await histRef.set({ rank:matched.n, salary:proratedSalary, fullTierSalary:matched.salary, daysPaid:daysToPay, leftVol, rightVol, timestamp:now });
+    await iRef.set(parseFloat(iSnap.exists()?iSnap.val():0)+matched.salary);
+    await rtdb.ref('users/'+u.id).update({ currentRank: matched.n });
+    await histRef.set({ rank:matched.n, salary:matched.salary, leftVol, rightVol, timestamp:Date.now() });
     await rtdb.ref('transactions/'+u.id).push({
-      type:'Rank Salary', amount:proratedSalary,
-      note:'Rank '+matched.n+' — '+daysToPay+' days — L:$'+leftVol.toFixed(0)+' R:$'+rightVol.toFixed(0)+' ('+monthKey+')',
-      timestamp:now, status:'completed', balance:newBal
+      type:'Rank Salary', amount:matched.salary,
+      note:'Rank '+matched.n+' — L:$'+leftVol.toFixed(0)+' R:$'+rightVol.toFixed(0)+' ('+monthKey+')',
+      timestamp:Date.now(), status:'completed', balance:newBal
     });
-    paidCount++; totalPaid += proratedSalary;
+    paidCount++; totalPaid += matched.salary;
   }
-  await rtdb.ref('rankSalaryHistory').push({ month:monthKey, usersPaid:paidCount, totalPaid:totalPaid.toFixed(2), timestamp:now });
+  await rtdb.ref('rankSalaryHistory').push({ month:monthKey, usersPaid:paidCount, totalPaid:totalPaid.toFixed(2), timestamp:Date.now() });
   logAdminAction('distribution','Rank Salary Distribution','ALL',monthKey+' — '+paidCount+' users, $'+totalPaid.toFixed(2));
   toast('✅ Rank Salary সম্পন্ন! '+paidCount+' জন পেয়েছেন, মোট $'+totalPaid.toFixed(2));
   set('rankSalaryLastRun','Last run: '+new Date().toLocaleString());

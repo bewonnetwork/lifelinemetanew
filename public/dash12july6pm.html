@@ -844,7 +844,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 
   <div class="card" style="max-width:640px">
     <div class="card-title">Redeem by Code (optional)</div>
-    <div class="fg"><label>Voucher Code</label><input type="text" id="vchCodeInput" placeholder="e.g. GIFT-XXXX-XXXX"/></div>
+    <div class="fg"><label>Voucher Code</label><input type="text" id="vchCodeInput" placeholder="e.g. LLM-XXXX-XXXX"/></div>
     <button class="btn btn-p" onclick="redeemVoucherCode()" style="width:100%">🎟 Redeem Code</button>
   </div>
 
@@ -1682,16 +1682,6 @@ function renderRank(matching, teamSales) {
     {name:'Six Star',   stars:'6⭐',        mReq:30000,  sReq:300000},
     {name:'Seven Star', stars:'7⭐',        mReq:100000, sReq:10000000}
   ];
-  // If admin has manually locked this user's rank, show that instead of the
-  // auto-computed one — the calculation is skipped entirely for this user.
-  if (UD && UD.rankOverride && UD.rank) {
-    const forced = ranks.find(r => r.name === UD.rank) || ranks[0];
-    set('rankStarsD', forced.stars);
-    set('rankNameD',  forced.name + ' (set by admin)');
-    set('infoRank',   forced.name);
-    set('rankNextHint', '🔒 Rank manually set by admin');
-    return;
-  }
   let idx = 0;
   for(let i=1;i<ranks.length;i++) {
     if(matching>=ranks[i].mReq && teamSales>=ranks[i].sReq) idx=i;
@@ -2107,26 +2097,6 @@ window.submitInvestment = async () => {
     await fsdb.collection('users').doc(CU.uid).update({ totalInvested:newInv });
     UD.totalInvested = newInv;
 
-    // Direct referral commission — credited to sponsor immediately, same % and
-    // logic as admin.html's approveInv() (kept in sync so both investment paths
-    // — instant P2P and admin-approved — pay the sponsor identically).
-    const refPct  = parseFloat(SETTINGS.investRefPct||5)/100;
-    const commAmt = amt * refPct;
-    if (UD.sponsorId && commAmt > 0) {
-      const sRef  = rtdb.ref('users/'+UD.sponsorId+'/walletBalance');
-      const sSnap = await sRef.get();
-      const sNewBal = parseFloat(sSnap.exists()?sSnap.val():0) + commAmt;
-      await sRef.set(sNewBal);
-      const iRef  = rtdb.ref('users/'+UD.sponsorId+'/income/directInvestComm');
-      const iSnap = await iRef.get();
-      await iRef.set(parseFloat(iSnap.exists()?iSnap.val():0) + commAmt);
-      await rtdb.ref('transactions/'+UD.sponsorId).push({
-        type:'Direct Investment Commission', amount:commAmt,
-        note:(refPct*100)+'% of $'+amt+' investment by '+(UD.fullName||UD.username||CU.uid),
-        timestamp:Date.now(), status:'completed', balance:sNewBal
-      });
-    }
-
     await rtdb.ref('transactions/'+CU.uid).push({
       type:'Investment Payment', amount:-amt,
       note:'Paid from P2P Wallet — no fee, full amount invested', timestamp:Date.now(), status:'completed'
@@ -2337,25 +2307,16 @@ window.submitWithdraw = async () => {
   const bal = parseFloat(UD?.walletBalance||0);
   if (amt > bal)       { toast('Insufficient Main Wallet balance'); return; }
   try {
-    const newBal = bal - amt; // deduct immediately — refunded automatically if admin rejects
-    await rtdb.ref('users/'+CU.uid+'/walletBalance').set(newBal);
-    UD.walletBalance = newBal;
-    const wdRef = await rtdb.ref('withdrawals/'+CU.uid).push({
+    await rtdb.ref('withdrawals/'+CU.uid).push({
       amount:    amt,
       address:   addr,
       status:    'pending',
       createdAt: Date.now()
     });
-    await rtdb.ref('transactions/'+CU.uid).push({
-      type: 'Withdrawal Requested', amount: -amt,
-      note: 'Pending admin approval — deducted from Main Wallet', timestamp: Date.now(),
-      status: 'pending', balance: newBal
-    });
-    toast('✅ Withdrawal request submitted! $'+amt.toFixed(2)+' has been held from your Main Wallet.');
+    toast('✅ Withdrawal request submitted!');
     document.getElementById('wdAmt').value  = '';
     document.getElementById('wdAddr').value = '';
     document.getElementById('wdPreview').style.display='none';
-    renderWalletCards();
   } catch(e) { toast('Error: '+e.message); }
 };
 

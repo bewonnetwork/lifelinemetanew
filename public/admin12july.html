@@ -105,27 +105,6 @@ tr:last-child td{border-bottom:none}
 .section-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .stab{padding:5px 13px;border-radius:8px;font-size:.75rem;font-weight:700;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:.2s}
 .stab.active{background:var(--accent);border-color:var(--accent);color:#000}
-
-/* ── FULL BINARY TREE (always-visible, table-based, zoomable) ── */
-.tree-scroll{overflow:auto;max-width:100%;max-height:75vh;border:1px solid var(--border);border-radius:10px;background:var(--bg);padding:18px}
-.tree-zoom-wrap{transform-origin:top left;display:inline-block;transition:transform .15s}
-.tree-tbl{border-collapse:collapse;margin:0 auto}
-.tree-tbl td{text-align:center;vertical-align:top;padding:0}
-.tnode{display:inline-flex;flex-direction:column;align-items:center;border:2px solid var(--border);background:var(--card);border-radius:10px;padding:6px 9px;min-width:118px;font-size:.68rem;cursor:pointer;transition:.15s}
-.tnode:hover{border-color:var(--accent)}
-.tnode.root{border-color:var(--accent);background:rgba(0,212,255,.08)}
-.tnode.active{border-color:var(--green)}
-.tnode.banned{border-color:var(--red)}
-.tnode.empty{border-style:dashed;opacity:.45;cursor:default}
-.tnode.placeable{border-color:var(--gold);background:rgba(245,158,11,.1);cursor:pointer;animation:pulseSlot 1.4s infinite}
-@keyframes pulseSlot{0%,100%{opacity:.5}50%{opacity:1}}
-.tnode .tn-name{font-weight:800;font-size:.72rem;max-width:105px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tnode .tn-row{color:var(--muted);font-size:.6rem;line-height:1.5;text-align:left;width:100%}
-.tnode .tn-row b{color:var(--text);font-weight:700}
-.tree-connector-v{width:2px;background:var(--border);height:14px;margin:0 auto}
-.tree-connector-h{border-top:2px solid var(--border);height:14px}
-.zoom-ctrl{display:flex;align-items:center;gap:8px;font-size:.72rem;color:var(--muted)}
-.zoom-ctrl input[type=range]{width:120px}
 @media(max-width:860px){
   .sidebar{transform:translateX(-100%)}
   .sidebar.open{transform:translateX(0)}
@@ -186,7 +165,6 @@ tr:last-child td{border-bottom:none}
     <div class="nav-sec">System</div>
     <a onclick="showPage('settings',this)"><span class="ic">⚙</span> Settings</a>
     <a onclick="showPage('ranks',this)"><span class="ic">⭐</span> Ranks</a>
-    <a onclick="showPage('ranksalary',this)"><span class="ic">👑</span> Rank Salary</a>
     <a onclick="showPage('backup',this)"><span class="ic">💾</span> Backup & Restore</a>
     <a onclick="showPage('reports',this)"><span class="ic">📊</span> Reports</a>
 
@@ -274,7 +252,6 @@ tr:last-child td{border-bottom:none}
     <button class="btn btn-o btn-sm" onclick="loadUsers()">↻ Refresh</button>
     <button class="btn btn-p btn-sm" onclick="exportCSV('users')">⬇ CSV</button>
     <button class="btn btn-r btn-sm" onclick="confirmDeleteAllUsers()">🗑 Delete All</button>
-    <button class="btn btn-g btn-sm" onclick="resetAllPasswords()">🔑 Reset ALL Passwords</button>
   </div>
   <div class="card">
     <div class="card-title">Users <small id="userCountLbl" style="color:var(--muted);font-weight:400"></small></div>
@@ -426,11 +403,7 @@ tr:last-child td{border-bottom:none}
       <option value="Daily Cashback">Cashback</option>
       <option value="ROI Payout">ROI</option>
       <option value="Club Bonus">Club</option>
-      <option value="Rank Salary">Rank Salary</option>
-      <option value="Direct Investment Commission">Investment Referral</option>
       <option value="Withdrawal">Withdrawal</option>
-      <option value="Withdrawal Requested">Withdrawal Requested</option>
-      <option value="Withdrawal Refund">Withdrawal Refund</option>
       <option value="Fund Deposit">Fund Deposit</option>
       <option value="Gift Voucher">Voucher</option>
       <option value="Admin Adjustment">Admin Adj</option>
@@ -612,46 +585,16 @@ tr:last-child td{border-bottom:none}
 
 <!-- ===== BINARY TREE ===== -->
 <div class="page" id="page-tree">
-  <div class="pg-title">🌳 Binary Tree (Full View)</div>
-  <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:9px;align-items:center">
-    <input type="text" id="treeSearchInput" placeholder="Search ID / username / email…" style="flex:1;min-width:160px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 11px;color:var(--text);font-size:.8rem;outline:none"/>
+  <div class="pg-title">Binary Tree View</div>
+  <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:13px">
+    <input type="text" id="treeSearchInput" placeholder="Search username…" style="flex:1;min-width:160px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 11px;color:var(--text);font-size:.8rem;outline:none"/>
     <button class="btn btn-p btn-sm" onclick="searchTreeUser()">Search</button>
     <button class="btn btn-o btn-sm" onclick="loadRootTree()">Root</button>
   </div>
-  <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:13px;align-items:center">
-    <select id="treeNavSelect" onchange="if(this.value) renderAdminTree(this.value)" style="flex:1;min-width:220px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 11px;color:var(--text);font-size:.78rem;outline:none">
-      <option value="">↕ বড় টিম হলে এখান থেকে দ্রুত user খুঁজুন…</option>
-    </select>
-    <span class="zoom-ctrl">🔍 Zoom
-      <input type="range" id="treeZoom" min="40" max="150" value="100" oninput="applyTreeZoom(this.value)"/>
-      <span id="treeZoomVal">100%</span>
-    </span>
-    <span class="zoom-ctrl">📏 Depth
-      <input type="range" id="treeDepth" min="3" max="10" value="6" oninput="applyTreeDepth(this.value)"/>
-      <span id="treeDepthVal">6</span>
-    </span>
-  </div>
-
-  <div class="card" id="placementCard">
-    <div class="card-title">📍 Manual Placement</div>
-    <div class="info-box">💡 নতুন approved user যদি এখনো tree-তে না বসে থাকে (unplaced), এখান থেকে বেছে নিন। <b>Manual</b>-এ ক্লিক করে খালি (হলুদ, ব্লিংকিং) স্লটে ক্লিক করুন, অথবা <b>Auto-Place</b> চাপলে sponsor-এর subtree-তে প্রথম খালি জায়গায় নিজে থেকে বসে যাবে।</div>
-    <div class="fg"><label>Unplaced User</label><select id="placementUserSelect"><option value="">— কেউ unplaced নেই —</option></select></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-or btn-sm" onclick="startPlacement()">📍 Start Manual Placement</button>
-      <button class="btn btn-gr btn-sm" onclick="autoPlaceUser()">⚡ Auto-Place This User</button>
-      <button class="btn btn-o btn-sm" id="cancelPlacementBtn" onclick="cancelPlacement()" style="display:none">✕ Cancel Placement Mode</button>
-    </div>
-    <div id="placementActiveBox" style="display:none;margin-top:9px" class="info-box">👤 Placing: <b id="placeUserLabel"></b> — নিচের tree-এ যেকোনো হলুদ blinking slot-এ ক্লিক করুন।</div>
-  </div>
-
   <div class="card">
-    <div class="card-title">
-      Tree <small id="treeRootLabel" style="color:var(--muted);font-weight:400"></small>
-    </div>
-    <div class="tree-scroll" id="treeScrollBox">
-      <div class="tree-zoom-wrap" id="treeZoomWrap">
-        <div style="text-align:center;color:var(--muted);padding:30px" id="treeViewContainer">Loading…</div>
-      </div>
+    <div class="card-title">Tree <small id="treeRootLabel" style="color:var(--muted);font-weight:400"></small></div>
+    <div style="overflow-x:auto;padding:10px 0" id="treeViewContainer">
+      <div style="text-align:center;color:var(--muted);padding:30px">Loading…</div>
     </div>
   </div>
 </div>
@@ -812,7 +755,7 @@ tr:last-child td{border-bottom:none}
       <div class="card-title">Matching & MLM</div>
       <div class="fg"><label>Matching Bonus (%)</label><input type="number" id="setMatchPct" value="5"/></div>
       <div class="fg"><label>Matching Cap ($)</label><input type="number" id="setMatchCap" value="1000"/></div>
-      <div class="fg"><label>Direct Investment Commission (% per investment, separate from activation)</label><input type="number" id="setInvestRefPct" value="5" step="0.5" min="0"/></div>
+      <div class="fg"><label>ROI Referral Bonus ($)</label><input type="number" id="setROIRefBonus" value="5"/></div>
       <button class="btn btn-p" onclick="saveSettings('matching')">💾 Save</button>
     </div>
     <div class="card">
@@ -862,38 +805,6 @@ tr:last-child td{border-bottom:none}
           <tr><td>Six Star</td><td>6⭐</td><td><input type="number" id="r6m" value="30000" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r6s" value="300000" style="width:85px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r6b" value="5000" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td id="r6cnt" style="color:var(--muted)">0</td><td><button class="btn btn-gr btn-sm" onclick="saveRank(6)">Save</button></td></tr>
           <tr><td>Seven Star</td><td>7⭐</td><td><input type="number" id="r7m" value="100000" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r7s" value="10000000" style="width:85px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="r7b" value="20000" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td id="r7cnt" style="color:var(--muted)">0</td><td><button class="btn btn-gr btn-sm" onclick="saveRank(7)">Save</button></td></tr>
         </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ===== RANK SALARY (Left/Right Volume based, Monthly) ===== -->
-<div class="page" id="page-ranksalary">
-  <div class="pg-title">👑 Rank Salary (Monthly)</div>
-  <div class="info-box">💡 এখানে Rank পুরোপুরি <b>Left leg + Right leg team investment volume</b> দিয়ে ঠিক হয় (matching বা personal sales না)। প্রতি মাসে "Run Monthly Rank Salary" চাপলে যোগ্য user সর্বোচ্চ যে rank-এ পৌঁছেছে, সেই rank-এর salary একবার করে পাবে — একই মাসে দ্বিতীয়বার চাপলে ডুপ্লিকেট payment হবে না।</div>
-  <div class="card">
-    <div class="card-title">Rank Tiers</div>
-    <div class="tw">
-      <table>
-        <thead><tr><th>Rank</th><th>Left Volume ($)</th><th>Right Volume ($)</th><th>Monthly Salary ($)</th><th>Qualified Now</th><th>Save</th></tr></thead>
-        <tbody id="rankSalaryTbody">
-          <tr><td>Rank 1</td><td><input type="number" id="rs1l" value="5000" style="width:95px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="rs1r" value="5000" style="width:95px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="rs1s" value="100" style="width:80px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td id="rs1cnt" style="color:var(--muted)">0</td><td><button class="btn btn-gr btn-sm" onclick="saveRankSalaryTier(1)">Save</button></td></tr>
-          <tr><td>Rank 2</td><td><input type="number" id="rs2l" value="20000" style="width:95px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="rs2r" value="20000" style="width:95px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="rs2s" value="300" style="width:80px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td id="rs2cnt" style="color:var(--muted)">0</td><td><button class="btn btn-gr btn-sm" onclick="saveRankSalaryTier(2)">Save</button></td></tr>
-          <tr><td>Rank 3</td><td><input type="number" id="rs3l" value="50000" style="width:95px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="rs3r" value="50000" style="width:95px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="rs3s" value="1000" style="width:80px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td id="rs3cnt" style="color:var(--muted)">0</td><td><button class="btn btn-gr btn-sm" onclick="saveRankSalaryTier(3)">Save</button></td></tr>
-          <tr><td>Rank 4</td><td><input type="number" id="rs4l" value="100000" style="width:95px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="rs4r" value="100000" style="width:95px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="rs4s" value="3000" style="width:80px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td id="rs4cnt" style="color:var(--muted)">0</td><td><button class="btn btn-gr btn-sm" onclick="saveRankSalaryTier(4)">Save</button></td></tr>
-          <tr><td>Rank 5</td><td><input type="number" id="rs5l" value="1000000" style="width:95px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="rs5r" value="1000000" style="width:95px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td><input type="number" id="rs5s" value="10000" style="width:80px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:.75rem"/></td><td id="rs5cnt" style="color:var(--muted)">0</td><td><button class="btn btn-gr btn-sm" onclick="saveRankSalaryTier(5)">Save</button></td></tr>
-        </tbody>
-      </table>
-    </div>
-    <button class="btn btn-p" style="width:100%;margin-top:12px" onclick="runRankSalary()">👑 Run Monthly Rank Salary Now</button>
-    <div style="font-size:.72rem;color:var(--muted);margin-top:6px" id="rankSalaryLastRun">Last run: Never</div>
-  </div>
-  <div class="card">
-    <div class="card-title">Distribution History</div>
-    <div class="tw">
-      <table>
-        <thead><tr><th>Date</th><th>Users Paid</th><th>Total Paid</th></tr></thead>
-        <tbody id="rankSalaryHistTb"><tr><td colspan="3" style="text-align:center;color:var(--muted);padding:12px">No history</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -972,26 +883,6 @@ tr:last-child td{border-bottom:none}
       </div>
     </div>
   </div>
-
-  <div class="card">
-    <div class="card-title">📊 Detailed Reports</div>
-    <div class="info-box">💡 নিচের dropdown থেকে রিপোর্ট বেছে নিন — সাথে সাথে টেবিল দেখাবে, আর প্রতিটার জন্য আলাদা CSV export করা যাবে।</div>
-    <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:13px">
-      <select id="reportTypeSel" onchange="renderReport(this.value)" style="flex:1;min-width:200px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 11px;color:var(--text);font-size:.8rem;outline:none">
-        <option value="investment">📈 Investment Report</option>
-        <option value="roi">💰 ROI Report</option>
-        <option value="commission">💸 Commission Report (Sponsor + Direct Investment)</option>
-        <option value="wallet">👛 Wallet Report</option>
-        <option value="generation">🔗 Generation Report</option>
-        <option value="rank">👑 Rank Report</option>
-        <option value="salary">🏅 Salary Report (Rank Salary payouts)</option>
-      </select>
-      <button class="btn btn-p btn-sm" onclick="exportReportCSV()">⬇ Export This Report (CSV)</button>
-    </div>
-    <div class="tw" id="reportTableWrap">
-      <table><tbody><tr><td style="text-align:center;color:var(--muted);padding:20px">Loading…</td></tr></tbody></table>
-    </div>
-  </div>
 </div>
 
 </main>
@@ -1022,7 +913,6 @@ tr:last-child td{border-bottom:none}
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-functions-compat.js"></script>
 
 <script>
 // ── FIREBASE CONFIG ──────────────────────────────────
@@ -1039,7 +929,6 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const fsdb = firebase.firestore();
 const rtdb = firebase.database();
-const cloudFn = firebase.functions();
 
 // ── GLOBALS ──────────────────────────────────────────
 let CU       = null;
@@ -1069,11 +958,9 @@ auth.onAuthStateChanged(async user => {
   document.getElementById('adminEmailD').textContent = user.email || '';
   // Check if admin or sub-admin
   const saSnap = await rtdb.ref('subAdmins').get();
-  let isSubAdmin = false;
   if (saSnap.exists()) {
     const saData = Object.values(saSnap.val()).find(s => s.email === user.email);
     if (saData) {
-      isSubAdmin = true;
       MY_ROLE  = 'subadmin';
       MY_PERMS = saData.permissions || {};
       document.getElementById('adminBadgeEl').textContent = '🛡 SUB-ADMIN';
@@ -1081,20 +968,6 @@ auth.onAuthStateChanged(async user => {
       document.getElementById('roleLabel').textContent    = 'Sub-Admin';
     }
   }
-  // ── Admin custom-claim verification ── (এখন চালু, কারণ claim কনফার্ম হয়েছে)
-  const ADMIN_CHECK_ENABLED = true;
-  if (!isSubAdmin && ADMIN_CHECK_ENABLED) {
-    const tokenResult = await user.getIdTokenResult(true); // force refresh
-    if (tokenResult.claims.admin !== true) {
-      alert('আপনার এই admin panel দেখার অনুমতি নেই। (admin claim সেট করা নেই)');
-      await auth.signOut();
-      window.location.href = 'login.html';
-      return;
-    }
-  }
-  // Debug: console-এ দেখাবে আপনার claim বর্তমানে কী আছে
-  const debugToken = await user.getIdTokenResult(true);
-  console.log('🔍 Current custom claims:', debugToken.claims);
   await loadAll();
 });
 
@@ -1112,8 +985,6 @@ async function loadAll() {
   loadActivityLog();
   computeOverview();
   loadGlobalToggles();
-  buildRankSalaryUI();
-  loadRankSalaryHistory();
 }
 
 // ── SETTINGS ─────────────────────────────────────────
@@ -1139,7 +1010,7 @@ function applySettings() {
   safeSet('setAdminWallet', S.adminWallet||'', 'value');
   safeSet('setMinWD',     S.minWithdrawal||10, 'value');
   safeSet('setWDFee',     S.withdrawalFee||0, 'value');
-  safeSet('setInvestRefPct', S.investRefPct||5, 'value');
+  safeSet('setROIRefBonus', S.roiRefBonus||5, 'value');
   safeSet('setMinInv',    S.minInvestment||100, 'value');
   safeSet('setInvLock',   S.invLockMonths||6, 'value');
   safeSet('setInvFee',    S.invFee||10, 'value');
@@ -1168,25 +1039,11 @@ window.loadUsers = async () => {
   populatePerUserSel();
 };
 
-let USERS_PAGE = 1;
-const USERS_PER_PAGE = 10;
-
 function renderUsers(list) {
-  // Sort newest-joined first so SL 1 = most recently joined, matching the
-  // requested date-wise serial numbering.
-  list = [...list].sort((a,b) => (b.createdAt?new Date(b.createdAt).getTime():0) - (a.createdAt?new Date(a.createdAt).getTime():0));
-
   set('userCountLbl', list.length+' users');
   const tb = document.getElementById('usersTb');
-  if (!list.length) { tb.innerHTML='<tr><td colspan="13" style="text-align:center;color:var(--muted);padding:16px">No users</td></tr>'; renderUsersPagination(0); return; }
-
-  const totalPages = Math.max(1, Math.ceil(list.length / USERS_PER_PAGE));
-  if (USERS_PAGE > totalPages) USERS_PAGE = totalPages;
-  const startIdx = (USERS_PAGE-1) * USERS_PER_PAGE;
-  const pageList = list.slice(startIdx, startIdx + USERS_PER_PAGE);
-
-  tb.innerHTML = pageList.map((u,i) => {
-    const sl = startIdx + i + 1; // date-wise serial number across all pages
+  if (!list.length) { tb.innerHTML='<tr><td colspan="13" style="text-align:center;color:var(--muted);padding:16px">No users</td></tr>'; return; }
+  tb.innerHTML = list.map((u,i) => {
     const joined = formatDate(u.createdAt);
     const incOff = u.incomeBlocked ? '🔴' : '🟢';
     const wdOff  = u.withdrawalBlocked ? '🔴' : '🟢';
@@ -1194,7 +1051,7 @@ function renderUsers(list) {
     const statusCls = u.isBanned ? 'pr' : u.isActive ? 'pg' : 'py';
     const sponsorName = u.sponsorId ? (ALLU[u.sponsorId]?.username || u.sponsorId.slice(0,10)+'…') : 'Root';
     return `<tr>
-      <td style="color:var(--muted)">${sl}</td>
+      <td style="color:var(--muted)">${i+1}</td>
       <td style="font-weight:700;min-width:100px">${u.fullName||'—'}</td>
       <td style="color:var(--muted)">@${u.username||'—'}</td>
       <td style="font-size:.71rem;color:var(--muted);max-width:140px;overflow:hidden;text-overflow:ellipsis">${u.email||'—'}</td>
@@ -1218,38 +1075,10 @@ function renderUsers(list) {
       </td>
     </tr>`;
   }).join('');
-  renderUsersPagination(totalPages);
   renderBlockList();
 }
 
-function renderUsersPagination(totalPages) {
-  let el = document.getElementById('usersPagination');
-  if (!el) {
-    const tb = document.getElementById('usersTb');
-    const table = tb ? tb.closest('table') : null;
-    const host = table ? table.parentElement : null;
-    if (!host) return;
-    el = document.createElement('div');
-    el.id = 'usersPagination';
-    el.style.cssText = 'display:flex;gap:6px;justify-content:center;align-items:center;margin-top:12px;flex-wrap:wrap';
-    host.appendChild(el);
-  }
-  if (totalPages <= 1) { el.innerHTML = ''; return; }
-  let html = `<button class="btn btn-sm" style="background:var(--border)" ${USERS_PAGE<=1?'disabled':''} onclick="gotoUsersPage(${USERS_PAGE-1})">‹ Prev</button>`;
-  for (let p=1; p<=totalPages; p++) {
-    html += `<button class="btn btn-sm" style="${p===USERS_PAGE?'background:var(--accent);color:#fff':'background:var(--border)'}" onclick="gotoUsersPage(${p})">${p}</button>`;
-  }
-  html += `<button class="btn btn-sm" style="background:var(--border)" ${USERS_PAGE>=totalPages?'disabled':''} onclick="gotoUsersPage(${USERS_PAGE+1})">Next ›</button>`;
-  el.innerHTML = html;
-}
-
-window.gotoUsersPage = (p) => {
-  USERS_PAGE = p;
-  filterUsers();
-};
-
 window.filterUsers = () => {
-  USERS_PAGE = 1;
   const q = document.getElementById('userSearchInput').value.toLowerCase();
   const f = document.getElementById('userFilterSel').value;
   let list = Object.values(ALLU);
@@ -1299,15 +1128,6 @@ window.viewUser = uid => {
     <div class="fg"><label>USDT Wallet</label><input type="text" id="editWallet" value="${u.paymentWallet||''}"/></div>
     <div class="fg"><label>Sponsor ID (change with care!)</label><input type="text" id="editSponsor" value="${u.sponsorId||''}"/></div>
     <div class="fg"><label>Wallet Balance ($)</label><input type="number" id="editBalance" value="${(u.walletBalance||0).toFixed(2)}" step="0.01"/></div>
-    <div class="fg">
-      <label>Rank (auto-calculated unless locked below)</label>
-      <select id="editRank">
-        ${['No Rank','One Star','Two Star','Three Star','Four Star','Five Star','Six Star','Seven Star'].map(r=>`<option value="${r}" ${((u.rank||'No Rank')===r)?'selected':''}>${r}</option>`).join('')}
-      </select>
-      <label style="display:flex;align-items:center;gap:6px;margin-top:6px;font-weight:400;font-size:.75rem;cursor:pointer">
-        <input type="checkbox" id="editRankOverride" ${u.rankOverride?'checked':''}/> Lock this rank manually (stop auto-calculation for this user)
-      </label>
-    </div>
     <button class="btn btn-p" onclick="saveUserEdit('${uid}')" style="width:100%;margin-bottom:10px">💾 Save Changes</button>
     <hr style="border-color:var(--border);margin:10px 0"/>
     <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Account Info</div>
@@ -1327,8 +1147,6 @@ window.viewUser = uid => {
         :`<button class="btn btn-r btn-sm" onclick="blockUser('${uid}');closeModal('userModal')">🚫 Ban</button>`}
       <button class="btn btn-sm" style="background:var(--border)" onclick="toggleIncomeBlock('${uid}',${!!u.incomeBlocked});closeModal('userModal')">${u.incomeBlocked?'✅ Enable Income':'🚫 Block Income'}</button>
       <button class="btn btn-sm" style="background:var(--border)" onclick="toggleWDBlock('${uid}',${!!u.withdrawalBlocked});closeModal('userModal')">${u.withdrawalBlocked?'✅ Enable WD':'🚫 Block WD'}</button>
-      <button class="btn btn-g btn-sm" onclick="resetUserPassword('${uid}','${(u.fullName||u.username||'User').replace(/'/g,"\\'")}')">🔑 Reset Password</button>
-      <button class="btn btn-pp btn-sm" onclick="loginAsUser('${uid}','${(u.fullName||u.username||'User').replace(/'/g,"\\'")}')">🔓 Login As User</button>
       <button class="btn btn-r btn-sm" onclick="deleteUser('${uid}');closeModal('userModal')">🗑 Delete</button>
     </div>`;
   document.getElementById('userModal').classList.add('show');
@@ -1342,8 +1160,6 @@ window.saveUserEdit = async uid => {
     mobile:        document.getElementById('editMobile').value.trim(),
     paymentWallet: document.getElementById('editWallet').value.trim(),
     sponsorId:     document.getElementById('editSponsor').value.trim(),
-    rank:          document.getElementById('editRank').value,
-    rankOverride:  document.getElementById('editRankOverride').checked,
     updatedAt:     new Date()
   };
   const newBal = parseFloat(document.getElementById('editBalance').value);
@@ -1682,15 +1498,18 @@ window.filterWithdrawals = ()=>{
 window.approveWD = async (key, uid, amount) => {
   const u = ALLU[uid];
   if (u?.withdrawalBlocked) { toast('This user has withdrawal blocked!'); return; }
-  if (!confirm('Approve $'+amount+' withdrawal? (Balance was already deducted when the request was submitted — this just marks it paid.)')) return;
+  if (!confirm('Approve $'+amount+' withdrawal and deduct from balance?')) return;
   const [,wid] = key.split('__');
+  const wdFee  = parseFloat(SETTINGS.withdrawalFee||0)/100;
+  const netAmt = amount*(1-wdFee);
   await rtdb.ref('withdrawals/'+uid+'/'+wid).update({ status:'approved', paidAt:Date.now(), paidBy:CU.email });
-  // NOTE: walletBalance is NOT deducted here anymore — it was already deducted
-  // the moment the user submitted the request (see dashboard.html submitWithdraw).
-  // Deducting again here would be a double-deduction bug.
+  const wRef = rtdb.ref('users/'+uid+'/walletBalance');
+  const wSnap= await wRef.get();
+  const newBal= Math.max(0,parseFloat(wSnap.exists()?wSnap.val():0)-amount);
+  await wRef.set(newBal);
   await rtdb.ref('transactions/'+uid).push({
-    type:'Withdrawal', amount:0,
-    note:'Withdrawal approved & paid ($'+amount+')', timestamp:Date.now(), status:'completed'
+    type:'Withdrawal', amount:-amount,
+    note:'Withdrawal approved & paid', timestamp:Date.now(), status:'completed', balance:newBal
   });
   const twRef=rtdb.ref('users/'+uid+'/totalWithdrawn');
   const twSnap=await twRef.get();
@@ -1702,18 +1521,16 @@ window.approveWD = async (key, uid, amount) => {
 };
 
 window.rejectWD = async (key, uid, amount) => {
-  if (!confirm('Reject & refund $'+amount+' back to Main Wallet?')) return;
+  if (!confirm('Reject & refund $'+amount+'?')) return;
   const [,wid]=key.split('__');
-  await rtdb.ref('withdrawals/'+uid+'/'+wid).update({ status:'rejected', rejectedAt:Date.now(), rejectedBy:CU.email });
-  // Refund is correct here because the amount WAS deducted from walletBalance
-  // at request-submission time (dashboard.html). This restores it.
+  await rtdb.ref('withdrawals/'+uid+'/'+wid).update({ status:'rejected' });
   const wRef=rtdb.ref('users/'+uid+'/walletBalance');
   const wSnap=await wRef.get();
   const newBal=parseFloat(wSnap.exists()?wSnap.val():0)+amount;
   await wRef.set(newBal);
   await rtdb.ref('transactions/'+uid).push({
     type:'Withdrawal Refund', amount:amount,
-    note:'Withdrawal rejected — refunded to Main Wallet', timestamp:Date.now(), status:'completed', balance:newBal
+    note:'Withdrawal rejected — refunded', timestamp:Date.now(), status:'completed', balance:newBal
   });
   ALL_WD[key].status='rejected';
   logAdminAction('withdrawal','Reject Withdrawal',uid,'$'+amount+' refunded');
@@ -1783,26 +1600,25 @@ window.approveInv = async (key, uid, amount) => {
   const [,pid] = key.split('__');
   await rtdb.ref('investments/'+uid+'/'+pid).update({ status:'active', activatedAt:Date.now() });
   ALL_INV[key].status = 'active';
-  const uData   = ALLU[uid];
-  const refPct  = parseFloat(SETTINGS.investRefPct||5)/100;
-  const commAmt = parseFloat(amount||0) * refPct; // 5% of THIS investment amount
-  if (uData?.sponsorId && commAmt>0) {
+  const uData = ALLU[uid];
+  const roiRef= parseFloat(SETTINGS.roiRefBonus||5);
+  if (uData?.sponsorId) {
     const sRef  = rtdb.ref('users/'+uData.sponsorId+'/walletBalance');
     const sSnap = await sRef.get();
-    const sNewBal= parseFloat(sSnap.exists()?sSnap.val():0)+commAmt;
+    const sNewBal= parseFloat(sSnap.exists()?sSnap.val():0)+roiRef;
     await sRef.set(sNewBal);
-    const iRef  = rtdb.ref('users/'+uData.sponsorId+'/income/directInvestComm');
-    const iSnap = await iRef.get();
-    await iRef.set(parseFloat(iSnap.exists()?iSnap.val():0)+commAmt);
+    await rtdb.ref('users/'+uData.sponsorId+'/income/roi_referral').get().then(async snap=>{
+      await rtdb.ref('users/'+uData.sponsorId+'/income/roi_referral').set(parseFloat(snap.exists()?snap.val():0)+roiRef);
+    });
     await rtdb.ref('transactions/'+uData.sponsorId).push({
-      type:'Direct Investment Commission', amount:commAmt,
-      note:refPct*100+'% of $'+amount+' investment by '+(uData.fullName||'User'),
+      type:'ROI Referral Bonus', amount:roiRef,
+      note:'From '+(uData.fullName||'User')+' $'+amount+' investment',
       timestamp:Date.now(), status:'completed', balance:sNewBal
     });
   }
-  logAdminAction('investments','Approve Investment',uid,'$'+amount+(commAmt>0?' (Sponsor comm $'+commAmt.toFixed(2)+')':''));
+  logAdminAction('investments','Approve Investment',uid,'$'+amount);
   renderInvestments(Object.entries(ALL_INV));
-  toast('✅ Investment activated!'+(commAmt>0?' Sponsor got $'+commAmt.toFixed(2)+' ('+(refPct*100)+'%)':''));
+  toast('✅ Investment activated! Sponsor got $'+roiRef);
 };
 
 window.approveAllPendingInv = async () => {
@@ -2009,28 +1825,16 @@ window.runClubBonus = async () => {
 };
 
 window.runROIDistrib = async () => {
-  if (!confirm('Run ROI distribution for all active plans?\n\nROI is prorated: a plan only earns for the number of days since it was activated (or since its last payout) — e.g. an investment made 2 days ago gets 2/30 of a month\'s ROI, not a full month.')) return;
+  if (!confirm('Run ROI distribution for all active plans?')) return;
   const directPct = parseFloat(document.getElementById('roiDirectPct').value)/100;
   const genPct    = 1-directPct;
   const genLvls   = [1,2,3,4,5,6,7].map(i=>parseFloat(document.getElementById('gl'+i).value)/100);
-  const now = Date.now();
-  const DAY_MS = 24*60*60*1000;
   let count = 0;
   for (const [key,p] of Object.entries(ALL_INV)) {
     if (p.status!=='active') continue;
     const u = ALLU[p.uid];
     if (u?.incomeBlocked) continue;
-
-    // Prorate by days since the plan's last ROI payout (or since it was
-    // activated, for the very first payout). Capped at 30 days so a plan
-    // that was never paid for a long time doesn't get an inflated lump sum.
-    const since = p.lastROI || p.activatedAt || p.createdAt || now;
-    const daysElapsed = Math.max(0, Math.floor((now - since) / DAY_MS));
-    const daysToPay = Math.min(daysElapsed, 30);
-    if (daysToPay <= 0) continue; // already paid today / nothing accrued yet
-
-    const fullMonthly = (p.amount||0)*(p.roiRate||12)/100;
-    const monthly   = fullMonthly * (daysToPay/30);
+    const monthly   = (p.amount||0)*(p.roiRate||12)/100;
     const directAmt = monthly*directPct;
     const genAmt    = monthly*genPct;
     const [uid,pid] = key.split('__');
@@ -2041,11 +1845,11 @@ window.runROIDistrib = async () => {
     const wSnap = await wRef.get();
     const newBal= parseFloat(wSnap.exists()?wSnap.val():0)+directAmt;
     await wRef.set(newBal);
-    await rtdb.ref('investments/'+uid+'/'+pid).update({ earnedROI:(p.earnedROI||0)+monthly, lastROI:now });
+    await rtdb.ref('investments/'+uid+'/'+pid).update({ earnedROI:(p.earnedROI||0)+monthly, lastROI:Date.now() });
     await rtdb.ref('transactions/'+uid).push({
       type:'ROI Payout', amount:directAmt,
-      note:daysToPay+'-day ROI ('+Math.round(directPct*100)+'% of prorated) on $'+p.amount,
-      timestamp:now, status:'completed', balance:newBal
+      note:'Monthly ROI '+Math.round(directPct*100)+'% on $'+p.amount,
+      timestamp:Date.now(), status:'completed', balance:newBal
     });
     let curUID = uid;
     for (let lvl=0;lvl<7;lvl++) {
@@ -2093,31 +1897,6 @@ window.runMatchingBonus = async () => {
     const rightVol = countLeg(u.id,'right') * parseFloat(SETTINGS.activationFee||30);
     const weaker   = Math.min(leftVol, rightVol);
     const bonus    = weaker * matchPct;
-
-    // Auto-update rank based on matching volume + total team sales — unless
-    // the admin has manually overridden this user's rank (u.rankOverride).
-    if (!u.rankOverride) {
-      const RANKS = [
-        {name:'No Rank',    mReq:0,      sReq:0},
-        {name:'One Star',   mReq:50,     sReq:100},
-        {name:'Two Star',   mReq:300,    sReq:300},
-        {name:'Three Star', mReq:1000,   sReq:1000},
-        {name:'Four Star',  mReq:3000,   sReq:10000},
-        {name:'Five Star',  mReq:10000,  sReq:100000},
-        {name:'Six Star',   mReq:30000,  sReq:300000},
-        {name:'Seven Star', mReq:100000, sReq:10000000}
-      ];
-      const teamSales = leftVol + rightVol;
-      let rIdx = 0;
-      for (let i=1;i<RANKS.length;i++) if (weaker>=RANKS[i].mReq && teamSales>=RANKS[i].sReq) rIdx = i;
-      const newRank = RANKS[rIdx].name;
-      if (u.rank !== newRank) {
-        await fsdb.collection('users').doc(u.id).update({ rank: newRank });
-        await rtdb.ref('users/'+u.id+'/rank').set(newRank);
-        ALLU[u.id] = { ...ALLU[u.id], rank: newRank };
-      }
-    }
-
     if (bonus <= 0) continue;
     const mRef  = rtdb.ref('users/'+u.id+'/income/matching');
     const mSnap = await mRef.get();
@@ -2188,7 +1967,7 @@ window.createVoucher = async () => {
   const note   = document.getElementById('voucherNote').value.trim();
   if (!amt||amt<=0) { toast('Enter valid amount'); return; }
   for (let i=0;i<qty;i++) {
-    const code = 'GIFT-'+Math.random().toString(36).substr(2,4).toUpperCase()+'-'+Math.random().toString(36).substr(2,4).toUpperCase();
+    const code = 'LLM-'+Math.random().toString(36).substr(2,4).toUpperCase()+'-'+Math.random().toString(36).substr(2,4).toUpperCase();
     await rtdb.ref('giftVouchers').push({
       code, amount:amt, status:'active', expiry:expiry||null, note, createdAt:Date.now(), createdBy:CU.email
     });
@@ -2208,188 +1987,62 @@ window.deleteVoucher = async id => {
 };
 
 // ── BINARY TREE ───────────────────────────────────────
-// ── TREE STATE ─────────────────────────────────────────
-let TREE_ROOT_UID = null;
-let TREE_DEPTH = 6;
-let PLACEMENT_UID = null; // uid currently being manually placed (null = not in placement mode)
-
-function getUserInvestment(uid){
-  let total = 0;
-  Object.values(ALL_INV||{}).forEach(inv => {
-    if (inv.uid===uid && inv.status==='active') total += parseFloat(inv.amount||0);
-  });
-  return total;
-}
-
 window.loadRootTree = async () => {
-  const root = Object.values(ALLU).find(u=>u.isRoot||(!u.parentId&&!u.sponsorId));
-  const rid = root ? root.id : (Object.values(ALLU)[0]?.id);
-  if (rid) renderAdminTree(rid);
-  else document.getElementById('treeViewContainer').innerHTML='<p style="color:var(--muted);padding:20px">No users yet</p>';
-  populateTreeNavSelect();
-  populatePlacementSelect();
+  const root = Object.values(ALLU).find(u=>u.isRoot||!u.parentId&&!u.sponsorId);
+  if (root) renderAdminTree(root.id);
+  else {
+    const first = Object.values(ALLU)[0];
+    if (first) renderAdminTree(first.id);
+    else document.getElementById('treeViewContainer').innerHTML='<p style="color:var(--muted);padding:20px">No users yet</p>';
+  }
 };
 
 window.searchTreeUser = async () => {
   const q = document.getElementById('treeSearchInput').value.trim().toLowerCase();
   if (!q) { loadRootTree(); return; }
-  const found = Object.values(ALLU).find(u=>(u.username||'').toLowerCase()===q||(u.email||'').toLowerCase()===q||(u.memberId||'').toLowerCase()===q||u.id.toLowerCase()===q);
+  const found = Object.values(ALLU).find(u=>(u.username||'').toLowerCase()===q||(u.email||'').toLowerCase()===q||(u.memberId||'').toLowerCase()===q);
   if (found) renderAdminTree(found.id);
   else toast('User not found: '+q);
 };
 
-function populateTreeNavSelect(){
-  const sel = document.getElementById('treeNavSelect');
-  if (!sel) return;
-  const users = Object.values(ALLU).sort((a,b)=>(a.fullName||a.username||'').localeCompare(b.fullName||b.username||''));
-  sel.innerHTML = '<option value="">↕ বড় টিম হলে এখান থেকে দ্রুত user খুঁজুন…</option>' +
-    users.map(u=>`<option value="${u.id}">${(u.fullName||'—')} — @${u.username||'?'} (${u.memberId||u.id.slice(0,8)})</option>`).join('');
-}
-
-window.applyTreeZoom = (val) => {
-  document.getElementById('treeZoomWrap').style.transform = 'scale('+(val/100)+')';
-  set('treeZoomVal', val+'%');
-};
-window.applyTreeDepth = (val) => {
-  TREE_DEPTH = parseInt(val);
-  set('treeDepthVal', val);
-  if (TREE_ROOT_UID) renderAdminTree(TREE_ROOT_UID);
-};
-
-// ── FULL BINARY TREE (table-based, always fully visible up to TREE_DEPTH) ──
 function renderAdminTree(rootUid) {
   const u = ALLU[rootUid]; if (!u) return;
-  TREE_ROOT_UID = rootUid;
-  set('treeRootLabel','Root: '+(u.fullName||u.username||rootUid)+' — ঘরের ভিতরে ক্লিক করলে সেই user root হবে (গভীর tree দেখতে)');
-
-  function nodeCell(uid, side){
-    if (!uid){
-      const isPlaceable = !!PLACEMENT_UID; // any empty slot is a valid target while in placement mode
-      const cls = isPlaceable ? 'tnode empty placeable' : 'tnode empty';
-      const onclick = isPlaceable ? `onclick="placeUserAt('${side.parentUid}','${side.dir}')"` : '';
-      return `<div class="${cls}" ${onclick}><div class="tn-name">খালি (${side.dir==='left'?'L':'R'})</div>${isPlaceable?'<div class="tn-row">এখানে বসান</div>':''}</div>`;
-    }
-    const n = ALLU[uid];
-    if (!n) return `<div class="tnode empty"><div class="tn-name">?</div></div>`;
-    const banned = n.isBanned, active = n.isActive;
-    const statusClass = uid===rootUid ? 'root' : (banned?'banned':(active?'active':''));
-    const invest = getUserInvestment(uid);
-    const sponsor = n.sponsorId ? (ALLU[n.sponsorId]?.memberId || ALLU[n.sponsorId]?.username || n.sponsorId.slice(0,8)) : '—';
-    return `<div class="tnode ${statusClass}" onclick="renderAdminTree('${uid}')" title="ক্লিক করলে এই user root হবে">
-      <div class="tn-name">${n.fullName||n.username||'—'}</div>
-      <div class="tn-row">ID: <b>${n.memberId||uid.slice(0,8)}</b></div>
-      <div class="tn-row">@${n.username||'?'}</div>
-      <div class="tn-row">Invest: <b>$${invest.toFixed(0)}</b></div>
-      <div class="tn-row">Spon: <b>${sponsor}</b></div>
-      <span class="pill ${banned?'pr':active?'pg':'py'}" style="margin-top:3px">${banned?'Banned':active?'Active':'Inactive'}</span>
+  set('treeRootLabel','Root: '+(u.fullName||u.username||rootUid));
+  function nodeHTML(uid, label) {
+    if (!uid) return `<div style="display:flex;flex-direction:column;align-items:center">
+      <div style="border:2px dashed var(--muted);border-radius:10px;padding:6px 10px;min-width:82px;text-align:center;opacity:.4;font-size:.71rem;color:var(--muted)">Empty<br>${label}</div></div>`;
+    const n=ALLU[uid]; const name=n?(n.fullName||n.username||uid.slice(0,8)):uid.slice(0,8);
+    const active=n?n.isActive:false; const banned=n?n.isBanned:false;
+    const borderColor=uid===rootUid?'var(--accent)':banned?'var(--red)':active?'var(--green)':'var(--border)';
+    return `<div style="display:flex;flex-direction:column;align-items:center">
+      <div style="border:2px solid ${borderColor};background:${uid===rootUid?'rgba(0,212,255,.08)':'var(--card)'};border-radius:10px;padding:6px 10px;min-width:82px;text-align:center;cursor:pointer;font-size:.72rem;transition:.2s" onclick="renderAdminTree('${uid}')" title="${uid}">
+        <div style="font-weight:800;font-size:.77rem;max-width:75px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</div>
+        <div style="font-size:.61rem;color:var(--muted);margin-top:1px">@${n?n.username:'?'}</div>
+        <span class="pill ${banned?'pr':active?'pg':'py'}" style="margin-top:2px;display:inline-block">${banned?'Ban':active?'✅':'Inact'}</span>
+        <div style="font-size:.6rem;color:var(--muted);margin-top:1px">${label}</div>
+      </div></div>`;
+  }
+  function lvl2(uid) {
+    const n=uid?ALLU[uid]:null;
+    return `<div style="display:flex;gap:12px">${nodeHTML(n?.leftChild,'L')}${nodeHTML(n?.rightChild,'R')}</div>`;
+  }
+  const lc=u.leftChild, rc=u.rightChild;
+  document.getElementById('treeViewContainer').innerHTML=`
+    <div style="display:flex;flex-direction:column;align-items:center;gap:0;padding:10px">
+      ${nodeHTML(rootUid,'ROOT')}
+      <div style="width:1px;height:16px;background:var(--border)"></div>
+      <div style="display:flex;gap:32px">
+        <div style="display:flex;flex-direction:column;align-items:center">
+          ${nodeHTML(lc,'LEFT')}
+          ${lc?`<div style="width:1px;height:13px;background:var(--border)"></div>${lvl2(lc)}`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center">
+          ${nodeHTML(rc,'RIGHT')}
+          ${rc?`<div style="width:1px;height:13px;background:var(--border)"></div>${lvl2(rc)}`:''}
+        </div>
+      </div>
     </div>`;
-  }
-
-  // Recursively build nested-table markup so no node ever overlaps another
-  function subtree(uid, depth, parentUidForEmpty, dirForEmpty){
-    const side = { parentUid: parentUidForEmpty, dir: dirForEmpty };
-    if (depth > TREE_DEPTH || (!uid && depth>1)) {
-      // Beyond render depth or a placeholder we don't expand further
-      if (!uid) return `<table class="tree-tbl"><tr><td>${nodeCell(null, side)}</td></tr></table>`;
-      return `<table class="tree-tbl"><tr><td>${nodeCell(uid, side)}</td></tr><tr><td style="font-size:.6rem;color:var(--muted);padding-top:4px">আরো নিচে আছে — ক্লিক করে দেখুন</td></tr></table>`;
-    }
-    if (!uid) {
-      return `<table class="tree-tbl"><tr><td>${nodeCell(null, side)}</td></tr></table>`;
-    }
-    const n = ALLU[uid];
-    const leftSub  = subtree(n?.leftChild,  depth+1, uid, 'left');
-    const rightSub = subtree(n?.rightChild, depth+1, uid, 'right');
-    return `<table class="tree-tbl">
-      <tr><td colspan="2">${nodeCell(uid, side)}</td></tr>
-      <tr><td colspan="2"><div class="tree-connector-v"></div></td></tr>
-      <tr>
-        <td style="padding:0 10px 0 0"><div class="tree-connector-h"></div>${leftSub}</td>
-        <td style="padding:0 0 0 10px"><div class="tree-connector-h"></div>${rightSub}</td>
-      </tr>
-    </table>`;
-  }
-
-  document.getElementById('treeViewContainer').innerHTML = subtree(rootUid, 1, null, null);
-  applyTreeZoom(document.getElementById('treeZoom').value);
 }
-
-// ── MANUAL / AUTO PLACEMENT ────────────────────────────
-function getUnplacedUsers(){
-  // "Unplaced" = has a sponsor but no parentId/side assigned in the tree yet, and isn't the root
-  return Object.values(ALLU).filter(u => u.sponsorId && !u.parentId && !u.isRoot);
-}
-function populatePlacementSelect(){
-  const sel = document.getElementById('placementUserSelect');
-  if (!sel) return;
-  const unplaced = getUnplacedUsers();
-  if (!unplaced.length){ sel.innerHTML = '<option value="">— কেউ unplaced নেই —</option>'; return; }
-  sel.innerHTML = unplaced.map(u=>`<option value="${u.id}">${u.fullName||u.username} — @${u.username||'?'} (Sponsor: ${ALLU[u.sponsorId]?.username||u.sponsorId.slice(0,8)})</option>`).join('');
-}
-window.startPlacement = () => {
-  const uid = document.getElementById('placementUserSelect').value;
-  if (!uid) { toast('একজন unplaced user বাছাই করুন'); return; }
-  PLACEMENT_UID = uid;
-  set('placeUserLabel', ALLU[uid]?.fullName || ALLU[uid]?.username || uid);
-  document.getElementById('placementActiveBox').style.display = 'block';
-  document.getElementById('cancelPlacementBtn').style.display = 'inline-block';
-  renderAdminTree(TREE_ROOT_UID || uid);
-  toast('📍 এখন যেকোনো খালি (হলুদ) স্লটে ক্লিক করুন');
-};
-window.cancelPlacement = () => {
-  PLACEMENT_UID = null;
-  document.getElementById('placementActiveBox').style.display = 'none';
-  document.getElementById('cancelPlacementBtn').style.display = 'none';
-  renderAdminTree(TREE_ROOT_UID);
-};
-window.placeUserAt = async (parentUid, dir) => {
-  if (!PLACEMENT_UID) return;
-  const uid = PLACEMENT_UID;
-  if (!confirm((ALLU[uid]?.fullName||ALLU[uid]?.username)+'-কে '+(ALLU[parentUid]?.username||parentUid.slice(0,8))+'-এর '+(dir==='left'?'LEFT':'RIGHT')+' এ বসাবেন?')) return;
-  const field = dir==='left' ? 'leftChild' : 'rightChild';
-  await fsdb.collection('users').doc(parentUid).update({ [field]: uid });
-  await fsdb.collection('users').doc(uid).update({ parentId: parentUid, side: dir });
-  ALLU[parentUid][field] = uid;
-  ALLU[uid].parentId = parentUid;
-  ALLU[uid].side = dir;
-  logAdminAction('users','Manual Tree Placement',uid,'Placed under '+parentUid+' ('+dir+')');
-  toast('✅ Placement সম্পন্ন!');
-  cancelPlacement();
-  populatePlacementSelect();
-  renderAdminTree(parentUid);
-};
-window.autoPlaceUser = async () => {
-  const uid = document.getElementById('placementUserSelect').value;
-  if (!uid) { toast('একজন unplaced user বাছাই করুন'); return; }
-  const u = ALLU[uid];
-  const sponsorUid = u.sponsorId;
-  if (!sponsorUid || !ALLU[sponsorUid]) { toast('Sponsor খুঁজে পাওয়া যায়নি'); return; }
-  // BFS to find first empty leftChild/rightChild slot under sponsor's subtree
-  const queue = [sponsorUid];
-  const visited = new Set();
-  let slot = null;
-  while (queue.length && !slot){
-    const cur = queue.shift();
-    if (visited.has(cur)) continue;
-    visited.add(cur);
-    const n = ALLU[cur];
-    if (!n) continue;
-    if (!n.leftChild){ slot = { parentUid: cur, dir: 'left' }; break; }
-    if (!n.rightChild){ slot = { parentUid: cur, dir: 'right' }; break; }
-    queue.push(n.leftChild, n.rightChild);
-  }
-  if (!slot) { toast('খালি স্লট পাওয়া যায়নি (subtree ভর্তি)'); return; }
-  if (!confirm('Auto-place: '+(u.fullName||u.username)+' → '+(ALLU[slot.parentUid]?.username||slot.parentUid.slice(0,8))+' ('+slot.dir.toUpperCase()+')?')) return;
-  const field = slot.dir==='left' ? 'leftChild' : 'rightChild';
-  await fsdb.collection('users').doc(slot.parentUid).update({ [field]: uid });
-  await fsdb.collection('users').doc(uid).update({ parentId: slot.parentUid, side: slot.dir });
-  ALLU[slot.parentUid][field] = uid;
-  ALLU[uid].parentId = slot.parentUid;
-  ALLU[uid].side = slot.dir;
-  logAdminAction('users','Auto Tree Placement',uid,'Auto-placed under '+slot.parentUid+' ('+slot.dir+')');
-  toast('✅ Auto-placed successfully!');
-  populatePlacementSelect();
-  renderAdminTree(slot.parentUid);
-};
 
 // ── DASHBOARD CONTROLS ───────────────────────────────
 const FEATURES = ['roi','withdrawal','referral','cashback','club','matching','fundrequest','voucher','tree','income'];
@@ -2552,97 +2205,6 @@ window.deleteNotice = async id => {
 };
 
 // ── ACTIVITY LOG ──────────────────────────────────────
-// ── PASSWORD RESET & LOGIN-AS-USER ──
-// টেম্পোরারি (Spark প্ল্যান) ভার্সন: সরাসরি পাসওয়ার্ড সেট করার বদলে
-// Firebase-এর নিজস্ব ফ্রি ফিচার sendPasswordResetEmail() ব্যবহার করছি —
-// এটা কোনো Blaze/Cloud Function ছাড়াই কাজ করে। Blaze-এ upgrade করার পর
-// নিচের CLOUD_FN_READY = true করে দিলে সরাসরি-পাসওয়ার্ড-সেট মোডে চলে যাবে।
-const CLOUD_FN_READY = false; // ⬅ Blaze + Cloud Functions deploy করার পর এটা true করুন
-
-window.resetUserPassword = async (uid, name) => {
-  const u = ALLU[uid];
-  if (!u || !u.email) { toast('❌ এই user-এর email পাওয়া যায়নি'); return; }
-
-  if (CLOUD_FN_READY) {
-    const pw = prompt(name+'-এর জন্য নতুন পাসওয়ার্ড দিন (কমপক্ষে ৬ ক্যারেক্টার):', '123456');
-    if (!pw) return;
-    if (pw.length < 6) { toast('কমপক্ষে ৬ ক্যারেক্টার লাগবে'); return; }
-    if (!confirm(name+'-এর পাসওয়ার্ড "'+pw+'"-তে পরিবর্তন করবেন?')) return;
-    try {
-      const fn = cloudFn.httpsCallable('adminResetPassword');
-      await fn({ targetUid: uid, newPassword: pw });
-      logAdminAction('users','Password Reset',uid,'Reset by admin');
-      toast('✅ পাসওয়ার্ড পরিবর্তন হয়েছে!');
-      closeModal('userModal');
-    } catch (e) {
-      toast('❌ Error: '+e.message);
-    }
-    return;
-  }
-
-  // Spark-compatible fallback: reset link পাঠানো
-  if (!confirm(name+' ('+u.email+') এর email-এ password reset link পাঠাবেন?')) return;
-  try {
-    await auth.sendPasswordResetEmail(u.email);
-    logAdminAction('users','Password Reset Email Sent',uid,u.email);
-    toast('✅ Reset link পাঠানো হয়েছে: '+u.email);
-  } catch (e) {
-    toast('❌ Error: '+e.message);
-  }
-};
-
-window.resetAllPasswords = async () => {
-  if (CLOUD_FN_READY) {
-    const pw = prompt('সব user-এর পাসওয়ার্ড কী হবে? (কমপক্ষে ৬ ক্যারেক্টার):', '123456');
-    if (!pw) return;
-    if (pw.length < 6) { toast('কমপক্ষে ৬ ক্যারেক্টার লাগবে'); return; }
-    if (!confirm('⚠️ সাবধান! এটা সব ('+Object.keys(ALLU).length+' জন) user-এর পাসওয়ার্ড "'+pw+'"-তে পরিবর্তন করে দেবে। নিশ্চিত?')) return;
-    if (prompt('নিশ্চিত করতে RESET_ALL লিখুন:') !== 'RESET_ALL') { toast('বাতিল করা হয়েছে'); return; }
-    try {
-      toast('⏳ চলছে... একটু সময় লাগতে পারে');
-      const fn = cloudFn.httpsCallable('adminResetAllPasswords');
-      const res = await fn({ newPassword: pw });
-      logAdminAction('users','Reset ALL Passwords','ALL',res.data.updated+' updated, '+res.data.failed+' failed');
-      toast('✅ '+res.data.updated+' জনের পাসওয়ার্ড পরিবর্তন হয়েছে!');
-    } catch (e) {
-      toast('❌ Error: '+e.message);
-    }
-    return;
-  }
-
-  // Spark-compatible fallback: সবাইকে reset email পাঠানো (bulk)
-  const users = Object.values(ALLU).filter(u=>u.email);
-  if (!confirm('⚠️ সব ('+users.length+' জন) user-এর email-এ password reset link পাঠাবেন?')) return;
-  if (prompt('নিশ্চিত করতে RESET_ALL লিখুন:') !== 'RESET_ALL') { toast('বাতিল করা হয়েছে'); return; }
-  toast('⏳ পাঠানো হচ্ছে... একটু সময় লাগতে পারে');
-  let sent=0, failed=0;
-  for (const u of users) {
-    try { await auth.sendPasswordResetEmail(u.email); sent++; }
-    catch(e){ failed++; }
-  }
-  logAdminAction('users','Bulk Reset Emails','ALL',sent+' sent, '+failed+' failed');
-  toast('✅ '+sent+' জনকে reset email পাঠানো হয়েছে'+(failed?', '+failed+' জনকে যায়নি':''));
-};
-
-window.loginAsUser = async (uid, name) => {
-  if (!CLOUD_FN_READY) {
-    toast('⏳ এই ফিচারটা এখনো চালু হয়নি — Blaze প্ল্যান + Cloud Function deploy করার পর কাজ করবে');
-    return;
-  }
-  if (!confirm(name+'-এর dashboard-এ password ছাড়া login করবেন?')) return;
-  try {
-    const fn = cloudFn.httpsCallable('adminCreateLoginToken');
-    const res = await fn({ targetUid: uid });
-    logAdminAction('users','Login As User',uid,'Admin impersonation');
-    // নতুন ট্যাবে dashboard.html খুলবে, সাথে impersonation token পাস হবে
-    // dashboard.html-এ এই token নিয়ে signInWithCustomToken() কল করার কোড বসাতে হবে
-    window.open('dashboard.html?impersonate='+encodeURIComponent(res.data.token), '_blank');
-    toast('✅ নতুন ট্যাবে খোলা হয়েছে');
-  } catch (e) {
-    toast('❌ Error: '+e.message);
-  }
-};
-
 async function logAdminAction(type, action, target, details) {
   await rtdb.ref('adminLog').push({
     type, action, target:String(target), details:String(details),
@@ -2727,7 +2289,7 @@ window.saveSettings = async type => {
   } else if (type==='matching') {
     updates.matchingPct   = parseFloat(el('setMatchPct').value);
     updates.matchingCap   = parseFloat(el('setMatchCap').value);
-    updates.investRefPct  = parseFloat(el('setInvestRefPct').value);
+    updates.roiRefBonus   = parseFloat(el('setROIRefBonus').value);
   } else if (type==='investment') {
     updates.minInvestment = parseFloat(el('setMinInv').value);
     updates.invLockMonths = parseFloat(el('setInvLock').value);
@@ -2762,126 +2324,6 @@ window.saveRank = async n => {
   logAdminAction('settings','Save Rank '+n,'—',JSON.stringify(data));
   toast('⭐ Rank '+n+' saved!');
 };
-
-// ── RANK SALARY (Left/Right investment volume, monthly) ──
-function buildRankSalaryUI(){
-  const saved = SETTINGS.rankSalaryTiers || {};
-  for (let n=1;n<=5;n++){
-    const t = saved['rank'+n];
-    if (t){
-      const le=document.getElementById('rs'+n+'l'), re=document.getElementById('rs'+n+'r'), se=document.getElementById('rs'+n+'s');
-      if (le) le.value = t.leftVol;
-      if (re) re.value = t.rightVol;
-      if (se) se.value = t.salary;
-    }
-  }
-}
-window.saveRankSalaryTier = async n => {
-  const data = {
-    leftVol:  parseFloat(document.getElementById('rs'+n+'l').value)||0,
-    rightVol: parseFloat(document.getElementById('rs'+n+'r').value)||0,
-    salary:   parseFloat(document.getElementById('rs'+n+'s').value)||0
-  };
-  await rtdb.ref('settings/rankSalaryTiers/rank'+n).set(data);
-  if (!SETTINGS.rankSalaryTiers) SETTINGS.rankSalaryTiers = {};
-  SETTINGS.rankSalaryTiers['rank'+n] = data;
-  logAdminAction('settings','Save Rank Salary Tier '+n,'—',JSON.stringify(data));
-  toast('👑 Rank '+n+' salary tier saved!');
-};
-
-// Sum of ALL active investment amounts under a user's entire subtree on one side (recursive)
-function legInvestmentVolume(startUid, side){
-  const rootUser = ALLU[startUid];
-  if (!rootUser) return 0;
-  const startChild = side==='left' ? rootUser.leftChild : rootUser.rightChild;
-  if (!startChild) return 0;
-  let total = 0;
-  const stack = [startChild];
-  const visited = new Set();
-  while (stack.length){
-    const uid = stack.pop();
-    if (!uid || visited.has(uid)) continue;
-    visited.add(uid);
-    const u = ALLU[uid];
-    if (!u) continue;
-    // sum this user's own active investments
-    Object.values(ALL_INV).forEach(inv => {
-      if (inv.uid===uid && inv.status==='active') total += parseFloat(inv.amount||0);
-    });
-    if (u.leftChild) stack.push(u.leftChild);
-    if (u.rightChild) stack.push(u.rightChild);
-  }
-  return total;
-}
-
-window.runRankSalary = async () => {
-  const monthKey = new Date().toISOString().slice(0,7); // e.g. "2026-07"
-  if (!confirm('মাসিক Rank Salary চালাবেন? (মাস: '+monthKey+')\n\nNote: Salary is prorated — a user who has been active for fewer than 30 days since joining (or since their last salary payment) gets a proportional share, not the full tier amount.')) return;
-  const tiers = SETTINGS.rankSalaryTiers || {};
-  const rankList = [5,4,3,2,1].map(n=>({ n, ...(tiers['rank'+n]||{leftVol:Infinity,rightVol:Infinity,salary:0}) }));
-  const active = Object.values(ALLU).filter(u=>u.isActive && !u.isBanned && !u.incomeBlocked);
-  const now = Date.now();
-  const DAY_MS = 24*60*60*1000;
-  let paidCount=0, totalPaid=0;
-  for (const u of active){
-    // Prevent duplicate payment for the same month
-    const histRef  = rtdb.ref('users/'+u.id+'/rankSalaryPaidMonths/'+monthKey);
-    const already  = await histRef.get();
-    if (already.exists()) continue;
-
-    const leftVol  = legInvestmentVolume(u.id,'left');
-    const rightVol = legInvestmentVolume(u.id,'right');
-    let matched = null;
-    for (const r of rankList){
-      if (leftVol>=r.leftVol && rightVol>=r.rightVol){ matched=r; break; }
-    }
-    if (!matched || matched.salary<=0) continue;
-
-    // Prorate by days since joining (or since the last salary payment,
-    // whichever is more recent) — capped at a 30-day cycle. e.g. someone
-    // who joined 8 days before this distribution gets 8/30 of the tier salary.
-    const joinedAt = u.createdAt ? new Date(u.createdAt).getTime() : now;
-    const since = u.rankSalaryLastPaidAt || joinedAt;
-    const daysElapsed = Math.max(0, Math.floor((now - since) / DAY_MS));
-    const daysToPay = Math.min(daysElapsed, 30);
-    if (daysToPay <= 0) continue; // nothing accrued yet
-    const proratedSalary = matched.salary * (daysToPay/30);
-
-    const wRef  = rtdb.ref('users/'+u.id+'/walletBalance');
-    const wSnap = await wRef.get();
-    const newBal= parseFloat(wSnap.exists()?wSnap.val():0)+proratedSalary;
-    await wRef.set(newBal);
-    const iRef  = rtdb.ref('users/'+u.id+'/income/rankSalary');
-    const iSnap = await iRef.get();
-    await iRef.set(parseFloat(iSnap.exists()?iSnap.val():0)+proratedSalary);
-    await rtdb.ref('users/'+u.id).update({ currentRank: matched.n, rankSalaryLastPaidAt: now });
-    await histRef.set({ rank:matched.n, salary:proratedSalary, fullTierSalary:matched.salary, daysPaid:daysToPay, leftVol, rightVol, timestamp:now });
-    await rtdb.ref('transactions/'+u.id).push({
-      type:'Rank Salary', amount:proratedSalary,
-      note:'Rank '+matched.n+' — '+daysToPay+' days — L:$'+leftVol.toFixed(0)+' R:$'+rightVol.toFixed(0)+' ('+monthKey+')',
-      timestamp:now, status:'completed', balance:newBal
-    });
-    paidCount++; totalPaid += proratedSalary;
-  }
-  await rtdb.ref('rankSalaryHistory').push({ month:monthKey, usersPaid:paidCount, totalPaid:totalPaid.toFixed(2), timestamp:now });
-  logAdminAction('distribution','Rank Salary Distribution','ALL',monthKey+' — '+paidCount+' users, $'+totalPaid.toFixed(2));
-  toast('✅ Rank Salary সম্পন্ন! '+paidCount+' জন পেয়েছেন, মোট $'+totalPaid.toFixed(2));
-  set('rankSalaryLastRun','Last run: '+new Date().toLocaleString());
-  loadRankSalaryHistory();
-};
-
-async function loadRankSalaryHistory(){
-  const snap = await rtdb.ref('rankSalaryHistory').get();
-  const tb = document.getElementById('rankSalaryHistTb');
-  if (!tb) return;
-  if (!snap.exists()){ tb.innerHTML='<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:12px">No history</td></tr>'; return; }
-  const list = Object.values(snap.val()).sort((a,b)=>b.timestamp-a.timestamp);
-  tb.innerHTML = list.slice(0,12).map(h=>`<tr>
-    <td style="font-size:.72rem">${h.month||new Date(h.timestamp).toLocaleDateString()}</td>
-    <td>${h.usersPaid}</td>
-    <td style="color:var(--green);font-weight:700">$${h.totalPaid}</td>
-  </tr>`).join('');
-}
 
 // ── BACKUP & RESTORE ──────────────────────────────────
 window.downloadBackup = async type => {
@@ -3015,85 +2457,6 @@ function computeOverview() {
 }
 
 // ── EXPORT CSV ────────────────────────────────────────
-// ── DETAILED REPORTS (Investment/ROI/Commission/Wallet/Generation/Rank/Salary) ──
-let RTDB_USERS_CACHE = null;
-async function fetchRtdbUsersOnce(){
-  if (RTDB_USERS_CACHE) return RTDB_USERS_CACHE;
-  const snap = await rtdb.ref('users').get();
-  RTDB_USERS_CACHE = snap.exists() ? snap.val() : {};
-  return RTDB_USERS_CACHE;
-}
-
-async function buildReportData(type){
-  const uName = uid => ALLU[uid]?.fullName || ALLU[uid]?.username || (uid||'').slice(0,10) || '—';
-
-  if (type==='investment'){
-    return {
-      headers:['User','Amount','ROI %','Status','Earned ROI','Date'],
-      rows: Object.values(ALL_INV).map(p=>[uName(p.uid), '$'+(p.amount||0), (p.roiRate||12)+'%', p.status||'—', '$'+(p.earnedROI||0).toFixed(2), p.createdAt?new Date(p.createdAt).toLocaleDateString():'—'])
-    };
-  }
-  if (type==='roi'){
-    const rows = ALL_TX.filter(t=>t.type==='ROI Payout').map(t=>[uName(t.uid), '$'+(t.amount||0).toFixed(2), t.note||'', new Date(t.timestamp).toLocaleString()]);
-    return { headers:['User','Amount','Note','Date'], rows };
-  }
-  if (type==='commission'){
-    const rows = ALL_TX.filter(t=>t.type==='Sponsor Commission'||t.type==='Direct Investment Commission').map(t=>[uName(t.uid), t.type, '$'+(t.amount||0).toFixed(2), t.note||'', new Date(t.timestamp).toLocaleString()]);
-    return { headers:['User','Type','Amount','Note','Date'], rows };
-  }
-  if (type==='generation'){
-    const rows = ALL_TX.filter(t=>(t.type||'').startsWith('Generation Bonus')).map(t=>[uName(t.uid), t.type, '$'+(t.amount||0).toFixed(2), t.note||'', new Date(t.timestamp).toLocaleString()]);
-    return { headers:['User','Level','Amount','Note','Date'], rows };
-  }
-  if (type==='salary'){
-    const rows = ALL_TX.filter(t=>t.type==='Rank Salary').map(t=>[uName(t.uid), '$'+(t.amount||0).toFixed(2), t.note||'', new Date(t.timestamp).toLocaleString()]);
-    return { headers:['User','Amount','Note','Date'], rows };
-  }
-  if (type==='wallet'){
-    const rtdbUsers = await fetchRtdbUsersOnce();
-    const rows = Object.entries(rtdbUsers).map(([uid,ru])=>[
-      uName(uid), '$'+(parseFloat(ru.walletBalance||0)).toFixed(2),
-      '$'+(parseFloat(ru.income?.sponsor||0)).toFixed(2),
-      '$'+(parseFloat(ru.income?.directInvestComm||0)).toFixed(2),
-      '$'+(parseFloat(ru.income?.roi||0)).toFixed(2),
-      '$'+(parseFloat(ru.income?.matching||0)).toFixed(2),
-      '$'+(parseFloat(ru.income?.cashback||0)).toFixed(2),
-      '$'+(parseFloat(ru.income?.club||0)).toFixed(2),
-      '$'+(parseFloat(ru.income?.rankSalary||0)).toFixed(2),
-      '$'+(parseFloat(ru.income?.generation||0)).toFixed(2)
-    ]);
-    return { headers:['User','Wallet Balance','Sponsor','Direct Invest Comm','ROI','Matching','Cashback','Club','Rank Salary','Generation'], rows };
-  }
-  if (type==='rank'){
-    const rtdbUsers = await fetchRtdbUsersOnce();
-    const rows = Object.entries(rtdbUsers).filter(([,ru])=>ru.currentRank).map(([uid,ru])=>[uName(uid), 'Rank '+ru.currentRank]);
-    return { headers:['User','Current Rank'], rows };
-  }
-  return { headers:[], rows:[] };
-}
-
-window.renderReport = async (type) => {
-  const wrap = document.getElementById('reportTableWrap');
-  wrap.innerHTML = '<table><tbody><tr><td style="text-align:center;color:var(--muted);padding:20px">Loading…</td></tr></tbody></table>';
-  const { headers, rows } = await buildReportData(type);
-  if (!rows.length){ wrap.innerHTML = '<table><tbody><tr><td style="text-align:center;color:var(--muted);padding:20px">কোনো ডাটা নেই</td></tr></tbody></table>'; return; }
-  wrap.innerHTML = `<table>
-    <thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
-    <tbody>${rows.slice(0,300).map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
-  </table>` + (rows.length>300 ? `<div style="font-size:.7rem;color:var(--muted);padding:8px">শুধু প্রথম ৩০০টা দেখানো হচ্ছে — সব দেখতে CSV export করুন (মোট ${rows.length})</div>` : '');
-};
-
-window.exportReportCSV = async () => {
-  const type = document.getElementById('reportTypeSel').value;
-  const { headers, rows } = await buildReportData(type);
-  const csv = [headers, ...rows].map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  a.download = type+'_report.csv';
-  a.click();
-  toast('⬇ Exporting '+type+'_report.csv');
-};
-
 window.exportCSV = type => {
   let rows = [], filename = type+'.csv';
   if (type==='users') {
@@ -3149,7 +2512,7 @@ const PAGE_LABELS = {
   withdrawals:'Withdrawals', investments:'Investments', transactions:'Transactions',
   cashback:'Cashback Pool', clubbonus:'Club Bonus', roi:'ROI Management', voucher:'Gift Voucher', matching:'Matching Bonus',
   tree:'Binary Tree', dashctrl:'Dashboard Control', subadmin:'Sub-Admins', notices:'Notices', actlog:'Activity Log',
-  settings:'Settings', ranks:'Ranks', ranksalary:'Rank Salary', backup:'Backup & Restore', reports:'Reports'
+  settings:'Settings', ranks:'Ranks', backup:'Backup & Restore', reports:'Reports'
 };
 
 window.showPage = (page, el) => {
@@ -3165,8 +2528,6 @@ window.showPage = (page, el) => {
   if(page==='actlog') loadActivityLog();
   if(page==='voucher') loadVouchers();
   if(page==='cashback') loadCashbackHistory();
-  if(page==='ranksalary') { buildRankSalaryUI(); loadRankSalaryHistory(); }
-  if(page==='reports') { RTDB_USERS_CACHE = null; renderReport(document.getElementById('reportTypeSel').value); }
   if(page==='dashctrl') { loadGlobalToggles(); populatePerUserSel(); }
   if(page==='subadmin') loadSubAdmins();
   if(page==='backup') loadBackupHistory();

@@ -42,7 +42,7 @@ nav a .ic{width:17px;text-align:center;font-size:.9rem}
 @keyframes noticeScroll{ 0%{transform:translateX(0)} 100%{transform:translateX(-100%)} }
 .main{margin-left:245px;padding-top:56px;min-height:100vh;transition:margin-left .3s}
 .main.with-notice{padding-top:86px}
-.page{display:none;padding:20px;overflow-x:hidden;max-width:100%}
+.page{display:none;padding:20px}
 .page.active{display:block}
 .pg-title{font-size:1.25rem;font-weight:800;margin-bottom:16px}
 .pg-title span{font-size:.8rem;color:var(--muted);font-weight:400;margin-left:6px}
@@ -78,13 +78,6 @@ tr:last-child td{border-bottom:none}
 .fg label{display:block;font-size:.73rem;color:var(--muted);margin-bottom:4px;font-weight:600}
 .fg input,.fg select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:9px 12px;color:var(--text);font-size:.85rem;outline:none;transition:.2s}
 .fg input:focus,.fg select:focus{border-color:var(--accent)}
-.clr-wrap{position:relative}
-.clr-wrap input{padding-right:32px!important}
-.clr-btn{position:absolute;right:9px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--muted);font-size:.85rem;display:none;line-height:1;padding:2px}
-.clr-btn:hover{color:var(--red)}
-.acc-info-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 12px;overflow:hidden}
-.acc-info-lbl{font-size:.66rem;color:var(--muted);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
-.acc-info-val{font-size:.85rem;font-weight:700;word-break:break-word}
 .btn{padding:8px 16px;border-radius:9px;font-size:.79rem;font-weight:700;border:none;cursor:pointer;transition:.15s}
 .btn:hover{opacity:.85}
 .btn-p{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
@@ -104,8 +97,6 @@ tr:last-child td{border-bottom:none}
 .tree-box.you-node{border-color:var(--accent);background:rgba(0,198,255,.08)}
 .tree-box.empty-node{border-style:dashed;border-color:var(--muted);opacity:.4}
 .tree-name{font-weight:700;font-size:.75rem;max-width:110px;overflow-wrap:break-word;white-space:normal;line-height:1.25}
-.tree-expand-btn{font-size:.62rem;color:var(--accent);text-align:center;margin-top:3px;cursor:pointer;font-weight:700;user-select:none}
-.tree-expand-btn:hover{text-decoration:underline}
 .tree-status{font-size:.62rem;margin-top:1px}
 .tree-extra{font-size:.6rem;color:var(--muted);margin-top:2px;line-height:1.5}
 .rank-stars{font-size:1.5rem;letter-spacing:3px;margin:6px 0 3px}
@@ -154,15 +145,6 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
   .cards-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:440px){.cards-grid{grid-template-columns:1fr}}
-@media(max-width:600px){
-  .tb-right{gap:6px}
-  .theme-btn-txt,.logout-txt{display:none}
-  .theme-btn,.btn.btn-o.btn-sm{padding:6px 8px!important}
-  #headerBalance{padding:5px 8px}
-  #incomeTicker{display:none!important}
-}
-.tb-right{overflow-x:auto;scrollbar-width:none}
-.tb-right::-webkit-scrollbar{display:none}
 </style>
 </head>
 <body>
@@ -215,22 +197,21 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:9px">
     <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-    <button id="pgBackBtn" onclick="goBackToOverview()" title="Back" style="display:none;background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;width:30px;height:30px;font-size:1rem;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0">←</button>
     <span class="pg-label" id="pgLabel">Overview</span>
   </div>
-  <div class="tb-right" id="tbRight">
-    <div id="headerBalance" onclick="showPage('wallet',null)" title="Main Wallet balance (USDT) — click to open Wallet" style="cursor:pointer;display:flex;align-items:center;gap:6px;background:rgba(0,198,255,.1);border:1px solid rgba(0,198,255,.3);border-radius:20px;padding:5px 10px;font-size:.78rem;color:var(--accent);font-weight:800;white-space:nowrap;flex-shrink:0">
-      <span style="display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#26A17B;color:#fff;font-size:.65rem;font-weight:900;flex-shrink:0">₮</span>
-      <span id="headerBalanceVal">0.00</span>
+  <div class="tb-right">
+    <div id="headerBalance" onclick="showPage('wallet',null)" title="Main Wallet balance — click to open Wallet" style="cursor:pointer;display:flex;align-items:center;gap:6px;background:rgba(0,198,255,.1);border:1px solid rgba(0,198,255,.3);border-radius:20px;padding:5px 12px;font-size:.78rem;color:var(--accent);font-weight:800;white-space:nowrap">
+      <span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--accent);color:#062;font-size:.6rem;font-weight:900;color:#000">₮</span>
+      <span id="headerBalanceVal">0.00</span><span style="color:var(--muted);font-weight:600;font-size:.68rem">USDT</span>
     </div>
-    <div id="incomeTicker" style="display:none;align-items:center;gap:6px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:20px;padding:5px 12px;font-size:.75rem;color:#fff;font-weight:700;white-space:nowrap;flex-shrink:0">
+    <div id="incomeTicker" style="display:none;align-items:center;gap:6px;background:rgba(10, 20, 17, 0.1);border:1px solid rgba(16,185,129,.3);border-radius:20px;padding:5px 12px;font-size:.75rem;color:var(--green);font-weight:700;white-space:nowrap">
       <span>💲</span><span id="incomeTickerText">$0.00</span>
     </div>
-    <button id="activityBellBtn" onclick="clearActivityBadge()" style="position:relative;background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 9px;font-size:.9rem;cursor:pointer;flex-shrink:0">
+    <button id="activityBellBtn" onclick="clearActivityBadge()" style="position:relative;background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 9px;font-size:.9rem;cursor:pointer">
       🔔<span id="activityBellBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;border-radius:50%;width:16px;height:16px;font-size:.6rem;line-height:16px;text-align:center">0</span>
     </button>
-    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" style="flex-shrink:0">☀️<span class="theme-btn-txt"> Light</span></button>
-    <button class="btn btn-o btn-sm" onclick="doLogout()" style="flex-shrink:0;white-space:nowrap">🚪<span class="logout-txt"> Logout</span></button>
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️ Light</button>
+    <button class="btn btn-o btn-sm" onclick="doLogout()">Logout</button>
   </div>
 </div>
 
@@ -376,36 +357,15 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     </div>
     <div class="card">
       <div class="card-title">Account Info</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div class="acc-info-box">
-          <div class="acc-info-lbl">Member ID</div>
-          <div class="acc-info-val" id="infoUID" style="font-family:monospace;font-size:.68rem;word-break:break-all">—</div>
-        </div>
-        <div class="acc-info-box">
-          <div class="acc-info-lbl">Username</div>
-          <div class="acc-info-val" id="infoUsername">—</div>
-        </div>
-        <div class="acc-info-box">
-          <div class="acc-info-lbl">Sponsor</div>
-          <div class="acc-info-val" id="infoSponsor">—</div>
-        </div>
-        <div class="acc-info-box">
-          <div class="acc-info-lbl">Joined</div>
-          <div class="acc-info-val" id="infoJoined">—</div>
-        </div>
-        <div class="acc-info-box">
-          <div class="acc-info-lbl">Rank</div>
-          <div class="acc-info-val" id="infoRank">No Rank</div>
-        </div>
-        <div class="acc-info-box">
-          <div class="acc-info-lbl">Status</div>
-          <div class="acc-info-val" id="infoStatus">—</div>
-        </div>
-        <div class="acc-info-box" style="grid-column:1/-1">
-          <div class="acc-info-lbl">Signup Method</div>
-          <div class="acc-info-val" id="infoMethod">—</div>
-        </div>
-      </div>
+      <table style="width:100%;font-size:.8rem">
+        <tr><td style="color:var(--muted);padding:6px 0;width:120px">Member ID</td><td id="infoUID" style="font-family:monospace;font-size:.72rem;word-break:break-all">—</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Username</td><td id="infoUsername">—</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Sponsor</td><td id="infoSponsor">—</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Joined</td><td id="infoJoined">—</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Rank</td><td id="infoRank">No Rank</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Status</td><td id="infoStatus">—</td></tr>
+        <tr><td style="color:var(--muted);padding:6px 0">Signup Method</td><td id="infoMethod">—</td></tr>
+      </table>
     </div>
   </div>
 </div>
@@ -462,15 +422,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     <div id="treeSummaryCircle" style="display:flex;justify-content:center;padding:14px 0"></div>
   </div>
   <div class="card">
-    <div class="card-title">Tree View <small>Click a node to expand/collapse its branch</small></div>
-    <div class="fg" style="margin-bottom:14px">
-      <label>Search Member (by Username)</label>
-      <div style="display:flex;gap:8px">
-        <input type="text" id="treeSearchInput" placeholder="Enter username…" onkeydown="if(event.key==='Enter')searchTreeMember()"/>
-        <button class="btn btn-p" style="flex-shrink:0" onclick="searchTreeMember()">🔎 Search</button>
-      </div>
-      <div id="treeSearchResult" style="margin-top:8px;font-size:.78rem"></div>
-    </div>
+    <div class="card-title">Tree View <small>3 levels shown — Active count / Carry / Invested</small></div>
     <div class="tree-container" id="treeContainer">
       <div style="text-align:center;color:var(--muted);padding:30px">Loading tree…</div>
     </div>
@@ -479,7 +431,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     <div class="card-title">All Downline Members</div>
     <div class="tw">
       <table>
-        <thead><tr><th>Username</th><th>UID</th><th>Level</th><th>Side</th><th>Status</th><th>Invested</th><th>Withdrawn</th><th>Joined</th></tr></thead>
+        <thead><tr><th>User ID</th><th>UID</th><th>Level</th><th>Side</th><th>Status</th><th>Invested</th><th>Withdrawn</th><th>Joined</th></tr></thead>
         <tbody id="downlineTbody">
           <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:16px">Loading…</td></tr>
         </tbody>
@@ -529,7 +481,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     </div>
   </div>
   <div class="card">
-    <div class="card-title">Transaction <small id="txCountLbl"></small></div>
+    <div class="card-title">Transaction History <small id="txCountLbl"></small></div>
     <div class="tw">
       <table>
         <thead><tr><th>Date & Time</th><th>Type</th><th>Note</th><th>Amount</th><th>Status</th></tr></thead>
@@ -844,7 +796,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 
   <div class="card" style="max-width:640px">
     <div class="card-title">Redeem by Code (optional)</div>
-    <div class="fg"><label>Voucher Code</label><input type="text" id="vchCodeInput" placeholder="e.g. GIFT-XXXX-XXXX"/></div>
+    <div class="fg"><label>Voucher Code</label><input type="text" id="vchCodeInput" placeholder="e.g. LLM-XXXX-XXXX"/></div>
     <button class="btn btn-p" onclick="redeemVoucherCode()" style="width:100%">🎟 Redeem Code</button>
   </div>
 
@@ -964,7 +916,7 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
   <div class="bn-item" onclick="showPage('fundrequest',null)"><span class="bn-ic">💰</span><span>Fund Request</span></div>
   <div class="bn-item" onclick="showPage('wallet',null)"><span class="bn-ic">💸</span><span>Withdraw</span></div>
   <div class="bn-item" onclick="showPage('tree',null)"><span class="bn-ic">🌳</span><span>Binary Tree</span></div>
-  <div class="bn-item" onclick="showPage('income',null)"><span class="bn-ic">🧾</span><span>Transaction</span></div>
+  <div class="bn-item" onclick="showPage('income',null)"><span class="bn-ic">🧾</span><span>Transaction History</span></div>
 </div>
 
 <!-- ===== SUPPORT CHATBOX (new) ===== -->
@@ -1013,8 +965,6 @@ let CU   = null;
 let UD   = null;
 let ALLU = {};
 let SETTINGS = {};
-let TREE_EXPANDED = new Set(); // uids whose children the user has clicked to expand
-let PARENT_MAP = {};           // uid -> parentUid, rebuilt every renderBinaryTree() call
 
 // ── AUTH GUARD ───────────────────────────────────────
 auth.onAuthStateChanged(async user => {
@@ -1457,43 +1407,6 @@ function renderOwnPayHistory(list) {
   }).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No history yet</td></tr>';
 }
 
-// ── TREE: EXPAND/COLLAPSE + SEARCH ────────────────────
-window.toggleTreeNode = (uid) => {
-  if (TREE_EXPANDED.has(uid)) TREE_EXPANDED.delete(uid);
-  else TREE_EXPANDED.add(uid);
-  renderBinaryTree();
-};
-
-window.searchTreeMember = () => {
-  const q = document.getElementById('treeSearchInput').value.trim().toLowerCase();
-  const resultEl = document.getElementById('treeSearchResult');
-  if (!q) { resultEl.innerHTML = ''; return; }
-
-  const found = Object.values(ALLU).find(u =>
-    (u.username || '').toLowerCase() === q
-  ) || Object.values(ALLU).find(u =>
-    (u.username || '').toLowerCase().includes(q)
-  );
-
-  if (!found || PARENT_MAP[found.id] === undefined) {
-    resultEl.innerHTML = '<span style="color:var(--red)">❌ এই username আপনার টিমে পাওয়া যায়নি</span>';
-    return;
-  }
-
-  // expand every ancestor node so the found member becomes visible in the tree
-  let cur = found.id;
-  while (cur && PARENT_MAP[cur]) {
-    TREE_EXPANDED.add(PARENT_MAP[cur]);
-    cur = PARENT_MAP[cur];
-  }
-  renderBinaryTree();
-  resultEl.innerHTML = `<span style="color:var(--green)">✅ পাওয়া গেছে: <b>${found.username || found.memberId}</b> — Tree-তে expand করে দেখানো হয়েছে, নিচে স্ক্রল করুন</span>`;
-  setTimeout(() => {
-    const node = document.getElementById('tnode-' + found.id);
-    if (node) node.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, 150);
-};
-
 // ── BINARY TREE (enhanced: active count / carry / invested / withdrawn) ──
 // ── EMPTY TREE SLOT → REGISTER NEW MEMBER HERE ────────
 window.goRegisterHere = (sponsorUid, side) => {
@@ -1516,21 +1429,19 @@ function renderBinaryTree() {
   let leftInvested = 0, rightInvested = 0, leftWithdrawn = 0, rightWithdrawn = 0;
 
   const allDownline = [];
-  PARENT_MAP = {};
-  function bfsCount(uid, side, level, parentUid) {
+  function bfsCount(uid, side, level) {
     if (!uid || !ALLU[uid]) return;
     const u = ALLU[uid];
-    PARENT_MAP[uid] = parentUid || null;
     const inv = parseFloat(u.totalInvested||0);
     const wd  = parseFloat(u.totalWithdrawn||0);
     if (side === 'left') { leftCount++; if(u.isActive) leftActive++; leftInvested+=inv; leftWithdrawn+=wd; }
     else if (side === 'right') { rightCount++; if(u.isActive) rightActive++; rightInvested+=inv; rightWithdrawn+=wd; }
     allDownline.push({ u, side, level });
-    if (u.leftChild)  bfsCount(u.leftChild,  side||'left',  level+1, uid);
-    if (u.rightChild) bfsCount(u.rightChild, side||'right', level+1, uid);
+    if (u.leftChild)  bfsCount(u.leftChild,  side||'left',  level+1);
+    if (u.rightChild) bfsCount(u.rightChild, side||'right', level+1);
   }
-  if (leftChild)  bfsCount(leftChild,  'left',  1, CU.uid);
-  if (rightChild) bfsCount(rightChild, 'right', 1, CU.uid);
+  if (leftChild)  bfsCount(leftChild,  'left',  1);
+  if (rightChild) bfsCount(rightChild, 'right', 1);
 
   // Carry = business volume net of withdrawals (carry decreases when a withdrawal happens)
   const leftCarryVol  = Math.max(0, leftInvested  - leftWithdrawn);
@@ -1590,48 +1501,27 @@ function renderBinaryTree() {
         ${label ? `<div style="font-size:.64rem;color:var(--muted);margin-top:4px">${label}</div>` : ''}
       </div>`;
     }
-    const name   = u ? (u.username || u.memberId || u.id || 'User') : '?';
+    const name   = u ? (u.memberId || u.id || 'User') : '?';
     const active = u ? u.isActive : false;
     const inv    = u ? parseFloat(u.totalInvested||0) : 0;
     const wd     = u ? parseFloat(u.totalWithdrawn||0) : 0;
     const cls    = isYou ? 'you-node' : (active ? 'active-node' : '');
-    const hasKids = u && (u.leftChild || u.rightChild);
-    const expanded = uid && TREE_EXPANDED.has(uid);
-    const toggleBtn = (!isYou && hasKids)
-      ? `<div class="tree-expand-btn" onclick="toggleTreeNode('${uid}')">${expanded ? '▲ Collapse' : '▼ Expand'}</div>` : '';
-    return `<div class="tree-node" id="tnode-${uid}">
+    return `<div class="tree-node">
       <div class="tree-box ${cls}" title="${name}">
         <div class="tree-name">${isYou ? '👤 You' : name}</div>
         <div class="tree-status"><span class="pill ${active?'pg':'py'}" style="font-size:.6rem">${active?'Active':'Inactive'}</span></div>
         ${!isYou ? `<div class="tree-extra">Inv: $${inv.toFixed(0)} | WD: $${wd.toFixed(0)}</div>` : ''}
       </div>
-      ${toggleBtn}
       ${label ? `<div style="font-size:.64rem;color:var(--muted);margin-top:4px">${label}</div>` : ''}
     </div>`;
   }
-
-  // childrenRow: renders a node's left/right children.
-  // forceShow=true always renders (used for the fixed first 2 levels);
-  // beyond that, children only render if the parent uid is in TREE_EXPANDED
-  // (user clicked "▼ Expand") — this is the dropdown behaviour for deep trees.
-  function childrenRow(uid, forceShow, depth) {
-    if (depth > 25) return ''; // safety guard against runaway/corrupt data
+  function lvl2(uid) {
     const u = uid && ALLU[uid];
-    if (!u) return '';
-    const lc = u.leftChild || null;
-    const rc = u.rightChild || null;
-    if (!lc && !rc) return '';
-    if (!forceShow && !TREE_EXPANDED.has(uid)) return '';
-    return `<div style="display:flex;gap:16px;position:relative;margin-top:14px">
-      <div style="position:absolute;top:-7px;left:25%;right:25%;height:1px;background:var(--border)"></div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:0">
-        ${makeNode(lc, depth<=2?'L':null, false, uid, 'left')}
-        ${childrenRow(lc, false, depth+1)}
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:0">
-        ${makeNode(rc, depth<=2?'R':null, false, uid, 'right')}
-        ${childrenRow(rc, false, depth+1)}
-      </div>
+    const lc = u ? u.leftChild  : null;
+    const rc = u ? u.rightChild : null;
+    return `<div style="display:flex;gap:16px;position:relative">
+      <div style="position:absolute;top:0;left:25%;right:25%;height:1px;background:var(--border)"></div>
+      ${makeNode(lc,'L',false,uid,'left')}${makeNode(rc,'R',false,uid,'right')}
     </div>`;
   }
 
@@ -1645,13 +1535,13 @@ function renderBinaryTree() {
           <div style="width:1px;height:0px"></div>
           ${makeNode(leftChild,'LEFT',false,CU.uid,'left')}
           <div style="width:1px;height:16px;background:${leftChild?'var(--border)':'transparent'}"></div>
-          ${childrenRow(leftChild, true, 1)}
+          ${lvl2(leftChild)}
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:0">
           <div style="width:1px;height:0px"></div>
           ${makeNode(rightChild,'RIGHT',false,CU.uid,'right')}
           <div style="width:1px;height:16px;background:${rightChild?'var(--border)':'transparent'}"></div>
-          ${childrenRow(rightChild, true, 1)}
+          ${lvl2(rightChild)}
         </div>
       </div>
     </div>`;
@@ -1659,7 +1549,7 @@ function renderBinaryTree() {
   downlineTb.innerHTML = allDownline.length === 0
     ? '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:16px">No downline yet</td></tr>'
     : allDownline.map(({u,side,level}) => `<tr>
-        <td style="font-weight:700;font-family:monospace;font-size:.72rem">${u.username || u.memberId || u.id}</td>
+        <td style="font-weight:700;font-family:monospace;font-size:.72rem">${u.memberId || u.id}</td>
         <td style="color:var(--muted);font-family:monospace;font-size:.68rem">${u.id}</td>
         <td><span class="pill pb">Level ${level}</span></td>
         <td><span class="pill ${side==='left'?'pb':'pp'}">${side.toUpperCase()}</span></td>
@@ -1682,16 +1572,6 @@ function renderRank(matching, teamSales) {
     {name:'Six Star',   stars:'6⭐',        mReq:30000,  sReq:300000},
     {name:'Seven Star', stars:'7⭐',        mReq:100000, sReq:10000000}
   ];
-  // If admin has manually locked this user's rank, show that instead of the
-  // auto-computed one — the calculation is skipped entirely for this user.
-  if (UD && UD.rankOverride && UD.rank) {
-    const forced = ranks.find(r => r.name === UD.rank) || ranks[0];
-    set('rankStarsD', forced.stars);
-    set('rankNameD',  forced.name + ' (set by admin)');
-    set('infoRank',   forced.name);
-    set('rankNextHint', '🔒 Rank manually set by admin');
-    return;
-  }
   let idx = 0;
   for(let i=1;i<ranks.length;i++) {
     if(matching>=ranks[i].mReq && teamSales>=ranks[i].sReq) idx=i;
@@ -2107,26 +1987,6 @@ window.submitInvestment = async () => {
     await fsdb.collection('users').doc(CU.uid).update({ totalInvested:newInv });
     UD.totalInvested = newInv;
 
-    // Direct referral commission — credited to sponsor immediately, same % and
-    // logic as admin.html's approveInv() (kept in sync so both investment paths
-    // — instant P2P and admin-approved — pay the sponsor identically).
-    const refPct  = parseFloat(SETTINGS.investRefPct||5)/100;
-    const commAmt = amt * refPct;
-    if (UD.sponsorId && commAmt > 0) {
-      const sRef  = rtdb.ref('users/'+UD.sponsorId+'/walletBalance');
-      const sSnap = await sRef.get();
-      const sNewBal = parseFloat(sSnap.exists()?sSnap.val():0) + commAmt;
-      await sRef.set(sNewBal);
-      const iRef  = rtdb.ref('users/'+UD.sponsorId+'/income/directInvestComm');
-      const iSnap = await iRef.get();
-      await iRef.set(parseFloat(iSnap.exists()?iSnap.val():0) + commAmt);
-      await rtdb.ref('transactions/'+UD.sponsorId).push({
-        type:'Direct Investment Commission', amount:commAmt,
-        note:(refPct*100)+'% of $'+amt+' investment by '+(UD.fullName||UD.username||CU.uid),
-        timestamp:Date.now(), status:'completed', balance:sNewBal
-      });
-    }
-
     await rtdb.ref('transactions/'+CU.uid).push({
       type:'Investment Payment', amount:-amt,
       note:'Paid from P2P Wallet — no fee, full amount invested', timestamp:Date.now(), status:'completed'
@@ -2337,25 +2197,16 @@ window.submitWithdraw = async () => {
   const bal = parseFloat(UD?.walletBalance||0);
   if (amt > bal)       { toast('Insufficient Main Wallet balance'); return; }
   try {
-    const newBal = bal - amt; // deduct immediately — refunded automatically if admin rejects
-    await rtdb.ref('users/'+CU.uid+'/walletBalance').set(newBal);
-    UD.walletBalance = newBal;
-    const wdRef = await rtdb.ref('withdrawals/'+CU.uid).push({
+    await rtdb.ref('withdrawals/'+CU.uid).push({
       amount:    amt,
       address:   addr,
       status:    'pending',
       createdAt: Date.now()
     });
-    await rtdb.ref('transactions/'+CU.uid).push({
-      type: 'Withdrawal Requested', amount: -amt,
-      note: 'Pending admin approval — deducted from Main Wallet', timestamp: Date.now(),
-      status: 'pending', balance: newBal
-    });
-    toast('✅ Withdrawal request submitted! $'+amt.toFixed(2)+' has been held from your Main Wallet.');
+    toast('✅ Withdrawal request submitted!');
     document.getElementById('wdAmt').value  = '';
     document.getElementById('wdAddr').value = '';
     document.getElementById('wdPreview').style.display='none';
-    renderWalletCards();
   } catch(e) { toast('Error: '+e.message); }
 };
 
@@ -2563,7 +2414,6 @@ window.showPage = (page, el) => {
     fundrequest:'Fund Request'
   };
   document.getElementById('pgLabel').textContent = labels[page]||page;
-  document.getElementById('pgBackBtn').style.display = (page==='overview') ? 'none' : 'flex';
   closeSidebar();
   loadNoticeBar(); // notice bar only shows on Overview — re-check on every page switch
   if(page==='tree' && UD) renderBinaryTree();
@@ -2575,11 +2425,6 @@ window.showPage = (page, el) => {
   // Bottom-nav active state sync
   const bnMap = { roi:0, wallet:1, tree:2, income:3 };
   document.querySelectorAll('.bn-item').forEach((b,i)=>b.classList.toggle('active', bnMap[page]===i));
-};
-
-window.goBackToOverview = () => {
-  const overviewLink = document.querySelector('nav a[onclick*="showPage(\'overview\'"]');
-  showPage('overview', overviewLink || null);
 };
 
 window.toggleSidebar = ()=>{
@@ -2827,35 +2672,6 @@ window.submitFundRequest = async () => {
     loadFundRequestPage();
   } catch(e) { toast('Error: ' + e.message); }
 };
-
-// ── CLEAR (✕) BUTTON ON ALL EDITABLE TEXT INPUTS ──────
-function initClearButtons() {
-  document.querySelectorAll('.fg input[type="text"]:not([readonly]), .fg input[type="password"]:not([readonly])').forEach(inp => {
-    if (inp.dataset.clrInit) return; // already wrapped
-    inp.dataset.clrInit = '1';
-    const wrap = document.createElement('div');
-    wrap.className = 'clr-wrap';
-    inp.parentNode.insertBefore(wrap, inp);
-    wrap.appendChild(inp);
-    const btn = document.createElement('span');
-    btn.className = 'clr-btn';
-    btn.textContent = '✕';
-    btn.title = 'Clear';
-    wrap.appendChild(btn);
-    const sync = () => { btn.style.display = inp.value ? 'block' : 'none'; };
-    inp.addEventListener('input', sync);
-    sync();
-    btn.addEventListener('click', () => {
-      inp.value = '';
-      inp.focus();
-      inp.dispatchEvent(new Event('input', { bubbles: true }));
-      sync();
-    });
-  });
-}
-document.addEventListener('DOMContentLoaded', initClearButtons);
-// Also re-run shortly after login/data-load in case fields were re-rendered
-setTimeout(initClearButtons, 1500);
 </script>
 </body>
 </html>

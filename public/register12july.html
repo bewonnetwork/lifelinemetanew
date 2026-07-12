@@ -667,21 +667,18 @@ document.getElementById('username').addEventListener('input',function(){
   },600);
 });
 
-/* ── DUPLICATE CHECK: EMAIL (real check via Firestore, not the unreliable
-   fetchSignInMethodsForEmail — Firebase's email-enumeration protection makes
-   that always return an empty list, so it used to show "available" even for
-   emails that were already taken) ── */
+/* ── DUPLICATE CHECK: EMAIL ── */
 let emailTimer=null;
 document.getElementById('email').addEventListener('input',function(){
   clearTimeout(emailTimer);
-  const val=this.value.trim().toLowerCase();
+  const val=this.value.trim();
   const msgEl=document.getElementById('emailMsg');
   this.classList.remove('field-error','field-ok');
   if(!val||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){msgEl.textContent='';return;}
   emailTimer=setTimeout(async function(){
     try{
-      const snap=await db.collection('users').where('email','==',val).limit(1).get();
-      if(!snap.empty){
+      const methods=await auth.fetchSignInMethodsForEmail(val);
+      if(methods&&methods.length>0){
         document.getElementById('email').classList.add('field-error');
         msgEl.style.color='#dc2626';
         msgEl.textContent='⚠ This email is already registered. Please sign in or use a different email.';
@@ -869,61 +866,10 @@ async function loadTreePicker(){
     }
     scroll.innerHTML='';
     scroll.appendChild(renderTreeNode(rootId,nodes));
-    applyPendingDashboardPlacement();
   }catch(err){
     console.error(err);
     scroll.innerHTML='<div class="tree-loading">Could not load tree. Tap Refresh to try again.</div>';
   }
-}
-
-/* ── DASHBOARD-LINKED EXACT PLACEMENT ──────────────────────────────────────
-   When a user taps an empty slot on the dashboard's Binary Tree page, the
-   dashboard sends them here with ?ref=<sponsorCode>&side=<left|right>
-   &placement=<parentUid>. We use that to auto-select the EXACT same slot in
-   the tree picker below — no manual browsing needed, and the new member is
-   placed exactly where the empty slot was clicked. ── */
-let pendingDashboardPlacement=null; // {parentId, side}
-(function readDashboardPlacementFromLink(){
-  const params=new URLSearchParams(window.location.search);
-  const side=params.get('side');
-  const placementParentId=params.get('placement');
-  if(placementParentId&&(side==='left'||side==='right')){
-    pendingDashboardPlacement={parentId:placementParentId,side};
-  }
-})();
-
-function applyPendingDashboardPlacement(){
-  if(!pendingDashboardPlacement)return;
-  const btn=document.querySelector('.tree-slot-btn[data-parent="'+pendingDashboardPlacement.parentId+'"][data-side="'+pendingDashboardPlacement.side+'"]');
-  if(btn){
-    btn.click();
-    btn.scrollIntoView({behavior:'smooth',block:'center'});
-    const banner=document.getElementById('selectedPlacementBox');
-    if(banner){
-      const t=document.getElementById('selectedPlacementText');
-      if(t)t.textContent='✓ '+t.textContent+' (position chosen from your dashboard tree)';
-    }
-  }else{
-    // The exact slot from the dashboard link is no longer empty (someone else
-    // took it in the meantime) — let the user pick a fresh spot manually.
-    const box=document.getElementById('treePickerBox');
-    if(box){
-      const warn=document.createElement('div');
-      warn.style.cssText='background:#fef3c7;border:1px solid #f59e0b;border-radius:10px;padding:10px 12px;margin-top:10px;font-size:13px;color:#92400e';
-      warn.textContent='⚠ The exact slot you tapped on the dashboard is no longer available. Please pick another empty slot below.';
-      box.insertBefore(warn,document.getElementById('treeScroll'));
-    }
-  }
-  pendingDashboardPlacement=null; // only auto-apply once
-}
-
-// If we arrived from the dashboard with an exact slot, jump straight into
-// "Pick exact position from tree" mode and auto-select it.
-if(pendingDashboardPlacement){
-  const placementSelect=document.getElementById('placement');
-  placementSelect.value='tree';
-  document.getElementById('treePickerBox').style.display='block';
-  loadTreePicker();
 }
 
 function renderTreeNode(id,nodes){
@@ -950,8 +896,6 @@ function renderTreeNode(id,nodes){
       const slotBtn=document.createElement('button');
       slotBtn.type='button';
       slotBtn.className='tree-slot-btn';
-      slotBtn.setAttribute('data-parent',data.id);
-      slotBtn.setAttribute('data-side',side);
       slotBtn.textContent='+ Empty '+side.charAt(0).toUpperCase()+side.slice(1)+' slot';
       slotBtn.addEventListener('click',function(){
         document.querySelectorAll('.tree-slot-btn.selected').forEach(b=>b.classList.remove('selected'));
@@ -1057,14 +1001,6 @@ document.getElementById('registerForm').addEventListener('submit',async function
       if(p!==p2){setMsg('Passwords do not match!','error');btn.disabled=false;return;}
       if(p.length<6){setMsg('Password must be at least 6 characters.','error');btn.disabled=false;return;}
 
-      try{
-        const esnap=await db.collection('users').where('email','==',email.toLowerCase()).limit(1).get();
-        if(!esnap.empty){
-          setMsg('⚠ This email is already registered. Please sign in or use a different email.','error');
-          document.getElementById('email').classList.add('field-error');
-          btn.disabled=false;return;
-        }
-      }catch(err){}
       try{
         const methods=await auth.fetchSignInMethodsForEmail(email);
         if(methods&&methods.length>0){
