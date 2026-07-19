@@ -30,12 +30,14 @@
   --glow-blue: rgba(56,189,248,0.12);
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
+html{scroll-behavior:smooth;overflow-x:hidden;width:100%;}
 body{
   font-family:'Inter',sans-serif;
   background:var(--bg);
   color:var(--text);
   overflow-x:hidden;
+  width:100%;
+  position:relative;
 }
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-thumb{background:linear-gradient(var(--gold),var(--blue));border-radius:10px;}
@@ -79,6 +81,33 @@ nav a:hover{color:var(--text);background:rgba(255,255,255,0.05);}
 .btn-blue{background:linear-gradient(135deg,#0EA5E9,var(--blue));color:#fff;box-shadow:0 4px 20px rgba(56,189,248,0.25);}
 .btn-blue:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(56,189,248,0.4);}
 
+/* ─── HAMBURGER (mobile only) ─── */
+.hamburger{
+  display:none;flex-direction:column;justify-content:center;gap:5px;
+  width:38px;height:38px;background:none;border:none;cursor:pointer;padding:0;z-index:1001;
+}
+.hamburger span{width:22px;height:2px;background:var(--text);border-radius:2px;transition:.3s;}
+.hamburger.active span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.active span:nth-child(2){opacity:0;}
+.hamburger.active span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+/* ─── MOBILE NAV OVERLAY ─── */
+.mobile-nav{
+  position:fixed;top:70px;left:0;right:0;bottom:0;
+  background:rgba(2,8,18,0.98);backdrop-filter:blur(20px);
+  z-index:997;transform:translateX(100%);transition:transform .35s ease;
+  display:flex;flex-direction:column;padding:24px 6%;gap:2px;overflow-y:auto;
+}
+.mobile-nav.active{transform:translateX(0);}
+.mobile-nav a{
+  padding:15px 8px;border-bottom:1px solid var(--border);
+  color:var(--text);text-decoration:none;font-size:16px;font-weight:500;
+}
+.mobile-nav a:active{color:var(--gold);}
+.mobile-nav .mobile-nav-btns{display:flex;flex-direction:column;gap:12px;margin-top:24px;}
+.mobile-nav .mobile-nav-btns .btn{width:100%;justify-content:center;padding:13px 20px;font-size:14.5px;}
+body.nav-open{overflow:hidden;}
+
 /* ─── TICKER ─── */
 .ticker-wrap{
   margin-top:70px;
@@ -114,7 +143,7 @@ nav a:hover{color:var(--text);background:rgba(255,255,255,0.05);}
 
 /* ─── HERO ─── */
 .hero{
-  position:relative;min-height:100vh;
+  position:relative;min-height:100vh;min-height:100svh;
   padding:50px 5% 60px;
   display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;
   max-width:1400px;margin:0 auto;z-index:1;
@@ -346,6 +375,56 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:64px 5% 
 .scroll-top{bottom:148px;right:22px;background:var(--card2);border:1px solid var(--border2);color:var(--text);font-size:18px;}
 .scroll-top:hover{background:var(--gold);color:#000;border-color:var(--gold);}
 
+/* ─── CHAT WIDGET ─── */
+.chat-fab{bottom:22px;left:22px;background:linear-gradient(135deg,var(--blue),#0EA5E9);box-shadow:0 8px 25px rgba(56,189,248,0.35);}
+.chat-fab:hover{transform:scale(1.08);}
+.chat-panel{
+  position:fixed;bottom:88px;left:22px;z-index:1000;
+  width:350px;max-width:92vw;height:500px;max-height:76vh;
+  background:var(--bg2);border:1px solid var(--border2);border-radius:18px;
+  box-shadow:0 30px 80px rgba(0,0,0,0.7);
+  display:flex;flex-direction:column;overflow:hidden;
+  transform:translateY(16px) scale(0.97);opacity:0;pointer-events:none;
+  transition:transform .25s ease,opacity .25s ease;
+}
+.chat-panel.active{transform:translateY(0) scale(1);opacity:1;pointer-events:auto;}
+.chat-head{padding:14px 16px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.chat-head-title{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:700;}
+.chat-head-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
+.chat-close{cursor:pointer;color:var(--muted);font-size:20px;line-height:1;padding:2px 6px;border-radius:6px;}
+.chat-close:hover{color:var(--text);background:rgba(255,255,255,0.06);}
+.chat-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;}
+.chat-tab{flex:1;text-align:center;padding:11px 6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;font-family:'Inter',sans-serif;transition:.2s;}
+.chat-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.chat-pane{flex:1;display:none;flex-direction:column;overflow:hidden;min-height:0;}
+.chat-pane.active{display:flex;}
+.chat-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;}
+.chat-msg{max-width:82%;padding:9px 12px;border-radius:13px;font-size:12.8px;line-height:1.55;}
+.chat-msg.bot{background:var(--card2);align-self:flex-start;border-bottom-left-radius:3px;}
+.chat-msg.me{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;align-self:flex-end;border-bottom-right-radius:3px;font-weight:500;}
+.chat-quick{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px;flex-shrink:0;}
+.chat-quick span{padding:5px 11px;border-radius:100px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.25);color:var(--blue2);font-size:11px;cursor:pointer;transition:.2s;}
+.chat-quick span:hover{background:rgba(56,189,248,0.18);}
+.chat-input-row{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);flex-shrink:0;}
+.chat-input-row input{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:10px 12px;color:var(--text);font-size:12.8px;outline:none;font-family:'Inter',sans-serif;}
+.chat-input-row input:focus{border-color:rgba(250,204,21,0.4);}
+.chat-send{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;color:#000;font-size:15px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.chat-login{padding:26px 20px;display:flex;flex-direction:column;gap:14px;justify-content:center;height:100%;}
+.chat-login-icon{font-size:30px;text-align:center;margin-bottom:2px;}
+.chat-login h4{font-size:15px;text-align:center;font-weight:700;}
+.chat-login p{font-size:12px;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:4px;}
+.chat-field label{font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;font-weight:600;display:block;margin-bottom:6px;}
+.chat-field input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:10px 12px;color:var(--text);font-size:13px;outline:none;font-family:'Inter',sans-serif;}
+.chat-field input:focus{border-color:rgba(250,204,21,0.4);}
+.chat-login-btn{margin-top:4px;padding:11px;border-radius:9px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;color:#000;font-weight:700;font-size:13.5px;cursor:pointer;}
+.chat-login-note{font-size:10.5px;color:var(--dim);text-align:center;line-height:1.6;}
+.chat-user-bar{padding:9px 14px;background:rgba(34,197,94,0.06);border-bottom:1px solid var(--border);font-size:11.5px;color:var(--green2);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.chat-logout{cursor:pointer;color:var(--muted);text-decoration:underline;}
+@media(max-width:480px){
+  .chat-fab{bottom:16px;left:16px;}
+  .chat-panel{left:10px;bottom:78px;width:calc(100vw - 20px);}
+}
+
 /* ─── RESPONSIVE ─── */
 @media(max-width:1100px){
   .hero{grid-template-columns:1fr;padding-top:30px;}
@@ -361,7 +440,9 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:64px 5% 
 @media(max-width:768px){
   .header{padding:0 5%;}
   nav{display:none;}
-  .hero{padding:40px 5% 50px;}
+  .header-btns{display:none;}
+  .hamburger{display:flex;}
+  .hero{padding:40px 5% 50px;min-height:auto;}
   .hero-h1{font-size:36px;}
   .section{padding:60px 5%;}
   .feat-grid{grid-template-columns:1fr;}
@@ -375,6 +456,32 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:64px 5% 
   .market-row .cell:nth-child(5),.market-row .cell:nth-child(6){display:none;}
   .market-head .th:nth-child(5),.market-head .th:nth-child(6){display:none;}
   .banner-wrap img{max-height:200px;}
+}
+@media(max-width:480px){
+  .logo-text .sub{display:none;}
+  .logo-text h1{font-size:16px;}
+  .logo img{height:36px;width:36px;}
+  .hero-h1{font-size:29px;}
+  .hero-p{font-size:14.5px;}
+  .section-title{font-size:30px;}
+  .hero-btns .btn{flex:1 1 100%;text-align:center;justify-content:center;}
+  .hero-stats{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .stat-num{font-size:19px;}
+  .acct-featured{transform:none;}
+  .acct-card:hover{transform:translateY(-4px);}
+  .acct-featured:hover{transform:translateY(-4px);}
+  .acct-min{font-size:36px;}
+  .partner-box h2{font-size:26px;}
+  .cta-box h2{font-size:28px;}
+  .cta-box{padding:32px 18px;}
+  .cta-btns .btn{flex:1 1 100%;text-align:center;justify-content:center;}
+  .market-head,.market-row{grid-template-columns:2fr 1.5fr 1.3fr;font-size:12px;}
+  .market-head .th:nth-child(4),.market-row .cell:nth-child(4){display:none;}
+  .asset-icon{width:30px;height:30px;}
+  .float-btn{width:44px;height:44px;}
+  .wa-fab{bottom:16px;right:16px;}
+  .tg-fab{bottom:68px;right:16px;}
+  .scroll-top{bottom:126px;right:16px;}
 }
 </style>
 </head>
@@ -400,7 +507,22 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:64px 5% 
     <a href="login.html" class="btn btn-ghost">Login</a>
     <a href="register.html" class="btn btn-gold">Open Account</a>
   </div>
+  <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </header>
+
+<!-- ═══ MOBILE NAV OVERLAY ═══ -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="#home">Home</a>
+  <a href="#markets">Markets</a>
+  <a href="#platform">Platform</a>
+  <a href="#academy">Academy</a>
+  <div class="mobile-nav-btns">
+    <a href="login.html" class="btn btn-ghost">Login</a>
+    <a href="register.html" class="btn btn-gold">Open Account</a>
+  </div>
+</div>
 
 <!-- ═══ TICKER ═══ -->
 <div class="ticker-wrap">
@@ -434,6 +556,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:64px 5% 
 <section class="hero" id="home">
   <div class="hero-text">
     <div class="hero-badge">Professional Forex Trading Platform · 180+ Countries</div>
+    <div class="hero-badge" style="background:rgba(34,197,94,0.08);border-color:rgba(34,197,94,0.3);color:var(--green2);margin-left:8px;">🎉 100% Free Joining · ID Activation Only $30</div>
     <h1 class="hero-h1">
       Trade Global Markets<br>
       <span class="accent">With Confidence</span>
@@ -773,6 +896,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:64px 5% 
   <div class="section-eyebrow">Trading Accounts</div>
   <h2 class="section-title">Choose Your Trading Account</h2>
   <p class="section-sub">Start with a plan that matches your goals. Upgrade anytime as you grow.</p>
+  <p class="section-sub" style="margin-top:10px;color:var(--green2);font-weight:600;">✅ Joining is 100% Free — a one-time ID Activation fee of $30 applies to activate your live trading account.</p>
 
   <div class="acct-grid">
     <div class="acct-card">
@@ -964,7 +1088,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:64px 5% 
         <h4>Support</h4>
         <a href="#">Help Center</a>
         <a href="#">Contact Us</a>
-        <a href="https://wa.me/" target="_blank">💬 WhatsApp</a>
+        <a href="#" id="waFooterLink" rel="noopener">💬 WhatsApp</a>
         <a href="#">✈️ Telegram</a>
         <a href="#">📧 Email Support</a>
       </div>
@@ -977,7 +1101,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:64px 5% 
 </footer>
 
 <!-- ═══ FLOATING BUTTONS ═══ -->
-<a class="float-btn wa-fab" href="https://wa.me/" target="_blank">
+<a class="float-btn wa-fab" href="#" id="waFab" rel="noopener">
   <svg viewBox="0 0 24 24" width="26" height="26" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
 <a class="float-btn tg-fab" href="https://t.me/" target="_blank">
@@ -985,8 +1109,96 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:64px 5% 
 </a>
 <div class="float-btn scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
 
+<!-- ═══ CHAT WIDGET BUTTON ═══ -->
+<div class="float-btn chat-fab" id="chatFab" onclick="toggleChatPanel()">
+  <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><path d="M12 2C6.48 2 2 6.03 2 11c0 2.61 1.28 4.94 3.34 6.6-.13 1.14-.53 2.6-1.34 3.9 1.85-.3 3.37-1.02 4.44-1.68C9.5 20.27 10.72 20.5 12 20.5c5.52 0 10-4.03 10-9s-4.48-9.5-10-9.5z"/></svg>
+</div>
+
+<!-- ═══ CHAT PANEL ═══ -->
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-head">
+    <div class="chat-head-title"><span class="chat-head-dot"></span> LIFELINEMETA Support</div>
+    <div class="chat-close" onclick="toggleChatPanel()">×</div>
+  </div>
+  <div class="chat-tabs">
+    <button class="chat-tab active" id="tabAuto" onclick="switchChatTab('auto')">🤖 Auto Support</button>
+    <button class="chat-tab" id="tabUser" onclick="switchChatTab('user')">💬 User Chat</button>
+  </div>
+
+  <!-- AUTO REPLY BOT -->
+  <div class="chat-pane active" id="paneAuto">
+    <div class="chat-body" id="autoBody">
+      <div class="chat-msg bot">👋 Welcome to LIFELINEMETA! I'm your auto-assistant. Ask me about joining, account activation, deposits, or trading accounts — or tap a quick question below.</div>
+    </div>
+    <div class="chat-quick">
+      <span onclick="askBot('Is joining free?')">Is joining free?</span>
+      <span onclick="askBot('ID activation fee?')">ID activation fee?</span>
+      <span onclick="askBot('Minimum deposit?')">Minimum deposit?</span>
+      <span onclick="askBot('How to withdraw?')">How to withdraw?</span>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" id="autoInput" placeholder="Type your question..." onkeydown="if(event.key==='Enter')sendAutoMsg()">
+      <button class="chat-send" onclick="sendAutoMsg()">➤</button>
+    </div>
+  </div>
+
+  <!-- USER TO USER CHAT (login gated) -->
+  <div class="chat-pane" id="paneUser">
+    <div id="userLoginBox">
+      <div class="chat-login">
+        <div class="chat-login-icon">🔒</div>
+        <h4>Login to User Chat</h4>
+        <p>Sign in to message other LIFELINEMETA traders directly. Your registered account username &amp; password are required.</p>
+        <div class="chat-field">
+          <label>Username</label>
+          <input type="text" id="chatUsername" placeholder="Enter your username">
+        </div>
+        <div class="chat-field">
+          <label>Password</label>
+          <input type="password" id="chatPassword" placeholder="Enter your password">
+        </div>
+        <button class="chat-login-btn" onclick="chatLogin()">Login &amp; Start Chatting</button>
+        <div class="chat-login-note">Don't have an account? <a href="register.html" style="color:var(--gold);">Register free</a> first.</div>
+      </div>
+    </div>
+    <div id="userChatBox" style="display:none;flex-direction:column;flex:1;min-height:0;">
+      <div class="chat-user-bar">
+        <span>🟢 Logged in as <strong id="chatUserLabel"></strong></span>
+        <span class="chat-logout" onclick="chatLogout()">Logout</span>
+      </div>
+      <div class="chat-body" id="userBody">
+        <div class="chat-msg bot">You're connected to User-to-User Chat. Messages you send here are visible to other logged-in traders.</div>
+      </div>
+      <div class="chat-input-row">
+        <input type="text" id="userInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendUserMsg()">
+        <button class="chat-send" onclick="sendUserMsg()">➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ SCROLL ANIMATION ═══ -->
 <script>
+/* Mobile hamburger nav toggle */
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const mobileNav = document.getElementById('mobileNav');
+if(hamburgerBtn && mobileNav){
+  hamburgerBtn.addEventListener('click', ()=>{
+    const isOpen = mobileNav.classList.toggle('active');
+    hamburgerBtn.classList.toggle('active', isOpen);
+    hamburgerBtn.setAttribute('aria-expanded', isOpen);
+    document.body.classList.toggle('nav-open', isOpen);
+  });
+  mobileNav.querySelectorAll('a').forEach(link=>{
+    link.addEventListener('click', ()=>{
+      mobileNav.classList.remove('active');
+      hamburgerBtn.classList.remove('active');
+      hamburgerBtn.setAttribute('aria-expanded', false);
+      document.body.classList.remove('nav-open');
+    });
+  });
+}
+
 /* Scroll reveal */
 const reveals = document.querySelectorAll('.feat-card,.acct-card,.testi-card,.academy-card,.market-row,.stat-box');
 reveals.forEach(el=>{el.style.opacity='0';el.style.transform='translateY(30px)';el.style.transition='.7s ease';});
@@ -1011,6 +1223,221 @@ setInterval(()=>{
     cel.className='chg '+(pct>=0?'up':'dn');
   }
 },2000);
+
+/* ══════════ WHATSAPP LINK (number lives only on the server) ══════════ */
+(function(){
+  /* ⚠️ Paste the URL you get after deploying the goWhatsapp Cloud Function
+     (see the lifelinemeta-whatsapp-function package). Example:
+     "https://us-central1-livelinemeta.cloudfunctions.net/goWhatsapp"
+     or, once Hosting is set up: "https://lifelinemeta.com/go/whatsapp" */
+  const WHATSAPP_FUNCTION_URL = 'https://us-central1-livelinemeta.cloudfunctions.net/goWhatsapp';
+
+  const waFab = document.getElementById('waFab');
+  const waFooterLink = document.getElementById('waFooterLink');
+  [waFab, waFooterLink].forEach(el=>{
+    if(el){
+      el.setAttribute('href', WHATSAPP_FUNCTION_URL);
+      el.setAttribute('target', '_blank');
+      el.setAttribute('rel', 'noopener');
+    }
+  });
+})();
+
+/* ══════════ CHAT WIDGET ══════════ */
+function toggleChatPanel(){
+  document.getElementById('chatPanel').classList.toggle('active');
+}
+function switchChatTab(tab){
+  document.getElementById('tabAuto').classList.toggle('active', tab==='auto');
+  document.getElementById('tabUser').classList.toggle('active', tab==='user');
+  document.getElementById('paneAuto').classList.toggle('active', tab==='auto');
+  document.getElementById('paneUser').classList.toggle('active', tab==='user');
+}
+
+/* ── AUTO-REPLY BOT ── */
+function addMsg(containerId, text, who){
+  const body = document.getElementById(containerId);
+  const div = document.createElement('div');
+  div.className = 'chat-msg ' + who;
+  div.textContent = text;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+}
+function botReply(question){
+  const q = question.toLowerCase();
+  if(q.includes('free') || q.includes('join')) return "🎉 Joining LIFELINEMETA is 100% FREE — no registration cost at all!";
+  if(q.includes('activat') || q.includes('30')) return "🔑 To activate your live trading ID, a one-time Activation Fee of $30 applies. After payment your account is instantly ready to trade.";
+  if(q.includes('deposit') || q.includes('minimum')) return "💰 Minimum deposit starts at $100 for the Starter account. Professional is $1,000 and VIP Elite is $5,000.";
+  if(q.includes('withdraw')) return "🏦 Withdrawals are typically processed within 24 hours to your linked payment method.";
+  if(q.includes('spread')) return "📉 Spreads start from as low as 0.1 pip on major pairs like EUR/USD.";
+  if(q.includes('support') || q.includes('contact') || q.includes('human') || q.includes('agent'))
+    return "🙋 For a real person, switch to the 'User Chat' tab above, or reach us on WhatsApp/Telegram using the buttons on the right side of the page.";
+  if(q.includes('hi') || q.includes('hello') || q.includes('hey')) return "👋 Hello! Ask me about joining, ID activation, deposits, spreads or withdrawals.";
+  return "🤖 Thanks for your message! For this specific question, please switch to 'User Chat' to speak with our team, or contact us on WhatsApp/Telegram.";
+}
+function sendAutoMsg(){
+  const input = document.getElementById('autoInput');
+  const val = input.value.trim();
+  if(!val) return;
+  addMsg('autoBody', val, 'me');
+  input.value = '';
+  setTimeout(()=>addMsg('autoBody', botReply(val), 'bot'), 450);
+}
+function askBot(question){
+  addMsg('autoBody', question, 'me');
+  setTimeout(()=>addMsg('autoBody', botReply(question), 'bot'), 450);
+}
+
+/* ── USER-TO-USER CHAT ──
+   Login/Register + real-time messaging is now powered by Firestore.
+   See the module script block below for the actual logic
+   (chatLogin, chatLogout, sendUserMsg are defined there on window). */
+</script>
+
+<!-- ═══ FIREBASE AUTH + FIRESTORE — SECURE REAL-TIME USER-TO-USER CHAT ═══ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import {
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  onAuthStateChanged, signOut, updateProfile
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import {
+  getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+/* ⚠️ REPLACE with YOUR OWN Firebase project config.
+   Get this from: Firebase Console → Project Settings → General → Your apps → SDK config.
+   Create a free project at https://console.firebase.google.com
+   Then enable: Authentication → Sign-in method → Email/Password. */
+const firebaseConfig = {
+  apiKey: "AIzaSyA3G2bMOJ_HSDYXJPuM70tVjfbkHlMftr4",
+  authDomain: "livelinemeta.firebaseapp.com",
+  databaseURL: "https://livelinemeta-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "livelinemeta",
+  storageBucket: "livelinemeta.firebasestorage.app",
+  messagingSenderId: "206900805598",
+  appId: "1:206900805598:web:10e6b39100af201b4e674f"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+/* Users still just type a "username" in the UI — internally we map it to a
+   real email address so Firebase Authentication can securely store and
+   verify the password for us (never stored or handled by our own code). */
+const AUTH_DOMAIN = '@lifelinemeta.app';
+function usernameToEmail(u){
+  return u.toLowerCase().replace(/[^a-z0-9._-]/g, '') + AUTH_DOMAIN;
+}
+
+let unsubscribeChat = null;
+
+/* Log in if the username already exists; auto-register it if it's new.
+   Firebase itself decides whether the password is correct — we never
+   see or store it ourselves. */
+window.chatLogin = async function(){
+  const uEl = document.getElementById('chatUsername');
+  const pEl = document.getElementById('chatPassword');
+  const u = uEl.value.trim();
+  const p = pEl.value.trim();
+  if(!u || !p){ alert('Please enter both username and password.'); return; }
+  if(p.length < 6){ alert('Password must be at least 6 characters.'); return; }
+
+  const email = usernameToEmail(u);
+  const btn = document.querySelector('.chat-login-btn');
+  const originalLabel = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Connecting...';
+
+  try{
+    try{
+      await signInWithEmailAndPassword(auth, email, p);
+    }catch(signInErr){
+      /* Not a valid existing login → try creating a new account with
+         this username/password. If that fails because the account
+         already exists, the original password must have been wrong. */
+      try{
+        const cred = await createUserWithEmailAndPassword(auth, email, p);
+        await updateProfile(cred.user, { displayName: u });
+      }catch(createErr){
+        if(createErr.code === 'auth/email-already-in-use'){
+          alert('Incorrect password for this username.');
+        }else if(createErr.code === 'auth/weak-password'){
+          alert('Password must be at least 6 characters.');
+        }else{
+          throw createErr;
+        }
+        btn.disabled = false; btn.textContent = originalLabel;
+        return;
+      }
+    }
+    /* Successful sign-in / registration is picked up by onAuthStateChanged below */
+  }catch(err){
+    console.error('Chat login error:', err);
+    alert('Could not connect to chat right now. Please try again in a moment.');
+  }
+  btn.disabled = false; btn.textContent = originalLabel;
+};
+
+window.chatLogout = function(){
+  signOut(auth);
+  document.getElementById('chatUsername').value = '';
+  document.getElementById('chatPassword').value = '';
+};
+
+/* Reacts to real Firebase auth state — keeps the UI correct even on refresh */
+onAuthStateChanged(auth, user => {
+  if(user){
+    const label = user.displayName || user.email.split('@')[0];
+    document.getElementById('chatUserLabel').textContent = label;
+    document.getElementById('userLoginBox').style.display = 'none';
+    document.getElementById('userChatBox').style.display  = 'flex';
+    startChatListener(user);
+  }else{
+    if(unsubscribeChat){ unsubscribeChat(); unsubscribeChat = null; }
+    document.getElementById('userChatBox').style.display = 'none';
+    document.getElementById('userLoginBox').style.display = 'block';
+  }
+});
+
+/* Real-time listener on the shared "public_chat" room */
+function startChatListener(user){
+  const body = document.getElementById('userBody');
+  const q = query(collection(db, 'public_chat'), orderBy('createdAt', 'asc'), limit(100));
+  unsubscribeChat = onSnapshot(q, snapshot => {
+    body.innerHTML = '';
+    snapshot.forEach(docSnap => {
+      const m = docSnap.data();
+      const div = document.createElement('div');
+      div.className = 'chat-msg ' + (m.uid === user.uid ? 'me' : 'bot');
+      const nameTag = document.createElement('div');
+      nameTag.style.cssText = 'font-size:10px;opacity:.65;margin-bottom:2px;font-weight:700;';
+      nameTag.textContent = m.uid === user.uid ? 'You' : m.username;
+      const textEl = document.createElement('div');
+      textEl.textContent = m.text;
+      div.appendChild(nameTag);
+      div.appendChild(textEl);
+      body.appendChild(div);
+    });
+    body.scrollTop = body.scrollHeight;
+  }, err => console.error('Chat listener error:', err));
+}
+
+window.sendUserMsg = async function(){
+  const input = document.getElementById('userInput');
+  const val = input.value.trim();
+  const user = auth.currentUser;
+  if(!val || !user) return;
+  input.value = '';
+  try{
+    await addDoc(collection(db, 'public_chat'), {
+      uid: user.uid,
+      username: user.displayName || user.email.split('@')[0],
+      text: val,
+      createdAt: serverTimestamp()
+    });
+  }catch(err){ console.error('Send message error:', err); }
+};
 </script>
 </body>
 </html>
