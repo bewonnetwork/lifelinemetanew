@@ -186,6 +186,7 @@ tr:last-child td{border-bottom:none}
 
     <div class="nav-sec">System</div>
     <a onclick="showPage('settings',this)"><span class="ic">⚙</span> Settings</a>
+    <a onclick="showPage('commtable',this)"><span class="ic">📋</span> Commission Table</a>
     <a onclick="showPage('ranks',this)"><span class="ic">⭐</span> Ranks</a>
     <a onclick="showPage('ranksalary',this)"><span class="ic">👑</span> Rank Salary</a>
     <a onclick="showPage('backup',this)"><span class="ic">💾</span> Backup & Restore</a>
@@ -286,6 +287,7 @@ tr:last-child td{border-bottom:none}
     <button class="btn btn-p btn-sm" onclick="exportCSV('users')">⬇ CSV</button>
     <button class="btn btn-r btn-sm" onclick="confirmDeleteAllUsers()">🗑 Delete All</button>
     <button class="btn btn-g btn-sm" onclick="resetAllPasswords()">🔑 Reset ALL Passwords</button>
+    <button class="btn btn-p btn-sm" onclick="bulkAdjustBalance()">💰 Bulk Balance Add/Deduct</button>
   </div>
   <div class="card">
     <div class="card-title">Users <small id="userCountLbl" style="color:var(--muted);font-weight:400"></small></div>
@@ -340,7 +342,7 @@ tr:last-child td{border-bottom:none}
 <!-- ===== FUND REQUESTS ===== -->
 <div class="page" id="page-fundreqs">
   <div class="pg-title">Fund Deposit Requests</div>
-  <div class="info-box">💡 User sends USDT to admin wallet → submits TxHash → Admin approve করলে <strong id="frCommDisplay">5%</strong> deduct করে balance credit হয়।</div>
+  <div class="info-box">💡 User sends USDT to admin wallet → submits TxHash → Admin approve করলে <strong>full amount</strong> (no commission deducted) balance এ credit হয়।</div>
   <div class="cards-grid" style="max-width:600px">
     <div class="sc cr"><div class="sc-lbl">Pending</div><div class="sc-val" id="frPendCount">0</div><div class="sc-ic">⏳</div></div>
     <div class="sc cgr"><div class="sc-lbl">Approved Today</div><div class="sc-val" id="frApprCount">0</div><div class="sc-ic">✅</div></div>
@@ -701,6 +703,26 @@ tr:last-child td{border-bottom:none}
       </div>
     </div>
   </div>
+
+  <div class="card">
+    <div class="card-title">➕ Custom Dashboard Button (admin বানালেই user dashboard-এ auto-show হবে)</div>
+    <div class="info-box">💡 কোনো কোডিং লাগবে না — এখানে বাটন বানালেই সেটা সাথে সাথে সব (বা নির্দিষ্ট) user-এর dashboard-এ দেখা যাবে।</div>
+    <div class="two-col">
+      <div class="fg"><label>Label</label><input type="text" id="cbtnLabel" placeholder="যেমন: Telegram Group"/></div>
+      <div class="fg"><label>Icon (emoji)</label><input type="text" id="cbtnIcon" placeholder="📢" value="🔗"/></div>
+      <div class="fg"><label>Link (URL)</label><input type="text" id="cbtnLink" placeholder="https://..."/></div>
+      <div class="fg"><label>Show To</label>
+        <select id="cbtnTarget"><option value="all">সব User</option><option value="active">শুধু Active</option><option value="inactive">শুধু Inactive</option></select>
+      </div>
+    </div>
+    <button class="btn btn-p" style="width:100%" onclick="createCustomButton()">➕ Button তৈরি করুন</button>
+    <div class="tw" style="margin-top:14px">
+      <table>
+        <thead><tr><th>Label</th><th>Link</th><th>Show To</th><th>Delete</th></tr></thead>
+        <tbody id="customBtnTb"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:12px">কোনো custom button নেই</td></tr></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <!-- ===== SUPPORT CHAT ===== -->
@@ -861,7 +883,7 @@ tr:last-child td{border-bottom:none}
       <div class="fg"><label>Club Bonus Pool (%)</label><input type="number" id="setClubPct" value="4"/></div>
       <div class="fg"><label>Club Min Direct Refs</label><input type="number" id="setClubMinRefs" value="10"/></div>
       <div class="fg"><label>Club Min Matching ($)</label><input type="number" id="setClubMinMatch" value="50"/></div>
-      <div class="fg"><label>Fund Request Commission (%)</label><input type="number" id="setFRComm" value="5"/></div>
+      <div class="fg"><label>Fund Request Commission</label><div style="font-size:.78rem;color:var(--muted);padding:9px 0">Deposits are always credited in full (0% fee) — commission only applies to withdrawals.</div></div>
       <button class="btn btn-p" onclick="saveSettings('pools')">💾 Save</button>
     </div>
     <div class="card">
@@ -878,9 +900,44 @@ tr:last-child td{border-bottom:none}
   </div>
 </div>
 
+<!-- ===== UNIFIED COMMISSION TABLE ===== -->
+<div class="page" id="page-commtable">
+  <div class="pg-title">📋 Unified Commission Table</div>
+  <div class="info-box">💡 সব commission-এর rate এক জায়গায় — সরাসরি এখান থেকে বদলে "Save All" চাপুন। প্রতিটা রেট আসলে Settings/ROI/Cashback/Club পেজেই সেভ হয় (একই ডাটা, শুধু দেখা ও এডিট করার সুবিধার্থে এখানে একসাথে দেখানো হয়েছে)।</div>
+  <div class="card">
+    <div class="tw">
+      <table>
+        <thead><tr><th>Commission Type</th><th>ভিত্তি (Based On)</th><th>Rate/Amount</th></tr></thead>
+        <tbody>
+          <tr><td>Sponsor Commission</td><td>Activation (flat)</td><td><input type="number" id="uctSponsComm" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.8rem"/> $</td></tr>
+          <tr><td>Direct Investment Commission</td><td>Investment amount</td><td><input type="number" id="uctInvestRefPct" step="0.5" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.8rem"/> %</td></tr>
+          <tr><td>Matching Bonus</td><td>Weaker-leg investment volume</td><td><input type="number" id="uctMatchPct" step="0.5" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.8rem"/> %</td></tr>
+          <tr><td>Matching Cap (lifetime)</td><td>—</td><td><input type="number" id="uctMatchCap" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.8rem"/> $</td></tr>
+          <tr><td>Cashback Pool</td><td>Joining volume (active users)</td><td><input type="number" id="uctCBPct" step="0.5" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.8rem"/> %</td></tr>
+          <tr><td>Cashback Limit / User</td><td>—</td><td><input type="number" id="uctCBLimit" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.8rem"/> $</td></tr>
+          <tr><td>Club Bonus Pool</td><td>Joining volume (eligible users)</td><td><input type="number" id="uctClubPct" step="0.5" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.8rem"/> %</td></tr>
+          <tr><td>Club Min Direct Refs</td><td>Eligibility</td><td><input type="number" id="uctClubMinRefs" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.8rem"/></td></tr>
+          <tr><td>Club Min Matching Income</td><td>Eligibility (OR condition)</td><td><input type="number" id="uctClubMinMatch" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.8rem"/> $</td></tr>
+          <tr><td>ROI — Direct to Investor</td><td>Investment amount</td><td><input type="number" id="uctRoiDirectPct" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.8rem"/> %</td></tr>
+          <tr><td>ROI — Generation Share (বাকি অংশ)</td><td>ROI payout</td><td id="uctGenShareDisplay" style="color:var(--muted)">50%</td></tr>
+          <tr><td>Generation Level 1</td><td>ROI-এর Generation অংশ</td><td><input type="number" id="uctGl1" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.8rem"/> %</td></tr>
+          <tr><td>Generation Level 2</td><td>ROI-এর Generation অংশ</td><td><input type="number" id="uctGl2" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.8rem"/> %</td></tr>
+          <tr><td>Generation Level 3</td><td>ROI-এর Generation অংশ</td><td><input type="number" id="uctGl3" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.8rem"/> %</td></tr>
+          <tr><td>Generation Level 4</td><td>ROI-এর Generation অংশ</td><td><input type="number" id="uctGl4" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.8rem"/> %</td></tr>
+          <tr><td>Generation Level 5</td><td>ROI-এর Generation অংশ</td><td><input type="number" id="uctGl5" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.8rem"/> %</td></tr>
+          <tr><td>Generation Level 6</td><td>ROI-এর Generation অংশ</td><td><input type="number" id="uctGl6" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.8rem"/> %</td></tr>
+          <tr><td>Generation Level 7</td><td>ROI-এর Generation অংশ</td><td><input type="number" id="uctGl7" style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:.8rem"/> %</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <button class="btn btn-p" style="width:100%;margin-top:14px" onclick="saveUnifiedCommissionTable()">💾 Save All Commission Rates</button>
+  </div>
+</div>
+
 <!-- ===== RANKS ===== -->
 <div class="page" id="page-ranks">
-  <div class="pg-title">Rank Management</div>
+  <div class="pg-title">Rank Reward (One-Time Bonus)</div>
+  <div class="info-box">💡 এটা <b>এক-কালীন bonus</b> — কোনো user প্রথমবার একটা rank-এর থ্রেশহোল্ড (Min Matching + Min Team Sales) পূরণ করলে সেই rank-এর Bonus $ একবারই পাবে (প্রতি মাসে না)। এটা "Rank Salary" (মাসিক recurring payment) থেকে সম্পূর্ণ আলাদা সিস্টেম।</div>
   <div class="card">
     <div class="tw">
       <table>
@@ -896,18 +953,28 @@ tr:last-child td{border-bottom:none}
         </tbody>
       </table>
     </div>
+    <button class="btn btn-p" style="width:100%;margin-top:12px" onclick="runRankRewards()">🏅 Check & Pay Rank Rewards Now</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Rank Reward History</div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Date</th><th>User</th><th>Rank</th><th>Bonus</th></tr></thead>
+        <tbody id="rankRewardHistTb"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:12px">No history</td></tr></tbody>
+      </table>
+    </div>
   </div>
 </div>
 
 <!-- ===== RANK SALARY (Left/Right Volume based, Monthly) ===== -->
 <div class="page" id="page-ranksalary">
   <div class="pg-title">👑 Rank Salary (Monthly)</div>
-  <div class="info-box">💡 Rank ঠিক হয় <b>Left leg + Right leg-এ কতজন Active ID (member)</b> আছে তার উপর ভিত্তি করে (ডলার/investment volume না)। দুই পাশেই থ্রেশহোল্ড পূরণ হলে সেই rank পাওয়া যায়। "Run Monthly Rank Salary" চাপলে যোগ্য user সর্বোচ্চ rank-এর salary পাবে (মাসে একবার, duplicate-প্রুফ)। Admin চাইলে যেকোনো user-কে Edit User থেকে rank সরাসরি বসিয়ে (override) দিতে পারবে — তখন সেই user-এর জন্য auto-calculation বন্ধ থাকবে।</div>
+  <div class="info-box">💡 Rank Salary ঠিক হয় <b>Left leg + Right leg-এ মোট investment (ডলার)</b> এর উপর ভিত্তি করে (ID সংখ্যা না)। দুই পাশেই থ্রেশহোল্ড পূরণ হলে সেই rank-এর salary পাওয়া যায়। "Run Monthly Rank Salary" চাপলে যোগ্য user সর্বোচ্চ rank-এর salary পাবে (মাসে একবার, duplicate-প্রুফ, prorated)। Admin চাইলে যেকোনো user-কে Edit User থেকে rank সরাসরি বসিয়ে (override) দিতে পারবে। ⚠️ এটা Rank Reward (এক-কালীন বোনাস, "Ranks" পেজে) থেকে আলাদা।</div>
   <div class="card">
     <div class="card-title">Rank Tiers (সব সংখ্যা এডিটেবল)</div>
     <div class="tw">
       <table>
-        <thead><tr><th>Rank</th><th>Left Active ID</th><th>Right Active ID</th><th>Monthly Salary ($)</th><th>Qualified Now</th><th>Save</th></tr></thead>
+        <thead><tr><th>Rank</th><th>Left Investment ($)</th><th>Right Investment ($)</th><th>Monthly Salary ($)</th><th>Qualified Now</th><th>Save</th></tr></thead>
         <tbody id="rankSalaryTbody"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:12px">Loading…</td></tr></tbody>
       </table>
     </div>
@@ -1013,6 +1080,7 @@ tr:last-child td{border-bottom:none}
         <option value="salary">🏅 Salary Report (Rank Salary payouts)</option>
         <option value="distributionlog">📋 Distribution Detail Log (কে কত পেল, প্রতিটা run)</option>
         <option value="topbalance">🏆 Top Balance Leaderboard</option>
+        <option value="freeid">🆓 Free ID List (Active কিন্তু এখনো Investment করেনি)</option>
       </select>
       <button class="btn btn-p btn-sm" onclick="exportReportCSV()">⬇ Export This Report (CSV)</button>
     </div>
@@ -1041,6 +1109,14 @@ tr:last-child td{border-bottom:none}
       <button class="btn btn-r" id="confirmOkBtn" style="flex:1">Confirm</button>
       <button class="btn btn-o" onclick="closeModal('confirmModal')" style="flex:1">Cancel</button>
     </div>
+  </div>
+</div>
+
+<!-- DISTRIBUTION RESULT MODAL (কে কত পেল, run করার সাথে সাথেই) -->
+<div class="modal-bg" id="distResultModal">
+  <div class="modal" style="max-width:520px;max-height:80vh;overflow-y:auto">
+    <div class="modal-title" id="distResultTitle">Distribution Result <button class="modal-close" onclick="closeModal('distResultModal')">✕</button></div>
+    <div id="distResultBody">Loading…</div>
   </div>
 </div>
 
@@ -1127,22 +1203,26 @@ auth.onAuthStateChanged(async user => {
 });
 
 async function loadAll() {
-  await loadSettings();
-  await loadUsers();
-  await loadActivations();
-  await loadWithdrawals();
-  await loadInvestments();
-  await loadAllTx();
-  await loadFundRequests();
-  await loadVouchers();
-  loadNotices();
-  loadSubAdmins();
-  loadActivityLog();
-  computeOverview();
-  loadGlobalToggles();
-  buildRankSalaryUI();
-  loadRankSalaryHistory();
-  loadChatList();
+  const safe = async (label, fn) => {
+    try { await fn(); }
+    catch (e) { console.error('❌ loadAll failed at: '+label, e); toast('⚠️ '+label+' load করতে সমস্যা হয়েছে: '+e.message); }
+  };
+  await safe('Settings',      () => loadSettings());
+  await safe('Users',         () => loadUsers());
+  await safe('Activations',   () => loadActivations());
+  await safe('Withdrawals',   () => loadWithdrawals());
+  await safe('Investments',   () => loadInvestments());
+  await safe('Transactions',  () => loadAllTx());
+  await safe('Fund Requests', () => loadFundRequests());
+  await safe('Vouchers',      () => loadVouchers());
+  await safe('Notices',       () => loadNotices());
+  await safe('Sub-Admins',    () => loadSubAdmins());
+  await safe('Activity Log',  () => loadActivityLog());
+  await safe('Overview',      () => computeOverview());
+  await safe('Global Toggles',() => loadGlobalToggles());
+  await safe('Rank Salary UI',() => buildRankSalaryUI());
+  await safe('Rank Salary History', () => loadRankSalaryHistory());
+  await safe('Chat List',     () => loadChatList());
 }
 
 // ── SETTINGS ─────────────────────────────────────────
@@ -1164,7 +1244,7 @@ function applySettings() {
   safeSet('setClubPct',   S.clubPct||4, 'value');
   safeSet('setClubMinRefs', S.clubMinRefs||10, 'value');
   safeSet('setClubMinMatch', S.clubMinMatch||50, 'value');
-  safeSet('setFRComm',    S.fundRequestComm||5, 'value');
+  // Fund Request Commission removed — deposits are always credited in full
   safeSet('setAdminWallet', S.adminWallet||'', 'value');
   safeSet('setMinWD',     S.minWithdrawal||10, 'value');
   safeSet('setWDFee',     S.withdrawalFee||0, 'value');
@@ -1184,7 +1264,7 @@ function applySettings() {
   set('clubMinMatchDisplay', '$'+(S.clubMinMatch||50));
   set('matchPctDisplay', (S.matchingPct||5)+'%');
   set('matchCapDisplay', '$'+(S.matchingCap||1000));
-  set('frCommDisplay', (S.fundRequestComm||5)+'%');
+  // frCommDisplay removed — no commission on fund requests
   if (S.generationLevels) S.generationLevels.forEach((v,i)=>{ const el=document.getElementById('gl'+(i+1)); if(el) el.value=v; });
 }
 
@@ -1397,7 +1477,8 @@ window.activateUser = async uid => {
     ALLU[uid] = { ...u, isActive:true };
     const sponsComm = parseFloat(SETTINGS.sponsorComm||4);
     const compFund  = parseFloat(SETTINGS.companyFund||5);
-    if (u.sponsorId) {
+    const sponsorIsActive = u.sponsorId ? !!ALLU[u.sponsorId]?.isActive : false;
+    if (u.sponsorId && sponsorIsActive) {
       const sRef   = rtdb.ref('users/'+u.sponsorId+'/income/sponsor');
       const sSnap  = await sRef.get();
       const newInc = parseFloat(sSnap.exists()?sSnap.val():0)+sponsComm;
@@ -1411,11 +1492,13 @@ window.activateUser = async uid => {
         note:'From '+(u.fullName||u.username||'User')+' activation',
         timestamp:Date.now(), status:'completed', balance:newBal
       });
+    } else if (u.sponsorId && !sponsorIsActive) {
+      logAdminAction('activation','Sponsor Commission Skipped',u.sponsorId,'Sponsor is inactive (Free ID) — no commission paid');
     }
     const cfRef  = rtdb.ref('settings/companyFundBalance');
     const cfSnap = await cfRef.get();
     await cfRef.set(parseFloat(cfSnap.exists()?cfSnap.val():0)+compFund);
-    toast('✅ Activated! $'+sponsComm+' → Sponsor, $'+compFund+' → Company Fund');
+    toast('✅ Activated!'+(sponsorIsActive?' $'+sponsComm+' → Sponsor,':' (Sponsor is inactive — no commission paid)')+' $'+compFund+' → Company Fund');
     logAdminAction('activation','Activate User',uid,'Manual activation');
     renderUsers(Object.values(ALLU));
     computeOverview();
@@ -1497,6 +1580,39 @@ window.adjustBalance = (uid, name) => {
       toast('Balance adjusted by $'+amt.toFixed(2));
     });
   });
+};
+
+// ── BULK BALANCE ADD/DEDUCT (all users at once, one click) ──
+window.bulkAdjustBalance = async () => {
+  const amt = parseFloat(prompt('সব active user-এর balance-এ কত add/deduct করবেন?\n(+50 মানে সবাইকে $50 করে যোগ, -20 মানে সবার থেকে $20 করে বাদ):'));
+  if (isNaN(amt) || amt===0) { toast('সঠিক amount দিন'); return; }
+  const targets = Object.values(ALLU).filter(u=>u.isActive && !u.isBanned);
+  if (!targets.length) { toast('কোনো active user নেই'); return; }
+  if (!confirm('সব ('+targets.length+' জন) active user-এর balance-এ '+(amt>0?'+':'')+'$'+amt+' করবেন?')) return;
+  if (prompt('নিশ্চিত করতে BULK লিখুন:') !== 'BULK') { toast('বাতিল করা হয়েছে'); return; }
+  toast('⏳ চলছে... একটু সময় লাগতে পারে');
+  const detailLog = [];
+  let done = 0;
+  for (const u of targets) {
+    const wRef  = rtdb.ref('users/'+u.id+'/walletBalance');
+    const wSnap = await wRef.get();
+    const cur   = parseFloat(wSnap.exists()?wSnap.val():0);
+    const newBal= Math.max(0, cur+amt); // negative balance এড়াতে
+    await wRef.set(newBal);
+    const applied = newBal - cur;
+    await rtdb.ref('transactions/'+u.id).push({
+      type:'Admin Adjustment', amount:applied,
+      note:'Bulk adjustment by admin (all users)',
+      timestamp:Date.now(), status:'completed', balance:newBal
+    });
+    detailLog.push({ uid:u.id, name: u.fullName||u.username||u.id.slice(0,10), amount: applied });
+    done++;
+  }
+  await logDistributionDetail('Bulk Balance Adjustment', detailLog);
+  logAdminAction('user','Bulk Balance Adjust','ALL',(amt>0?'+':'')+'$'+amt+' x '+done+' users');
+  toast('✅ '+done+' জনের balance আপডেট হয়েছে!');
+  await loadUsers();
+  computeOverview();
 };
 
 // ── ACTIVATIONS ───────────────────────────────────────
@@ -1596,8 +1712,7 @@ function renderFundReqs(entries) {
   badge.textContent = pending.length>0?pending.length:'';
   const tb = document.getElementById('frTb');
   tb.innerHTML = entries.length ? entries.map(([id,f],i)=>{
-    const comm    = parseFloat(SETTINGS.fundRequestComm||5)/100;
-    const net     = f.netCredited || (f.amount*(1-comm));
+    const net     = f.netCredited != null ? f.netCredited : f.amount; // Deposits are always credited in full — no commission on fund requests
     const sc      = f.status==='approved'?'pg':f.status==='rejected'?'pr':'py';
     const userName = ALLU[f.uid]?.fullName||ALLU[f.uid]?.username||f.name||f.uid?.slice(0,10)||'—';
     return `<tr>
@@ -1625,9 +1740,8 @@ window.filterFundReqs = () => {
 };
 
 window.approveFR = async (id, uid, amount) => {
-  const commPct = parseFloat(SETTINGS.fundRequestComm||5)/100;
-  const comm    = amount*commPct;
-  const net     = amount-comm;
+  if (!confirm('Are you sure you want to APPROVE this fund request of $'+amount+'? Full amount will be credited — no commission is cut on deposits.')) return;
+  const net = amount; // Fund requests (deposits) are credited in full — commission only applies to withdrawals, never to deposits.
   await rtdb.ref('fundRequests/'+id).update({ status:'approved', approvedAt:Date.now(), netCredited:net, approvedBy:CU.email });
   // Credit wallet
   const wRef  = rtdb.ref('users/'+uid+'/walletBalance');
@@ -1636,12 +1750,12 @@ window.approveFR = async (id, uid, amount) => {
   await wRef.set(newBal);
   await rtdb.ref('transactions/'+uid).push({
     type:'Fund Deposit', amount:net,
-    note:'Fund request approved. Sent: $'+amount+', Comm: $'+comm.toFixed(2),
+    note:'Fund request approved. Full amount credited: $'+amount+' (no fee on deposits)',
     timestamp:Date.now(), status:'completed', balance:newBal
   });
   ALL_FR[id] = { ...ALL_FR[id], status:'approved', netCredited:net };
-  logAdminAction('fund','Approve Fund Request',uid,'$'+amount+' → $'+net.toFixed(2)+' credited');
-  toast('✅ Fund credited! $'+net.toFixed(2)+' (after '+commPct*100+'% comm)');
+  logAdminAction('fund','Approve Fund Request',uid,'$'+amount+' credited in full (no commission)');
+  toast('✅ Fund credited! $'+net.toFixed(2)+' (full amount — no commission on deposits)');
   renderFundReqs(Object.entries(ALL_FR));
   computeOverview();
 };
@@ -1809,13 +1923,15 @@ window.filterInvestments = () => {
 };
 
 window.approveInv = async (key, uid, amount) => {
+  if (!confirm('Are you sure you want to APPROVE this investment of $'+amount+'?')) return;
   const [,pid] = key.split('__');
   await rtdb.ref('investments/'+uid+'/'+pid).update({ status:'active', activatedAt:Date.now() });
   ALL_INV[key].status = 'active';
   const uData   = ALLU[uid];
   const refPct  = parseFloat(SETTINGS.investRefPct||5)/100;
   const commAmt = parseFloat(amount||0) * refPct; // 5% of THIS investment amount
-  if (uData?.sponsorId && commAmt>0) {
+  const sponsorIsActive = uData?.sponsorId ? !!ALLU[uData.sponsorId]?.isActive : false;
+  if (uData?.sponsorId && sponsorIsActive && commAmt>0) {
     const sRef  = rtdb.ref('users/'+uData.sponsorId+'/walletBalance');
     const sSnap = await sRef.get();
     const sNewBal= parseFloat(sSnap.exists()?sSnap.val():0)+commAmt;
@@ -1828,10 +1944,12 @@ window.approveInv = async (key, uid, amount) => {
       note:refPct*100+'% of $'+amount+' investment by '+(uData.fullName||'User'),
       timestamp:Date.now(), status:'completed', balance:sNewBal
     });
+  } else if (uData?.sponsorId && !sponsorIsActive) {
+    logAdminAction('investments','Sponsor Commission Skipped',uData.sponsorId,'Sponsor is inactive (Free ID) — no commission paid');
   }
-  logAdminAction('investments','Approve Investment',uid,'$'+amount+(commAmt>0?' (Sponsor comm $'+commAmt.toFixed(2)+')':''));
+  logAdminAction('investments','Approve Investment',uid,'$'+amount+(sponsorIsActive&&commAmt>0?' (Sponsor comm $'+commAmt.toFixed(2)+')':' (no sponsor commission — sponsor inactive)'));
   renderInvestments(Object.entries(ALL_INV));
-  toast('✅ Investment activated!'+(commAmt>0?' Sponsor got $'+commAmt.toFixed(2)+' ('+(refPct*100)+'%)':''));
+  toast('✅ Investment activated!'+(sponsorIsActive&&commAmt>0?' Sponsor got $'+commAmt.toFixed(2)+' ('+(refPct*100)+'%)':' No commission paid — sponsor is inactive (Free ID).'));
 };
 
 window.approveAllPendingInv = async () => {
@@ -1933,6 +2051,7 @@ window.runCashback = async () => {
   }
   if (!eligible.length) { toast('No eligible members'); return; }
   const perUser = pool/eligible.length;
+  const detailLog = [];
   for (const u of eligible) {
     const give = Math.min(perUser, cbLimit-u.cbEarned);
     if (give<=0) continue;
@@ -1946,7 +2065,9 @@ window.runCashback = async () => {
       note:'Pool: $'+pool.toFixed(2)+' / '+eligible.length+' members',
       timestamp:Date.now(), status:'completed', balance:newBal
     });
+    detailLog.push({ uid:u.id, name: u.fullName||u.username||u.id.slice(0,10), amount: give });
   }
+  await logDistributionDetail('Daily Cashback', detailLog);
   await rtdb.ref('cashbackHistory').push({ pool:pool.toFixed(2), members:eligible.length, perUser:perUser.toFixed(4), timestamp:Date.now() });
   logAdminAction('distribution','Cashback Distribution','ALL','Pool: $'+pool.toFixed(2)+', Members: '+eligible.length);
   toast('✅ Cashback done! $'+perUser.toFixed(4)+'/member');
@@ -1991,6 +2112,7 @@ window.runCashbackOverride = async () => {
       timestamp:Date.now(), status:'completed', balance:newBal
     });
   }
+  await logDistributionDetail('Cashback Override', targets.map(u=>({ uid:u.id, name:u.fullName||u.username||u.id.slice(0,10), amount:amt })));
   logAdminAction('distribution','Custom Cashback', target==='all'?'ALL':targets[0].id, '$'+amt+' x '+targets.length+' — '+note);
   toast('✅ $'+amt+' cashback দেওয়া হয়েছে '+targets.length+' জনকে');
   document.getElementById('cbOverrideAmt').value='';
@@ -2018,6 +2140,7 @@ window.runClubBonus = async () => {
   }
   if (!eligible.length) { toast('No eligible club members'); return; }
   const perUser = pool/eligible.length;
+  const detailLog = [];
   for (const u of eligible) {
     const ref   = rtdb.ref('users/'+u.id+'/income/club');
     const snap  = await ref.get();
@@ -2031,7 +2154,9 @@ window.runClubBonus = async () => {
       note:'Club pool: $'+pool.toFixed(2)+' / '+eligible.length+' members',
       timestamp:Date.now(), status:'completed', balance:newBal
     });
+    detailLog.push({ uid:u.id, name: u.fullName||u.username||u.id.slice(0,10), amount: perUser });
   }
+  await logDistributionDetail('Club Bonus', detailLog);
   await rtdb.ref('clubBonusHistory').push({ pool:pool.toFixed(2), members:eligible.length, perUser:perUser.toFixed(4), timestamp:Date.now() });
   logAdminAction('distribution','Club Bonus','ALL','Pool: $'+pool.toFixed(2)+', Members: '+eligible.length);
   toast('✅ Club bonus: $'+perUser.toFixed(4)+'/member');
@@ -2045,6 +2170,7 @@ window.runROIDistrib = async () => {
   const now = Date.now();
   const DAY_MS = 24*60*60*1000;
   let count = 0;
+  const detailLog = [];
   for (const [key,p] of Object.entries(ALL_INV)) {
     if (p.status!=='active') continue;
     const u = ALLU[p.uid];
@@ -2097,8 +2223,10 @@ window.runROIDistrib = async () => {
       });
       curUID=parent;
     }
+    detailLog.push({ uid, name: ALLU[uid]?.fullName||ALLU[uid]?.username||uid.slice(0,10), amount: directAmt });
     count++;
   }
+  await logDistributionDetail('ROI Payout', detailLog);
   logAdminAction('distribution','ROI Distribution','ALL',count+' plans processed');
   toast('✅ ROI done for '+count+' plan(s)!');
   loadAllTx();
@@ -2110,16 +2238,18 @@ window.runMatchingBonus = async () => {
   const active   = users.filter(u=>u.isActive&&!u.isBanned&&!u.incomeBlocked);
   const matchPct = parseFloat(SETTINGS.matchingPct||5)/100;
   const matchCap = parseFloat(SETTINGS.matchingCap||1000);
+  const actFee   = parseFloat(SETTINGS.activationFee||30);
   let count = 0;
   const detailLog = [];
   for (const u of active) {
-    // Volume = actual investment amount carried up the tree (consistent with
-    // Sponsor Commission / Cashback / ROI — সব investment-ভিত্তিক, activation-count না)
-    const leftVol  = legInvestmentVolume(u.id,'left');
-    const rightVol = legInvestmentVolume(u.id,'right');
+    // Volume = joining/activation fee × weaker-leg active ID count
+    // (যেমন: $30 activation fee, weaker leg-এ ১টা active ID = $30 × 5% = $1.5)
+    const leftCnt  = legActiveIdCount(u.id,'left');
+    const rightCnt = legActiveIdCount(u.id,'right');
+    const leftVol  = leftCnt  * actFee;
+    const rightVol = rightCnt * actFee;
     const weaker   = Math.min(leftVol, rightVol);
     const bonus    = weaker * matchPct;
-    // (rank auto-calculation এখন Rank Salary সিস্টেমে হয় — ID active count ভিত্তিক)
 
     if (bonus <= 0) continue;
     const mRef  = rtdb.ref('users/'+u.id+'/income/matching');
@@ -2134,7 +2264,7 @@ window.runMatchingBonus = async () => {
     await wRef.set(newBal);
     await rtdb.ref('transactions/'+u.id).push({
       type:'Matching Bonus', amount:give,
-      note:'Left: $'+leftVol.toFixed(0)+', Right: $'+rightVol.toFixed(0)+', Weaker: $'+weaker.toFixed(0),
+      note:'Left: '+leftCnt+' ID ($'+leftVol.toFixed(0)+'), Right: '+rightCnt+' ID ($'+rightVol.toFixed(0)+'), Weaker: $'+weaker.toFixed(0),
       timestamp:Date.now(), status:'completed', balance:newBal
     });
     detailLog.push({ uid:u.id, name: u.fullName||u.username||u.id.slice(0,10), amount: give });
@@ -2466,6 +2596,40 @@ window.savePerUserToggles = async () => {
   toast('✅ User dashboard settings saved!');
 };
 
+// ── CUSTOM DASHBOARD BUTTON (admin বানালে dashboard.html-এ auto-show) ──
+window.createCustomButton = async () => {
+  const label  = document.getElementById('cbtnLabel').value.trim();
+  const icon   = document.getElementById('cbtnIcon').value.trim() || '🔗';
+  const link   = document.getElementById('cbtnLink').value.trim();
+  const target = document.getElementById('cbtnTarget').value;
+  if (!label || !link) { toast('Label ও Link দুটোই লাগবে'); return; }
+  await rtdb.ref('customButtons').push({ label, icon, link, target, createdAt: Date.now() });
+  document.getElementById('cbtnLabel').value = '';
+  document.getElementById('cbtnLink').value  = '';
+  logAdminAction('settings','Custom Button Created','—',label+' → '+link);
+  toast('✅ Button তৈরি হয়েছে! Dashboard-এ এখনই দেখা যাবে');
+  loadCustomButtons();
+};
+async function loadCustomButtons(){
+  const tb = document.getElementById('customBtnTb');
+  if (!tb) return;
+  const snap = await rtdb.ref('customButtons').get();
+  if (!snap.exists()){ tb.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:12px">কোনো custom button নেই</td></tr>'; return; }
+  const entries = Object.entries(snap.val());
+  tb.innerHTML = entries.map(([id,b])=>`<tr>
+    <td>${b.icon||'🔗'} ${b.label}</td>
+    <td style="font-size:.7rem;max-width:150px;overflow:hidden;text-overflow:ellipsis">${b.link}</td>
+    <td>${b.target}</td>
+    <td><button class="btn btn-r btn-sm" onclick="deleteCustomButton('${id}')">🗑</button></td>
+  </tr>`).join('');
+}
+window.deleteCustomButton = async (id) => {
+  if (!confirm('এই button মুছে ফেলবেন?')) return;
+  await rtdb.ref('customButtons/'+id).remove();
+  toast('🗑 Button মুছে ফেলা হয়েছে');
+  loadCustomButtons();
+};
+
 // ── SUB-ADMINS ────────────────────────────────────────
 const PERMS_LIST = ['users','activations','withdrawals','investments','fundreqs','distributions','settings','reports'];
 
@@ -2726,6 +2890,23 @@ async function logDistributionDetail(type, details) {
   await rtdb.ref('distributionLogs').push({
     type, timestamp: Date.now(), userCount: details.length, totalPaid: total, details
   });
+  showDistributionResultModal(type, details, total);
+}
+
+function showDistributionResultModal(type, details, total) {
+  set('distResultTitle', '✅ '+type+' — সম্পন্ন');
+  const body = document.getElementById('distResultBody');
+  if (!details.length) {
+    body.innerHTML = '<div class="info-box">কোনো user যোগ্য পাওয়া যায়নি, কাউকে কিছু দেওয়া হয়নি।</div>';
+  } else {
+    body.innerHTML = `
+      <div class="info-box">মোট <b>${details.length}</b> জন পেয়েছেন, সর্বমোট <b>$${total.toFixed(2)}</b></div>
+      <div class="tw"><table>
+        <thead><tr><th>#</th><th>User</th><th>Amount</th></tr></thead>
+        <tbody>${details.map((d,i)=>`<tr><td>${i+1}</td><td>${d.name||d.uid}</td><td style="color:var(--green);font-weight:700">$${(d.amount||0).toFixed(2)}</td></tr>`).join('')}</tbody>
+      </table></div>`;
+  }
+  document.getElementById('distResultModal').classList.add('show');
 }
 
 async function logAdminAction(type, action, target, details) {
@@ -2801,6 +2982,51 @@ window.saveGenLevels = async () => {
   toast('✅ Generation levels saved');
 };
 
+// ── UNIFIED COMMISSION TABLE ──────────────────────────
+function loadUnifiedCommissionTable(){
+  const g = id => document.getElementById(id);
+  if (!g('uctSponsComm')) return;
+  g('uctSponsComm').value    = SETTINGS.sponsorComm   ?? 4;
+  g('uctInvestRefPct').value = SETTINGS.investRefPct  ?? 5;
+  g('uctMatchPct').value     = SETTINGS.matchingPct   ?? 5;
+  g('uctMatchCap').value     = SETTINGS.matchingCap   ?? 1000;
+  g('uctCBPct').value        = SETTINGS.cashbackPct   ?? 3;
+  g('uctCBLimit').value      = SETTINGS.cashbackLimit ?? 60;
+  g('uctClubPct').value      = SETTINGS.clubPct       ?? 4;
+  g('uctClubMinRefs').value  = SETTINGS.clubMinRefs   ?? 10;
+  g('uctClubMinMatch').value = SETTINGS.clubMinMatch  ?? 50;
+  const directPct = SETTINGS.roiDirectPct ?? 50;
+  g('uctRoiDirectPct').value = directPct;
+  set('uctGenShareDisplay', (100-directPct)+'%');
+  const gl = SETTINGS.generationLevels || [20,15,10,10,10,5,5];
+  [1,2,3,4,5,6,7].forEach(i => { g('uctGl'+i).value = gl[i-1] ?? 0; });
+  g('uctRoiDirectPct').oninput = () => set('uctGenShareDisplay', (100-parseFloat(g('uctRoiDirectPct').value||0))+'%');
+}
+
+window.saveUnifiedCommissionTable = async () => {
+  const v = id => parseFloat(document.getElementById(id).value)||0;
+  const updates = {
+    sponsorComm:   v('uctSponsComm'),
+    investRefPct:  v('uctInvestRefPct'),
+    matchingPct:   v('uctMatchPct'),
+    matchingCap:   v('uctMatchCap'),
+    cashbackPct:   v('uctCBPct'),
+    cashbackLimit: v('uctCBLimit'),
+    clubPct:       v('uctClubPct'),
+    clubMinRefs:   v('uctClubMinRefs'),
+    clubMinMatch:  v('uctClubMinMatch'),
+    roiDirectPct:  v('uctRoiDirectPct')
+  };
+  const genLevels = [1,2,3,4,5,6,7].map(i=>v('uctGl'+i));
+  await rtdb.ref('settings').update(updates);
+  await rtdb.ref('settings/generationLevels').set(genLevels);
+  Object.assign(SETTINGS, updates);
+  SETTINGS.generationLevels = genLevels;
+  logAdminAction('settings','Unified Commission Table Update','ALL',JSON.stringify({...updates, genLevels}));
+  toast('✅ সব commission rate সেভ হয়েছে!');
+  await loadSettings();
+};
+
 window.saveSettings = async type => {
   const updates = {};
   const el = id => document.getElementById(id);
@@ -2823,7 +3049,7 @@ window.saveSettings = async type => {
     updates.clubPct       = parseFloat(el('setClubPct').value);
     updates.clubMinRefs   = parseFloat(el('setClubMinRefs').value);
     updates.clubMinMatch  = parseFloat(el('setClubMinMatch').value);
-    updates.fundRequestComm = parseFloat(el('setFRComm').value);
+    // fundRequestComm removed — deposits are always credited in full
   } else if (type==='wallet') {
     updates.adminWallet   = el('setAdminWallet').value.trim();
   } else if (type==='withdrawal') {
@@ -2847,6 +3073,66 @@ window.saveRank = async n => {
   logAdminAction('settings','Save Rank '+n,'—',JSON.stringify(data));
   toast('⭐ Rank '+n+' saved!');
 };
+
+// ── RANK REWARD (ONE-TIME bonus — আলাদা Rank Salary থেকে) ──
+const RANK_REWARD_NAMES = ['One Star','Two Star','Three Star','Four Star','Five Star','Six Star','Seven Star'];
+window.runRankRewards = async () => {
+  if (!confirm('সব active user চেক করে যোগ্য হলে এক-কালীন Rank Reward দেওয়া হবে (যারা আগে থেকেই পেয়েছে তাদের আবার দেওয়া হবে না)। চালাবেন?')) return;
+  const savedRanks = SETTINGS.ranks || {};
+  const actFee = parseFloat(SETTINGS.activationFee||30);
+  const tierList = RANK_REWARD_NAMES.map((name,i)=>{
+    const n=i+1;
+    const r = savedRanks['rank'+n] || {};
+    return { name, minMatching: r.minMatching, minSales: r.minSales, bonus: r.bonus||0 };
+  }).reverse(); // সর্বোচ্চ rank আগে চেক হবে
+  const active = Object.values(ALLU).filter(u=>u.isActive && !u.isBanned && !u.incomeBlocked);
+  let paidCount=0, totalPaid=0;
+  const detailLog = [];
+  for (const u of active){
+    const leftCnt   = legActiveIdCount(u.id,'left');
+    const rightCnt  = legActiveIdCount(u.id,'right');
+    const weakerVol = Math.min(leftCnt,rightCnt) * actFee;   // Matching-এর ভিত্তি (activation fee based)
+    const teamSales = legInvestmentVolume(u.id,'left') + legInvestmentVolume(u.id,'right'); // মোট team investment ($ sales)
+
+    let matched = null;
+    for (const t of tierList){
+      if (weakerVol>=t.minMatching && teamSales>=t.minSales){ matched=t; break; }
+    }
+    if (!matched || matched.bonus<=0) continue;
+    const alreadyRef  = rtdb.ref('users/'+u.id+'/rankRewardsPaid/'+matched.name.replace(/\s/g,'_'));
+    const already = await alreadyRef.get();
+    if (already.exists()) continue; // এই rank-এর reward আগেই পেয়ে গেছে
+
+    const wRef  = rtdb.ref('users/'+u.id+'/walletBalance');
+    const wSnap = await wRef.get();
+    const newBal= parseFloat(wSnap.exists()?wSnap.val():0)+matched.bonus;
+    await wRef.set(newBal);
+    await alreadyRef.set({ bonus:matched.bonus, timestamp:Date.now() });
+    await rtdb.ref('transactions/'+u.id).push({
+      type:'Rank Reward', amount:matched.bonus,
+      note:matched.name+' — one-time reward (Weaker: $'+weakerVol.toFixed(0)+', Team Sales: $'+teamSales.toFixed(0)+')',
+      timestamp:Date.now(), status:'completed', balance:newBal
+    });
+    detailLog.push({ uid:u.id, name: u.fullName||u.username||u.id.slice(0,10), amount: matched.bonus });
+    paidCount++; totalPaid += matched.bonus;
+  }
+  await logDistributionDetail('Rank Reward', detailLog);
+  await rtdb.ref('rankRewardHistory').push({ timestamp:Date.now(), usersPaid:paidCount, totalPaid:totalPaid.toFixed(2) });
+  logAdminAction('distribution','Rank Reward','ALL',paidCount+' users, $'+totalPaid.toFixed(2));
+  toast('✅ Rank Reward সম্পন্ন! '+paidCount+' জন পেয়েছেন, মোট $'+totalPaid.toFixed(2));
+  loadRankRewardHistory();
+};
+async function loadRankRewardHistory(){
+  const tb = document.getElementById('rankRewardHistTb');
+  if (!tb) return;
+  const snap = await rtdb.ref('distributionLogs').orderByChild('type').equalTo('Rank Reward').limitToLast(20).get();
+  if (!snap.exists()){ tb.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:12px">No history</td></tr>'; return; }
+  const rows = [];
+  Object.values(snap.val()).sort((a,b)=>b.timestamp-a.timestamp).forEach(log=>{
+    (log.details||[]).forEach(d=>rows.push([new Date(log.timestamp).toLocaleString(), d.name, log.type, '$'+(d.amount||0).toFixed(2)]));
+  });
+  tb.innerHTML = rows.slice(0,50).map(r=>`<tr><td style="font-size:.72rem">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td style="color:var(--green);font-weight:700">${r[3]}</td></tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:12px">No history</td></tr>';
+}
 
 // ── RANK SALARY (Left/Right ACTIVE ID COUNT-ভিত্তিক, ৭-star, monthly) ──
 const STAR_NAMES = ['One Star','Two Star','Three Star','Four Star','Five Star','Six Star','Seven Star'];
@@ -2876,14 +3162,14 @@ function buildRankSalaryUI(){
       <td><button class="btn btn-gr btn-sm" onclick="saveRankSalaryTier(${n})">Save</button></td>
     </tr>`;
   }).join('');
-  // "Qualified Now" গণনা (active user-দের মধ্যে কতজন প্রতিটা tier-এ পৌঁছেছে)
+  // "Qualified Now" গণনা — এখন investment volume ($) ভিত্তিক (idCount ফিল্ডের নাম আগের রাখা হয়েছে, কিন্তু এখন এটা ডলার represent করে)
   setTimeout(() => {
     const active = Object.values(ALLU).filter(u=>u.isActive && !u.isBanned);
     STAR_NAMES.forEach((name,i)=>{
       const n = i+1;
       const t = (SETTINGS.starRankTiers||{})['star'+n] || STAR_DEFAULTS[i];
       const idRight = t.idCountRight!==undefined ? t.idCountRight : t.idCount;
-      const qualified = active.filter(u => legActiveIdCount(u.id,'left')>=t.idCount && legActiveIdCount(u.id,'right')>=idRight).length;
+      const qualified = active.filter(u => legInvestmentVolume(u.id,'left')>=t.idCount && legInvestmentVolume(u.id,'right')>=idRight).length;
       const el = document.getElementById('rs'+n+'cnt');
       if (el) el.textContent = qualified;
     });
@@ -2969,8 +3255,8 @@ window.runRankSalary = async () => {
     const already  = await histRef.get();
     if (already.exists()) continue;
 
-    const leftCnt  = legActiveIdCount(u.id,'left');
-    const rightCnt = legActiveIdCount(u.id,'right');
+    const leftVol  = legInvestmentVolume(u.id,'left');
+    const rightVol = legInvestmentVolume(u.id,'right');
 
     let matched = null;
     if (u.rankOverride) {
@@ -2978,7 +3264,7 @@ window.runRankSalary = async () => {
       matched = tierList.find(t => t.name === u.rank) || null;
     } else {
       for (const t of tierList){
-        if (leftCnt>=t.idLeft && rightCnt>=t.idRight){ matched=t; break; }
+        if (leftVol>=t.idLeft && rightVol>=t.idRight){ matched=t; break; }
       }
       // rank ফিল্ড আপডেট (override না থাকলেই)
       const newRank = matched ? matched.name : 'No Rank';
@@ -3004,10 +3290,10 @@ window.runRankSalary = async () => {
     const iSnap = await iRef.get();
     await iRef.set(parseFloat(iSnap.exists()?iSnap.val():0)+proratedSalary);
     await rtdb.ref('users/'+u.id).update({ rankSalaryLastPaidAt: now });
-    await histRef.set({ rank:matched.name, salary:proratedSalary, fullTierSalary:matched.salary, daysPaid:daysToPay, leftCnt, rightCnt, timestamp:now });
+    await histRef.set({ rank:matched.name, salary:proratedSalary, fullTierSalary:matched.salary, daysPaid:daysToPay, leftVol, rightVol, timestamp:now });
     await rtdb.ref('transactions/'+u.id).push({
       type:'Rank Salary', amount:proratedSalary,
-      note:matched.name+' — '+daysToPay+' days — L:'+leftCnt+' ID, R:'+rightCnt+' ID ('+monthKey+')',
+      note:matched.name+' — '+daysToPay+' days — L: $'+leftVol.toFixed(0)+', R: $'+rightVol.toFixed(0)+' ('+monthKey+')',
       timestamp:now, status:'completed', balance:newBal
     });
     detailLog.push({ uid:u.id, name: u.fullName||u.username||u.id.slice(0,10), amount: proratedSalary });
@@ -3260,6 +3546,14 @@ async function buildReportData(type){
       .map((r,i)=>[i+1, r[1], '$'+r[2].toFixed(2)]);
     return { headers:['Rank #','User','Wallet Balance'], rows };
   }
+  if (type==='freeid'){
+    // Active হয়েছে (activation fee দিয়েছে) কিন্তু এখনো কোনো investment/upgrade করেনি
+    const investedUids = new Set(Object.values(ALL_INV).map(inv=>inv.uid));
+    const rows = Object.values(ALLU)
+      .filter(u => u.isActive && !u.isBanned && !investedUids.has(u.id))
+      .map(u => [u.memberId||u.id.slice(0,10), u.fullName||'—', u.username||'—', u.email||'—', formatDate(u.createdAt)]);
+    return { headers:['Member ID','Full Name','Username','Email','Joined'], rows };
+  }
   return { headers:[], rows:[] };
 }
 
@@ -3340,7 +3634,7 @@ const PAGE_LABELS = {
   withdrawals:'Withdrawals', investments:'Investments', transactions:'Transactions',
   cashback:'Cashback Pool', clubbonus:'Club Bonus', roi:'ROI Management', voucher:'Gift Voucher', matching:'Matching Bonus',
   tree:'Binary Tree', dashctrl:'Dashboard Control', supportchat:'Support Chat', subadmin:'Sub-Admins', notices:'Notices', actlog:'Activity Log',
-  settings:'Settings', ranks:'Ranks', ranksalary:'Rank Salary', backup:'Backup & Restore', reports:'Reports'
+  settings:'Settings', commtable:'Commission Table', ranks:'Ranks', ranksalary:'Rank Salary', backup:'Backup & Restore', reports:'Reports'
 };
 
 window.showPage = (page, el) => {
@@ -3357,9 +3651,11 @@ window.showPage = (page, el) => {
   if(page==='voucher') loadVouchers();
   if(page==='cashback') loadCashbackHistory();
   if(page==='ranksalary') { buildRankSalaryUI(); loadRankSalaryHistory(); }
+  if(page==='ranks') { loadRankRewardHistory(); }
   if(page==='reports') { RTDB_USERS_CACHE = null; renderReport(document.getElementById('reportTypeSel').value); }
   if(page==='supportchat') { loadChatList(); }
-  if(page==='dashctrl') { loadGlobalToggles(); populatePerUserSel(); }
+  if(page==='commtable') { loadUnifiedCommissionTable(); }
+  if(page==='dashctrl') { loadGlobalToggles(); populatePerUserSel(); loadCustomButtons(); }
   if(page==='subadmin') loadSubAdmins();
   if(page==='backup') loadBackupHistory();
 };
