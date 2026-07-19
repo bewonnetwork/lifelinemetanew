@@ -33,15 +33,15 @@ nav a .ic{width:17px;text-align:center;font-size:.9rem}
 .pg-label{font-size:.87rem;font-weight:700;color:var(--muted)}
 .tb-right{display:flex;align-items:center;gap:10px}
 .theme-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 11px;font-size:.76rem;cursor:pointer}
-/* NOTICE MARQUEE (new) */
-.notice-bar{position:fixed;top:56px;left:245px;right:0;height:30px;background:linear-gradient(90deg,rgba(0,198,255,.12),rgba(124,58,237,.12));border-bottom:1px solid var(--border);z-index:98;overflow:hidden;display:flex;align-items:center;transition:left .3s}
+/* NOTICE MARQUEE (new) — sits in normal page flow right under the topbar, not fixed, so it doesn't float/reappear over content while scrolling */
+.notice-bar{margin-left:245px;margin-top:56px;height:30px;background:linear-gradient(90deg,rgba(0,198,255,.12),rgba(124,58,237,.12));border-bottom:1px solid var(--border);z-index:98;overflow:hidden;display:flex;align-items:center;transition:margin-left .3s}
 .notice-bar.hide{display:none}
 .notice-track{display:inline-flex;white-space:nowrap;animation:noticeScroll 28s linear infinite;padding-left:100%}
 .notice-track span{margin-right:60px;font-size:.76rem;color:var(--accent);font-weight:600}
 .notice-track span b{color:var(--gold);margin-right:6px}
 @keyframes noticeScroll{ 0%{transform:translateX(0)} 100%{transform:translateX(-100%)} }
 .main{margin-left:245px;padding-top:56px;min-height:100vh;transition:margin-left .3s}
-.main.with-notice{padding-top:86px}
+.main.with-notice{padding-top:56px}
 .page{display:none;padding:20px;overflow-x:hidden;max-width:100%}
 .page.active{display:block}
 .pg-title{font-size:1.25rem;font-weight:800;margin-bottom:16px}
@@ -139,16 +139,26 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 /* BOTTOM NAV (new, mobile app style) */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:var(--surface);border-top:1px solid var(--border);display:flex;z-index:120}
 .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--text);font-size:.63rem;font-weight:700;cursor:pointer;transition:.2s;user-select:none}
-.bn-item .bn-ic{font-size:1.15rem;color:var(--accent)}
+.bn-item .bn-ic{
+  width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:50%;
+  background:linear-gradient(145deg, var(--accent), var(--accent2));
+  box-shadow: 0 2px 5px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,255,255,.35), inset 0 -1px 2px rgba(0,0,0,.25);
+  transition:.2s;
+}
+.bn-item .bn-ic svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}
 .bn-item.active{color:var(--accent)}
-.bn-item.active .bn-ic{color:var(--accent2)}
+.bn-item.active .bn-ic{
+  background:linear-gradient(145deg, var(--accent2), var(--accent));
+  box-shadow: 0 3px 8px rgba(0,198,255,.45), inset 0 1px 1px rgba(255,255,255,.4), inset 0 -1px 2px rgba(0,0,0,.25);
+  transform:translateY(-1px);
+}
 .bn-item:hover{color:var(--accent)}
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%)}
   .sidebar.open{transform:translateX(0)}
   .main{margin-left:0}
   .topbar{left:0}
-  .notice-bar{left:0}
+  .notice-bar{margin-left:0}
   .menu-btn{display:block}
   .two-col{grid-template-columns:1fr}
   .cards-grid{grid-template-columns:1fr 1fr}
@@ -164,6 +174,9 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 .tb-right{overflow-x:auto;scrollbar-width:none}
 .tb-right::-webkit-scrollbar{display:none}
 </style>
+  <!-- Web3 Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.9.0/dist/web3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tronweb@5.3.2/dist/TronWeb.js"></script>
 </head>
 <body>
 
@@ -232,9 +245,12 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
       🔔<span id="activityBellBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;border-radius:50%;width:16px;height:16px;font-size:.6rem;line-height:16px;text-align:center">0</span>
     </button>
     <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" style="flex-shrink:0">☀️<span class="theme-btn-txt"> Light</span></button>
-    <button class="btn btn-o btn-sm" onclick="doLogout()" style="flex-shrink:0;white-space:nowrap;display:flex;align-items:center;gap:4px">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-      <span class="logout-txt">Logout</span>
+    <button onclick="doLogout()" title="Power Off / Logout" style="flex-shrink:0;width:36px;height:36px;border-radius:50%;background:linear-gradient(145deg,#2d1515,#1a0808);border:1.5px solid rgba(251,113,133,0.35);color:#fb7185;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.35s;box-shadow:0 3px 10px rgba(251,113,133,0.25),0 1px 0 rgba(255,100,100,0.1) inset;" onmouseover="this.style.background='linear-gradient(145deg,#ef4444,#b91c1c)';this.style.color='#fff';this.style.boxShadow='0 5px 18px rgba(239,68,68,0.6)';this.style.transform='scale(1.08)'" onmouseout="this.style.background='linear-gradient(145deg,#2d1515,#1a0808)';this.style.color='#fb7185';this.style.boxShadow='0 3px 10px rgba(251,113,133,0.25)';this.style.transform='scale(1)'">
+      <!-- Power/Shutdown icon -->
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
+        <line x1="12" y1="2" x2="12" y2="12"/>
+      </svg>
     </button>
   </div>
 </div>
@@ -257,6 +273,8 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     </div>
     <button class="btn btn-g btn-sm" onclick="showPage('activation',null)">Activate Now →</button>
   </div>
+
+  <div id="customButtonsBox" style="display:none;gap:8px;flex-wrap:wrap;margin-bottom:13px"></div>
 
   <div class="card">
     <div class="card-title">Your IDs <small>Copy your ID or your upline's ID</small></div>
@@ -949,17 +967,80 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
     </div>
 
     <div class="card">
-      <div class="card-title">💳 Submit Deposit Request (Manual)</div>
-      <div class="info-box">Send USDT to admin wallet below → paste TxHash here → Admin approve then Main Wallet will credit </div>
-      <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:13px;margin-bottom:13px">
-        <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px">Admin USDT Wallet — TRC-20 (TRON)</div>
-        <div style="font-size:.82rem;color:var(--accent);word-break:break-all;font-family:monospace;margin-bottom:8px" id="adminWalletAddrTRC">Loading…</div>
-        <button class="btn btn-o btn-sm" onclick="copyAdminWallet('trc')">📋 Copy TRC-20 Address</button>
+      <div class="card-title">💳 Deposit USDT — Auto Verify</div>
+      <div class="info-box">✅ Send USDT to the address below → Paste TxHash → Click <strong>Auto Verify & Submit</strong> — No admin needed for TRC-20!</div>
+
+      <!-- WALLET CONNECT SECTION -->
+      <div style="background:linear-gradient(135deg,rgba(0,198,255,0.08),rgba(34,197,94,0.05));border:1px solid rgba(0,198,255,0.2);border-radius:14px;padding:18px;margin-bottom:16px;">
+        <div style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;">🔗 Connect Wallet — Direct Transfer</div>
+        
+        <!-- Wallet Status -->
+        <div id="walletStatus" style="display:none;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:.78rem;">
+          <div style="color:var(--green);font-weight:700;margin-bottom:3px;">✅ Wallet Connected</div>
+          <div style="color:var(--muted);font-family:monospace;font-size:.72rem;word-break:break-all;" id="connectedAddr">-</div>
+          <div style="color:var(--muted);font-size:.72rem;margin-top:4px;">Balance: <span id="walletUsdtBal" style="color:var(--accent);font-weight:700;">-</span> USDT</div>
+        </div>
+
+        <!-- Connect Buttons -->
+        <div id="connectBtns" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+          <button onclick="connectTronLink()" style="padding:11px;border-radius:10px;border:1px solid rgba(0,198,255,0.3);background:rgba(0,198,255,0.08);color:var(--accent);font-weight:700;font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+            🔵 TronLink
+          </button>
+          <button onclick="connectMetaMask()" style="padding:11px;border-radius:10px;border:1px solid rgba(250,204,21,0.3);background:rgba(250,204,21,0.06);color:var(--gold);font-weight:700;font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+            🦊 MetaMask
+          </button>
+          <button onclick="connectTokenPocket()" style="padding:11px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);color:var(--text);font-weight:700;font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+            📱 TokenPocket
+          </button>
+          <button onclick="connectTrustWallet()" style="padding:11px;border-radius:10px;border:1px solid rgba(59,130,246,0.3);background:rgba(59,130,246,0.06);color:#60a5fa;font-weight:700;font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+            🛡️ Trust Wallet
+          </button>
+        </div>
+        <div style="text-align:center;margin-bottom:8px;">
+          <button onclick="disconnectWallet()" id="disconnectBtn" style="display:none;padding:8px 20px;border-radius:20px;border:1px solid rgba(251,113,133,0.3);background:rgba(251,113,133,0.06);color:var(--red);font-weight:700;font-size:.75rem;cursor:pointer;">
+            ✕ Disconnect Wallet
+          </button>
+        </div>
+
+        <!-- Send Amount + Button -->
+        <div id="sendSection" style="display:none;">
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <input type="number" id="sendAmount" placeholder="Amount in USDT" min="30" step="1"
+              style="flex:1;padding:11px 14px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.84rem;outline:none;">
+            <button onclick="sendUSDT()" style="padding:11px 16px;border-radius:10px;background:linear-gradient(135deg,#06b6d4,#22c55e);color:black;font-weight:800;font-size:.84rem;border:none;cursor:pointer;white-space:nowrap;">
+              ⚡ Send & Credit
+            </button>
+          </div>
+          <div style="font-size:.71rem;color:var(--muted);">Minimum $30 USDT • Funds sent directly to admin wallet • Auto credited to your balance</div>
+        </div>
+
+        <div id="sendStatus" style="display:none;padding:10px;border-radius:8px;margin-top:8px;font-size:.8rem;text-align:center;"></div>
       </div>
-      <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:13px;margin-bottom:13px">
-        <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px">Admin USDT Wallet — BEP-20 (BSC)</div>
-        <div style="font-size:.82rem;color:var(--accent);word-break:break-all;font-family:monospace;margin-bottom:8px" id="adminWalletAddrBEP">Loading…</div>
-        <button class="btn btn-o btn-sm" onclick="copyAdminWallet('bep')">📋 Copy BEP-20 Address</button>
+
+      <!-- TRC-20 -->
+      <div style="background:var(--bg);border:1px solid rgba(0,198,255,.3);border-radius:12px;padding:15px;margin-bottom:13px">
+        <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">✅ USDT TRC-20 (TRON) — Recommended</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+          <img id="adminQrTRC" src="" alt="TRC20 QR" style="width:140px;height:140px;border-radius:10px;border:2px solid var(--accent);display:none">
+          <div style="width:100%;background:rgba(0,198,255,0.07);border:1px solid rgba(0,198,255,0.2);border-radius:8px;padding:10px 12px;text-align:center">
+            <div style="font-size:.72rem;color:var(--muted);margin-bottom:5px;">Wallet Address</div>
+            <div style="font-size:.75rem;color:var(--accent);word-break:break-all;font-family:monospace;font-weight:700;line-height:1.5" id="adminWalletAddrTRC">Loading…</div>
+          </div>
+          <button class="btn btn-o" onclick="copyAdminWallet('trc')" style="width:100%">📋 Copy TRC-20 Address</button>
+        </div>
+      </div>
+
+      <!-- BEP-20 -->
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:15px;margin-bottom:13px">
+        <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">USDT BEP-20 (BSC) — Manual Approve</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+          <img id="adminQrBEP" src="" alt="BEP20 QR" style="width:140px;height:140px;border-radius:10px;border:2px solid var(--border);display:none">
+          <div style="width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center">
+            <div style="font-size:.72rem;color:var(--muted);margin-bottom:5px;">Wallet Address</div>
+            <div style="font-size:.75rem;color:var(--accent);word-break:break-all;font-family:monospace;font-weight:700;line-height:1.5" id="adminWalletAddrBEP">Loading…</div>
+          </div>
+          <button class="btn btn-o" onclick="copyAdminWallet('bep')" style="width:100%">📋 Copy BEP-20 Address</button>
+        </div>
       </div>
       <div class="fg">
         <label>Deposit Amount (USDT)</label>
@@ -980,7 +1061,33 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
         <label>Note (optional)</label>
         <input type="text" id="frNote" placeholder="Any note for admin…"/>
       </div>
-      <button class="btn btn-p" onclick="submitFundRequest()" style="width:100%;padding:12px;font-size:.88rem">📤 Submit Fund Request (credits Main Wallet)</button>
+      <div id="autoVerifyStatus" style="display:none;padding:10px;border-radius:8px;margin-bottom:10px;font-size:.82rem;text-align:center"></div>
+
+      <!-- Submit Method Toggle -->
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <button id="tabAuto" onclick="setSubmitTab('auto')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(0,198,255,0.12);color:var(--accent);font-weight:700;font-size:.82rem;cursor:pointer;transition:.3s">
+          ⚡ Auto Verify
+        </button>
+        <button id="tabManual" onclick="setSubmitTab('manual')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:700;font-size:.82rem;cursor:pointer;transition:.3s">
+          📤 Manual Submit
+        </button>
+      </div>
+
+      <!-- Auto Tab -->
+      <div id="submitTabAuto">
+        <div style="font-size:.76rem;color:var(--muted);background:rgba(0,198,255,0.06);border:1px solid rgba(0,198,255,0.15);border-radius:8px;padding:9px 12px;margin-bottom:10px;">
+          ✅ TRC-20 only — Blockchain verify করে instantly credit হবে। কোনো admin approval লাগবে না।
+        </div>
+        <button class="btn btn-p" onclick="autoVerifyAndSubmit()" style="width:100%;padding:13px;font-size:.9rem;">⚡ Auto Verify & Credit Now</button>
+      </div>
+
+      <!-- Manual Tab -->
+      <div id="submitTabManual" style="display:none;">
+        <div style="font-size:.76rem;color:var(--muted);background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:9px 12px;margin-bottom:10px;">
+          📤 TRC-20 বা BEP-20 — Admin approve করলে wallet এ credit হবে।
+        </div>
+        <button class="btn btn-o" onclick="submitFundRequest()" style="width:100%;padding:13px;font-size:.9rem;">📤 Submit for Admin Approval</button>
+      </div>
     </div>
 
     <div class="card">
@@ -999,30 +1106,190 @@ body.light{--bg:#f1f5f9;--surface:#fff;--card:#f8fafc;--border:#e2e8f0;--text:#1
 
 </main>
 
-<!-- BOTTOM NAV (new, mobile-app style footer) -->
+<!-- BOTTOM NAV — 3D Yellow Icons -->
+<style>
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;height:72px;
+  background:linear-gradient(180deg,rgba(12,18,38,0.99),rgba(4,6,18,1));
+  border-top:1px solid rgba(250,204,21,0.12);
+  display:flex;z-index:120;padding:0 8px;
+  backdrop-filter:blur(24px);
+  box-shadow:0 -6px 35px rgba(0,0,0,0.5);
+}
+.bn-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:5px;cursor:pointer;padding:6px 2px;
+  border-radius:14px;transition:.3s;color:#475569;
+  font-size:.55rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;
+}
+.bn-item:hover{color:#facc15;}
+.bn-item.active{color:#facc15;}
+.bn-ic{
+  width:44px;height:44px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(145deg,#fde047,#f59e0b);
+  border:1px solid rgba(255,255,255,0.15);
+  transition:.35s;
+  box-shadow:
+    0 5px 14px rgba(250,204,21,0.45),
+    0 2px 0 rgba(255,255,255,0.35) inset,
+    0 -3px 0 rgba(160,100,0,0.45) inset;
+}
+.bn-item:hover .bn-ic,
+.bn-item.active .bn-ic{
+  background:linear-gradient(145deg,#fff176,#facc15);
+  box-shadow:
+    0 8px 22px rgba(250,204,21,0.7),
+    0 2px 0 rgba(255,255,255,0.5) inset,
+    0 -3px 0 rgba(160,100,0,0.4) inset;
+  transform:translateY(-4px);
+}
+.bn-ic svg{width:21px;height:21px;stroke:#000;fill:none;stroke-width:2;transition:.3s;}
+.bn-item:hover .bn-ic svg,
+.bn-item.active .bn-ic svg{stroke:#000;}
+
+.bn-center{position:relative;flex:0 0 74px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:6px;}
+.bn-center-btn{
+  position:absolute;top:-24px;left:50%;transform:translateX(-50%);
+  width:60px;height:60px;border-radius:20px;
+  background:linear-gradient(145deg,#fde047,#f59e0b);
+  border:3px solid #04060e;
+  box-shadow:
+    0 8px 24px rgba(250,204,21,0.65),
+    0 2px 0 rgba(255,255,255,0.35) inset,
+    0 -3px 0 rgba(160,100,0,0.5) inset;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.35s;
+}
+.bn-center-btn:hover{
+  transform:translateX(-50%) scale(1.1) translateY(-4px);
+  box-shadow:0 14px 32px rgba(250,204,21,0.75),0 2px 0 rgba(255,255,255,0.35) inset;
+}
+.bn-center-btn svg{width:28px;height:28px;stroke:#000;fill:none;stroke-width:2.8;}
+.bn-center-label{margin-top:26px;font-size:.55rem;color:#facc15;font-weight:700;letter-spacing:.4px;text-transform:uppercase;}
+</style>
+
 <div class="bottom-nav" id="bottomNav">
-  <div class="bn-item" id="bn-roi" data-page="roi" onclick="showPage('roi',null)"><span class="bn-ic">📈</span><span>Invest Now</span></div>
-  <div class="bn-item" id="bn-fundrequest" data-page="fundrequest" onclick="showPage('fundrequest',null)"><span class="bn-ic">💰</span><span>Fund Request</span></div>
-  <div class="bn-item" data-page="wallet" onclick="showPage('wallet',null)"><span class="bn-ic">💸</span><span>Withdraw</span></div>
-  <div class="bn-item" data-page="wallet" onclick="showPage('wallet',null)"><span class="bn-ic">🔄</span><span>Transfer</span></div>
-  <div class="bn-item" id="bn-tree" data-page="tree" onclick="showPage('tree',null)"><span class="bn-ic">🌳</span><span>Binary Tree</span></div>
-  <div class="bn-item" data-page="income" onclick="showPage('income',null)"><span class="bn-ic">🧾</span><span>Transaction</span></div>
-  <div class="bn-item" onclick="showPage('income',null)"><span class="bn-ic">🧾</span><span>Transaction</span></div>
+
+  <div class="bn-item" id="bn-home" onclick="showPage('overview',null);setActiveNav('bn-home')">
+    <span class="bn-ic">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </span>
+    <span>Home</span>
+  </div>
+
+  <div class="bn-item" id="bn-deposit" onclick="showPage('fundrequest',null);setActiveNav('bn-deposit')">
+    <span class="bn-ic">
+      <svg viewBox="0 0 24 24"><path d="M12 2v10m0 0l-3-3m3 3l3-3"/><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 18h.01M10 18h4"/></svg>
+    </span>
+    <span>Deposit</span>
+  </div>
+
+  <div class="bn-center">
+    <div class="bn-center-btn" onclick="showPage('roi',null);setActiveNav('')" title="Invest Now">
+      <!-- Trending Up chart icon -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+        <polyline points="16 7 22 7 22 13"/>
+      </svg>
+    </div>
+    <span class="bn-center-label">Invest</span>
+  </div>
+
+  <div class="bn-item" id="bn-wallet" onclick="showPage('wallet',null);setActiveNav('bn-wallet')">
+    <span class="bn-ic">
+      <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/><circle cx="16" cy="15" r="1" fill="currentColor"/></svg>
+    </span>
+    <span>Wallet</span>
+  </div>
+
+  <div class="bn-item" id="bn-profile" onclick="showPage('profile',null);setActiveNav('bn-profile')">
+    <span class="bn-ic">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </span>
+    <span>Profile</span>
+  </div>
+
 </div>
 
-<!-- ===== SUPPORT CHATBOX (new) ===== -->
-<button id="chatFab" onclick="toggleChatPanel()" style="position:fixed;bottom:76px;right:18px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;font-size:1.3rem;box-shadow:0 4px 14px rgba(0,198,255,.4);z-index:150;cursor:pointer">
-  💬<span id="chatUnreadBadge" style="display:none;position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;border-radius:50%;width:16px;height:16px;font-size:.6rem;line-height:16px;text-align:center">0</span>
+<!-- ===== CHAT SYSTEM — User↔Admin + User↔User ===== -->
+<style>
+#chatFab{position:fixed;bottom:76px;right:18px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;font-size:1.4rem;box-shadow:0 4px 18px rgba(0,198,255,.45);z-index:150;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+#chatPanel{display:none;position:fixed;bottom:142px;right:18px;width:340px;max-width:93vw;height:480px;max-height:72vh;background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:0 15px 40px rgba(0,0,0,.5);z-index:150;flex-direction:column;overflow:hidden;}
+.chat-tabs{display:flex;border-bottom:1px solid var(--border);}
+.chat-tab{flex:1;padding:9px;text-align:center;font-size:.75rem;font-weight:700;cursor:pointer;color:var(--muted);transition:.2s;border-bottom:2px solid transparent;}
+.chat-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.chat-msgs{flex:1;overflow-y:auto;padding:12px;font-size:.78rem;display:flex;flex-direction:column;gap:8px;}
+.chat-bubble{max-width:75%;padding:8px 12px;border-radius:14px;line-height:1.5;font-size:.76rem;word-break:break-word;}
+.chat-bubble.mine{align-self:flex-end;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:14px 14px 4px 14px;}
+.chat-bubble.theirs{align-self:flex-start;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:14px 14px 14px 4px;}
+.chat-bubble .cb-name{font-size:.65rem;font-weight:700;opacity:.7;margin-bottom:3px;}
+.chat-bubble .cb-time{font-size:.62rem;opacity:.5;margin-top:3px;text-align:right;}
+.user-list-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:.2s;}
+.user-list-item:hover{background:rgba(255,255,255,0.04);}
+.user-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:.85rem;flex-shrink:0;}
+.online-dot{width:9px;height:9px;border-radius:50%;background:var(--green);border:2px solid var(--card);position:absolute;bottom:0;right:0;}
+</style>
+
+<button id="chatFab" onclick="toggleChatPanel()">
+  💬
+  <span id="chatUnreadBadge" style="display:none;position:absolute;top:-3px;right:-3px;background:var(--red);color:#fff;border-radius:50%;width:18px;height:18px;font-size:.62rem;line-height:18px;text-align:center;font-weight:800">0</span>
 </button>
-<div id="chatPanel" style="display:none;position:fixed;bottom:136px;right:18px;width:320px;max-width:90vw;height:420px;max-height:70vh;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.4);z-index:150;flex-direction:column;overflow:hidden">
-  <div style="background:linear-gradient(90deg,var(--accent),var(--accent2));padding:11px 14px;display:flex;justify-content:space-between;align-items:center;color:#fff">
-    <div style="font-weight:800;font-size:.85rem">💬 Support Chat</div>
-    <button onclick="toggleChatPanel()" style="background:none;border:none;color:#fff;font-size:1.1rem;cursor:pointer">✕</button>
+
+<div id="chatPanel" style="display:none;flex-direction:column;">
+  <!-- Header -->
+  <div style="background:linear-gradient(90deg,var(--accent),var(--accent2));padding:12px 16px;display:flex;justify-content:space-between;align-items:center;color:#fff;flex-shrink:0;">
+    <div>
+      <div style="font-weight:800;font-size:.88rem" id="chatPanelTitle">💬 Messages</div>
+      <div style="font-size:.68rem;opacity:.8" id="chatPanelSub">Support & User Chat</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button onclick="showChatView('list')" id="chatBackBtn" style="display:none;background:rgba(255,255,255,0.2);border:none;color:#fff;border-radius:8px;padding:4px 8px;font-size:.75rem;cursor:pointer;">← Back</button>
+      <button onclick="toggleChatPanel()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:1rem;cursor:pointer;">✕</button>
+    </div>
   </div>
-  <div id="chatMessages" style="flex:1;overflow-y:auto;padding:12px;font-size:.78rem;display:flex;flex-direction:column;gap:8px"></div>
-  <div style="display:flex;gap:0;border-top:1px solid var(--border);padding:8px">
-    <input type="text" id="chatInput" placeholder="Type your message…" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:.8rem;outline:none" onkeydown="if(event.key==='Enter')sendChatMessage()"/>
-    <button class="btn btn-p btn-sm" style="margin-left:6px" onclick="sendChatMessage()">➤</button>
+
+  <!-- TABS -->
+  <div class="chat-tabs" id="chatTabsBar">
+    <div class="chat-tab active" id="tabAdmin" onclick="switchChatTab('admin')">🛡 Admin Support</div>
+    <div class="chat-tab" id="tabUsers" onclick="switchChatTab('users')">👥 User Chat</div>
+  </div>
+
+  <!-- ADMIN CHAT VIEW -->
+  <div id="chatViewAdmin" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+    <div class="chat-msgs" id="chatMessages"></div>
+    <div style="display:flex;gap:6px;border-top:1px solid var(--border);padding:8px;flex-shrink:0;">
+      <input type="text" id="chatInput" placeholder="Message support…" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--text);font-size:.8rem;outline:none;" onkeydown="if(event.key==='Enter')sendChatMessage()"/>
+      <button class="btn btn-p btn-sm" onclick="sendChatMessage()">➤</button>
+    </div>
+  </div>
+
+  <!-- USER SEARCH VIEW — no list, search only ──>
+  <div id="chatViewUsers" style="display:none;flex:1;flex-direction:column;overflow:hidden;">
+    <div style="padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0;">
+      <div style="font-size:.72rem;color:var(--muted);margin-bottom:8px;text-align:center;">Type a name or Member ID to find a user</div>
+      <div style="position:relative;">
+        <input type="text" id="userSearchInput" placeholder="🔍 Search name or Member ID…"
+          oninput="searchChatUsers(this.value)"
+          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:10px 14px;color:var(--text);font-size:.8rem;outline:none;transition:.3s;"
+          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+      </div>
+    </div>
+    <div id="userChatList" style="flex:1;overflow-y:auto;">
+      <div style="padding:30px 20px;text-align:center;color:var(--muted);font-size:.78rem;opacity:.6;">
+        <div style="font-size:2rem;margin-bottom:10px;">🔍</div>
+        <div>Search for a member to start chatting</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER-TO-USER CHAT VIEW -->
+  <div id="chatViewDM" style="display:none;flex:1;flex-direction:column;overflow:hidden;">
+    <div class="chat-msgs" id="dmMessages"></div>
+    <div style="display:flex;gap:6px;border-top:1px solid var(--border);padding:8px;flex-shrink:0;">
+      <input type="text" id="dmInput" placeholder="Send message…" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--text);font-size:.8rem;outline:none;" onkeydown="if(event.key==='Enter')sendDM()"/>
+      <button class="btn btn-p btn-sm" onclick="sendDM()">➤</button>
+    </div>
   </div>
 </div>
 
@@ -1082,6 +1349,7 @@ async function loadAll() {
     loadMyVouchers();
     watchChatMessages();
     applyDashboardControls();
+    loadCustomButtons();
 
     rtdb.ref('users/' + CU.uid + '/income').on('value', snap => {
       if (snap.exists() && UD) { UD.income = snap.val(); renderIncomeCards(); }
@@ -1158,7 +1426,9 @@ function renderAll() {
     document.getElementById('avInitImg').src = u.photoURL;
     document.getElementById('avInitImg').style.display = 'block';
   } else {
-    document.getElementById('avInitImg').style.display = 'none';
+    // No custom photo yet — show the site logo as the default profile picture
+    document.getElementById('avInitImg').src = 'assets/images/logo.jpeg';
+    document.getElementById('avInitImg').style.display = 'block';
   }
   document.getElementById('sbName').textContent   = name;
   document.getElementById('sbStatus').textContent = u.isActive ? '✅ Active' : '⚠️ Inactive';
@@ -1175,8 +1445,10 @@ function renderAll() {
     document.getElementById('pfAvImg').style.display = 'block';
     document.getElementById('pfAv').style.display = 'none';
   } else {
-    document.getElementById('pfAvImg').style.display = 'none';
-    document.getElementById('pfAv').style.display = 'block';
+    // No custom photo yet — show the site logo as the default profile picture
+    document.getElementById('pfAvImg').src = 'assets/images/logo.jpeg';
+    document.getElementById('pfAvImg').style.display = 'block';
+    document.getElementById('pfAv').style.display = 'none';
   }
   document.getElementById('pfNameD').textContent       = name;
   document.getElementById('pfEmailD').textContent      = u.email || CU.email || '';
@@ -1741,7 +2013,7 @@ window.searchTreeMember = () => {
   );
 
   if (!found || PARENT_MAP[found.id] === undefined) {
-    resultEl.innerHTML = '<span style="color:var(--red)">❌ এই username আপনার টিমে পাওয়া যায়নি</span>';
+    resultEl.innerHTML = '<span style="color:var(--red)">❌ This username was not found in your team</span>';
     return;
   }
 
@@ -1752,7 +2024,7 @@ window.searchTreeMember = () => {
     cur = PARENT_MAP[cur];
   }
   renderBinaryTree();
-  resultEl.innerHTML = `<span style="color:var(--green)">✅ পাওয়া গেছে: <b>${found.username || found.memberId}</b> — Tree-তে expand করে দেখানো হয়েছে, নিচে স্ক্রল করুন</span>`;
+  resultEl.innerHTML = `<span style="color:var(--green)">✅ Found: <b>${found.username || found.memberId}</b> — expanded in the Tree below, scroll down to view</span>`;
   setTimeout(() => {
     const node = document.getElementById('tnode-' + found.id);
     if (node) node.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1844,7 +2116,10 @@ function renderBinaryTree() {
         <span>Left Count-Carry: <strong style="color:var(--accent)">${leftCarry}</strong></span>
         <span>Right Count-Carry: <strong style="color:var(--accent2)">${rightCarry}</strong></span>
       </div>
-      <div style="text-align:center;font-size:.65rem;color:var(--muted);margin-top:6px">⚠️ If anyone withdraws funds, the carry volume decreases instantly</div>`;
+      <div style="text-align:center;margin-top:6px">
+        <span onclick="const n=document.getElementById('treeCarryNote');n.style.display=n.style.display==='none'?'block':'none';" style="font-size:.63rem;color:var(--accent);cursor:pointer;user-select:none">ℹ️ What does carry volume mean? ▾</span>
+        <div id="treeCarryNote" style="display:none;font-size:.65rem;color:var(--muted);margin-top:4px">⚠️ If anyone withdraws funds, the carry volume decreases instantly</div>
+      </div>`;
   }
 
   function makeNode(uid, label, isYou, parentUid, sideOverride) {
@@ -2253,8 +2528,8 @@ let SELECTED_AVATAR_FILE = null;
 window.handleAvatarSelect = (e) => {
   const file = e.target.files[0];
   if (!file) return;
-  if (!file.type.startsWith('image/')) { toast('❌ দয়া করে একটা ছবি ফাইল বাছুন'); return; }
-  if (file.size > 3*1024*1024) { toast('❌ ছবি ৩MB এর কম হতে হবে'); return; }
+  if (!file.type.startsWith('image/')) { toast('❌ Please choose an image file'); return; }
+  if (file.size > 3*1024*1024) { toast('❌ Image must be under 3MB'); return; }
   SELECTED_AVATAR_FILE = file;
   const url = URL.createObjectURL(file);
   const img = document.getElementById('pfAvImg');
@@ -2264,7 +2539,7 @@ window.handleAvatarSelect = (e) => {
 
 window.saveProfile = async () => {
   const msgEl = document.getElementById('pfSaveMsg');
-  msgEl.style.color = 'var(--muted)'; msgEl.textContent = 'সেভ হচ্ছে…';
+  msgEl.style.color = 'var(--muted)'; msgEl.textContent = 'Saving…';
   try {
     const updates = {
       fullName:      document.getElementById('pfName').value.trim(),
@@ -2275,7 +2550,8 @@ window.saveProfile = async () => {
 
     if (SELECTED_AVATAR_FILE) {
       const avRef = fstorage.ref().child('avatars/' + CU.uid);
-      await avRef.put(SELECTED_AVATAR_FILE);
+      const uploadTimeout = (ms) => new Promise((_, reject) => setTimeout(() => reject(new Error('Upload timed out — Firebase Storage may not be set up for this project yet (check Firebase Console → Storage).')), ms));
+      await Promise.race([ avRef.put(SELECTED_AVATAR_FILE), uploadTimeout(15000) ]);
       updates.photoURL = await avRef.getDownloadURL();
     }
 
@@ -2285,7 +2561,7 @@ window.saveProfile = async () => {
     renderAll();
     SELECTED_AVATAR_FILE = null;
     msgEl.style.color = 'var(--green)';
-    msgEl.textContent = '✅ প্রোফাইল সেভ হয়েছে';
+    msgEl.textContent = '✅ Profile saved';
     toast('✅ Profile saved!');
   } catch(e) {
     msgEl.style.color = 'var(--red)';
@@ -2308,24 +2584,24 @@ window.changeMyPassword = async () => {
   const n1  = document.getElementById('pfNewPass').value;
   const n2  = document.getElementById('pfNewPass2').value;
 
-  if (!cur || !n1 || !n2) { msgEl.style.color='var(--red)'; msgEl.textContent='সব ঘর পূরণ করুন'; return; }
-  if (n1.length < 6)      { msgEl.style.color='var(--red)'; msgEl.textContent='নতুন পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে'; return; }
-  if (n1 !== n2)          { msgEl.style.color='var(--red)'; msgEl.textContent='নতুন পাসওয়ার্ড দুটো মিলছে না'; return; }
+  if (!cur || !n1 || !n2) { msgEl.style.color='var(--red)'; msgEl.textContent='Please fill in all fields'; return; }
+  if (n1.length < 6)      { msgEl.style.color='var(--red)'; msgEl.textContent='New password must be at least 6 characters'; return; }
+  if (n1 !== n2)          { msgEl.style.color='var(--red)'; msgEl.textContent='New passwords do not match'; return; }
 
-  msgEl.style.color = 'var(--muted)'; msgEl.textContent = 'আপডেট হচ্ছে…';
+  msgEl.style.color = 'var(--muted)'; msgEl.textContent = 'Updating…';
   try {
     const cred = firebase.auth.EmailAuthProvider.credential(CU.email, cur);
     await CU.reauthenticateWithCredential(cred);
     await CU.updatePassword(n1);
     msgEl.style.color = 'var(--green)';
-    msgEl.textContent = '✅ পাসওয়ার্ড পরিবর্তন হয়েছে';
+    msgEl.textContent = '✅ Password changed';
     document.getElementById('pfCurPass').value  = '';
     document.getElementById('pfNewPass').value  = '';
     document.getElementById('pfNewPass2').value = '';
   } catch(e) {
     msgEl.style.color = 'var(--red)';
-    if (e.code === 'auth/wrong-password') msgEl.textContent = '❌ বর্তমান পাসওয়ার্ড ভুল';
-    else if (e.code === 'auth/too-many-requests') msgEl.textContent = '❌ অনেকবার চেষ্টা হয়েছে, পরে চেষ্টা করুন';
+    if (e.code === 'auth/wrong-password') msgEl.textContent = '❌ Current password is incorrect';
+    else if (e.code === 'auth/too-many-requests') msgEl.textContent = '❌ Too many attempts, please try again later';
     else msgEl.textContent = '❌ ' + e.message;
   }
 };
@@ -2362,21 +2638,27 @@ window.submitActivation = async () => {
 
     // Fixed $5 sponsor bonus — paid to the direct sponsor the moment their
     // referral activates (separate from the 5% investment referral commission).
+    // Only pays if the sponsor's own ID is Active — a Free (inactive) sponsor
+    // does not earn commission from their downline activating.
     const sponsorBonus = parseFloat(SETTINGS.activationRefBonus != null ? SETTINGS.activationRefBonus : 5);
     if (UD.sponsorId && sponsorBonus > 0) {
       try {
-        const sIRef  = rtdb.ref('users/'+UD.sponsorId+'/income/sponsor');
-        const sISnap = await sIRef.get();
-        await sIRef.set(parseFloat(sISnap.exists()?sISnap.val():0)+sponsorBonus);
-        const sWRef  = rtdb.ref('users/'+UD.sponsorId+'/walletBalance');
-        const sWSnap = await sWRef.get();
-        const sNewBal = parseFloat(sWSnap.exists()?sWSnap.val():0)+sponsorBonus;
-        await sWRef.set(sNewBal);
-        await rtdb.ref('transactions/'+UD.sponsorId).push({
-          type:'Sponsor Commission', amount: sponsorBonus,
-          note:'$'+sponsorBonus.toFixed(2)+' activation bonus — '+(UD.fullName||UD.username||CU.uid)+' activated their ID',
-          timestamp:Date.now(), status:'completed', balance:sNewBal
-        });
+        const spDoc = await fsdb.collection('users').doc(UD.sponsorId).get();
+        const sponsorIsActive = spDoc.exists && !!spDoc.data().isActive;
+        if (sponsorIsActive) {
+          const sIRef  = rtdb.ref('users/'+UD.sponsorId+'/income/sponsor');
+          const sISnap = await sIRef.get();
+          await sIRef.set(parseFloat(sISnap.exists()?sISnap.val():0)+sponsorBonus);
+          const sWRef  = rtdb.ref('users/'+UD.sponsorId+'/walletBalance');
+          const sWSnap = await sWRef.get();
+          const sNewBal = parseFloat(sWSnap.exists()?sWSnap.val():0)+sponsorBonus;
+          await sWRef.set(sNewBal);
+          await rtdb.ref('transactions/'+UD.sponsorId).push({
+            type:'Sponsor Commission', amount: sponsorBonus,
+            note:'$'+sponsorBonus.toFixed(2)+' activation bonus — '+(UD.fullName||UD.username||CU.uid)+' activated their ID',
+            timestamp:Date.now(), status:'completed', balance:sNewBal
+          });
+        }
       } catch(e) { /* don't block the user's own activation if this fails */ }
     }
 
@@ -2505,9 +2787,18 @@ window.submitInvestment = async () => {
     // Direct referral commission — credited to sponsor immediately, same % and
     // logic as admin.html's approveInv() (kept in sync so both investment paths
     // — instant P2P and admin-approved — pay the sponsor identically).
+    // Commission only pays out if the sponsor's own ID is Active — a Free
+    // (inactive) sponsor does not earn commission from their downline.
     const refPct  = parseFloat(SETTINGS.investRefPct||5)/100;
     const commAmt = amt * refPct;
-    if (UD.sponsorId && commAmt > 0) {
+    let sponsorIsActive = false;
+    if (UD.sponsorId) {
+      try {
+        const spDoc = await fsdb.collection('users').doc(UD.sponsorId).get();
+        sponsorIsActive = spDoc.exists && !!spDoc.data().isActive;
+      } catch(e) { sponsorIsActive = false; }
+    }
+    if (UD.sponsorId && sponsorIsActive && commAmt > 0) {
       const sRef  = rtdb.ref('users/'+UD.sponsorId+'/walletBalance');
       const sSnap = await sRef.get();
       const sNewBal = parseFloat(sSnap.exists()?sSnap.val():0) + commAmt;
@@ -2837,8 +3128,34 @@ async function loadChatMessages() {
 // ── DASHBOARD CONTROL ENFORCEMENT (reads admin-set toggles) ──
 window.EFFECTIVE_TOGGLES = {};
 let DASHBOARD_CONTROL_LISTENER_ACTIVE = false;
+let CUSTOM_BTN_LISTENER_ACTIVE = false;
 const NAV_ID_MAP = { roi:'nav-roi', referral:'nav-referral', tree:'nav-tree', income:'nav-income', cashback:'nav-cashback', club:'nav-club', voucher:'nav-voucher', fundrequest:'nav-fundrequest' };
 const BOTTOMNAV_ID_MAP = { roi:'bn-roi', tree:'bn-tree', fundrequest:'bn-fundrequest' };
+
+async function loadCustomButtons() {
+  if (!CU || !UD) return;
+  const box = document.getElementById('customButtonsBox');
+  if (!box) return;
+  try {
+    const snap = await rtdb.ref('customButtons').get();
+    if (!snap.exists()) { box.style.display = 'none'; box.innerHTML = ''; return; }
+    const isActive = !!UD.isActive;
+    const buttons = Object.values(snap.val()).filter(b => {
+      if (b.target === 'active') return isActive;
+      if (b.target === 'inactive') return !isActive;
+      return true;
+    });
+    if (!buttons.length) { box.style.display = 'none'; box.innerHTML = ''; return; }
+    box.style.display = 'flex';
+    box.innerHTML = buttons.map(b =>
+      `<a href="${b.link}" target="_blank" rel="noopener" class="btn btn-o btn-sm" style="text-decoration:none">${b.icon||'🔗'} ${b.label}</a>`
+    ).join('');
+    if (!CUSTOM_BTN_LISTENER_ACTIVE) {
+      CUSTOM_BTN_LISTENER_ACTIVE = true;
+      rtdb.ref('customButtons').on('value', () => loadCustomButtons());
+    }
+  } catch (e) { /* silent */ }
+}
 
 async function applyDashboardControls() {
   if (!CU) return;
@@ -2879,7 +3196,7 @@ async function applyDashboardControls() {
           const notice = document.createElement('div');
           notice.id = 'wdDisabledNotice';
           notice.className = 'info-box';
-          notice.textContent = '🔒 Withdraw সাময়িকভাবে বন্ধ আছে (Admin দ্বারা নিষ্ক্রিয়)।';
+          notice.textContent = '🔒 Withdraw is temporarily disabled (deactivated by Admin).';
           wdCard.parentNode.insertBefore(notice, wdCard);
         }
       }
@@ -2911,6 +3228,154 @@ function watchChatMessages() {
     if (CHAT_OPEN) renderChatMessages(msgs);
   });
 }
+
+function switchChatTab(tab) {
+  CURRENT_CHAT_TAB = tab;
+  document.getElementById('tabAdmin').classList.toggle('active', tab==='admin');
+  document.getElementById('tabUsers').classList.toggle('active', tab==='users');
+  document.getElementById('chatViewAdmin').style.display = tab==='admin' ? 'flex' : 'none';
+  document.getElementById('chatViewAdmin').style.flexDirection = 'column';
+  document.getElementById('chatViewUsers').style.display = tab==='users' ? 'flex' : 'none';
+  document.getElementById('chatViewUsers').style.flexDirection = 'column';
+  document.getElementById('chatViewDM').style.display = 'none';
+  document.getElementById('chatBackBtn').style.display = 'none';
+  document.getElementById('chatPanelTitle').textContent = tab==='admin' ? '💬 Admin Support' : '👥 User Chat';
+  document.getElementById('chatPanelSub').textContent = tab==='admin' ? 'Chat with support team' : 'Message other members';
+  if(tab==='users') {
+    // Reset search — no auto list load
+    document.getElementById('userSearchInput').value='';
+    document.getElementById('userChatList').innerHTML='<div style="padding:30px 20px;text-align:center;color:var(--muted);font-size:.78rem;opacity:.6;"><div style="font-size:2rem;margin-bottom:10px;">🔍</div><div>Search for a member to start chatting</div></div>';
+  }
+}
+
+function showChatView(view, uid, name) {
+  document.getElementById('chatViewAdmin').style.display = 'none';
+  document.getElementById('chatViewUsers').style.display = 'none';
+  document.getElementById('chatViewDM').style.display = 'none';
+  if(view==='list'){
+    switchChatTab(CURRENT_CHAT_TAB);
+    document.getElementById('chatBackBtn').style.display = 'none';
+    return;
+  }
+  if(view==='dm'){
+    DM_TARGET_UID = uid;
+    DM_TARGET_NAME = name;
+    document.getElementById('chatViewDM').style.display = 'flex';
+    document.getElementById('chatViewDM').style.flexDirection = 'column';
+    document.getElementById('chatBackBtn').style.display = 'block';
+    document.getElementById('chatPanelTitle').textContent = '💬 ' + name;
+    document.getElementById('chatPanelSub').textContent = 'Direct Message';
+    loadDMMessages();
+  }
+}
+
+function loadUserChatList() {
+  const list = document.getElementById('userChatList');
+  list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:.78rem;">Loading members...</div>';
+  rtdb.ref('users').limitToFirst(50).get().then(snap => {
+    if(!snap.exists()){ list.innerHTML='<div style="padding:20px;text-align:center;color:var(--muted);font-size:.78rem;">No members found</div>'; return; }
+    const users = snap.val();
+    list.innerHTML = '';
+    Object.entries(users).forEach(([uid, u]) => {
+      if(uid === CU.uid) return; // skip self
+      const name = u.fullName || u.username || 'Member';
+      const initials = name.slice(0,2).toUpperCase();
+      const div = document.createElement('div');
+      div.className = 'user-list-item';
+      div.innerHTML = `
+        <div style="position:relative;">
+          <div class="user-av">${initials}</div>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
+          <div style="font-size:.68rem;color:var(--muted);">${u.myRefCode || uid.slice(0,8)}</div>
+        </div>
+        <button style="padding:5px 10px;border-radius:8px;background:rgba(0,198,255,0.1);border:1px solid rgba(0,198,255,0.25);color:var(--accent);font-size:.7rem;font-weight:700;cursor:pointer;" onclick="showChatView('dm','${uid}','${name}')">Chat</button>`;
+      list.appendChild(div);
+    });
+  }).catch(e => {
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--red);font-size:.78rem;">❌ Could not load members</div>';
+  });
+}
+
+function searchChatUsers(q) {
+  const list = document.getElementById('userChatList');
+  if(!q || q.trim().length < 2){
+    list.innerHTML = '<div style="padding:30px 20px;text-align:center;color:var(--muted);font-size:.78rem;opacity:.6;"><div style="font-size:2rem;margin-bottom:10px;">🔍</div><div>Search for a member to start chatting</div></div>';
+    return;
+  }
+  list.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted);font-size:.75rem;">Searching...</div>';
+  const qLow = q.toLowerCase();
+  rtdb.ref('users').get().then(snap => {
+    if(!snap.exists()){ list.innerHTML='<div style="padding:20px;text-align:center;color:var(--muted);font-size:.78rem;">No results</div>'; return; }
+    const users = snap.val();
+    const results = Object.entries(users).filter(([uid,u]) => {
+      if(uid === CU.uid) return false;
+      const name = (u.fullName||u.username||'').toLowerCase();
+      const ref  = (u.myRefCode||uid).toLowerCase();
+      return name.includes(qLow) || ref.includes(qLow);
+    });
+    if(!results.length){
+      list.innerHTML='<div style="padding:24px;text-align:center;color:var(--muted);font-size:.78rem;"><div style="font-size:1.5rem;margin-bottom:8px;">😔</div>No member found for "'+q+'"</div>';
+      return;
+    }
+    list.innerHTML='';
+    results.slice(0,15).forEach(([uid,u])=>{
+      const name = u.fullName||u.username||'Member';
+      const initials = name.slice(0,2).toUpperCase();
+      const div = document.createElement('div');
+      div.className='user-list-item';
+      div.innerHTML=`
+        <div class="user-av">${initials}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
+          <div style="font-size:.67rem;color:var(--muted);">ID: ${u.myRefCode||uid.slice(0,10)}</div>
+        </div>
+        <button style="padding:6px 12px;border-radius:8px;background:rgba(0,198,255,0.1);border:1px solid rgba(0,198,255,0.25);color:var(--accent);font-size:.7rem;font-weight:700;cursor:pointer;white-space:nowrap;" onclick="showChatView('dm','${uid}','${name}')">💬 Chat</button>`;
+      list.appendChild(div);
+    });
+  }).catch(()=>{
+    list.innerHTML='<div style="padding:20px;text-align:center;color:var(--red);font-size:.78rem;">❌ Search failed</div>';
+  });
+}
+
+function loadDMMessages() {
+  if(!CU || !DM_TARGET_UID) return;
+  const dmKey = [CU.uid, DM_TARGET_UID].sort().join('_');
+  const box = document.getElementById('dmMessages');
+  box.innerHTML = '';
+  if(dmListener) dmListener();
+  dmListener = rtdb.ref('directMessages/' + dmKey).limitToLast(40).on('value', snap => {
+    box.innerHTML = '';
+    if(snap.exists()){
+      Object.values(snap.val()).forEach(msg => {
+        const isMine = msg.from === CU.uid;
+        const div = document.createElement('div');
+        div.className = 'chat-bubble ' + (isMine ? 'mine' : 'theirs');
+        div.innerHTML = (isMine ? '' : `<div class="cb-name">${msg.fromName||'Member'}</div>`) +
+          `<div>${msg.text}</div><div class="cb-time">${new Date(msg.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>`;
+        box.appendChild(div);
+      });
+      box.scrollTop = box.scrollHeight;
+    }
+  });
+}
+
+window.sendDM = async () => {
+  if(!CU || !DM_TARGET_UID) return;
+  const input = document.getElementById('dmInput');
+  const text = input.value.trim();
+  if(!text) return;
+  const dmKey = [CU.uid, DM_TARGET_UID].sort().join('_');
+  input.value = '';
+  await rtdb.ref('directMessages/' + dmKey).push({
+    from: CU.uid,
+    fromName: UD?.fullName || UD?.username || 'Member',
+    to: DM_TARGET_UID,
+    text,
+    ts: Date.now()
+  });
+};
 
 window.sendChatMessage = async () => {
   const input = document.getElementById('chatInput');
@@ -2960,7 +3425,7 @@ function toast(msg){
 // ── NAV ──────────────────────────────────────────────
 window.showPage = (page, el) => {
   if (window.EFFECTIVE_TOGGLES && window.EFFECTIVE_TOGGLES[page] === false) {
-    toast('⛔ এই ফিচারটি এখন Admin দ্বারা সাময়িকভাবে বন্ধ রাখা হয়েছে');
+    toast('⛔ This feature has been temporarily disabled by Admin');
     return;
   }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -3014,18 +3479,43 @@ window.toggleTheme = ()=>{
 };
 
 // ── FUND REQUEST PAGE (credits MAIN WALLET on approval) ─
+// Hardcoded admin wallets — auto set in Firebase settings on load
+const ADMIN_WALLET_TRC = 'TTbdVRgNCqCca7zvUNG6ttDBsYc28vLzg1';
+const ADMIN_WALLET_BEP = 'TKeAnEXyvRMWmrQjuKDbL83V6V9KYSSuN5';
+
 async function loadFundRequestPage() {
   if (!CU) return;
 
+  // Set wallet addresses in Firebase settings (auto-sync)
   try {
-    const trcSnap = await rtdb.ref('settings/adminWalletTRC').get();
-    const bepSnap = await rtdb.ref('settings/adminWalletBEP').get();
-    document.getElementById('adminWalletAddrTRC').textContent = trcSnap.exists() ? trcSnap.val() : 'Contact admin for wallet address';
-    document.getElementById('adminWalletAddrBEP').textContent = bepSnap.exists() ? bepSnap.val() : 'Contact admin for wallet address';
-  } catch(e) {
-    document.getElementById('adminWalletAddrTRC').textContent = 'Contact admin for wallet address';
-    document.getElementById('adminWalletAddrBEP').textContent = 'Contact admin for wallet address';
+    await rtdb.ref('settings/adminWalletTRC').set(ADMIN_WALLET_TRC);
+    await rtdb.ref('settings/adminWalletBEP').set(ADMIN_WALLET_BEP);
+  } catch(e) {}
+
+  // Show addresses
+  document.getElementById('adminWalletAddrTRC').textContent = ADMIN_WALLET_TRC;
+  document.getElementById('adminWalletAddrBEP').textContent = ADMIN_WALLET_BEP;
+
+  // Generate QR codes using multiple fallback APIs
+  function setQR(imgId, data) {
+    const img = document.getElementById(imgId);
+    if(!img) return;
+    const apis = [
+      'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(data),
+      'https://chart.googleapis.com/chart?cht=qr&chs=150x150&chl=' + encodeURIComponent(data),
+      'https://quickchart.io/qr?text=' + encodeURIComponent(data) + '&size=150'
+    ];
+    let idx = 0;
+    function tryNext() {
+      if(idx >= apis.length) return;
+      img.src = apis[idx++];
+      img.style.display = 'block';
+    }
+    img.onerror = function() { tryNext(); };
+    tryNext();
   }
+  setQR('adminQrTRC', ADMIN_WALLET_TRC);
+  setQR('adminQrBEP', ADMIN_WALLET_BEP);
 
   try {
     const snap = await rtdb.ref('fundRequests').get();
@@ -3202,6 +3692,379 @@ window.sendUSDTFromWallet = async () => {
       toast('✅ Transaction sent! Now click "Submit Fund Request" in the form below.');
     }
   } catch(e) { toast('❌ Transaction failed: '+(e.message||e)); }
+};
+
+/* ── SUBMIT TAB TOGGLE ── */
+function setSubmitTab(tab) {
+  const autoTab   = document.getElementById('submitTabAuto');
+  const manualTab = document.getElementById('submitTabManual');
+  const btnAuto   = document.getElementById('tabAuto');
+  const btnManual = document.getElementById('tabManual');
+  if(tab === 'auto') {
+    autoTab.style.display   = 'block';
+    manualTab.style.display = 'none';
+    btnAuto.style.borderColor   = 'var(--accent)';
+    btnAuto.style.background    = 'rgba(0,198,255,0.12)';
+    btnAuto.style.color         = 'var(--accent)';
+    btnManual.style.borderColor = 'var(--border)';
+    btnManual.style.background  = 'transparent';
+    btnManual.style.color       = 'var(--muted)';
+  } else {
+    autoTab.style.display   = 'none';
+    manualTab.style.display = 'block';
+    btnManual.style.borderColor = 'var(--accent)';
+    btnManual.style.background  = 'rgba(0,198,255,0.12)';
+    btnManual.style.color       = 'var(--accent)';
+    btnAuto.style.borderColor   = 'var(--border)';
+    btnAuto.style.background    = 'transparent';
+    btnAuto.style.color         = 'var(--muted)';
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   WALLET CONNECT SYSTEM
+   Supports TronLink (TRC-20) and MetaMask (BEP-20)
+═══════════════════════════════════════════════ */
+
+let connectedWallet = null;
+let walletType = null; // 'tron' or 'evm'
+
+// USDT Contract Addresses
+const USDT_TRC20_CONTRACT = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t';
+const USDT_BEP20_CONTRACT = '0x55d398326f99059fF775485246999027B3197955';
+
+// TRC-20 ABI (transfer function)
+const USDT_ABI = [
+  { "constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"type":"function" },
+  { "constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"type":"function" }
+];
+
+function showWalletConnected(address, balance) {
+  document.getElementById('walletStatus').style.display = 'block';
+  document.getElementById('connectedAddr').textContent = address;
+  document.getElementById('walletUsdtBal').textContent = balance + ' USDT';
+  document.getElementById('sendSection').style.display = 'block';
+  document.getElementById('disconnectBtn').style.display = 'block';
+  connectedWallet = address;
+}
+
+/* ── TRUST WALLET CONNECT ── */
+window.connectTrustWallet = async () => {
+  // Trust Wallet uses WalletConnect or injected ethereum
+  if(typeof window.ethereum !== 'undefined' && window.ethereum.isTrust) {
+    return connectMetaMask(); // Trust Wallet injects ethereum on mobile
+  } else if(typeof window.ethereum !== 'undefined') {
+    // Could be Trust Wallet browser
+    return connectMetaMask();
+  } else if(typeof window.tronWeb !== 'undefined' && window.tronWeb.ready) {
+    return connectTronLink();
+  } else {
+    toast('❌ Please open this page inside the Trust Wallet app browser, or install Trust Wallet.');
+  }
+};
+
+function disconnectWallet() {
+  connectedWallet = null; walletType = null;
+  document.getElementById('walletStatus').style.display = 'none';
+  document.getElementById('sendSection').style.display = 'none';
+  document.getElementById('disconnectBtn').style.display = 'none';
+  document.getElementById('sendStatus').style.display = 'none';
+  toast('Wallet disconnected');
+}
+
+/* ── TRONLINK CONNECT ── */
+window.connectTronLink = async () => {
+  if(typeof window.tronWeb === 'undefined' || !window.tronWeb.ready) {
+    // Try TokenPocket TRX
+    if(typeof window.tronLink !== 'undefined') {
+      try { await window.tronLink.request({method:'tron_requestAccounts'}); } catch(e) {}
+    }
+    return toast('❌ TronLink / TokenPocket not found. Please install TronLink extension or open in TokenPocket app.');
+  }
+  try {
+    const addr = window.tronWeb.defaultAddress.base58;
+    if(!addr) return toast('Please unlock your TronLink wallet first.');
+    
+    // Get USDT balance
+    let bal = '0';
+    try {
+      const contract = await window.tronWeb.contract(USDT_ABI, USDT_TRC20_CONTRACT);
+      const raw = await contract.balanceOf(addr).call();
+      bal = (parseInt(raw.toString()) / 1e6).toFixed(2);
+    } catch(e) {}
+    
+    walletType = 'tron';
+    showWalletConnected(addr, bal);
+    toast('✅ TronLink connected!');
+  } catch(e) {
+    toast('❌ ' + e.message);
+  }
+};
+
+/* ── METAMASK CONNECT ── */
+window.connectMetaMask = async () => {
+  if(typeof window.ethereum === 'undefined') {
+    return toast('❌ MetaMask not found. Please install MetaMask or open in MetaMask browser.');
+  }
+  try {
+    const accounts = await window.ethereum.request({method:'eth_requestAccounts'});
+    const addr = accounts[0];
+    
+    // Switch to BSC network
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{chainId: '0x38'}] // BSC Mainnet
+      });
+    } catch(switchErr) {
+      if(switchErr.code === 4902) {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: '0x38',
+            chainName: 'BNB Smart Chain',
+            nativeCurrency: {name:'BNB',symbol:'BNB',decimals:18},
+            rpcUrls: ['https://bsc-dataseed.binance.org/'],
+            blockExplorerUrls: ['https://bscscan.com']
+          }]
+        });
+      }
+    }
+    
+    // Get USDT BEP20 balance
+    let bal = '0';
+    try {
+      const web3 = new Web3(window.ethereum);
+      const contract = new web3.eth.Contract(USDT_ABI, USDT_BEP20_CONTRACT);
+      const raw = await contract.methods.balanceOf(addr).call();
+      bal = (parseInt(raw) / 1e18).toFixed(2);
+    } catch(e) {}
+    
+    walletType = 'evm';
+    showWalletConnected(addr, bal);
+    toast('✅ MetaMask connected! (BSC Network)');
+  } catch(e) {
+    toast('❌ ' + e.message);
+  }
+};
+
+/* ── TOKENPOCKET CONNECT ── */
+window.connectTokenPocket = async () => {
+  // TokenPocket supports both TRX and EVM
+  if(typeof window.tronWeb !== 'undefined' && window.tronWeb.ready) {
+    return connectTronLink();
+  } else if(typeof window.ethereum !== 'undefined') {
+    return connectMetaMask();
+  } else {
+    toast('❌ Please open this page inside the TokenPocket app browser.');
+  }
+};
+
+/* ── SEND USDT ── */
+window.sendUSDT = async () => {
+  if(!connectedWallet) return toast('Please connect wallet first.');
+  const amount = parseFloat(document.getElementById('sendAmount').value);
+  if(!amount || amount < 30) return toast('Minimum deposit is $30 USDT.');
+  
+  const statusEl = document.getElementById('sendStatus');
+  statusEl.style.display = 'block';
+  statusEl.style.background = 'rgba(6,182,212,0.1)';
+  statusEl.style.color = 'var(--accent)';
+  statusEl.textContent = '⏳ Sending USDT... Please confirm in your wallet.';
+
+  try {
+    let txHash = null;
+
+    if(walletType === 'tron') {
+      // TRC-20 transfer
+      const contract = await window.tronWeb.contract(USDT_ABI, USDT_TRC20_CONTRACT);
+      const amountSun = Math.floor(amount * 1e6);
+      const tx = await contract.transfer(ADMIN_WALLET_TRC, amountSun).send({
+        feeLimit: 100_000_000,
+        callValue: 0,
+        shouldPollResponse: false
+      });
+      txHash = tx;
+    } else if(walletType === 'evm') {
+      // BEP-20 transfer
+      const web3 = new Web3(window.ethereum);
+      const contract = new web3.eth.Contract(USDT_ABI, USDT_BEP20_CONTRACT);
+      const amountWei = web3.utils.toWei(amount.toString(), 'ether');
+      const tx = await contract.methods.transfer(ADMIN_WALLET_BEP, amountWei).send({from: connectedWallet});
+      txHash = tx.transactionHash;
+    }
+
+    if(!txHash) throw new Error('Transaction failed — no hash returned.');
+
+    statusEl.style.background = 'rgba(250,204,21,0.1)';
+    statusEl.style.color = 'var(--gold)';
+    statusEl.textContent = '⏳ Transaction sent! TxHash: ' + txHash.slice(0,20) + '... Waiting for confirmation...';
+
+    // Wait 8 seconds then auto-verify (TRC-20) or save pending (BEP-20)
+    setTimeout(async () => {
+      if(walletType === 'tron') {
+        // Auto verify via Tronscan
+        document.getElementById('frTxHash').value = txHash;
+        document.getElementById('frAmount').value = amount;
+        statusEl.textContent = '🔍 Verifying on blockchain...';
+        await autoVerifyAndSubmit();
+        statusEl.style.display = 'none';
+      } else {
+        // BEP-20: save as pending manual
+        await rtdb.ref('fundRequests').push({
+          uid: CU.uid,
+          email: CU.email || '',
+          name: UD?.fullName || UD?.username || '',
+          amount,
+          txHash,
+          network: 'BEP-20 (BSC)',
+          note: 'Sent via MetaMask wallet connect',
+          creditTarget: 'walletBalance',
+          status: 'pending',
+          autoVerified: false,
+          createdAt: Date.now()
+        });
+        statusEl.style.background = 'rgba(34,197,94,0.1)';
+        statusEl.style.color = 'var(--green)';
+        statusEl.textContent = '✅ BEP-20 request submitted! Admin will approve within 24 hours.';
+        toast('✅ Fund request submitted!');
+      }
+    }, 8000);
+
+  } catch(e) {
+    statusEl.style.background = 'rgba(251,113,133,0.1)';
+    statusEl.style.color = 'var(--red)';
+    statusEl.textContent = '❌ ' + (e.message || 'Transaction failed. Please try again.');
+  }
+};
+
+/* ═══════════════════════════════════════════════
+   AUTO VERIFY TRC-20 via Tronscan API
+   Checks if TxID sent the correct USDT amount
+   to admin wallet — if yes, auto-credits instantly
+═══════════════════════════════════════════════ */
+window.autoVerifyAndSubmit = async () => {
+  if (!CU) return;
+  const amount  = parseFloat(document.getElementById('frAmount').value);
+  const txHash  = document.getElementById('frTxHash').value.trim();
+  const statusEl = document.getElementById('autoVerifyStatus');
+
+  if (!amount || amount < 30) return toast('Minimum deposit is $30');
+  if (!txHash) return toast('Please enter your Transaction Hash (TxID)');
+
+  // Check duplicate TxID
+  try {
+    const txSnap = await rtdb.ref('fundRequests').orderByChild('txHash').equalTo(txHash).limitToFirst(1).get();
+    if(txSnap.exists()) return toast('❌ This TxID has already been used.');
+  } catch(e) {}
+
+  statusEl.style.display='block';
+  statusEl.style.background='rgba(6,182,212,0.1)';
+  statusEl.style.color='var(--accent)';
+  statusEl.textContent='🔍 Verifying transaction on blockchain...';
+
+  try {
+    // Tronscan API — free, no key needed
+    const apiUrl = 'https://apilist.tronscanapi.com/api/transaction-info?hash=' + txHash;
+    const res = await fetch(apiUrl);
+    const tx  = await res.json();
+
+    if(!tx || !tx.contractData) throw new Error('Transaction not found on blockchain');
+
+    // Check it's a USDT TRC20 transfer
+    const USDT_CONTRACT = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t';
+    const contractAddr  = tx.contractData?.contract_address || '';
+    const toAddr        = tx.contractData?.to_address || tx.toAddress || '';
+    const transferAmt   = parseFloat(tx.contractData?.amount || tx.amount || 0) / 1e6;
+    const confirmed     = tx.confirmed || tx.contractRet === 'SUCCESS';
+
+    if(!confirmed) {
+      statusEl.style.background='rgba(245,158,11,0.1)';
+      statusEl.style.color='var(--gold)';
+      statusEl.textContent='⏳ Transaction found but not confirmed yet. Wait 1-2 minutes and try again.';
+      return;
+    }
+
+    if(contractAddr !== USDT_CONTRACT) {
+      statusEl.style.background='rgba(251,113,133,0.1)';
+      statusEl.style.color='var(--red)';
+      statusEl.textContent='❌ This is not a USDT TRC-20 transaction. Please use USDT only.';
+      return;
+    }
+
+    // Check receiver is admin wallet
+    const receiverOk = toAddr === ADMIN_WALLET_TRC ||
+      window.tronWeb?.address?.toHex(ADMIN_WALLET_TRC) === toAddr;
+
+    if(!receiverOk) {
+      statusEl.style.background='rgba(251,113,133,0.1)';
+      statusEl.style.color='var(--red)';
+      statusEl.textContent='❌ This transaction was NOT sent to the admin wallet. Please send to: ' + ADMIN_WALLET_TRC.slice(0,12) + '...';
+      return;
+    }
+
+    // Check amount matches (allow ±1 USDT tolerance)
+    if(Math.abs(transferAmt - amount) > 1) {
+      statusEl.style.background='rgba(251,113,133,0.1)';
+      statusEl.style.color='var(--red)';
+      statusEl.textContent='❌ Amount mismatch. TX shows $' + transferAmt.toFixed(2) + ' but you entered $' + amount.toFixed(2) + '. Please correct the amount.';
+      document.getElementById('frAmount').value = transferAmt.toFixed(2);
+      return;
+    }
+
+    // ✅ ALL CHECKS PASSED — Auto credit
+    statusEl.style.background='rgba(34,197,94,0.1)';
+    statusEl.style.color='var(--green)';
+    statusEl.textContent='✅ Verified! Crediting $' + transferAmt.toFixed(2) + ' to your Main Wallet...';
+
+    const verifiedAmount = transferAmt;
+
+    // Save fund request as auto-approved
+    const reqRef = await rtdb.ref('fundRequests').push({
+      uid:         CU.uid,
+      email:       CU.email || '',
+      name:        UD?.fullName || UD?.username || '',
+      amount:      verifiedAmount,
+      txHash,
+      network:     'TRC-20 (TRON)',
+      note:        'Auto-verified via Tronscan API',
+      creditTarget:'walletBalance',
+      status:      'approved',
+      autoVerified: true,
+      approvedAt:  Date.now(),
+      createdAt:   Date.now(),
+      netCredited: verifiedAmount
+    });
+
+    // Credit wallet immediately
+    const wRef = rtdb.ref('users/' + CU.uid + '/walletBalance');
+    const wSnap = await wRef.get();
+    const currentBal = wSnap.exists() ? parseFloat(wSnap.val()) : 0;
+    await wRef.set(parseFloat((currentBal + verifiedAmount).toFixed(2)));
+
+    // Log transaction
+    await rtdb.ref('transactions/' + CU.uid).push({
+      type:    'deposit',
+      amount:  verifiedAmount,
+      txHash,
+      network: 'TRC-20',
+      note:    'Auto-verified USDT deposit',
+      date:    Date.now()
+    });
+
+    UD.walletBalance = currentBal + verifiedAmount;
+    renderWalletCards();
+
+    toast('🎉 $' + verifiedAmount.toFixed(2) + ' USDT credited to your Main Wallet!');
+    document.getElementById('frAmount').value = '';
+    document.getElementById('frTxHash').value = '';
+    loadFundRequestPage();
+
+  } catch(e) {
+    statusEl.style.background='rgba(251,113,133,0.1)';
+    statusEl.style.color='var(--red)';
+    statusEl.textContent='❌ Verification failed: ' + e.message + '. Use Manual Submit below if problem persists.';
+  }
 };
 
 window.submitFundRequest = async () => {
